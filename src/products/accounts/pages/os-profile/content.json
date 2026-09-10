@@ -1,0 +1,73 @@
+{
+  "page": 90,
+  "name": "PROFILE",
+  "source_paragraph": 1718,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/profile",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/profile",
+  "seo_title": "Profile | LAMID ONE",
+  "meta_description": "Manage personal information, professional context, preferences, and active contexts.",
+  "title": "Your Profile",
+  "description": "Manage personal information, professional context, preferences, and active contexts.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Your Profile",
+    "paragraphs": [
+      {
+        "text": "Your Profile",
+        "sourceParagraph": 1724
+      },
+      {
+        "text": "Manage personal information, professional context, preferences, and active contexts.",
+        "sourceParagraph": 1725
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Personal Information",
+      "title": "Personal Information",
+      "paragraphs": [
+        {
+          "text": "Personal Information",
+          "sourceParagraph": 1726
+        },
+        {
+          "text": "Maintain the identity information attached to your LAMID ONE account.",
+          "sourceParagraph": 1727
+        }
+      ]
+    },
+    {
+      "label": "Professional Context",
+      "title": "Professional Context",
+      "paragraphs": [
+        {
+          "text": "Professional Context",
+          "sourceParagraph": 1728
+        },
+        {
+          "text": "Add role, work, and professional information that improves relevant experiences where you choose to use it.",
+          "sourceParagraph": 1729
+        }
+      ]
+    },
+    {
+      "label": "Preferences",
+      "title": "Preferences",
+      "paragraphs": [
+        {
+          "text": "Preferences",
+          "sourceParagraph": 1730
+        },
+        {
+          "text": "Set personal defaults for how the product behaves and presents information.",
+          "sourceParagraph": 1731
+        }
+      ]
+    }
+  ]
+}

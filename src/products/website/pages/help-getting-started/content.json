@@ -1,0 +1,79 @@
+{
+  "page": 39,
+  "name": "GETTING STARTED HELP",
+  "source_paragraph": 823,
+  "gates": [],
+  "route": "/help/getting-started",
+  "indexing": "index, follow",
+  "canonical": "/help/getting-started",
+  "seo_title": "Getting Started Help | LAMID ONE",
+  "meta_description": "Set your context, begin your first Clarity session, use the Companion, and establish an operating rhythm that can carry relevant change forward over time.",
+  "title": "Start Simple.",
+  "description": "Set your context, begin your first Clarity session, use the Companion, and establish an operating rhythm that can carry relevant change forward over time.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start Simple.",
+    "paragraphs": [
+      {
+        "text": "Start Simple.",
+        "sourceParagraph": 829
+      },
+      {
+        "text": "Set your context, begin your first Clarity session, use the Companion, and establish an operating rhythm that can carry relevant change forward over time.",
+        "sourceParagraph": 830
+      },
+      {
+        "text": "CTA: Start the Guide",
+        "sourceParagraph": 831
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "1. Choose Your Context",
+      "title": "1. Choose Your Context",
+      "paragraphs": [
+        {
+          "text": "1. Choose Your Context",
+          "sourceParagraph": 832
+        },
+        {
+          "text": "Start with the context that matches your work today.",
+          "sourceParagraph": 833
+        }
+      ]
+    },
+    {
+      "label": "4. Review Progress",
+      "title": "4. Review Progress",
+      "paragraphs": [
+        {
+          "text": "4. Review Progress",
+          "sourceParagraph": 834
+        },
+        {
+          "text": "Return through daily and weekly rhythm to see what changed and continue without rebuilding context each time.",
+          "sourceParagraph": 835
+        }
+      ]
+    },
+    {
+      "label": "Complete Your First Decision Cycle",
+      "title": "Complete Your First Decision Cycle",
+      "paragraphs": [
+        {
+          "text": "Complete Your First Decision Cycle",
+          "sourceParagraph": 836
+        },
+        {
+          "text": "Start with one real decision and finish with a clear next action.",
+          "sourceParagraph": 837
+        },
+        {
+          "text": "CTA: Start the Guide",
+          "sourceParagraph": 838
+        }
+      ]
+    }
+  ]
+}

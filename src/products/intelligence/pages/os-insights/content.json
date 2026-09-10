@@ -1,0 +1,71 @@
+{
+  "page": 75,
+  "name": "INSIGHTS",
+  "source_paragraph": 1486,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/insights",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/insights",
+  "seo_title": "Insights | LAMID ONE",
+  "meta_description": "The priority is not more alerts. It is a calm explanation of the changes that now matter.",
+  "title": "Insights Worth Your Attention",
+  "description": "The priority is not more alerts. It is a calm explanation of the changes that now matter.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Insights Worth Your Attention",
+    "paragraphs": [
+      {
+        "text": "Insights Worth Your Attention",
+        "sourceParagraph": 1492
+      },
+      {
+        "text": "The priority is not more alerts. It is a calm explanation of the changes that now matter.",
+        "sourceParagraph": 1493
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Each Material Insight Should Show",
+      "title": "Each Material Insight Should Show",
+      "paragraphs": [
+        {
+          "text": "Each Material Insight Should Show",
+          "sourceParagraph": 1494
+        },
+        {
+          "text": "• What changed",
+          "sourceParagraph": 1495
+        },
+        {
+          "text": "• Why it matters",
+          "sourceParagraph": 1496
+        },
+        {
+          "text": "• Context or source",
+          "sourceParagraph": 1497
+        },
+        {
+          "text": "Permission / authority basis",
+          "sourceParagraph": 1498
+        }
+      ]
+    },
+    {
+      "label": "Turn an Insight Into Action",
+      "title": "Turn an Insight Into Action",
+      "paragraphs": [
+        {
+          "text": "Turn an Insight Into Action",
+          "sourceParagraph": 1499
+        },
+        {
+          "text": "Review the evidence, accept or reject the interpretation, then create a decision or workflow only when warranted.",
+          "sourceParagraph": 1500
+        }
+      ]
+    }
+  ]
+}

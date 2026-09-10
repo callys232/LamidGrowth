@@ -1,0 +1,73 @@
+{
+  "page": 98,
+  "name": "PLAN & USAGE",
+  "source_paragraph": 1838,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/plan",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/plan",
+  "seo_title": "Plan & Usage | LAMID ONE",
+  "meta_description": "See your current plan, available capabilities, usage, limits, and options for more depth or scale.",
+  "title": "Plan & Usage",
+  "description": "See your current plan, available capabilities, usage, limits, and options for more depth or scale.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Plan & Usage",
+    "paragraphs": [
+      {
+        "text": "Plan & Usage",
+        "sourceParagraph": 1844
+      },
+      {
+        "text": "See your current plan, available capabilities, usage, limits, and options for more depth or scale.",
+        "sourceParagraph": 1845
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Current Plan",
+      "title": "Current Plan",
+      "paragraphs": [
+        {
+          "text": "Current Plan",
+          "sourceParagraph": 1846
+        },
+        {
+          "text": "See the commercial level currently attached to the workspace or organization.",
+          "sourceParagraph": 1847
+        }
+      ]
+    },
+    {
+      "label": "Available Capabilities",
+      "title": "Available Capabilities",
+      "paragraphs": [
+        {
+          "text": "Available Capabilities",
+          "sourceParagraph": 1848
+        },
+        {
+          "text": "Review the product depth and controls included with the current plan.",
+          "sourceParagraph": 1849
+        }
+      ]
+    },
+    {
+      "label": "Organization Requirements",
+      "title": "Organization Requirements",
+      "paragraphs": [
+        {
+          "text": "Organization Requirements",
+          "sourceParagraph": 1850
+        },
+        {
+          "text": "See when governance, integrations, support, or organizational controls require an enterprise conversation.",
+          "sourceParagraph": 1851
+        }
+      ]
+    }
+  ]
+}

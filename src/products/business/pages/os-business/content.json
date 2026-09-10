@@ -1,0 +1,73 @@
+{
+  "page": 76,
+  "name": "BUSINESS",
+  "source_paragraph": 1502,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/business",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/business",
+  "seo_title": "Business | LAMID ONE",
+  "meta_description": "See the priorities, operations, finances, people, opportunities, and active execution shaping the business.",
+  "title": "Your Business Context",
+  "description": "See the priorities, operations, finances, people, opportunities, and active execution shaping the business.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Your Business Context",
+    "paragraphs": [
+      {
+        "text": "Your Business Context",
+        "sourceParagraph": 1508
+      },
+      {
+        "text": "See the priorities, operations, finances, people, opportunities, and active execution shaping the business.",
+        "sourceParagraph": 1509
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Current Priorities",
+      "title": "Current Priorities",
+      "paragraphs": [
+        {
+          "text": "Current Priorities",
+          "sourceParagraph": 1510
+        },
+        {
+          "text": "See the business priorities that need attention now and why they matter.",
+          "sourceParagraph": 1511
+        }
+      ]
+    },
+    {
+      "label": "Operational Clarity",
+      "title": "Operational Clarity",
+      "paragraphs": [
+        {
+          "text": "Operational Clarity",
+          "sourceParagraph": 1512
+        },
+        {
+          "text": "Review bottlenecks, dependencies, recurring friction, and operating assumptions shaping performance.",
+          "sourceParagraph": 1513
+        }
+      ]
+    },
+    {
+      "label": "People & Capability",
+      "title": "People & Capability",
+      "paragraphs": [
+        {
+          "text": "People & Capability",
+          "sourceParagraph": 1514
+        },
+        {
+          "text": "See the strengths, gaps, role requirements, and team capacity affecting the plan.",
+          "sourceParagraph": 1515
+        }
+      ]
+    }
+  ]
+}

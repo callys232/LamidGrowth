@@ -1,0 +1,95 @@
+{
+  "page": 27,
+  "name": "GOVERNANCE",
+  "source_paragraph": 585,
+  "gates": [
+    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+  ],
+  "route": "/trust/governance",
+  "indexing": "index, follow",
+  "canonical": "/trust/governance",
+  "seo_title": "Governance | LAMID ONE",
+  "meta_description": "As LAMID ONE becomes more capable and more continuous, governance must make progression, permission, authority, override, and accountability clearer.",
+  "title": "Capability Needs Accountability.",
+  "description": "As LAMID ONE becomes more capable and more continuous, governance must make progression, permission, authority, override, and accountability clearer - without making everyday use harder to understand.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Capability Needs Accountability.",
+    "paragraphs": [
+      {
+        "text": "Capability Needs Accountability.",
+        "sourceParagraph": 591
+      },
+      {
+        "text": "As LAMID ONE becomes more capable and more continuous, governance must make progression, permission, authority, override, and accountability clearer - without making everyday use harder to understand.",
+        "sourceParagraph": 592
+      },
+      {
+        "text": "CTA: Explore Enterprise Platform & Deployment",
+        "sourceParagraph": 593
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Experience Governance",
+      "title": "Experience Governance",
+      "paragraphs": [
+        {
+          "text": "Experience Governance",
+          "sourceParagraph": 594
+        },
+        {
+          "text": "Keep clarity, progressive disclosure, guidance, pacing, and audience coherence consistent as the experience adapts.",
+          "sourceParagraph": 595
+        }
+      ]
+    },
+    {
+      "label": "Organizational Governance",
+      "title": "Organizational Governance",
+      "paragraphs": [
+        {
+          "text": "Organizational Governance",
+          "sourceParagraph": 596
+        },
+        {
+          "text": "Control roles, permissions, delegation, workflows, approvals, override rights, revocation, and accountability inside organizations.",
+          "sourceParagraph": 597
+        }
+      ]
+    },
+    {
+      "label": "Continuous Intelligence Governance",
+      "title": "Continuous Intelligence Governance",
+      "paragraphs": [
+        {
+          "text": "Continuous Intelligence Governance",
+          "sourceParagraph": 598
+        },
+        {
+          "text": "Define which sources and workflows may progress in the background, how permission, freshness, provenance, and prior state are shown, when users are notified, what can be overridden or reversed, what requires approval, and how material progression is audited.",
+          "sourceParagraph": 599
+        }
+      ]
+    },
+    {
+      "label": "Connected Governance. Clear Responsibilities.",
+      "title": "Connected Governance. Clear Responsibilities.",
+      "paragraphs": [
+        {
+          "text": "Connected Governance. Clear Responsibilities.",
+          "sourceParagraph": 600
+        },
+        {
+          "text": "Keep experience, product, organizational, platform, and AI governance coordinated while preserving clear responsibilities.",
+          "sourceParagraph": 601
+        },
+        {
+          "text": "CTA: Explore Enterprise Platform & Deployment",
+          "sourceParagraph": 602
+        }
+      ]
+    }
+  ]
+}

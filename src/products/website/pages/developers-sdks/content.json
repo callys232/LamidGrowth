@@ -1,0 +1,89 @@
+{
+  "page": 45,
+  "name": "SDKS",
+  "source_paragraph": 939,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/developers/sdks",
+  "indexing": "index, follow",
+  "canonical": "/developers/sdks",
+  "seo_title": "SDKs | LAMID ONE",
+  "meta_description": "Use supported SDKs to work with documented platform interfaces without rebuilding core protocol, authorization, and event handling.",
+  "title": "Build With LAMID ONE Capabilities.",
+  "description": "Use supported SDKs to work with documented platform interfaces without rebuilding core protocol, authorization, and event handling.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Build With LAMID ONE Capabilities.",
+    "paragraphs": [
+      {
+        "text": "Build With LAMID ONE Capabilities.",
+        "sourceParagraph": 945
+      },
+      {
+        "text": "Use supported SDKs to work with documented platform interfaces without rebuilding core protocol, authorization, and event handling.",
+        "sourceParagraph": 946
+      },
+      {
+        "text": "CTA: View SDKs",
+        "sourceParagraph": 947
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "SDK Areas",
+      "title": "SDK Areas",
+      "paragraphs": [
+        {
+          "text": "SDK Areas",
+          "sourceParagraph": 948
+        },
+        {
+          "text": "• Core OS",
+          "sourceParagraph": 949
+        },
+        {
+          "text": "• Workflows",
+          "sourceParagraph": 950
+        },
+        {
+          "text": "• AI orchestration",
+          "sourceParagraph": 951
+        }
+      ]
+    },
+    {
+      "label": "Listen for Workflow Completion",
+      "title": "Listen for Workflow Completion",
+      "paragraphs": [
+        {
+          "text": "Listen for Workflow Completion",
+          "sourceParagraph": 952
+        },
+        {
+          "text": "Subscribe to an approved event, validate payloads, handle retries, and trigger permitted downstream action.",
+          "sourceParagraph": 953
+        }
+      ]
+    },
+    {
+      "label": "Supported Versions",
+      "title": "Supported Versions",
+      "paragraphs": [
+        {
+          "text": "Supported Versions",
+          "sourceParagraph": 954
+        },
+        {
+          "text": "See the SDKs, versions, capabilities, and release status currently supported.",
+          "sourceParagraph": 955
+        },
+        {
+          "text": "CTA: View SDKs",
+          "sourceParagraph": 956
+        }
+      ]
+    }
+  ]
+}

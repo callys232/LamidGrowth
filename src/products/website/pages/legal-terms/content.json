@@ -1,0 +1,73 @@
+{
+  "page": 56,
+  "name": "TERMS OF SERVICE",
+  "source_paragraph": 1165,
+  "gates": [
+    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+  ],
+  "route": "/legal/terms",
+  "indexing": "index, follow",
+  "canonical": "/legal/terms",
+  "seo_title": "Terms of Service | LAMID ONE",
+  "meta_description": "These terms govern access to and use of LAMID ONE.",
+  "title": "Terms of Service",
+  "description": "These terms govern access to and use of LAMID ONE.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Terms of Service",
+    "paragraphs": [
+      {
+        "text": "Terms of Service",
+        "sourceParagraph": 1171
+      },
+      {
+        "text": "These terms govern access to and use of LAMID ONE.",
+        "sourceParagraph": 1172
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Eligibility and Accounts",
+      "title": "Eligibility and Accounts",
+      "paragraphs": [
+        {
+          "text": "Eligibility and Accounts",
+          "sourceParagraph": 1173
+        },
+        {
+          "text": "These terms describe who may use the service, account responsibilities, and obligations relating to credentials and authorized access.",
+          "sourceParagraph": 1174
+        }
+      ]
+    },
+    {
+      "label": "Service Scope",
+      "title": "Service Scope",
+      "paragraphs": [
+        {
+          "text": "Service Scope",
+          "sourceParagraph": 1175
+        },
+        {
+          "text": "These terms describe the service, applicable plans, feature availability, service changes, and permitted use.",
+          "sourceParagraph": 1176
+        }
+      ]
+    },
+    {
+      "label": "Plans and Payment",
+      "title": "Plans and Payment",
+      "paragraphs": [
+        {
+          "text": "Plans and Payment",
+          "sourceParagraph": 1177
+        },
+        {
+          "text": "Subscription, billing, renewal, tax, cancellation, and payment terms apply according to your plan and the terms in force.",
+          "sourceParagraph": 1178
+        }
+      ]
+    }
+  ]
+}

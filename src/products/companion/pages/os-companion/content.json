@@ -1,0 +1,73 @@
+{
+  "page": 74,
+  "name": "COMPANION WORKSPACE",
+  "source_paragraph": 1471,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/companion",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/companion",
+  "seo_title": "Companion Workspace | LAMID ONE",
+  "meta_description": "Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You.",
+  "title": "What Are You Working Through?",
+  "description": "Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You remain able to review, redirect, pause, revoke, or override what happens next.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "What Are You Working Through?",
+    "paragraphs": [
+      {
+        "text": "What Are You Working Through?",
+        "sourceParagraph": 1477
+      },
+      {
+        "text": "Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You remain able to review, redirect, pause, revoke, or override what happens next.",
+        "sourceParagraph": 1478
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Objective",
+      "title": "Objective",
+      "paragraphs": [
+        {
+          "text": "Objective",
+          "sourceParagraph": 1479
+        },
+        {
+          "text": "State the decision, challenge, opportunity, or result you want to move forward.",
+          "sourceParagraph": 1480
+        }
+      ]
+    },
+    {
+      "label": "Context",
+      "title": "Context",
+      "paragraphs": [
+        {
+          "text": "Context",
+          "sourceParagraph": 1481
+        },
+        {
+          "text": "Add the information, constraints, people, prior decisions, connected data, permitted update sources, and progression boundaries that materially affect the objective.",
+          "sourceParagraph": 1482
+        }
+      ]
+    },
+    {
+      "label": "Relevant Intelligence",
+      "title": "Relevant Intelligence",
+      "paragraphs": [
+        {
+          "text": "Relevant Intelligence",
+          "sourceParagraph": 1483
+        },
+        {
+          "text": "The Companion brings forward the intelligence and support that fit the objective.",
+          "sourceParagraph": 1484
+        }
+      ]
+    }
+  ]
+}

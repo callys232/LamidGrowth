@@ -1,0 +1,89 @@
+{
+  "page": 37,
+  "name": "RESEARCH",
+  "source_paragraph": 787,
+  "gates": [
+    "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+  ],
+  "route": "/research",
+  "indexing": "index, follow",
+  "canonical": "/research",
+  "seo_title": "Research | LAMID ONE",
+  "meta_description": "Explore published research and evidence informing LAMID ONE's approach to decision support, capability, organizations, and responsible AI.",
+  "title": "Understanding How Humans and AI Work Better Together.",
+  "description": "Explore published research and evidence informing LAMID ONE's approach to decision support, capability, organizations, and responsible AI.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understanding How Humans and AI Work Better Together.",
+    "paragraphs": [
+      {
+        "text": "Understanding How Humans and AI Work Better Together.",
+        "sourceParagraph": 793
+      },
+      {
+        "text": "Explore published research and evidence informing LAMID ONE's approach to decision support, capability, organizations, and responsible AI.",
+        "sourceParagraph": 794
+      },
+      {
+        "text": "CTA: Explore Research",
+        "sourceParagraph": 795
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Research Areas",
+      "title": "Research Areas",
+      "paragraphs": [
+        {
+          "text": "Research Areas",
+          "sourceParagraph": 796
+        },
+        {
+          "text": "• Human-AI decision support",
+          "sourceParagraph": 797
+        },
+        {
+          "text": "• Capability development",
+          "sourceParagraph": 798
+        },
+        {
+          "text": "• Operating rhythms",
+          "sourceParagraph": 799
+        }
+      ]
+    },
+    {
+      "label": "Method Before Message",
+      "title": "Method Before Message",
+      "paragraphs": [
+        {
+          "text": "Method Before Message",
+          "sourceParagraph": 800
+        },
+        {
+          "text": "Review the methods, samples, assumptions, limitations, and sources behind published research.",
+          "sourceParagraph": 801
+        }
+      ]
+    },
+    {
+      "label": "From Research to Practice",
+      "title": "From Research to Practice",
+      "paragraphs": [
+        {
+          "text": "From Research to Practice",
+          "sourceParagraph": 802
+        },
+        {
+          "text": "See how research findings connect to practical design and operating implications, with limitations and causality kept explicit.",
+          "sourceParagraph": 803
+        },
+        {
+          "text": "CTA: Explore Research",
+          "sourceParagraph": 804
+        }
+      ]
+    }
+  ]
+}

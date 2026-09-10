@@ -1,0 +1,93 @@
+{
+  "page": 7,
+  "name": "ORGANIZATIONS",
+  "source_paragraph": 198,
+  "gates": [],
+  "route": "/product/organizations",
+  "indexing": "index, follow",
+  "canonical": "/product/organizations",
+  "seo_title": "Organizations | LAMID ONE",
+  "meta_description": "Extend the same operating principles across teams and organizations while keeping each person's experience clear and relevant.",
+  "title": "From Individual Clarity to Organizational Coherence.",
+  "description": "Extend the same operating principles across teams and organizations while keeping each person's experience clear and relevant.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "From Individual Clarity to Organizational Coherence.",
+    "paragraphs": [
+      {
+        "text": "From Individual Clarity to Organizational Coherence.",
+        "sourceParagraph": 204
+      },
+      {
+        "text": "Extend the same operating principles across teams and organizations while keeping each person's experience clear and relevant.",
+        "sourceParagraph": 205
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Organizations",
+        "sourceParagraph": 206
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Shared Context",
+      "title": "Shared Context",
+      "paragraphs": [
+        {
+          "text": "Shared Context",
+          "sourceParagraph": 207
+        },
+        {
+          "text": "Connect priorities, decisions, responsibilities, progress, and material changes where collaboration requires a common view.",
+          "sourceParagraph": 208
+        }
+      ]
+    },
+    {
+      "label": "Organizational Rhythm",
+      "title": "Organizational Rhythm",
+      "paragraphs": [
+        {
+          "text": "Organizational Rhythm",
+          "sourceParagraph": 209
+        },
+        {
+          "text": "Create shared clarity, understand capability, strengthen execution consistency, and review patterns as organizational context evolves over time.",
+          "sourceParagraph": 210
+        }
+      ]
+    },
+    {
+      "label": "Governance",
+      "title": "Governance",
+      "paragraphs": [
+        {
+          "text": "Governance",
+          "sourceParagraph": 211
+        },
+        {
+          "text": "Apply roles, permissions, AI policies, workflow approvals, data controls, and accountability as responsibility grows.",
+          "sourceParagraph": 212
+        }
+      ]
+    },
+    {
+      "label": "Scale the Capability. Preserve the Coherence.",
+      "title": "Scale the Capability. Preserve the Coherence.",
+      "paragraphs": [
+        {
+          "text": "Scale the Capability. Preserve the Coherence.",
+          "sourceParagraph": 213
+        },
+        {
+          "text": "Add shared context, administration, governance, and organizational depth while continuous updates remain permissioned, explainable, and calm enough for everyday work.",
+          "sourceParagraph": 214
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Organizations",
+          "sourceParagraph": 215
+        }
+      ]
+    }
+  ]
+}

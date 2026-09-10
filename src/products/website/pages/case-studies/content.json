@@ -1,0 +1,89 @@
+{
+  "page": 36,
+  "name": "CASE STUDIES",
+  "source_paragraph": 768,
+  "gates": [
+    "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+  ],
+  "route": "/case-studies",
+  "indexing": "index, follow",
+  "canonical": "/case-studies",
+  "seo_title": "Case Studies | LAMID ONE",
+  "meta_description": "Explore published case studies with verified context, outcomes, and lessons.",
+  "title": "Evidence, Not Claims.",
+  "description": "Explore published case studies with verified context, outcomes, and lessons.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Evidence, Not Claims.",
+    "paragraphs": [
+      {
+        "text": "Evidence, Not Claims.",
+        "sourceParagraph": 774
+      },
+      {
+        "text": "Explore published case studies with verified context, outcomes, and lessons.",
+        "sourceParagraph": 775
+      },
+      {
+        "text": "CTA: Browse Case Studies",
+        "sourceParagraph": 776
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "What Each Case Study Shows",
+      "title": "What Each Case Study Shows",
+      "paragraphs": [
+        {
+          "text": "What Each Case Study Shows",
+          "sourceParagraph": 777
+        },
+        {
+          "text": "• Context",
+          "sourceParagraph": 778
+        },
+        {
+          "text": "• Objective",
+          "sourceParagraph": 779
+        },
+        {
+          "text": "• Starting point",
+          "sourceParagraph": 780
+        }
+      ]
+    },
+    {
+      "label": "Evidence by Outcome",
+      "title": "Evidence by Outcome",
+      "paragraphs": [
+        {
+          "text": "Evidence by Outcome",
+          "sourceParagraph": 781
+        },
+        {
+          "text": "Explore case studies by outcome - for example, stronger delivery, clearer financial decisions, better team alignment, or faster decision cycles.",
+          "sourceParagraph": 782
+        }
+      ]
+    },
+    {
+      "label": "From Evidence to Action",
+      "title": "From Evidence to Action",
+      "paragraphs": [
+        {
+          "text": "From Evidence to Action",
+          "sourceParagraph": 783
+        },
+        {
+          "text": "See what worked, what did not, and what other teams can learn.",
+          "sourceParagraph": 784
+        },
+        {
+          "text": "CTA: Browse Case Studies",
+          "sourceParagraph": 785
+        }
+      ]
+    }
+  ]
+}

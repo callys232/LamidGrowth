@@ -1,0 +1,89 @@
+{
+  "page": 46,
+  "name": "INTEGRATIONS",
+  "source_paragraph": 958,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/integrations",
+  "indexing": "index, follow",
+  "canonical": "/integrations",
+  "seo_title": "Integrations | LAMID ONE",
+  "meta_description": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness.",
+  "title": "Connect the Systems You Already Use.",
+  "description": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness, revocation, and data boundaries.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Connect the Systems You Already Use.",
+    "paragraphs": [
+      {
+        "text": "Connect the Systems You Already Use.",
+        "sourceParagraph": 964
+      },
+      {
+        "text": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness, revocation, and data boundaries.",
+        "sourceParagraph": 965
+      },
+      {
+        "text": "CTA: Explore Integrations",
+        "sourceParagraph": 966
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Integration Categories",
+      "title": "Integration Categories",
+      "paragraphs": [
+        {
+          "text": "Integration Categories",
+          "sourceParagraph": 967
+        },
+        {
+          "text": "• CRM",
+          "sourceParagraph": 968
+        },
+        {
+          "text": "• Finance",
+          "sourceParagraph": 969
+        },
+        {
+          "text": "• People / HR",
+          "sourceParagraph": 970
+        }
+      ]
+    },
+    {
+      "label": "Control the Connection",
+      "title": "Control the Connection",
+      "paragraphs": [
+        {
+          "text": "Control the Connection",
+          "sourceParagraph": 971
+        },
+        {
+          "text": "Review scopes, data access, synchronization direction, permitted progression, freshness, status, and revocation.",
+          "sourceParagraph": 972
+        }
+      ]
+    },
+    {
+      "label": "Reduce Fragmentation Without Creating a New Silo.",
+      "title": "Reduce Fragmentation Without Creating a New Silo.",
+      "paragraphs": [
+        {
+          "text": "Reduce Fragmentation Without Creating a New Silo.",
+          "sourceParagraph": 973
+        },
+        {
+          "text": "Connect external systems for the context they contribute while preserving ownership, permissions, freshness, and revocation.",
+          "sourceParagraph": 974
+        },
+        {
+          "text": "CTA: Explore Integrations",
+          "sourceParagraph": 975
+        }
+      ]
+    }
+  ]
+}

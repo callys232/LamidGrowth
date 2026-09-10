@@ -1,0 +1,702 @@
+/* Legibility tokens: UI text stays readable at desktop and mobile sizes. */
+:root {
+  --text-secondary: #5a5f66;
+  --text-subtle: #5a5f66;
+  --text-inverse: #b9b6b1;
+}
+.brand small {
+  color: #5a5f66;
+}
+.brand-light small {
+  color: #b9b6b1;
+}
+.mini-progress > span,
+.preview-row > span:last-child,
+.preview-bottom {
+  color: #5a5f66;
+}
+.preview-review small {
+  color: #5a5f66;
+}
+.dark-section .editorial-number {
+  color: #b9b6b1;
+}
+@media (max-width: 640px) {
+  .header-container {
+    gap: 8px !important;
+  }
+  .public-header .brand {
+    font-size: 16px !important;
+    gap: 7px;
+  }
+  .public-header .brand small {
+    display: none;
+  }
+  .public-header .brand-mark {
+    width: 19px;
+    height: 19px;
+  }
+  .public-header .mobile-menu {
+    flex-shrink: 0;
+  }
+  .header-actions .button {
+    font-size: 8px !important;
+    padding: 9px !important;
+  }
+  .header-actions {
+    flex-shrink: 0;
+  }
+}
+.field > label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.field > small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.marketing-home p,
+.content-page p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.eyebrow {
+  font-size: 10px !important;
+}
+.hero-copy .eyebrow {
+  font-size: 9px !important;
+}
+.brand small {
+  font-size: 6px;
+}
+.public-nav > a,
+.nav-trigger,
+.sign-in {
+  font-size: 12px;
+}
+.header-actions .button {
+  font-size: 11px;
+}
+.hero-description {
+  font-size: 15px !important;
+}
+.hero-actions .button {
+  font-size: 12px;
+}
+.hero-actions .text-button {
+  font-size: 11px;
+}
+.hero-note {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.intro-band,
+.intro-band > div {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.intro-band > span strong {
+  color: var(--text-secondary);
+}
+.cycle-card-top > span,
+.context-card > span {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.cycle-card-bottom {
+  font-size: 11px;
+}
+.growth-caption > span:not(.growth-line) {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.showcase-copy p {
+  color: #b9b6b1;
+}
+.check-list li {
+  font-size: 12px;
+}
+.sample-note {
+  font-size: 10px;
+  color: #b9b6b1;
+}
+.showcase-copy .eyebrow {
+  color: #b9b6b1;
+}
+.context-card p {
+  font-size: 12px;
+}
+.trust-strip a {
+  font-size: 12px;
+}
+.faq-item > button {
+  font-size: 14px;
+}
+.faq-item > p {
+  font-size: 13px;
+}
+.closing-section > span {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.public-footer p,
+.footer-column a {
+  font-size: 11px !important;
+  color: #b9b6b1;
+}
+.footer-column h3 {
+  font-size: 11px;
+}
+.footer-bottom {
+  font-size: 10px;
+  color: #b9b6b1;
+}
+.footer-bottom > span:nth-child(2) {
+  color: #b9b6b1;
+}
+.auth-content > p,
+.auth-content .auth-footnote,
+.auth-content .auth-switch,
+.back-link,
+.auth-divider span,
+.auth-copyright {
+  color: var(--text-secondary);
+}
+.auth-footnote {
+  font-size: 11px !important;
+}
+.auth-copyright {
+  font-size: 10px;
+}
+.auth-switch {
+  font-size: 12px !important;
+}
+.workspace-layout .sidebar-label {
+  font-size: 9px;
+  color: #b9b6b1;
+  letter-spacing: 1.1px;
+}
+.workspace-layout .sidebar-link {
+  font-size: 12px;
+}
+.workspace-layout .workspace-switch strong {
+  font-size: 12px;
+}
+.workspace-layout .workspace-switch small,
+.workspace-layout .profile-row small {
+  font-size: 10px;
+  color: #b9b6b1;
+}
+.workspace-layout .profile-row strong {
+  font-size: 12px;
+}
+.workspace-layout .new-label {
+  font-size: 7px;
+}
+.workspace-layout .control-note {
+  font-size: 10px;
+}
+.workspace-layout .control-note small {
+  font-size: 9px;
+  color: #b9b6b1;
+}
+.workspace-layout .workspace-topbar > div {
+  font-size: 12px;
+}
+.workspace-layout .breadcrumb-root,
+.workspace-layout .search-button {
+  color: var(--text-secondary);
+}
+.workspace-layout .search-button {
+  font-size: 11px;
+}
+.workspace-layout .demo-banner {
+  font-size: 10px;
+  color: #5a5f66;
+}
+.workspace-layout .demo-banner a {
+  color: #5a5f66;
+}
+.workspace-layout .page-heading p {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.workspace-layout .page-heading .eyebrow {
+  color: var(--text-secondary);
+  font-size: 9px !important;
+}
+.workspace-layout .page-heading .button {
+  font-size: 12px;
+}
+.workspace-layout .focus-copy .eyebrow {
+  font-size: 9px !important;
+}
+.workspace-layout .focus-copy p {
+  font-size: 12px;
+  color: #d8cfc4;
+  max-width: 350px;
+}
+.workspace-layout .focus-copy .button {
+  font-size: 11px;
+}
+.workspace-layout .focus-footnote {
+  font-size: 7px;
+  color: #b9b6b1;
+}
+.workspace-layout .focus-panel {
+  min-height: 300px;
+}
+.workspace-layout .judgment-panel p {
+  font-size: 12px;
+  color: #5a5f66;
+}
+.workspace-layout .judgment-panel .tag {
+  font-size: 9px;
+  color: #5a5f66;
+}
+.workspace-layout .judgment-panel > a {
+  font-size: 12px;
+}
+.workspace-layout .stat-card > div {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .stat-card > small {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.workspace-layout .stat-card > strong {
+  font-size: 37px;
+}
+.workspace-layout .panel-heading > div > span,
+.workspace-layout .panel-heading > a {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .objective-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.workspace-layout .dashboard-section .objective-grid > .objective-card:nth-child(3) {
+  display: block;
+}
+.workspace-layout .priority {
+  font-size: 10px;
+  color: #5a5f66;
+}
+.workspace-layout .priority-high {
+  color: #5a5f66;
+}
+.workspace-layout .objective-card-top > span:last-child {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.workspace-layout .objective-card > p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-height: 60px;
+}
+.workspace-layout .objective-progress,
+.workspace-layout .objective-card-bottom > span,
+.workspace-layout .objective-card-bottom .text-button {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.workspace-layout .objective-progress > strong {
+  color: #5a5f66;
+}
+.workspace-layout .action-row-title > strong {
+  font-size: 12px;
+}
+.workspace-layout .action-row-title > small {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.workspace-layout .action-date {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+.workspace-layout .status-pill {
+  font-size: 9px;
+  color: #5a5f66;
+}
+.workspace-layout .status-needs-review {
+  color: #5a5f66;
+}
+.workspace-layout .status-in-progress {
+  color: #5a5f66;
+}
+.workspace-layout .status-paused {
+  color: #5a5f66;
+}
+.workspace-layout .panel-bottom-link {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .rhythm-nudge .eyebrow {
+  color: var(--text-secondary);
+  font-size: 9px !important;
+}
+.workspace-layout .rhythm-nudge p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.workspace-layout .rhythm-nudge a {
+  font-size: 11px;
+  color: #5a5f66;
+}
+.workspace-layout .workspace-footer {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+.workspace-layout
+  :is(
+    .view-toolbar > span,
+    .inline-select,
+    .objective-context-link,
+    .kanban-empty,
+    .companion-top small,
+    .companion-message p,
+    .companion-context > p,
+    .context-step small,
+    .companion-boundary,
+    .review-overview p,
+    .review-card > p,
+    .audit-event p,
+    .audit-event small,
+    .capability-card p,
+    .settings-card > p,
+    .settings-note,
+    .empty-state p,
+    .modal-description,
+    .detail-objective,
+    .detail-list dt,
+    .detail-meta,
+    .search-results small
+  ) {
+  color: var(--text-secondary);
+}
+.workspace-layout
+  :is(
+    .companion-context .eyebrow,
+    .review-overview .eyebrow,
+    .review-card .eyebrow,
+    .capability-card .eyebrow,
+    .detail-note .eyebrow
+  ) {
+  color: var(--text-secondary);
+}
+.workspace-layout .segmented button {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .kanban-card > small,
+.workspace-layout .kanban-card > p,
+.workspace-layout .kanban-card > div {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .kanban-heading > span:last-child {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .companion-top small {
+  font-size: 11px;
+}
+.workspace-layout .suggestion-chips button {
+  font-size: 11px;
+  color: #5a5f66;
+}
+.workspace-layout .context-step strong {
+  font-size: 12px;
+}
+.workspace-layout .context-step small,
+.workspace-layout .companion-boundary > p {
+  font-size: 11px;
+}
+.workspace-layout .companion-boundary > strong {
+  font-size: 12px;
+}
+.workspace-layout .companion-conversation .button {
+  font-size: 12px;
+}
+.workspace-layout .companion-complete p {
+  color: var(--text-secondary);
+}
+.workspace-layout .governance-summary,
+.workspace-layout .capability-intro {
+  color: var(--text-secondary);
+}
+.workspace-layout .governance-summary p {
+  font-size: 12px;
+}
+.workspace-layout .audit-event small {
+  font-size: 11px;
+}
+.workspace-layout .audit-event p {
+  font-size: 12px;
+}
+.workspace-layout .review-overview p {
+  font-size: 12px;
+}
+.workspace-layout .settings-note p {
+  font-size: 12px;
+}
+.workspace-layout .checkbox-field small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.workspace-layout .detail-meta,
+.workspace-layout .detail-list > div {
+  font-size: 12px;
+}
+.workspace-layout .review-callout {
+  color: #5a5f66;
+}
+.workspace-layout .review-callout p {
+  font-size: 12px;
+}
+.workspace-layout .detail-note > p {
+  font-size: 13px;
+}
+.workspace-layout .modal .field > label {
+  font-size: 12px;
+}
+.content-breadcrumb,
+.content-hero .eyebrow,
+.editorial-number,
+.availability-section > div > .eyebrow {
+  color: var(--text-secondary);
+}
+.dark-section p {
+  color: #b9b6b1;
+}
+.available-features > p {
+  color: var(--text-secondary);
+}
+@media (max-width: 1100px) {
+  .workspace-layout .sidebar-label {
+    font-size: 8px;
+  }
+  .workspace-layout .sidebar-link {
+    font-size: 11px;
+  }
+  .workspace-layout .new-label {
+    font-size: 6px;
+  }
+  .workspace-layout .focus-copy p {
+    max-width: 280px;
+  }
+  .workspace-layout .focus-footnote {
+    display: none;
+  }
+  .workspace-layout .focus-copy .button {
+    font-size: 10px;
+  }
+  .workspace-layout .stat-card > div {
+    font-size: 10px;
+  }
+  .workspace-layout .stat-card > small {
+    font-size: 9px;
+  }
+  .workspace-layout .objective-card h3 {
+    font-size: 26px;
+  }
+  .workspace-layout .judgment-panel .tag {
+    font-size: 7px;
+  }
+  .workspace-layout .judgment-panel p {
+    font-size: 11px;
+  }
+}
+@media (max-width: 850px) {
+  .workspace-layout .objective-grid {
+    grid-template-columns: 1fr;
+  }
+  .workspace-layout .objective-card > p {
+    min-height: 0;
+  }
+  .workspace-layout .sidebar-link {
+    font-size: 11px;
+  }
+  .workspace-layout .focus-copy p {
+    max-width: 350px;
+  }
+  .workspace-layout .judgment-panel .tag {
+    font-size: 8px;
+  }
+  .workspace-layout .judgment-panel p {
+    font-size: 12px;
+  }
+  .workspace-layout .judgment-panel > a {
+    font-size: 11px;
+  }
+  .workspace-layout .demo-banner {
+    font-size: 9px;
+  }
+  .public-nav > a,
+  .nav-trigger {
+    font-size: 11px;
+  }
+  .header-actions .button {
+    font-size: 9px;
+  }
+  .hero-actions .text-button {
+    font-size: 10px;
+  }
+  .hero-actions .button {
+    font-size: 11px;
+  }
+  .cycle-card-bottom {
+    font-size: 9px;
+  }
+}
+@media (max-width: 640px) {
+  .header-actions .button {
+    font-size: 9px;
+  }
+  .public-nav > a,
+  .nav-trigger {
+    font-size: 13px;
+  }
+  .hero-copy .eyebrow {
+    font-size: 8px !important;
+  }
+  .hero-description {
+    font-size: 14px !important;
+  }
+  .hero-actions {
+    gap: 13px;
+  }
+  .hero-actions .button {
+    font-size: 10px;
+    padding: 12px;
+  }
+  .hero-actions .text-button {
+    font-size: 9px;
+  }
+  .hero-note {
+    font-size: 10px;
+  }
+  .intro-band > span {
+    font-size: 9px;
+  }
+  .intro-band > div {
+    font-size: 10px;
+    gap: 20px;
+  }
+  .growth-caption > span:not(.growth-line) {
+    font-size: 9px;
+  }
+  .growth-line {
+    display: none;
+  }
+  .cycle-card-bottom {
+    font-size: 11px;
+  }
+  .closing-section .eyebrow {
+    font-size: 8px !important;
+  }
+  .context-card p {
+    font-size: 12px;
+  }
+  .trust-strip a {
+    font-size: 11px;
+  }
+  .footer-bottom {
+    font-size: 8px;
+  }
+  .workspace-layout .sidebar-link {
+    font-size: 13px;
+  }
+  .workspace-layout .sidebar-label {
+    font-size: 9px;
+  }
+  .workspace-layout .page-heading .eyebrow {
+    font-size: 8px !important;
+  }
+  .workspace-layout .page-heading h1 {
+    font-size: 34px;
+  }
+  .workspace-layout .page-heading p {
+    font-size: 12px;
+  }
+  .workspace-layout .page-heading .button {
+    font-size: 11px;
+  }
+  .workspace-layout .demo-banner {
+    font-size: 9px;
+  }
+  .workspace-layout .demo-banner a {
+    font-size: 9px;
+  }
+  .workspace-layout .focus-panel {
+    min-height: 285px;
+  }
+  .workspace-layout .focus-copy .eyebrow {
+    font-size: 8px !important;
+  }
+  .workspace-layout .focus-copy p {
+    font-size: 12px;
+    max-width: 280px;
+  }
+  .workspace-layout .focus-copy .button {
+    font-size: 10px;
+    gap: 7px;
+  }
+  .workspace-layout .judgment-panel {
+    display: flex;
+  }
+  .workspace-layout .judgment-panel h3 {
+    font-size: 29px;
+    white-space: normal;
+    margin: 13px 0;
+  }
+  .workspace-layout .judgment-panel .tag {
+    font-size: 9px;
+  }
+  .workspace-layout .judgment-panel > a {
+    font-size: 12px;
+    padding-top: 18px;
+  }
+  .workspace-layout .judgment-panel p {
+    max-width: 100%;
+  }
+  .workspace-layout .stat-card > div {
+    font-size: 11px;
+  }
+  .workspace-layout .stat-card > small {
+    font-size: 10px;
+  }
+  .workspace-layout .panel-heading > div > span {
+    font-size: 10px;
+  }
+  .workspace-layout .action-row-title > strong {
+    font-size: 12px;
+  }
+  .workspace-layout .action-row-title > small {
+    font-size: 10px;
+  }
+  .workspace-layout .status-pill {
+    font-size: 8px;
+  }
+  .workspace-layout .workspace-footer {
+    font-size: 9px;
+  }
+  .workspace-layout .objective-card h3 {
+    font-size: 29px;
+  }
+  .workspace-layout .objective-card > p {
+    font-size: 12px;
+  }
+  .workspace-layout .companion-top small {
+    font-size: 10px;
+  }
+  .workspace-layout .segmented button {
+    font-size: 10px;
+  }
+  .workspace-layout .sidebar .new-label {
+    font-size: 7px;
+  }
+}

@@ -1,0 +1,369 @@
+/* Canonical source: enterprise §10.1–10.5, website ¶87–101.
+   No named font families are mandated: DM Sans implements the primary humanist
+   sans role; Instrument Serif is reserved for strategic editorial headlines. */
+:root {
+  --midnight: #0d1a2b;
+  --graphite: #5a5f66;
+  --sandstone: #d8cfc4;
+  --warm-white: #fbfaf7;
+  --signature-red: #c12129;
+  --structured-teal: #1ca8a8;
+  --growth-green: #2e8f4e;
+  --capability-purple: #6a4fbf;
+  --font-ui: 'DM Sans', system-ui, sans-serif;
+  --font-editorial: 'Instrument Serif', Georgia, serif;
+  --navy: var(--midnight);
+  --ink: var(--midnight);
+  --muted: var(--graphite);
+  --paper: var(--warm-white);
+  --line: #e4dfd8;
+  --text-secondary: var(--graphite);
+  --text-subtle: var(--graphite);
+  --serif: var(--font-editorial);
+  --sage: #f5f3ef;
+  --gold: var(--sandstone);
+  font-family: var(--font-ui);
+  color: var(--midnight);
+  background: var(--warm-white);
+}
+body,
+.public-header,
+.auth-page {
+  background: var(--warm-white);
+}
+em,
+.hero-copy h1 em,
+.section-heading em,
+.closing-section em {
+  color: inherit;
+}
+.brand-mark,
+.brand-light .brand-mark {
+  border-color: var(--signature-red);
+}
+.brand-mark span,
+.brand-light .brand-mark span {
+  background: var(--signature-red);
+}
+.button-primary,
+.sidebar,
+.public-footer,
+.workspace-showcase,
+.focus-panel,
+.auth-aside,
+.dark-section {
+  background: var(--midnight);
+}
+.button-primary:hover {
+  background: #263448;
+}
+.button-secondary:hover,
+.button-ghost:hover {
+  background: #eeeae5;
+}
+.button-light,
+.workspace-layout .focus-copy .button {
+  background: var(--warm-white);
+  color: var(--midnight);
+}
+.button-light:hover {
+  background: #eeeae5;
+}
+.judgment-panel,
+.review-callout,
+.preview-review {
+  background: #eeeae5;
+  border-color: var(--sandstone);
+}
+.workspace-layout .judgment-panel p,
+.workspace-layout .judgment-panel .tag,
+.workspace-layout .judgment-panel > a,
+.workspace-layout .review-callout {
+  color: var(--graphite);
+}
+.cycle-card.sage,
+.cycle-card.sand,
+.cycle-card.blue {
+  background: #f5f3ef;
+  border-color: #e4dfd8;
+}
+.cycle-card {
+  border-top: 2px solid var(--sandstone) !important;
+}
+.cycle-card-top svg {
+  color: var(--midnight);
+}
+.live-dot {
+  background: var(--structured-teal);
+}
+.gold-dot {
+  background: var(--sandstone);
+}
+.blue-dot {
+  background: var(--graphite);
+}
+.label-context > .live-dot {
+  background: var(--structured-teal);
+}
+.label-capability > .gold-dot {
+  background: var(--capability-purple);
+}
+.label-consistency > .blue-dot {
+  background: var(--growth-green);
+}
+.orbit-label {
+  color: var(--midnight);
+  background: #fbfaf7f5;
+  border-color: #d8cfc4;
+}
+.orbit-label-sub,
+.orbit-coordinate,
+.orbit-caption {
+  color: var(--graphite);
+}
+.orbit-coordinate,
+.orbit-caption {
+  font-size: 8px;
+}
+.orbit-grid {
+  background-image:
+    linear-gradient(#5a5f660a 1px, transparent 1px),
+    linear-gradient(90deg, #5a5f660a 1px, transparent 1px);
+}
+.orbital {
+  border-color: #d8cfc480;
+}
+.orbital-middle {
+  border-color: #d8cfc470;
+}
+.orbit-dot {
+  background: var(--graphite);
+  box-shadow: 0 0 0 1px #d8cfc4;
+  border-color: var(--warm-white);
+}
+.orbit-sphere {
+  background: radial-gradient(
+    circle at 30% 20%,
+    #fbfaf7 2%,
+    #eeeae5 26%,
+    #d8cfc4 51%,
+    #898d92 72%,
+    #5a5f66 95%
+  );
+  box-shadow: 20px 33px 40px -25px #0d1a2b40;
+}
+.one-core {
+  background: var(--midnight);
+}
+.three-orbit-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+.orbit-visual[data-renderer='three'] .orbit-sphere {
+  visibility: hidden;
+}
+.orbit-visual[data-renderer='fallback'] .three-orbit-canvas {
+  visibility: hidden;
+}
+.orbit-label,
+.orbit-coordinate,
+.orbit-caption,
+.orbit-dot {
+  z-index: 3;
+}
+.three-core-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-ui);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  pointer-events: none;
+  z-index: 2;
+  display: none;
+}
+.orbit-visual[data-renderer='three'] .three-core-label {
+  display: block;
+}
+.auth-aside .orbit-coordinate,
+.auth-aside .orbit-caption {
+  color: var(--sandstone);
+}
+.auth-aside blockquote em,
+.showcase-copy h2 em {
+  color: var(--sandstone);
+}
+.auth-aside .orbit-dot {
+  border-color: var(--midnight);
+}
+.workspace-layout :is(h2, h3) {
+  font-family: var(--font-ui);
+}
+.workspace-layout
+  :is(
+    .focus-copy h2,
+    .judgment-panel h3,
+    .companion-message h2,
+    .companion-complete h2,
+    .rhythm-nudge h3
+  ) {
+  font-family: var(--font-editorial);
+}
+.workspace-layout .panel-heading h2 {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+.workspace-layout .objective-card h3 {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.35px;
+}
+.workspace-layout
+  :is(
+    .review-card h3,
+    .settings-card h2,
+    .capability-card h2,
+    .governance-summary h3,
+    .companion-context h3,
+    .detail-note h3
+  ) {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.workspace-layout .modal-header h2 {
+  font-family: var(--font-ui);
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.workspace-layout .review-overview h2 {
+  font-size: 25px;
+  line-height: 1.4;
+}
+.workspace-layout .plan-summary > h3 {
+  font-family: var(--font-ui);
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.workspace-layout .empty-state h3 {
+  font-size: 22px;
+  font-weight: 500;
+}
+.workspace-layout .sidebar-link.active {
+  background: #d8cfc418;
+  color: var(--warm-white);
+}
+.workspace-layout .sidebar-link.active:before {
+  background: var(--sandstone);
+}
+.workspace-layout .sidebar-link.active > svg {
+  color: var(--sandstone);
+}
+.workspace-icon {
+  background: #344152;
+  color: var(--sandstone);
+}
+.avatar {
+  background: var(--sandstone);
+  color: var(--midnight);
+}
+.companion-symbol {
+  background: #6a4fbf0c;
+  color: var(--capability-purple);
+}
+.workspace-layout .companion-link svg {
+  color: #c6b6f0;
+}
+.workspace-layout .new-label {
+  color: #d6c7f5;
+  background: #6a4fbf26;
+}
+.workspace-layout .priority {
+  background: #eeeae5;
+  color: var(--graphite);
+}
+.workspace-layout .priority-high {
+  background: var(--sandstone);
+  color: var(--midnight);
+}
+.workspace-layout .status-pill {
+  background: #eeeae5;
+  color: var(--graphite);
+}
+.workspace-layout .status-in-progress {
+  background: #1ca8a810;
+  color: #126a6a;
+}
+.workspace-layout .status-done {
+  background: #2e8f4e0c;
+  color: #26753f;
+}
+.workspace-layout .status-needs-review {
+  background: var(--sandstone);
+  color: var(--midnight);
+}
+.workspace-layout .action-check.complete {
+  background: var(--growth-green);
+  border-color: var(--growth-green);
+}
+.workspace-layout .action-check > span {
+  background: var(--structured-teal);
+}
+progress::-webkit-progress-value {
+  background: var(--growth-green);
+}
+progress::-moz-progress-bar {
+  background: var(--growth-green);
+}
+.form-error {
+  color: #9b1b22;
+  background: #c1212908;
+  border-color: #c1212940;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-color: var(--capability-purple);
+}
+.toast {
+  background: var(--midnight);
+  color: var(--warm-white);
+}
+.toast > svg {
+  color: #9fd4af;
+}
+.context-selector > button.selected {
+  background: #eeeae5;
+  border-color: var(--graphite);
+}
+.workspace-preview p {
+  font-size: 9px;
+}
+@media (max-width: 640px) {
+  .orbit-coordinate,
+  .orbit-caption {
+    font-size: 6px;
+  }
+  .three-core-label {
+    font-size: 8px;
+  }
+  .workspace-layout .objective-card h3 {
+    font-size: 20px;
+  }
+  .workspace-layout .page-heading h1 {
+    font-size: 36px;
+  }
+}

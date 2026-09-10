@@ -1,0 +1,95 @@
+{
+  "page": 26,
+  "name": "PRIVACY & DATA",
+  "source_paragraph": 566,
+  "gates": [
+    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+  ],
+  "route": "/trust/privacy",
+  "indexing": "index, follow",
+  "canonical": "/trust/privacy",
+  "seo_title": "Privacy & Data | LAMID ONE",
+  "meta_description": "Understand what information LAMID ONE uses, what may progress or update over time, which permission allows it, where it belongs, and what controls apply.",
+  "title": "Your Context Deserves Clear Boundaries.",
+  "description": "Understand what information LAMID ONE uses, what may progress or update over time, which permission allows it, where it belongs, and what controls apply.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Your Context Deserves Clear Boundaries.",
+    "paragraphs": [
+      {
+        "text": "Your Context Deserves Clear Boundaries.",
+        "sourceParagraph": 572
+      },
+      {
+        "text": "Understand what information LAMID ONE uses, what may progress or update over time, which permission allows it, where it belongs, and what controls apply.",
+        "sourceParagraph": 573
+      },
+      {
+        "text": "CTA: View Data Controls",
+        "sourceParagraph": 574
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "What Information Is Used",
+      "title": "What Information Is Used",
+      "paragraphs": [
+        {
+          "text": "What Information Is Used",
+          "sourceParagraph": 575
+        },
+        {
+          "text": "Account, workspace, interaction, uploaded, connected-source, and usage information are handled according to the service and permissions that apply.",
+          "sourceParagraph": 576
+        }
+      ]
+    },
+    {
+      "label": "Why It Is Used",
+      "title": "Why It Is Used",
+      "paragraphs": [
+        {
+          "text": "Why It Is Used",
+          "sourceParagraph": 577
+        },
+        {
+          "text": "Information is used for defined purposes such as delivering the service, supporting workflows, maintaining security, and improving permitted product behavior.",
+          "sourceParagraph": 578
+        }
+      ]
+    },
+    {
+      "label": "Personal and Organizational Context",
+      "title": "Personal and Organizational Context",
+      "paragraphs": [
+        {
+          "text": "Personal and Organizational Context",
+          "sourceParagraph": 579
+        },
+        {
+          "text": "Personal, team, and organizational information is separated according to the relevant workspace, role, and permissions.",
+          "sourceParagraph": 580
+        }
+      ]
+    },
+    {
+      "label": "Review Your Data Footprint",
+      "title": "Review Your Data Footprint",
+      "paragraphs": [
+        {
+          "text": "Review Your Data Footprint",
+          "sourceParagraph": 581
+        },
+        {
+          "text": "See what information is available, where it came from, what it supports, and which controls you can use.",
+          "sourceParagraph": 582
+        },
+        {
+          "text": "CTA: View Data Controls",
+          "sourceParagraph": 583
+        }
+      ]
+    }
+  ]
+}

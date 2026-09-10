@@ -1,0 +1,95 @@
+{
+  "page": 24,
+  "name": "SECURITY",
+  "source_paragraph": 525,
+  "gates": [
+    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+  ],
+  "route": "/security",
+  "indexing": "index, follow",
+  "canonical": "/security",
+  "seo_title": "Security | LAMID ONE",
+  "meta_description": "Evaluate the controls protecting identity, authorization, data, integrations, AI-assisted actions, commercial activity, infrastructure, and operational.",
+  "title": "Security Should Be Verifiable.",
+  "description": "Evaluate the controls protecting identity, authorization, data, integrations, AI-assisted actions, commercial activity, infrastructure, and operational continuity. Verified status and scope stay visible beside material claims.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Security Should Be Verifiable.",
+    "paragraphs": [
+      {
+        "text": "Security Should Be Verifiable.",
+        "sourceParagraph": 531
+      },
+      {
+        "text": "Evaluate the controls protecting identity, authorization, data, integrations, AI-assisted actions, commercial activity, infrastructure, and operational continuity. Verified status and scope stay visible beside material claims.",
+        "sourceParagraph": 532
+      },
+      {
+        "text": "CTA: Contact Security",
+        "sourceParagraph": 533
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Identity & Account Protection",
+      "title": "Identity & Account Protection",
+      "paragraphs": [
+        {
+          "text": "Identity & Account Protection",
+          "sourceParagraph": 534
+        },
+        {
+          "text": "Review implemented controls for authentication, phishing-resistant MFA where supported, secure recovery, session protection, step-up authentication for sensitive actions, privileged access, and automated-abuse resistance.",
+          "sourceParagraph": 535
+        }
+      ]
+    },
+    {
+      "label": "Authorization Boundaries",
+      "title": "Authorization Boundaries",
+      "paragraphs": [
+        {
+          "text": "Authorization Boundaries",
+          "sourceParagraph": 536
+        },
+        {
+          "text": "Review server-side role, object-level, function-level, workspace, and tenant authorization controls designed to prevent unauthorized data access, BOLA/IDOR-style bypasses, privilege escalation, and cross-context leakage.",
+          "sourceParagraph": 537
+        }
+      ]
+    },
+    {
+      "label": "Evidence",
+      "title": "Evidence",
+      "paragraphs": [
+        {
+          "text": "Evidence",
+          "sourceParagraph": 538
+        },
+        {
+          "text": "Testing, certifications, reports, penetration assessments, compliance statements, and reliability claims appear only when verified, current, attributable, and presented with their scope and status.",
+          "sourceParagraph": 539
+        }
+      ]
+    },
+    {
+      "label": "Security Evaluation",
+      "title": "Security Evaluation",
+      "paragraphs": [
+        {
+          "text": "Security Evaluation",
+          "sourceParagraph": 540
+        },
+        {
+          "text": "Review the current control register and supporting evidence for procurement or security review. Planned, beta, limited, or unverified controls are identified by status rather than presented as production facts.",
+          "sourceParagraph": 541
+        },
+        {
+          "text": "CTA: Contact Security",
+          "sourceParagraph": 542
+        }
+      ]
+    }
+  ]
+}

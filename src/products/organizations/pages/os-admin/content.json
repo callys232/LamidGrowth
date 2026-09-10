@@ -1,0 +1,73 @@
+{
+  "page": 89,
+  "name": "ADMIN",
+  "source_paragraph": 1703,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/admin",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/admin",
+  "seo_title": "Admin | LAMID ONE",
+  "meta_description": "Manage the organization, membership, roles, plans, capabilities, policies, integrations, and support settings.",
+  "title": "Organization Administration",
+  "description": "Manage the organization, membership, roles, plans, capabilities, policies, integrations, and support settings.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Organization Administration",
+    "paragraphs": [
+      {
+        "text": "Organization Administration",
+        "sourceParagraph": 1709
+      },
+      {
+        "text": "Manage the organization, membership, roles, plans, capabilities, policies, integrations, and support settings.",
+        "sourceParagraph": 1710
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Members",
+      "title": "Members",
+      "paragraphs": [
+        {
+          "text": "Members",
+          "sourceParagraph": 1711
+        },
+        {
+          "text": "Manage organization membership and account status from the appropriate administrative scope.",
+          "sourceParagraph": 1712
+        }
+      ]
+    },
+    {
+      "label": "Teams",
+      "title": "Teams",
+      "paragraphs": [
+        {
+          "text": "Teams",
+          "sourceParagraph": 1713
+        },
+        {
+          "text": "Create and maintain team structures, ownership, and membership.",
+          "sourceParagraph": 1714
+        }
+      ]
+    },
+    {
+      "label": "Plans",
+      "title": "Plans",
+      "paragraphs": [
+        {
+          "text": "Plans",
+          "sourceParagraph": 1715
+        },
+        {
+          "text": "Review the organization plan and the commercial level attached to the workspace.",
+          "sourceParagraph": 1716
+        }
+      ]
+    }
+  ]
+}

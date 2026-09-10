@@ -1,0 +1,93 @@
+{
+  "page": 8,
+  "name": "HOW IT WORKS",
+  "source_paragraph": 217,
+  "gates": [],
+  "route": "/how-it-works",
+  "indexing": "index, follow",
+  "canonical": "/how-it-works",
+  "seo_title": "How It Works | LAMID ONE",
+  "meta_description": "Move from understanding to capability, from capability to consistent action, and let permitted progress carry forward between interactions so growth can.",
+  "title": "A Simple Operating Cycle for More Complex Work.",
+  "description": "Move from understanding to capability, from capability to consistent action, and let permitted progress carry forward between interactions so growth can compound over time.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "A Simple Operating Cycle for More Complex Work.",
+    "paragraphs": [
+      {
+        "text": "A Simple Operating Cycle for More Complex Work.",
+        "sourceParagraph": 223
+      },
+      {
+        "text": "Move from understanding to capability, from capability to consistent action, and let permitted progress carry forward between interactions so growth can compound over time.",
+        "sourceParagraph": 224
+      },
+      {
+        "text": "CTA: Start With Clarity",
+        "sourceParagraph": 225
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Clarity",
+      "title": "Clarity",
+      "paragraphs": [
+        {
+          "text": "Clarity",
+          "sourceParagraph": 226
+        },
+        {
+          "text": "Understand the situation before acting.",
+          "sourceParagraph": 227
+        }
+      ]
+    },
+    {
+      "label": "Capability",
+      "title": "Capability",
+      "paragraphs": [
+        {
+          "text": "Capability",
+          "sourceParagraph": 228
+        },
+        {
+          "text": "Strengthen what the next step requires.",
+          "sourceParagraph": 229
+        }
+      ]
+    },
+    {
+      "label": "Outcome: Growth",
+      "title": "Outcome: Growth",
+      "paragraphs": [
+        {
+          "text": "Outcome: Growth",
+          "sourceParagraph": 230
+        },
+        {
+          "text": "Each cycle carries forward relevant change and authorized progress so growth can compound rather than restart.",
+          "sourceParagraph": 231
+        }
+      ]
+    },
+    {
+      "label": "The Cycle Stays Simple. The Depth Appears When Needed.",
+      "title": "The Cycle Stays Simple. The Depth Appears When Needed.",
+      "paragraphs": [
+        {
+          "text": "The Cycle Stays Simple. The Depth Appears When Needed.",
+          "sourceParagraph": 232
+        },
+        {
+          "text": "Clarity, Capability, and Consistency remain the common experience while specialist intelligence and permissioned progression appear only when the objective requires them.",
+          "sourceParagraph": 233
+        },
+        {
+          "text": "CTA: Start With Clarity",
+          "sourceParagraph": 234
+        }
+      ]
+    }
+  ]
+}

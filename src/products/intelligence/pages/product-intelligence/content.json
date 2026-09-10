@@ -1,0 +1,105 @@
+{
+  "page": 5,
+  "name": "CONTEXTUAL INTELLIGENCE",
+  "source_paragraph": 157,
+  "gates": [],
+  "route": "/product/intelligence",
+  "indexing": "index, follow",
+  "canonical": "/product/intelligence",
+  "seo_title": "Contextual Intelligence | LAMID ONE",
+  "meta_description": "Start with the outcome. LAMID ONE brings together the relevant analysis, context, and specialist depth inside one operating experience.",
+  "title": "The Right Intelligence for the Decision.",
+  "description": "Start with the outcome. LAMID ONE brings together the relevant analysis, context, and specialist depth inside one operating experience.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "The Right Intelligence for the Decision.",
+    "paragraphs": [
+      {
+        "text": "The Right Intelligence for the Decision.",
+        "sourceParagraph": 163
+      },
+      {
+        "text": "Start with the outcome. LAMID ONE brings together the relevant analysis, context, and specialist depth inside one operating experience.",
+        "sourceParagraph": 164
+      },
+      {
+        "text": "CTA: See How It Works",
+        "sourceParagraph": 165
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Choose Your Next Professional Move",
+      "title": "Choose Your Next Professional Move",
+      "paragraphs": [
+        {
+          "text": "Choose Your Next Professional Move",
+          "sourceParagraph": 166
+        },
+        {
+          "text": "Compare opportunity, current capability, timing, priorities, and development requirements before choosing the next direction.",
+          "sourceParagraph": 167
+        },
+        {
+          "text": "• Contextual Intelligence: Opportunity + Diagnostic + People",
+          "sourceParagraph": 168
+        }
+      ]
+    },
+    {
+      "label": "Plan the Next Stage of the Business",
+      "title": "Plan the Next Stage of the Business",
+      "paragraphs": [
+        {
+          "text": "Plan the Next Stage of the Business",
+          "sourceParagraph": 169
+        },
+        {
+          "text": "Assess financial capacity, people requirements, growth opportunity, operational readiness, and execution demand together.",
+          "sourceParagraph": 170
+        },
+        {
+          "text": "• Contextual Intelligence: Financial + People + Opportunity + Workflow",
+          "sourceParagraph": 171
+        }
+      ]
+    },
+    {
+      "label": "Strengthen Organizational Alignment",
+      "title": "Strengthen Organizational Alignment",
+      "paragraphs": [
+        {
+          "text": "Strengthen Organizational Alignment",
+          "sourceParagraph": 172
+        },
+        {
+          "text": "Connect strategic priorities, capability, dependencies, workflows, and governance across teams.",
+          "sourceParagraph": 173
+        },
+        {
+          "text": "• Contextual Intelligence: Organizational + People + Workflow",
+          "sourceParagraph": 174
+        }
+      ]
+    },
+    {
+      "label": "One Objective. The Relevant Depth.",
+      "title": "One Objective. The Relevant Depth.",
+      "paragraphs": [
+        {
+          "text": "One Objective. The Relevant Depth.",
+          "sourceParagraph": 175
+        },
+        {
+          "text": "You work on the outcome. The OS coordinates the specialist depth underneath.",
+          "sourceParagraph": 176
+        },
+        {
+          "text": "CTA: See How It Works",
+          "sourceParagraph": 177
+        }
+      ]
+    }
+  ]
+}

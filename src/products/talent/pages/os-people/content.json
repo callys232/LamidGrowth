@@ -1,0 +1,73 @@
+{
+  "page": 79,
+  "name": "PEOPLE & CAPABILITY",
+  "source_paragraph": 1547,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/people",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/people",
+  "seo_title": "People & Capability | LAMID ONE",
+  "meta_description": "See capability requirements, strengths, gaps, alignment, and development needs in context.",
+  "title": "Understand What the Work Requires.",
+  "description": "See capability requirements, strengths, gaps, alignment, and development needs in context.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understand What the Work Requires.",
+    "paragraphs": [
+      {
+        "text": "Understand What the Work Requires.",
+        "sourceParagraph": 1553
+      },
+      {
+        "text": "See capability requirements, strengths, gaps, alignment, and development needs in context.",
+        "sourceParagraph": 1554
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Capability Requirements",
+      "title": "Capability Requirements",
+      "paragraphs": [
+        {
+          "text": "Capability Requirements",
+          "sourceParagraph": 1555
+        },
+        {
+          "text": "Define what the objective requires from roles, skills, knowledge, systems, and support.",
+          "sourceParagraph": 1556
+        }
+      ]
+    },
+    {
+      "label": "Strengths",
+      "title": "Strengths",
+      "paragraphs": [
+        {
+          "text": "Strengths",
+          "sourceParagraph": 1557
+        },
+        {
+          "text": "See which existing capabilities already support the work.",
+          "sourceParagraph": 1558
+        }
+      ]
+    },
+    {
+      "label": "Gaps",
+      "title": "Gaps",
+      "paragraphs": [
+        {
+          "text": "Gaps",
+          "sourceParagraph": 1559
+        },
+        {
+          "text": "Identify the missing or weak capabilities most likely to constrain the objective.",
+          "sourceParagraph": 1560
+        }
+      ]
+    }
+  ]
+}

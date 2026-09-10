@@ -1,0 +1,67 @@
+{
+  "page": 63,
+  "name": "FORGOT PASSWORD",
+  "source_paragraph": 1285,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/forgot-password",
+  "indexing": "noindex, nofollow",
+  "canonical": "/forgot-password",
+  "seo_title": "Forgot Password | LAMID ONE",
+  "meta_description": "Enter the email associated with your account. We will send recovery instructions when the account is eligible.",
+  "title": "Recover Access",
+  "description": "Enter the email associated with your account. We will send recovery instructions when the account is eligible.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Recover Access",
+    "paragraphs": [
+      {
+        "text": "Recover Access",
+        "sourceParagraph": 1291
+      },
+      {
+        "text": "Enter the email associated with your account. We will send recovery instructions when the account is eligible.",
+        "sourceParagraph": 1292
+      },
+      {
+        "text": "CTA: Send Recovery Instructions",
+        "sourceParagraph": 1293
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Email",
+      "title": "Email",
+      "paragraphs": [
+        {
+          "text": "Email",
+          "sourceParagraph": 1294
+        },
+        {
+          "text": "Enter the email associated with your account to begin the recovery process.",
+          "sourceParagraph": 1295
+        },
+        {
+          "text": "CTA: Send Recovery Instructions",
+          "sourceParagraph": 1296
+        }
+      ]
+    },
+    {
+      "label": "Privacy-Safe Recovery",
+      "title": "Privacy-Safe Recovery",
+      "paragraphs": [
+        {
+          "text": "Privacy-Safe Recovery",
+          "sourceParagraph": 1297
+        },
+        {
+          "text": "Recovery responses protect account-existence information and other sensitive account details.",
+          "sourceParagraph": 1298
+        }
+      ]
+    }
+  ]
+}

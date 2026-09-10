@@ -1,0 +1,129 @@
+/* Consistent card construction across editorial and working surfaces. */
+:root {
+  --card-border: #dedfdc;
+  --card-radius: 14px;
+  --card-shadow: 0 2px 4px rgb(13 26 43 / 2%);
+}
+.content-page .canonical-copy .editorial-sections {
+  gap: 24px;
+  padding-bottom: 48px;
+}
+.content-page .canonical-copy .editorial-section,
+.workspace-main .canonical-copy .editorial-section {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: clamp(24px, 3.5vw, 48px);
+  align-items: start;
+  gap: 24px;
+  min-height: 0;
+  position: relative;
+}
+.content-page .canonical-copy .editorial-section:not(.dark-section) {
+  background: #fff;
+  border-top: 2px solid var(--page-accent, #0d1a2b);
+}
+.canonical-copy .editorial-section .editorial-number {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #d8cfc4;
+  border-radius: 8px;
+  font: 500 12px/1 var(--font-ui);
+  letter-spacing: 0.04em;
+  color: var(--page-accent, #5a5f66);
+  background: var(--page-tint, #f5f4f1);
+}
+.content-page .canonical-copy .editorial-section h2,
+.workspace-main .canonical-copy .editorial-section h2 {
+  margin: 0 0 20px;
+  font-size: clamp(26px, 2.5vw, 36px);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.canonical-copy .editorial-section p {
+  font: 400 15px/1.8 var(--font-ui);
+  margin: 0 0 14px;
+  max-width: 72ch;
+}
+.canonical-copy .editorial-section p:last-child {
+  margin-bottom: 0;
+}
+.canonical-copy .editorial-section .canonical-ctas {
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid #dedfdc;
+}
+.canonical-copy .dark-section .editorial-number {
+  background: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 30%);
+  color: #fff;
+}
+.canonical-copy .dark-section .canonical-ctas {
+  border-color: rgb(255 255 255 / 25%);
+}
+.workspace-layout
+  :is(.objective-card, .capability-card, .review-card, .settings-card, .kanban-card) {
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+.workspace-layout :is(.objective-card, .capability-card, .review-card, .settings-card) {
+  padding: 28px;
+}
+.workspace-layout .kanban-card {
+  padding: 20px;
+}
+.workspace-layout
+  :is(.objective-card, .capability-card, .review-card, .settings-card, .kanban-card)
+  :is(h2, h3) {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+}
+.workspace-layout .objective-card h3 {
+  font-size: 20px;
+  margin: 20px 0 12px;
+}
+.workspace-layout .kanban-card h3 {
+  font-size: 16px;
+}
+.workspace-layout .objective-card-bottom {
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid var(--card-border);
+}
+.workspace-layout .objective-card-top {
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.workspace-layout :is(.objective-card, .capability-card):focus-within {
+  border-color: var(--page-accent, #5a5f66);
+  box-shadow: 0 0 0 2px rgb(13 26 43 / 7%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .workspace-layout .kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgb(13 26 43 / 7%);
+  }
+}
+@media (max-width: 760px) {
+  .content-page .canonical-copy .editorial-section,
+  .workspace-main .canonical-copy .editorial-section {
+    padding: 24px;
+    gap: 18px;
+  }
+  .workspace-layout :is(.objective-card, .capability-card, .review-card, .settings-card) {
+    padding: 22px;
+  }
+  .canonical-copy .editorial-section p {
+    font-size: 14px;
+    line-height: 1.75;
+  }
+}

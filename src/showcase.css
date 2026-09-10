@@ -1,0 +1,181 @@
+/* Reference-inspired editorial layouts, using the original source paragraphs. */
+.section-index {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 max(24px, calc((100vw - 1280px) / 2));
+  background: #fbfaf7f5;
+  backdrop-filter: blur(16px);
+  border-block: 1px solid #dedfdc;
+}
+.section-index-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5a5f66;
+}
+.section-index-links {
+  display: flex;
+  overflow-x: auto;
+  min-width: 0;
+  gap: 24px;
+  scrollbar-width: thin;
+}
+.section-index a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  max-width: 300px;
+  padding: 20px 0;
+  border-bottom: 3px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #5a5f66;
+  text-decoration: none;
+}
+.section-index a span {
+  font-size: 10px;
+  color: var(--page-accent, #0d1a2b);
+}
+.section-index a:hover,
+.section-index a[aria-current] {
+  color: var(--page-accent, #0d1a2b);
+  border-color: var(--page-accent, #0d1a2b);
+}
+.section-index a:focus-visible {
+  outline: 2px solid var(--page-accent, #0d1a2b);
+  outline-offset: -3px;
+}
+.content-page .showcase-copy .editorial-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  padding-top: 64px;
+  padding-bottom: 88px;
+  align-items: stretch;
+}
+.content-page .showcase-copy .editorial-section {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border: 1px solid #dedfdc;
+  border-radius: 16px;
+  padding: 36px;
+  gap: 0;
+  scroll-margin-top: 110px;
+}
+.content-page .showcase-copy .section-heading .editorial-number {
+  margin-bottom: 24px;
+  border: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+.content-page .showcase-copy .editorial-section h2 {
+  font-size: clamp(28px, 3vw, 42px);
+  margin-bottom: 24px;
+}
+.content-page .showcase-copy .editorial-section p {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.content-page .showcase-copy .showcase-card {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+.content-page .showcase-copy .showcase-card:hover,
+.content-page .showcase-copy .showcase-card:focus-within {
+  background: var(--page-tint, #f3f0ea);
+  border-color: var(--page-accent, #0d1a2b);
+}
+.content-page .showcase-copy .showcase-feature {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 64px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 56px 0;
+  background: transparent;
+}
+.content-page .showcase-copy .showcase-feature .section-body {
+  padding: 36px;
+  border-radius: 16px;
+  background: var(--page-tint, #f3f0ea);
+  background-image: var(--page-pattern, none);
+  border: 1px solid #dedfdc;
+}
+.content-page .showcase-copy .showcase-feature:nth-child(even) .section-heading {
+  order: 2;
+}
+.content-page .showcase-copy .showcase-feature .section-heading {
+  align-self: center;
+}
+.content-page .showcase-copy .showcase-closing {
+  grid-column: 1 / -1;
+  text-align: center;
+  align-items: center;
+  padding: 64px max(32px, 8%);
+  background: var(--page-accent, #0d1a2b);
+  color: #fff;
+}
+.content-page .showcase-copy .showcase-closing p {
+  color: #fff;
+}
+.content-page .showcase-copy .showcase-closing .canonical-ctas {
+  justify-content: center;
+}
+.content-page .showcase-copy .showcase-closing .button {
+  background: #fbfaf7;
+  color: #0d1a2b;
+}
+.workspace-main .canonical-copy .editorial-section {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (max-width: 760px) {
+  .section-index {
+    padding-inline: 20px;
+    gap: 16px;
+  }
+  .section-index-label {
+    display: none;
+  }
+  .section-index a {
+    max-width: 220px;
+    padding-block: 16px;
+  }
+  .content-page .showcase-copy .editorial-sections {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 32px;
+    gap: 20px;
+  }
+  .content-page .showcase-copy .editorial-section {
+    padding: 24px;
+  }
+  .content-page .showcase-copy .showcase-feature {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 24px 0;
+  }
+  .content-page .showcase-copy .showcase-feature:nth-child(even) .section-heading {
+    order: 0;
+  }
+  .content-page .showcase-copy .showcase-feature .section-body {
+    padding: 24px;
+  }
+  .content-page .showcase-copy .showcase-closing {
+    padding: 40px 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-page .showcase-copy .showcase-card {
+    transition: none;
+  }
+}

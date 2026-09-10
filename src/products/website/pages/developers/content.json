@@ -1,0 +1,81 @@
+{
+  "page": 43,
+  "name": "DEVELOPERS",
+  "source_paragraph": 901,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/developers",
+  "indexing": "index, follow",
+  "canonical": "/developers",
+  "seo_title": "Developers | LAMID ONE",
+  "meta_description": "Build integrations and approved extensions around the same operating architecture used throughout LAMID ONE.",
+  "title": "Extend LAMID ONE Without Fragmenting It.",
+  "description": "Build integrations and approved extensions around the same operating architecture used throughout LAMID ONE.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Extend LAMID ONE Without Fragmenting It.",
+    "paragraphs": [
+      {
+        "text": "Extend LAMID ONE Without Fragmenting It.",
+        "sourceParagraph": 907
+      },
+      {
+        "text": "Build integrations and approved extensions around the same operating architecture used throughout LAMID ONE.",
+        "sourceParagraph": 908
+      },
+      {
+        "text": "CTA: Read the Developer Docs",
+        "sourceParagraph": 909
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "APIs",
+      "title": "APIs",
+      "paragraphs": [
+        {
+          "text": "APIs",
+          "sourceParagraph": 910
+        },
+        {
+          "text": "Use versioned interfaces for supported platform capabilities.",
+          "sourceParagraph": 911
+        }
+      ]
+    },
+    {
+      "label": "SDKs",
+      "title": "SDKs",
+      "paragraphs": [
+        {
+          "text": "SDKs",
+          "sourceParagraph": 912
+        },
+        {
+          "text": "Build with supported client libraries and documented capability boundaries.",
+          "sourceParagraph": 913
+        }
+      ]
+    },
+    {
+      "label": "One Platform. Stable Extension Boundaries.",
+      "title": "One Platform. Stable Extension Boundaries.",
+      "paragraphs": [
+        {
+          "text": "One Platform. Stable Extension Boundaries.",
+          "sourceParagraph": 914
+        },
+        {
+          "text": "Extend the OS through documented interfaces while keeping internal architecture out of ordinary-user navigation.",
+          "sourceParagraph": 915
+        },
+        {
+          "text": "CTA: Read the Developer Docs",
+          "sourceParagraph": 916
+        }
+      ]
+    }
+  ]
+}

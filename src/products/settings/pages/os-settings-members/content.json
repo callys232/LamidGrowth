@@ -1,0 +1,73 @@
+{
+  "page": 96,
+  "name": "MEMBERS & ROLES",
+  "source_paragraph": 1808,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/members",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/members",
+  "seo_title": "Members & Roles | LAMID ONE",
+  "meta_description": "Manage members, roles, invitations, permissions, and team assignments.",
+  "title": "People & Access",
+  "description": "Manage members, roles, invitations, permissions, and team assignments.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "People & Access",
+    "paragraphs": [
+      {
+        "text": "People & Access",
+        "sourceParagraph": 1814
+      },
+      {
+        "text": "Manage members, roles, invitations, permissions, and team assignments.",
+        "sourceParagraph": 1815
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Members",
+      "title": "Members",
+      "paragraphs": [
+        {
+          "text": "Members",
+          "sourceParagraph": 1816
+        },
+        {
+          "text": "Review the people who can access the workspace and their current status.",
+          "sourceParagraph": 1817
+        }
+      ]
+    },
+    {
+      "label": "Roles",
+      "title": "Roles",
+      "paragraphs": [
+        {
+          "text": "Roles",
+          "sourceParagraph": 1818
+        },
+        {
+          "text": "Assign roles that reflect responsibility and permitted capability.",
+          "sourceParagraph": 1819
+        }
+      ]
+    },
+    {
+      "label": "Invitations",
+      "title": "Invitations",
+      "paragraphs": [
+        {
+          "text": "Invitations",
+          "sourceParagraph": 1820
+        },
+        {
+          "text": "Send, review, revoke, or resend pending access invitations.",
+          "sourceParagraph": 1821
+        }
+      ]
+    }
+  ]
+}

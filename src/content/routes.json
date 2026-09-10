@@ -1,0 +1,590 @@
+[
+  {
+    "route": "/",
+    "page": 1,
+    "name": "HOME",
+    "gated": false
+  },
+  {
+    "route": "/product",
+    "page": 2,
+    "name": "PRODUCT OVERVIEW",
+    "gated": false
+  },
+  {
+    "route": "/product/companion",
+    "page": 3,
+    "name": "LAMID ONE COMPANION",
+    "gated": false
+  },
+  {
+    "route": "/product/experience",
+    "page": 4,
+    "name": "ADAPTIVE PRODUCT EXPERIENCE",
+    "gated": false
+  },
+  {
+    "route": "/product/intelligence",
+    "page": 5,
+    "name": "CONTEXTUAL INTELLIGENCE",
+    "gated": false
+  },
+  {
+    "route": "/product/workflows",
+    "page": 6,
+    "name": "WORKFLOWS & EXECUTION",
+    "gated": true
+  },
+  {
+    "route": "/product/organizations",
+    "page": 7,
+    "name": "ORGANIZATIONS",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works",
+    "page": 8,
+    "name": "HOW IT WORKS",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works/clarity",
+    "page": 9,
+    "name": "CLARITY",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works/capability",
+    "page": 10,
+    "name": "CAPABILITY",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works/consistency",
+    "page": 11,
+    "name": "CONSISTENCY",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works/growth",
+    "page": 12,
+    "name": "GROWTH",
+    "gated": false
+  },
+  {
+    "route": "/how-it-works/rhythm",
+    "page": 13,
+    "name": "OPERATING RHYTHM",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for",
+    "page": 14,
+    "name": "WHO IT'S FOR",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/individuals",
+    "page": 15,
+    "name": "INDIVIDUALS",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/professionals",
+    "page": 16,
+    "name": "PROFESSIONALS",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/creators",
+    "page": 17,
+    "name": "CREATORS",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/founders",
+    "page": 18,
+    "name": "FOUNDERS",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/teams",
+    "page": 19,
+    "name": "TEAMS",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/smes",
+    "page": 20,
+    "name": "SMES",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/enterprises",
+    "page": 21,
+    "name": "ENTERPRISES",
+    "gated": false
+  },
+  {
+    "route": "/who-its-for/institutions",
+    "page": 22,
+    "name": "INSTITUTIONS",
+    "gated": false
+  },
+  {
+    "route": "/enterprise",
+    "page": 23,
+    "name": "ENTERPRISE PLATFORM & DEPLOYMENT",
+    "gated": true
+  },
+  {
+    "route": "/security",
+    "page": 24,
+    "name": "SECURITY",
+    "gated": true
+  },
+  {
+    "route": "/responsible-ai",
+    "page": 25,
+    "name": "RESPONSIBLE AI",
+    "gated": true
+  },
+  {
+    "route": "/trust/privacy",
+    "page": 26,
+    "name": "PRIVACY & DATA",
+    "gated": true
+  },
+  {
+    "route": "/trust/governance",
+    "page": 27,
+    "name": "GOVERNANCE",
+    "gated": true
+  },
+  {
+    "route": "/pricing",
+    "page": 28,
+    "name": "PRICING",
+    "gated": true
+  },
+  {
+    "route": "/enterprise/contact",
+    "page": 29,
+    "name": "ENTERPRISE CONTACT",
+    "gated": false
+  },
+  {
+    "route": "/demo",
+    "page": 30,
+    "name": "DEMO",
+    "gated": false
+  },
+  {
+    "route": "/demo/request",
+    "page": 31,
+    "name": "REQUEST DEMO",
+    "gated": false
+  },
+  {
+    "route": "/start",
+    "page": 32,
+    "name": "START",
+    "gated": false
+  },
+  {
+    "route": "/resources",
+    "page": 33,
+    "name": "RESOURCES",
+    "gated": false
+  },
+  {
+    "route": "/insights",
+    "page": 34,
+    "name": "INSIGHTS",
+    "gated": false
+  },
+  {
+    "route": "/guides",
+    "page": 35,
+    "name": "GUIDES",
+    "gated": false
+  },
+  {
+    "route": "/case-studies",
+    "page": 36,
+    "name": "CASE STUDIES",
+    "gated": true
+  },
+  {
+    "route": "/research",
+    "page": 37,
+    "name": "RESEARCH",
+    "gated": true
+  },
+  {
+    "route": "/help",
+    "page": 38,
+    "name": "HELP CENTER",
+    "gated": false
+  },
+  {
+    "route": "/help/getting-started",
+    "page": 39,
+    "name": "GETTING STARTED HELP",
+    "gated": false
+  },
+  {
+    "route": "/help/product",
+    "page": 40,
+    "name": "PRODUCT GUIDES",
+    "gated": false
+  },
+  {
+    "route": "/help/account",
+    "page": 41,
+    "name": "ACCOUNT & BILLING HELP",
+    "gated": false
+  },
+  {
+    "route": "/support",
+    "page": 42,
+    "name": "SUPPORT",
+    "gated": false
+  },
+  {
+    "route": "/developers",
+    "page": 43,
+    "name": "DEVELOPERS",
+    "gated": true
+  },
+  {
+    "route": "/developers/api",
+    "page": 44,
+    "name": "API DOCUMENTATION",
+    "gated": true
+  },
+  {
+    "route": "/developers/sdks",
+    "page": 45,
+    "name": "SDKS",
+    "gated": true
+  },
+  {
+    "route": "/integrations",
+    "page": 46,
+    "name": "INTEGRATIONS",
+    "gated": true
+  },
+  {
+    "route": "/developers/webhooks",
+    "page": 47,
+    "name": "WEBHOOKS & EVENTS",
+    "gated": true
+  },
+  {
+    "route": "/developers/changelog",
+    "page": 48,
+    "name": "DEVELOPER CHANGELOG",
+    "gated": true
+  },
+  {
+    "route": "/about",
+    "page": 49,
+    "name": "ABOUT",
+    "gated": false
+  },
+  {
+    "route": "/about/story",
+    "page": 50,
+    "name": "OUR STORY",
+    "gated": true
+  },
+  {
+    "route": "/about/leadership",
+    "page": 51,
+    "name": "FOUNDER & LEADERSHIP",
+    "gated": true
+  },
+  {
+    "route": "/careers",
+    "page": 52,
+    "name": "CAREERS",
+    "gated": true
+  },
+  {
+    "route": "/press",
+    "page": 53,
+    "name": "PRESS & MEDIA",
+    "gated": true
+  },
+  {
+    "route": "/contact",
+    "page": 54,
+    "name": "CONTACT",
+    "gated": false
+  },
+  {
+    "route": "/legal/privacy",
+    "page": 55,
+    "name": "PRIVACY POLICY",
+    "gated": true
+  },
+  {
+    "route": "/legal/terms",
+    "page": 56,
+    "name": "TERMS OF SERVICE",
+    "gated": true
+  },
+  {
+    "route": "/legal/cookies",
+    "page": 57,
+    "name": "COOKIE POLICY",
+    "gated": true
+  },
+  {
+    "route": "/legal/acceptable-use",
+    "page": 58,
+    "name": "ACCEPTABLE USE POLICY",
+    "gated": true
+  },
+  {
+    "route": "/legal/dpa",
+    "page": 59,
+    "name": "DATA PROCESSING ADDENDUM",
+    "gated": true
+  },
+  {
+    "route": "/accessibility",
+    "page": 60,
+    "name": "ACCESSIBILITY",
+    "gated": false
+  },
+  {
+    "route": "/login",
+    "page": 61,
+    "name": "SIGN IN",
+    "gated": true
+  },
+  {
+    "route": "/signup",
+    "page": 62,
+    "name": "CREATE ACCOUNT",
+    "gated": true
+  },
+  {
+    "route": "/forgot-password",
+    "page": 63,
+    "name": "FORGOT PASSWORD",
+    "gated": true
+  },
+  {
+    "route": "/reset-password",
+    "page": 64,
+    "name": "RESET PASSWORD",
+    "gated": true
+  },
+  {
+    "route": "/verify",
+    "page": 65,
+    "name": "VERIFY ACCOUNT",
+    "gated": true
+  },
+  {
+    "route": "/onboarding",
+    "page": 66,
+    "name": "ONBOARDING",
+    "gated": true
+  },
+  {
+    "route": "/os",
+    "page": 67,
+    "name": "OS HOME",
+    "gated": true
+  },
+  {
+    "route": "/os/today",
+    "page": 68,
+    "name": "TODAY",
+    "gated": true
+  },
+  {
+    "route": "/os/clarity",
+    "page": 69,
+    "name": "CLARITY WORKSPACE",
+    "gated": true
+  },
+  {
+    "route": "/os/capability",
+    "page": 70,
+    "name": "CAPABILITY WORKSPACE",
+    "gated": true
+  },
+  {
+    "route": "/os/consistency",
+    "page": 71,
+    "name": "CONSISTENCY WORKSPACE",
+    "gated": true
+  },
+  {
+    "route": "/os/progress",
+    "page": 72,
+    "name": "PROGRESS",
+    "gated": true
+  },
+  {
+    "route": "/os/rhythm",
+    "page": 73,
+    "name": "RHYTHM WORKSPACE",
+    "gated": true
+  },
+  {
+    "route": "/os/companion",
+    "page": 74,
+    "name": "COMPANION WORKSPACE",
+    "gated": true
+  },
+  {
+    "route": "/os/insights",
+    "page": 75,
+    "name": "INSIGHTS",
+    "gated": true
+  },
+  {
+    "route": "/os/business",
+    "page": 76,
+    "name": "BUSINESS",
+    "gated": true
+  },
+  {
+    "route": "/os/opportunities",
+    "page": 77,
+    "name": "OPPORTUNITIES",
+    "gated": true
+  },
+  {
+    "route": "/os/finance",
+    "page": 78,
+    "name": "FINANCE",
+    "gated": true
+  },
+  {
+    "route": "/os/people",
+    "page": 79,
+    "name": "PEOPLE & CAPABILITY",
+    "gated": true
+  },
+  {
+    "route": "/os/workflows",
+    "page": 80,
+    "name": "WORKFLOWS",
+    "gated": true
+  },
+  {
+    "route": "/os/workflows/[id]",
+    "page": 81,
+    "name": "WORKFLOW BUILDER",
+    "gated": true
+  },
+  {
+    "route": "/os/organization",
+    "page": 82,
+    "name": "ORGANIZATION",
+    "gated": true
+  },
+  {
+    "route": "/os/teams",
+    "page": 83,
+    "name": "TEAMS",
+    "gated": true
+  },
+  {
+    "route": "/os/organization/rhythm",
+    "page": 84,
+    "name": "ORGANIZATIONAL RHYTHM",
+    "gated": true
+  },
+  {
+    "route": "/os/analytics",
+    "page": 85,
+    "name": "ANALYTICS",
+    "gated": true
+  },
+  {
+    "route": "/os/integrations",
+    "page": 86,
+    "name": "OS INTEGRATIONS",
+    "gated": true
+  },
+  {
+    "route": "/os/governance",
+    "page": 87,
+    "name": "OS GOVERNANCE",
+    "gated": true
+  },
+  {
+    "route": "/os/audit",
+    "page": 88,
+    "name": "AUDIT",
+    "gated": true
+  },
+  {
+    "route": "/os/admin",
+    "page": 89,
+    "name": "ADMIN",
+    "gated": true
+  },
+  {
+    "route": "/os/profile",
+    "page": 90,
+    "name": "PROFILE",
+    "gated": true
+  },
+  {
+    "route": "/os/settings",
+    "page": 91,
+    "name": "SETTINGS",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/ai",
+    "page": 92,
+    "name": "AI & MEMORY",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/privacy",
+    "page": 93,
+    "name": "PRIVACY & DATA CONTROLS",
+    "gated": true
+  },
+  {
+    "route": "/os/notifications",
+    "page": 94,
+    "name": "NOTIFICATIONS",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/workspace",
+    "page": 95,
+    "name": "WORKSPACE SETTINGS",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/members",
+    "page": 96,
+    "name": "MEMBERS & ROLES",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/billing",
+    "page": 97,
+    "name": "BILLING",
+    "gated": true
+  },
+  {
+    "route": "/os/settings/plan",
+    "page": 98,
+    "name": "PLAN & USAGE",
+    "gated": true
+  }
+]

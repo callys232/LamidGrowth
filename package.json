@@ -1,0 +1,47 @@
+{
+  "name": "lamid-one",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "node --watch-path=server --watch-path=src/app --watch-path=vite.config.ts server/index.mjs",
+    "build": "tsc -b && vite build",
+    "start": "node server/index.mjs --production",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "npm run build && npm test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "content:generate": "node scripts/generate-content.mjs",
+    "docs:products": "node scripts/update-product-index.mjs",
+    "content:catalog": "node scripts/sync-page-catalog.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts",
+    "backup": "node scripts/backup.mjs"
+  },
+  "dependencies": {
+    "@fontsource/dm-sans": "^5.2.0",
+    "@fontsource/instrument-serif": "^5.2.0",
+    "express": "^5.1.0",
+    "lucide-react": "^0.468.0",
+    "motion": "13.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0",
+    "three": "0.185.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/three": "0.185.4",
+    "@vitejs/plugin-react": "^4.5.0",
+    "prettier": "3.9.6",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.0"
+  }
+}

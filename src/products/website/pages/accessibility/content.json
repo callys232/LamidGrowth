@@ -1,0 +1,79 @@
+{
+  "page": 60,
+  "name": "ACCESSIBILITY",
+  "source_paragraph": 1229,
+  "gates": [],
+  "route": "/accessibility",
+  "indexing": "index, follow",
+  "canonical": "/accessibility",
+  "seo_title": "Accessibility | LAMID ONE",
+  "meta_description": "LAMID ONE aims to provide an accessible experience across devices and interaction modes.",
+  "title": "Designed for More People to Use.",
+  "description": "LAMID ONE aims to provide an accessible experience across devices and interaction modes.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Designed for More People to Use.",
+    "paragraphs": [
+      {
+        "text": "Designed for More People to Use.",
+        "sourceParagraph": 1235
+      },
+      {
+        "text": "LAMID ONE aims to provide an accessible experience across devices and interaction modes.",
+        "sourceParagraph": 1236
+      },
+      {
+        "text": "CTA: Contact Accessibility",
+        "sourceParagraph": 1237
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Keyboard and Assistive Technology",
+      "title": "Keyboard and Assistive Technology",
+      "paragraphs": [
+        {
+          "text": "Keyboard and Assistive Technology",
+          "sourceParagraph": 1238
+        },
+        {
+          "text": "LAMID ONE is designed to support keyboard navigation, semantic structure, accessible names, and compatible assistive-technology use.",
+          "sourceParagraph": 1239
+        }
+      ]
+    },
+    {
+      "label": "Visual Accessibility",
+      "title": "Visual Accessibility",
+      "paragraphs": [
+        {
+          "text": "Visual Accessibility",
+          "sourceParagraph": 1240
+        },
+        {
+          "text": "Readable hierarchy, sufficient contrast, visible focus states, responsive text, and status communication support clearer use across visual needs.",
+          "sourceParagraph": 1241
+        }
+      ]
+    },
+    {
+      "label": "Report an Accessibility Issue",
+      "title": "Report an Accessibility Issue",
+      "paragraphs": [
+        {
+          "text": "Report an Accessibility Issue",
+          "sourceParagraph": 1242
+        },
+        {
+          "text": "Tell us what you were trying to do, what barrier you encountered, and the device or assistive technology involved.",
+          "sourceParagraph": 1243
+        },
+        {
+          "text": "CTA: Contact Accessibility",
+          "sourceParagraph": 1244
+        }
+      ]
+    }
+  ]
+}

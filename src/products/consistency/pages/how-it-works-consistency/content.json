@@ -1,0 +1,93 @@
+{
+  "page": 11,
+  "name": "CONSISTENCY",
+  "source_paragraph": 276,
+  "gates": [],
+  "route": "/how-it-works/consistency",
+  "indexing": "index, follow",
+  "canonical": "/how-it-works/consistency",
+  "seo_title": "Consistency | LAMID ONE",
+  "meta_description": "Consistency connects understanding and capability to sustained action.",
+  "title": "Turn Good Decisions Into Reliable Progress.",
+  "description": "Consistency connects understanding and capability to sustained action.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Turn Good Decisions Into Reliable Progress.",
+    "paragraphs": [
+      {
+        "text": "Turn Good Decisions Into Reliable Progress.",
+        "sourceParagraph": 282
+      },
+      {
+        "text": "Consistency connects understanding and capability to sustained action.",
+        "sourceParagraph": 283
+      },
+      {
+        "text": "CTA: Build Your Rhythm",
+        "sourceParagraph": 284
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Move the Next Action",
+      "title": "Move the Next Action",
+      "paragraphs": [
+        {
+          "text": "Move the Next Action",
+          "sourceParagraph": 285
+        },
+        {
+          "text": "Reduce the gap between deciding and doing.",
+          "sourceParagraph": 286
+        }
+      ]
+    },
+    {
+      "label": "Build a Rhythm",
+      "title": "Build a Rhythm",
+      "paragraphs": [
+        {
+          "text": "Build a Rhythm",
+          "sourceParagraph": 287
+        },
+        {
+          "text": "Create a practical cadence around important work.",
+          "sourceParagraph": 288
+        }
+      ]
+    },
+    {
+      "label": "Review the Result",
+      "title": "Review the Result",
+      "paragraphs": [
+        {
+          "text": "Review the Result",
+          "sourceParagraph": 289
+        },
+        {
+          "text": "Learn from what happened instead of simply moving to the next task.",
+          "sourceParagraph": 290
+        }
+      ]
+    },
+    {
+      "label": "Consistency Keeps Important Work Moving Without Blocking Adaptation.",
+      "title": "Consistency Keeps Important Work Moving Without Blocking Adaptation.",
+      "paragraphs": [
+        {
+          "text": "Consistency Keeps Important Work Moving Without Blocking Adaptation.",
+          "sourceParagraph": 291
+        },
+        {
+          "text": "Use a clear cadence and review triggers so execution stays steady while the plan remains responsive to evidence.",
+          "sourceParagraph": 292
+        },
+        {
+          "text": "CTA: Build Your Rhythm",
+          "sourceParagraph": 293
+        }
+      ]
+    }
+  ]
+}

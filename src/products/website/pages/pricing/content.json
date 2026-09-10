@@ -1,0 +1,95 @@
+{
+  "page": 28,
+  "name": "PRICING",
+  "source_paragraph": 604,
+  "gates": [
+    "COMMERCIAL GATE - Final plan names, prices, limits, entitlements, taxes, and billing terms require commercial approval before publication."
+  ],
+  "route": "/pricing",
+  "indexing": "index, follow",
+  "canonical": "/pricing",
+  "seo_title": "Pricing | LAMID ONE",
+  "meta_description": "Use the same operating system at the level that fits your current context. Expand as your work, team, or organization grows.",
+  "title": "Start With the Depth You Need.",
+  "description": "Use the same operating system at the level that fits your current context. Expand as your work, team, or organization grows.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start With the Depth You Need.",
+    "paragraphs": [
+      {
+        "text": "Start With the Depth You Need.",
+        "sourceParagraph": 610
+      },
+      {
+        "text": "Use the same operating system at the level that fits your current context. Expand as your work, team, or organization grows.",
+        "sourceParagraph": 611
+      },
+      {
+        "text": "CTA: View Plan Details | Talk to Our Team",
+        "sourceParagraph": 612
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Personal",
+      "title": "Personal",
+      "paragraphs": [
+        {
+          "text": "Personal",
+          "sourceParagraph": 613
+        },
+        {
+          "text": "Start with the core individual experience for clarity, capability, rhythm, and progress.",
+          "sourceParagraph": 614
+        }
+      ]
+    },
+    {
+      "label": "Professional",
+      "title": "Professional",
+      "paragraphs": [
+        {
+          "text": "Professional",
+          "sourceParagraph": 615
+        },
+        {
+          "text": "Add deeper professional context, history, guidance, opportunity, and execution support.",
+          "sourceParagraph": 616
+        }
+      ]
+    },
+    {
+      "label": "Team",
+      "title": "Team",
+      "paragraphs": [
+        {
+          "text": "Team",
+          "sourceParagraph": 617
+        },
+        {
+          "text": "Add shared priorities, collaboration, team rhythm, capability, and coordinated execution.",
+          "sourceParagraph": 618
+        }
+      ]
+    },
+    {
+      "label": "Expand the OS - Not a Collection of Separate Products.",
+      "title": "Expand the OS - Not a Collection of Separate Products.",
+      "paragraphs": [
+        {
+          "text": "Expand the OS - Not a Collection of Separate Products.",
+          "sourceParagraph": 619
+        },
+        {
+          "text": "Pricing follows access, depth, collaboration, control, and scale inside the same LAMID ONE experience.",
+          "sourceParagraph": 620
+        },
+        {
+          "text": "CTA: View Plan Details",
+          "sourceParagraph": 621
+        }
+      ]
+    }
+  ]
+}

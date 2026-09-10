@@ -1,0 +1,73 @@
+{
+  "page": 59,
+  "name": "DATA PROCESSING ADDENDUM",
+  "source_paragraph": 1213,
+  "gates": [
+    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+  ],
+  "route": "/legal/dpa",
+  "indexing": "index, follow",
+  "canonical": "/legal/dpa",
+  "seo_title": "Data Processing Addendum | LAMID ONE",
+  "meta_description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+  "title": "Data Processing Addendum",
+  "description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Data Processing Addendum",
+    "paragraphs": [
+      {
+        "text": "Data Processing Addendum",
+        "sourceParagraph": 1219
+      },
+      {
+        "text": "This addendum defines applicable data-processing obligations for eligible business customers.",
+        "sourceParagraph": 1220
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Roles and Instructions",
+      "title": "Roles and Instructions",
+      "paragraphs": [
+        {
+          "text": "Roles and Instructions",
+          "sourceParagraph": 1221
+        },
+        {
+          "text": "The addendum defines controller and processor roles, permitted instructions, and the scope of processing.",
+          "sourceParagraph": 1222
+        }
+      ]
+    },
+    {
+      "label": "Confidentiality and Security",
+      "title": "Confidentiality and Security",
+      "paragraphs": [
+        {
+          "text": "Confidentiality and Security",
+          "sourceParagraph": 1223
+        },
+        {
+          "text": "The addendum sets contractual requirements for confidentiality and applicable technical and organizational security measures.",
+          "sourceParagraph": 1224
+        }
+      ]
+    },
+    {
+      "label": "Subprocessors",
+      "title": "Subprocessors",
+      "paragraphs": [
+        {
+          "text": "Subprocessors",
+          "sourceParagraph": 1225
+        },
+        {
+          "text": "The addendum describes subprocessors, notification arrangements, responsibilities, and applicable objection mechanisms.",
+          "sourceParagraph": 1226
+        }
+      ]
+    }
+  ]
+}

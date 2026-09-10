@@ -1,0 +1,95 @@
+{
+  "page": 31,
+  "name": "REQUEST DEMO",
+  "source_paragraph": 671,
+  "gates": [],
+  "route": "/demo/request",
+  "indexing": "index, follow",
+  "canonical": "/demo/request",
+  "seo_title": "Request Demo | LAMID ONE",
+  "meta_description": "Tell us what you are trying to improve, decide, or coordinate. We will shape the demo around those priorities.",
+  "title": "Explore LAMID ONE in Your Organizational Context.",
+  "description": "Tell us what you are trying to improve, decide, or coordinate. We will shape the demo around those priorities.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Explore LAMID ONE in Your Organizational Context.",
+    "paragraphs": [
+      {
+        "text": "Explore LAMID ONE in Your Organizational Context.",
+        "sourceParagraph": 677
+      },
+      {
+        "text": "Tell us what you are trying to improve, decide, or coordinate. We will shape the demo around those priorities.",
+        "sourceParagraph": 678
+      },
+      {
+        "text": "CTA: Request Your Demo",
+        "sourceParagraph": 679
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "What Are You Working Toward?",
+      "title": "What Are You Working Toward?",
+      "paragraphs": [
+        {
+          "text": "What Are You Working Toward?",
+          "sourceParagraph": 680
+        },
+        {
+          "text": "• Decision quality",
+          "sourceParagraph": 681
+        },
+        {
+          "text": "• Execution",
+          "sourceParagraph": 682
+        },
+        {
+          "text": "• Team capability",
+          "sourceParagraph": 683
+        }
+      ]
+    },
+    {
+      "label": "What Should We Understand?",
+      "title": "What Should We Understand?",
+      "paragraphs": [
+        {
+          "text": "What Should We Understand?",
+          "sourceParagraph": 684
+        },
+        {
+          "text": "• Organization size",
+          "sourceParagraph": 685
+        },
+        {
+          "text": "• Teams involved",
+          "sourceParagraph": 686
+        },
+        {
+          "text": "• Systems involved",
+          "sourceParagraph": 687
+        }
+      ]
+    },
+    {
+      "label": "Choose the Conversation",
+      "title": "Choose the Conversation",
+      "paragraphs": [
+        {
+          "text": "Choose the Conversation",
+          "sourceParagraph": 688
+        },
+        {
+          "text": "Product walkthrough, technical architecture, governance review, or tailored solution demonstration.",
+          "sourceParagraph": 689
+        },
+        {
+          "text": "CTA: Request Your Demo",
+          "sourceParagraph": 690
+        }
+      ]
+    }
+  ]
+}

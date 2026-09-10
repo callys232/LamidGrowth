@@ -1,0 +1,73 @@
+{
+  "page": 72,
+  "name": "PROGRESS",
+  "source_paragraph": 1441,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/progress",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/progress",
+  "seo_title": "Progress | LAMID ONE",
+  "meta_description": "Growth becomes more useful when you can compare the current state with what changed since the previous one.",
+  "title": "See What Is Changing Over Time.",
+  "description": "Growth becomes more useful when you can compare the current state with what changed since the previous one.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "See What Is Changing Over Time.",
+    "paragraphs": [
+      {
+        "text": "See What Is Changing Over Time.",
+        "sourceParagraph": 1447
+      },
+      {
+        "text": "Growth becomes more useful when you can compare the current state with what changed since the previous one.",
+        "sourceParagraph": 1448
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Clarity Patterns",
+      "title": "Clarity Patterns",
+      "paragraphs": [
+        {
+          "text": "Clarity Patterns",
+          "sourceParagraph": 1449
+        },
+        {
+          "text": "Review recurring priorities, assumptions, and decision themes to see where clarity is improving or repeatedly breaking down.",
+          "sourceParagraph": 1450
+        }
+      ]
+    },
+    {
+      "label": "Outcomes",
+      "title": "Outcomes",
+      "paragraphs": [
+        {
+          "text": "Outcomes",
+          "sourceParagraph": 1451
+        },
+        {
+          "text": "Record the results that matter and compare them with the original objective instead of relying on a universal score.",
+          "sourceParagraph": 1452
+        }
+      ]
+    },
+    {
+      "label": "Trace an Outcome Back to the Work",
+      "title": "Trace an Outcome Back to the Work",
+      "paragraphs": [
+        {
+          "text": "Trace an Outcome Back to the Work",
+          "sourceParagraph": 1453
+        },
+        {
+          "text": "See which decisions, capabilities, and actions contributed to a result instead of relying on an unexplained growth score.",
+          "sourceParagraph": 1454
+        }
+      ]
+    }
+  ]
+}

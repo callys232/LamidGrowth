@@ -1,0 +1,73 @@
+{
+  "page": 87,
+  "name": "OS GOVERNANCE",
+  "source_paragraph": 1673,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/governance",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/governance",
+  "seo_title": "OS Governance | LAMID ONE",
+  "meta_description": "Set the policies that govern AI, persistent progression, permissions, delegation, capability availability, data, workflows, overrides, and approvals.",
+  "title": "Define How LAMID ONE Operates in Your Organization.",
+  "description": "Set the policies that govern AI, persistent progression, permissions, delegation, capability availability, data, workflows, overrides, and approvals.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Define How LAMID ONE Operates in Your Organization.",
+    "paragraphs": [
+      {
+        "text": "Define How LAMID ONE Operates in Your Organization.",
+        "sourceParagraph": 1679
+      },
+      {
+        "text": "Set the policies that govern AI, persistent progression, permissions, delegation, capability availability, data, workflows, overrides, and approvals.",
+        "sourceParagraph": 1680
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Workflow Approvals",
+      "title": "Workflow Approvals",
+      "paragraphs": [
+        {
+          "text": "Workflow Approvals",
+          "sourceParagraph": 1681
+        },
+        {
+          "text": "Require human review before selected workflows or consequential actions proceed; allow authorized users to pause, redirect, override, or revoke progression before commitment.",
+          "sourceParagraph": 1682
+        }
+      ]
+    },
+    {
+      "label": "Administrative Controls",
+      "title": "Administrative Controls",
+      "paragraphs": [
+        {
+          "text": "Administrative Controls",
+          "sourceParagraph": 1683
+        },
+        {
+          "text": "Manage organization-level settings, ownership, policy defaults, and delegated administration.",
+          "sourceParagraph": 1684
+        }
+      ]
+    },
+    {
+      "label": "Separate Observation, Progression, and Commitment",
+      "title": "Separate Observation, Progression, and Commitment",
+      "paragraphs": [
+        {
+          "text": "Separate Observation, Progression, and Commitment",
+          "sourceParagraph": 1685
+        },
+        {
+          "text": "Set policy separately for Observe & Update, Progress Within Authorization, and Consequential Commitment. A lower band must never inherit or infer the permissions of a higher band.",
+          "sourceParagraph": 1686
+        }
+      ]
+    }
+  ]
+}

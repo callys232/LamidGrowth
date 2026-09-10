@@ -1,0 +1,87 @@
+{
+  "page": 34,
+  "name": "INSIGHTS",
+  "source_paragraph": 730,
+  "gates": [],
+  "route": "/insights",
+  "indexing": "index, follow",
+  "canonical": "/insights",
+  "seo_title": "Insights | LAMID ONE",
+  "meta_description": "Perspectives on Human-AI collaboration, decision-making, capability, execution, growth, and modern organizations.",
+  "title": "Ideas Worth Applying.",
+  "description": "Perspectives on Human-AI collaboration, decision-making, capability, execution, growth, and modern organizations.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Ideas Worth Applying.",
+    "paragraphs": [
+      {
+        "text": "Ideas Worth Applying.",
+        "sourceParagraph": 736
+      },
+      {
+        "text": "Perspectives on Human-AI collaboration, decision-making, capability, execution, growth, and modern organizations.",
+        "sourceParagraph": 737
+      },
+      {
+        "text": "CTA: Browse Insights",
+        "sourceParagraph": 738
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Topics",
+      "title": "Topics",
+      "paragraphs": [
+        {
+          "text": "Topics",
+          "sourceParagraph": 739
+        },
+        {
+          "text": "• Human-AI",
+          "sourceParagraph": 740
+        },
+        {
+          "text": "• Clarity",
+          "sourceParagraph": 741
+        },
+        {
+          "text": "• Capability",
+          "sourceParagraph": 742
+        }
+      ]
+    },
+    {
+      "label": "Useful by Design",
+      "title": "Useful by Design",
+      "paragraphs": [
+        {
+          "text": "Useful by Design",
+          "sourceParagraph": 743
+        },
+        {
+          "text": "Each insight is built around a useful idea, framework, body of evidence, or practical application.",
+          "sourceParagraph": 744
+        }
+      ]
+    },
+    {
+      "label": "Outcome Collections",
+      "title": "Outcome Collections",
+      "paragraphs": [
+        {
+          "text": "Outcome Collections",
+          "sourceParagraph": 745
+        },
+        {
+          "text": "Explore articles grouped around outcomes such as improving decision quality, strengthening team capability, or building an operating rhythm.",
+          "sourceParagraph": 746
+        },
+        {
+          "text": "CTA: Browse Insights",
+          "sourceParagraph": 747
+        }
+      ]
+    }
+  ]
+}

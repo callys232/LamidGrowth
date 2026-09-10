@@ -1,0 +1,97 @@
+{
+  "page": 2,
+  "name": "PRODUCT OVERVIEW",
+  "source_paragraph": 97,
+  "gates": [],
+  "route": "/product",
+  "indexing": "index, follow",
+  "canonical": "/product",
+  "seo_title": "Product Overview | LAMID ONE",
+  "meta_description": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context.",
+  "title": "One Continuous Operating System. Built Around Your Context.",
+  "description": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context forward, and go deeper as your needs grow.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "One Continuous Operating System. Built Around Your Context.",
+    "paragraphs": [
+      {
+        "text": "One Continuous Operating System. Built Around Your Context.",
+        "sourceParagraph": 103
+      },
+      {
+        "text": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context forward, and go deeper as your needs grow.",
+        "sourceParagraph": 104
+      },
+      {
+        "text": "CTA: Experience LAMID ONE | See How It Works",
+        "sourceParagraph": 105
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Start With Your Objective",
+      "title": "Start With Your Objective",
+      "paragraphs": [
+        {
+          "text": "Start With Your Objective",
+          "sourceParagraph": 106
+        },
+        {
+          "text": "The LAMID ONE Companion works from the situation in front of you and the relevant context carried forward over time, surfaces what matters now, and guides the next step without making you navigate the architecture underneath.",
+          "sourceParagraph": 107
+        },
+        {
+          "text": "CTA: Explore the Companion",
+          "sourceParagraph": 108
+        }
+      ]
+    },
+    {
+      "label": "Continuous Intelligence Keeps the Operating Context Current",
+      "title": "Continuous Intelligence Keeps the Operating Context Current",
+      "paragraphs": [
+        {
+          "text": "Continuous Intelligence Keeps the Operating Context Current",
+          "sourceParagraph": 109
+        },
+        {
+          "text": "Permitted signals can be sensed, understood, compared, and carried into recommendations as conditions change. Action remains bounded by authorization, and consequential commitment pauses for human judgment unless that exact authority was explicitly delegated in advance under policy.",
+          "sourceParagraph": 110
+        }
+      ]
+    },
+    {
+      "label": "Persistent Progression",
+      "title": "Persistent Progression",
+      "paragraphs": [
+        {
+          "text": "Persistent Progression",
+          "sourceParagraph": 111
+        },
+        {
+          "text": "Permitted context, intelligence, and already-authorized work can continue progressing across time. Every progression stays inside defined permissions, can be inspected, and can be redirected, paused, revoked, or overridden by an authorized human.",
+          "sourceParagraph": 112
+        }
+      ]
+    },
+    {
+      "label": "One OS. Different Relevant Depth.",
+      "title": "One OS. Different Relevant Depth.",
+      "paragraphs": [
+        {
+          "text": "One OS. Different Relevant Depth.",
+          "sourceParagraph": 113
+        },
+        {
+          "text": "Persistent progression underneath. Relevant depth above.",
+          "sourceParagraph": 114
+        },
+        {
+          "text": "CTA: Experience LAMID ONE",
+          "sourceParagraph": 115
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "page": 20,
+  "name": "SMES",
+  "source_paragraph": 447,
+  "gates": [],
+  "route": "/who-its-for/smes",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/smes",
+  "seo_title": "SMEs | LAMID ONE",
+  "meta_description": "Bring operations, people, finance, opportunity, and execution into one operating context.",
+  "title": "Run a Stronger Business Without Adding More Complexity.",
+  "description": "Bring operations, people, finance, opportunity, and execution into one operating context.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Run a Stronger Business Without Adding More Complexity.",
+    "paragraphs": [
+      {
+        "text": "Run a Stronger Business Without Adding More Complexity.",
+        "sourceParagraph": 453
+      },
+      {
+        "text": "Bring operations, people, finance, opportunity, and execution into one operating context.",
+        "sourceParagraph": 454
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for SMEs",
+        "sourceParagraph": 455
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Operations",
+      "title": "Operations",
+      "paragraphs": [
+        {
+          "text": "Operations",
+          "sourceParagraph": 456
+        },
+        {
+          "text": "Identify bottlenecks, recurring issues, and areas that need clearer structure.",
+          "sourceParagraph": 457
+        }
+      ]
+    },
+    {
+      "label": "Financial Understanding",
+      "title": "Financial Understanding",
+      "paragraphs": [
+        {
+          "text": "Financial Understanding",
+          "sourceParagraph": 458
+        },
+        {
+          "text": "See cash flow, pricing, scenarios, and financial implications clearly.",
+          "sourceParagraph": 459
+        }
+      ]
+    },
+    {
+      "label": "Improve Margin Without Slowing Growth",
+      "title": "Improve Margin Without Slowing Growth",
+      "paragraphs": [
+        {
+          "text": "Improve Margin Without Slowing Growth",
+          "sourceParagraph": 460
+        },
+        {
+          "text": "Connect cost drivers, pricing, workflow efficiency, capability, and growth priorities before choosing where to change.",
+          "sourceParagraph": 461
+        }
+      ]
+    },
+    {
+      "label": "More Capability. Less Fragmentation.",
+      "title": "More Capability. Less Fragmentation.",
+      "paragraphs": [
+        {
+          "text": "More Capability. Less Fragmentation.",
+          "sourceParagraph": 462
+        },
+        {
+          "text": "Bring operations, finance, people, opportunity, and execution into one business context instead of adding another disconnected layer.",
+          "sourceParagraph": 463
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for SMEs",
+          "sourceParagraph": 464
+        }
+      ]
+    }
+  ]
+}

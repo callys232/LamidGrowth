@@ -1,0 +1,97 @@
+{
+  "page": 66,
+  "name": "ONBOARDING",
+  "source_paragraph": 1335,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/onboarding",
+  "indexing": "noindex, nofollow",
+  "canonical": "/onboarding",
+  "seo_title": "Onboarding | LAMID ONE",
+  "meta_description": "Tell LAMID ONE where you are starting and what you want to move forward.",
+  "title": "Start With Your Context.",
+  "description": "Tell LAMID ONE where you are starting and what you want to move forward.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start With Your Context.",
+    "paragraphs": [
+      {
+        "text": "Start With Your Context.",
+        "sourceParagraph": 1341
+      },
+      {
+        "text": "Tell LAMID ONE where you are starting and what you want to move forward.",
+        "sourceParagraph": 1342
+      },
+      {
+        "text": "CTA: Enter LAMID ONE",
+        "sourceParagraph": 1343
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Choose Your Context",
+      "title": "Choose Your Context",
+      "paragraphs": [
+        {
+          "text": "Choose Your Context",
+          "sourceParagraph": 1344
+        },
+        {
+          "text": "• Myself",
+          "sourceParagraph": 1345
+        },
+        {
+          "text": "• Professional work",
+          "sourceParagraph": 1346
+        },
+        {
+          "text": "• Creative work",
+          "sourceParagraph": 1347
+        }
+      ]
+    },
+    {
+      "label": "Choose Your First Objective",
+      "title": "Choose Your First Objective",
+      "paragraphs": [
+        {
+          "text": "Choose Your First Objective",
+          "sourceParagraph": 1348
+        },
+        {
+          "text": "• Get clear",
+          "sourceParagraph": 1349
+        },
+        {
+          "text": "• Build capability",
+          "sourceParagraph": 1350
+        },
+        {
+          "text": "• Improve execution",
+          "sourceParagraph": 1351
+        }
+      ]
+    },
+    {
+      "label": "Start With One Real Decision",
+      "title": "Start With One Real Decision",
+      "paragraphs": [
+        {
+          "text": "Start With One Real Decision",
+          "sourceParagraph": 1352
+        },
+        {
+          "text": "Complete the first Clarity -> Capability -> Consistency cycle before configuring advanced features.",
+          "sourceParagraph": 1353
+        },
+        {
+          "text": "CTA: Enter LAMID ONE",
+          "sourceParagraph": 1354
+        }
+      ]
+    }
+  ]
+}

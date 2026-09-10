@@ -1,0 +1,73 @@
+{
+  "page": 38,
+  "name": "HELP CENTER",
+  "source_paragraph": 806,
+  "gates": [],
+  "route": "/help",
+  "indexing": "index, follow",
+  "canonical": "/help",
+  "seo_title": "Help Center | LAMID ONE",
+  "meta_description": "Get started, understand the product, manage your account, or resolve an issue.",
+  "title": "Find What You Need.",
+  "description": "Get started, understand the product, manage your account, or resolve an issue.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Find What You Need.",
+    "paragraphs": [
+      {
+        "text": "Find What You Need.",
+        "sourceParagraph": 812
+      },
+      {
+        "text": "Get started, understand the product, manage your account, or resolve an issue.",
+        "sourceParagraph": 813
+      },
+      {
+        "text": "CTA: Search Help",
+        "sourceParagraph": 814
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Browse by Need",
+      "title": "Browse by Need",
+      "paragraphs": [
+        {
+          "text": "Browse by Need",
+          "sourceParagraph": 815
+        },
+        {
+          "text": "• Getting Started",
+          "sourceParagraph": 816
+        },
+        {
+          "text": "• Companion",
+          "sourceParagraph": 817
+        },
+        {
+          "text": "• Clarity / Capability / Consistency",
+          "sourceParagraph": 818
+        }
+      ]
+    },
+    {
+      "label": "Get Unblocked Quickly",
+      "title": "Get Unblocked Quickly",
+      "paragraphs": [
+        {
+          "text": "Get Unblocked Quickly",
+          "sourceParagraph": 819
+        },
+        {
+          "text": "Search by what you are trying to do, not by internal feature names.",
+          "sourceParagraph": 820
+        },
+        {
+          "text": "CTA: Search Help",
+          "sourceParagraph": 821
+        }
+      ]
+    }
+  ]
+}

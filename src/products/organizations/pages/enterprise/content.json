@@ -1,0 +1,103 @@
+{
+  "page": 23,
+  "name": "ENTERPRISE PLATFORM & DEPLOYMENT",
+  "source_paragraph": 504,
+  "gates": [
+    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+  ],
+  "route": "/enterprise",
+  "indexing": "index, follow",
+  "canonical": "/enterprise",
+  "seo_title": "Enterprise Platform & Deployment | LAMID ONE",
+  "meta_description": "Evaluate LAMID ONE architecture, governance, integrations, administration, security boundaries, and deployment readiness at organizational scale.",
+  "title": "LAMID ONE at Organizational Scale",
+  "description": "Evaluate the architecture, governance, integrations, administration, security boundaries, operating depth, and deployment requirements behind an enterprise LAMID ONE environment.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "LAMID ONE at Organizational Scale",
+    "paragraphs": [
+      {
+        "text": "LAMID ONE at Organizational Scale",
+        "sourceParagraph": 510
+      },
+      {
+        "text": "Evaluate the architecture, governance, integrations, administration, security boundaries, operating depth, and deployment requirements behind an enterprise LAMID ONE environment.",
+        "sourceParagraph": 511
+      },
+      {
+        "text": "CTA: Request an Organizational Demo | Talk to Our Team",
+        "sourceParagraph": 512
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Enterprise Architecture",
+      "title": "Enterprise Architecture",
+      "paragraphs": [
+        {
+          "text": "Enterprise Architecture",
+          "sourceParagraph": 513
+        },
+        {
+          "text": "Support multiple permitted contexts, organizational workspaces, role-aware access, contextual intelligence, and organization-level controls within one coherent operating environment.",
+          "sourceParagraph": 514
+        }
+      ]
+    },
+    {
+      "label": "Governance Architecture",
+      "title": "Governance Architecture",
+      "paragraphs": [
+        {
+          "text": "Governance Architecture",
+          "sourceParagraph": 515
+        },
+        {
+          "text": "Define policies for people, data, AI, continuous intelligence, authorized progression, workflows, permissions, review, and organizational contexts.",
+          "sourceParagraph": 516
+        },
+        {
+          "text": "Persistent Progression. Permissioned by Design. Human Controlled.",
+          "sourceParagraph": 517
+        }
+      ]
+    },
+    {
+      "label": "Integration Architecture",
+      "title": "Integration Architecture",
+      "paragraphs": [
+        {
+          "text": "Integration Architecture",
+          "sourceParagraph": 518
+        },
+        {
+          "text": "Connect approved systems and data sources through governed integrations with appropriate permissions, synchronization, freshness, ownership, and revocation controls.",
+          "sourceParagraph": 519
+        }
+      ]
+    },
+    {
+      "label": "Evaluate Trust & Control",
+      "title": "Evaluate Trust & Control",
+      "paragraphs": [
+        {
+          "text": "Evaluate Trust & Control",
+          "sourceParagraph": 520
+        },
+        {
+          "text": "Review Security, Responsible AI, Privacy & Data, and Governance as part of the enterprise evaluation before moving into procurement or deployment planning.",
+          "sourceParagraph": 521
+        },
+        {
+          "text": "Links: Security | Responsible AI | Privacy & Data | Governance",
+          "sourceParagraph": 522
+        },
+        {
+          "text": "CTA: Request an Organizational Demo",
+          "sourceParagraph": 523
+        }
+      ]
+    }
+  ]
+}

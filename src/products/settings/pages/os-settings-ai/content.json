@@ -1,0 +1,73 @@
+{
+  "page": 92,
+  "name": "AI & MEMORY",
+  "source_paragraph": 1748,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/ai",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/ai",
+  "seo_title": "AI & Memory | LAMID ONE",
+  "meta_description": "Choose what LAMID ONE may remember, what may progress between interactions, and how those changes are surfaced.",
+  "title": "AI & Context Controls",
+  "description": "Choose what LAMID ONE may remember, what may progress between interactions, and how those changes are surfaced.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "AI & Context Controls",
+    "paragraphs": [
+      {
+        "text": "AI & Context Controls",
+        "sourceParagraph": 1754
+      },
+      {
+        "text": "Choose what LAMID ONE may remember, what may progress between interactions, and how those changes are surfaced.",
+        "sourceParagraph": 1755
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Memory",
+      "title": "Memory",
+      "paragraphs": [
+        {
+          "text": "Memory",
+          "sourceParagraph": 1756
+        },
+        {
+          "text": "Turn supported memory behavior and eligible progression features on or off, and revoke previously granted progression permissions, according to the controls available to your account or organization.",
+          "sourceParagraph": 1757
+        }
+      ]
+    },
+    {
+      "label": "Remembered Context",
+      "title": "Remembered Context",
+      "paragraphs": [
+        {
+          "text": "Remembered Context",
+          "sourceParagraph": 1758
+        },
+        {
+          "text": "Review the information LAMID ONE currently retains for future context where memory is enabled.",
+          "sourceParagraph": 1759
+        }
+      ]
+    },
+    {
+      "label": "Explanation Preferences",
+      "title": "Explanation Preferences",
+      "paragraphs": [
+        {
+          "text": "Explanation Preferences",
+          "sourceParagraph": 1760
+        },
+        {
+          "text": "Choose the level of explanation shown with recommendations where the product supports that setting.",
+          "sourceParagraph": 1761
+        }
+      ]
+    }
+  ]
+}

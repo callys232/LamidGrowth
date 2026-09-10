@@ -1,0 +1,688 @@
+[
+  {
+    "route": "/",
+    "product": "website",
+    "content": "src/products/website/pages/home/content.json",
+    "component": "src/products/website/pages/home/HomeDocumentPage.tsx",
+    "exportName": "HomeDocumentPage"
+  },
+  {
+    "route": "/product",
+    "product": "website",
+    "content": "src/products/website/pages/product/content.json",
+    "component": "src/products/website/pages/product/ProductDocumentPage.tsx",
+    "exportName": "ProductDocumentPage"
+  },
+  {
+    "route": "/product/companion",
+    "product": "companion",
+    "content": "src/products/companion/pages/product-companion/content.json",
+    "component": "src/products/companion/pages/product-companion/ProductCompanionDocumentPage.tsx",
+    "exportName": "ProductCompanionDocumentPage"
+  },
+  {
+    "route": "/product/experience",
+    "product": "experience",
+    "content": "src/products/experience/pages/product-experience/content.json",
+    "component": "src/products/experience/pages/product-experience/ProductExperienceDocumentPage.tsx",
+    "exportName": "ProductExperienceDocumentPage"
+  },
+  {
+    "route": "/product/intelligence",
+    "product": "intelligence",
+    "content": "src/products/intelligence/pages/product-intelligence/content.json",
+    "component": "src/products/intelligence/pages/product-intelligence/ProductIntelligenceDocumentPage.tsx",
+    "exportName": "ProductIntelligenceDocumentPage"
+  },
+  {
+    "route": "/product/workflows",
+    "product": "workflows",
+    "content": "src/products/workflows/pages/product-workflows/content.json",
+    "component": "src/products/workflows/pages/product-workflows/ProductWorkflowsDocumentPage.tsx",
+    "exportName": "ProductWorkflowsDocumentPage"
+  },
+  {
+    "route": "/product/organizations",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/product-organizations/content.json",
+    "component": "src/products/organizations/pages/product-organizations/ProductOrganizationsDocumentPage.tsx",
+    "exportName": "ProductOrganizationsDocumentPage"
+  },
+  {
+    "route": "/how-it-works",
+    "product": "website",
+    "content": "src/products/website/pages/how-it-works/content.json",
+    "component": "src/products/website/pages/how-it-works/HowItWorksDocumentPage.tsx",
+    "exportName": "HowItWorksDocumentPage"
+  },
+  {
+    "route": "/how-it-works/clarity",
+    "product": "clarity",
+    "content": "src/products/clarity/pages/how-it-works-clarity/content.json",
+    "component": "src/products/clarity/pages/how-it-works-clarity/HowItWorksClarityDocumentPage.tsx",
+    "exportName": "HowItWorksClarityDocumentPage"
+  },
+  {
+    "route": "/how-it-works/capability",
+    "product": "capability",
+    "content": "src/products/capability/pages/how-it-works-capability/content.json",
+    "component": "src/products/capability/pages/how-it-works-capability/HowItWorksCapabilityDocumentPage.tsx",
+    "exportName": "HowItWorksCapabilityDocumentPage"
+  },
+  {
+    "route": "/how-it-works/consistency",
+    "product": "consistency",
+    "content": "src/products/consistency/pages/how-it-works-consistency/content.json",
+    "component": "src/products/consistency/pages/how-it-works-consistency/HowItWorksConsistencyDocumentPage.tsx",
+    "exportName": "HowItWorksConsistencyDocumentPage"
+  },
+  {
+    "route": "/how-it-works/growth",
+    "product": "progress",
+    "content": "src/products/progress/pages/how-it-works-growth/content.json",
+    "component": "src/products/progress/pages/how-it-works-growth/HowItWorksGrowthDocumentPage.tsx",
+    "exportName": "HowItWorksGrowthDocumentPage"
+  },
+  {
+    "route": "/how-it-works/rhythm",
+    "product": "rhythm",
+    "content": "src/products/rhythm/pages/how-it-works-rhythm/content.json",
+    "component": "src/products/rhythm/pages/how-it-works-rhythm/HowItWorksRhythmDocumentPage.tsx",
+    "exportName": "HowItWorksRhythmDocumentPage"
+  },
+  {
+    "route": "/who-its-for",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for/content.json",
+    "component": "src/products/website/pages/who-its-for/WhoItsForDocumentPage.tsx",
+    "exportName": "WhoItsForDocumentPage"
+  },
+  {
+    "route": "/who-its-for/individuals",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-individuals/content.json",
+    "component": "src/products/website/pages/who-its-for-individuals/WhoItsForIndividualsDocumentPage.tsx",
+    "exportName": "WhoItsForIndividualsDocumentPage"
+  },
+  {
+    "route": "/who-its-for/professionals",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-professionals/content.json",
+    "component": "src/products/website/pages/who-its-for-professionals/WhoItsForProfessionalsDocumentPage.tsx",
+    "exportName": "WhoItsForProfessionalsDocumentPage"
+  },
+  {
+    "route": "/who-its-for/creators",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-creators/content.json",
+    "component": "src/products/website/pages/who-its-for-creators/WhoItsForCreatorsDocumentPage.tsx",
+    "exportName": "WhoItsForCreatorsDocumentPage"
+  },
+  {
+    "route": "/who-its-for/founders",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-founders/content.json",
+    "component": "src/products/website/pages/who-its-for-founders/WhoItsForFoundersDocumentPage.tsx",
+    "exportName": "WhoItsForFoundersDocumentPage"
+  },
+  {
+    "route": "/who-its-for/teams",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-teams/content.json",
+    "component": "src/products/website/pages/who-its-for-teams/WhoItsForTeamsDocumentPage.tsx",
+    "exportName": "WhoItsForTeamsDocumentPage"
+  },
+  {
+    "route": "/who-its-for/smes",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-smes/content.json",
+    "component": "src/products/website/pages/who-its-for-smes/WhoItsForSmesDocumentPage.tsx",
+    "exportName": "WhoItsForSmesDocumentPage"
+  },
+  {
+    "route": "/who-its-for/enterprises",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-enterprises/content.json",
+    "component": "src/products/website/pages/who-its-for-enterprises/WhoItsForEnterprisesDocumentPage.tsx",
+    "exportName": "WhoItsForEnterprisesDocumentPage"
+  },
+  {
+    "route": "/who-its-for/institutions",
+    "product": "website",
+    "content": "src/products/website/pages/who-its-for-institutions/content.json",
+    "component": "src/products/website/pages/who-its-for-institutions/WhoItsForInstitutionsDocumentPage.tsx",
+    "exportName": "WhoItsForInstitutionsDocumentPage"
+  },
+  {
+    "route": "/enterprise",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/enterprise/content.json",
+    "component": "src/products/organizations/pages/enterprise/EnterpriseDocumentPage.tsx",
+    "exportName": "EnterpriseDocumentPage"
+  },
+  {
+    "route": "/security",
+    "product": "website",
+    "content": "src/products/website/pages/security/content.json",
+    "component": "src/products/website/pages/security/SecurityDocumentPage.tsx",
+    "exportName": "SecurityDocumentPage"
+  },
+  {
+    "route": "/responsible-ai",
+    "product": "website",
+    "content": "src/products/website/pages/responsible-ai/content.json",
+    "component": "src/products/website/pages/responsible-ai/ResponsibleAiDocumentPage.tsx",
+    "exportName": "ResponsibleAiDocumentPage"
+  },
+  {
+    "route": "/trust/privacy",
+    "product": "governance",
+    "content": "src/products/governance/pages/trust-privacy/content.json",
+    "component": "src/products/governance/pages/trust-privacy/TrustPrivacyDocumentPage.tsx",
+    "exportName": "TrustPrivacyDocumentPage"
+  },
+  {
+    "route": "/trust/governance",
+    "product": "governance",
+    "content": "src/products/governance/pages/trust-governance/content.json",
+    "component": "src/products/governance/pages/trust-governance/TrustGovernanceDocumentPage.tsx",
+    "exportName": "TrustGovernanceDocumentPage"
+  },
+  {
+    "route": "/pricing",
+    "product": "website",
+    "content": "src/products/website/pages/pricing/content.json",
+    "component": "src/products/website/pages/pricing/PricingDocumentPage.tsx",
+    "exportName": "PricingDocumentPage"
+  },
+  {
+    "route": "/enterprise/contact",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/enterprise-contact/content.json",
+    "component": "src/products/organizations/pages/enterprise-contact/EnterpriseContactDocumentPage.tsx",
+    "exportName": "EnterpriseContactDocumentPage"
+  },
+  {
+    "route": "/demo",
+    "product": "website",
+    "content": "src/products/website/pages/demo/content.json",
+    "component": "src/products/website/pages/demo/DemoDocumentPage.tsx",
+    "exportName": "DemoDocumentPage"
+  },
+  {
+    "route": "/demo/request",
+    "product": "website",
+    "content": "src/products/website/pages/demo-request/content.json",
+    "component": "src/products/website/pages/demo-request/DemoRequestDocumentPage.tsx",
+    "exportName": "DemoRequestDocumentPage"
+  },
+  {
+    "route": "/start",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/start/content.json",
+    "component": "src/products/accounts/pages/start/StartDocumentPage.tsx",
+    "exportName": "StartDocumentPage"
+  },
+  {
+    "route": "/resources",
+    "product": "website",
+    "content": "src/products/website/pages/resources/content.json",
+    "component": "src/products/website/pages/resources/ResourcesDocumentPage.tsx",
+    "exportName": "ResourcesDocumentPage"
+  },
+  {
+    "route": "/insights",
+    "product": "website",
+    "content": "src/products/website/pages/insights/content.json",
+    "component": "src/products/website/pages/insights/InsightsDocumentPage.tsx",
+    "exportName": "InsightsDocumentPage"
+  },
+  {
+    "route": "/guides",
+    "product": "website",
+    "content": "src/products/website/pages/guides/content.json",
+    "component": "src/products/website/pages/guides/GuidesDocumentPage.tsx",
+    "exportName": "GuidesDocumentPage"
+  },
+  {
+    "route": "/case-studies",
+    "product": "website",
+    "content": "src/products/website/pages/case-studies/content.json",
+    "component": "src/products/website/pages/case-studies/CaseStudiesDocumentPage.tsx",
+    "exportName": "CaseStudiesDocumentPage"
+  },
+  {
+    "route": "/research",
+    "product": "website",
+    "content": "src/products/website/pages/research/content.json",
+    "component": "src/products/website/pages/research/ResearchDocumentPage.tsx",
+    "exportName": "ResearchDocumentPage"
+  },
+  {
+    "route": "/help",
+    "product": "website",
+    "content": "src/products/website/pages/help/content.json",
+    "component": "src/products/website/pages/help/HelpDocumentPage.tsx",
+    "exportName": "HelpDocumentPage"
+  },
+  {
+    "route": "/help/getting-started",
+    "product": "website",
+    "content": "src/products/website/pages/help-getting-started/content.json",
+    "component": "src/products/website/pages/help-getting-started/HelpGettingStartedDocumentPage.tsx",
+    "exportName": "HelpGettingStartedDocumentPage"
+  },
+  {
+    "route": "/help/product",
+    "product": "website",
+    "content": "src/products/website/pages/help-product/content.json",
+    "component": "src/products/website/pages/help-product/HelpProductDocumentPage.tsx",
+    "exportName": "HelpProductDocumentPage"
+  },
+  {
+    "route": "/help/account",
+    "product": "website",
+    "content": "src/products/website/pages/help-account/content.json",
+    "component": "src/products/website/pages/help-account/HelpAccountDocumentPage.tsx",
+    "exportName": "HelpAccountDocumentPage"
+  },
+  {
+    "route": "/support",
+    "product": "website",
+    "content": "src/products/website/pages/support/content.json",
+    "component": "src/products/website/pages/support/SupportDocumentPage.tsx",
+    "exportName": "SupportDocumentPage"
+  },
+  {
+    "route": "/developers",
+    "product": "website",
+    "content": "src/products/website/pages/developers/content.json",
+    "component": "src/products/website/pages/developers/DevelopersDocumentPage.tsx",
+    "exportName": "DevelopersDocumentPage"
+  },
+  {
+    "route": "/developers/api",
+    "product": "website",
+    "content": "src/products/website/pages/developers-api/content.json",
+    "component": "src/products/website/pages/developers-api/DevelopersApiDocumentPage.tsx",
+    "exportName": "DevelopersApiDocumentPage"
+  },
+  {
+    "route": "/developers/sdks",
+    "product": "website",
+    "content": "src/products/website/pages/developers-sdks/content.json",
+    "component": "src/products/website/pages/developers-sdks/DevelopersSdksDocumentPage.tsx",
+    "exportName": "DevelopersSdksDocumentPage"
+  },
+  {
+    "route": "/integrations",
+    "product": "website",
+    "content": "src/products/website/pages/integrations/content.json",
+    "component": "src/products/website/pages/integrations/IntegrationsDocumentPage.tsx",
+    "exportName": "IntegrationsDocumentPage"
+  },
+  {
+    "route": "/developers/webhooks",
+    "product": "website",
+    "content": "src/products/website/pages/developers-webhooks/content.json",
+    "component": "src/products/website/pages/developers-webhooks/DevelopersWebhooksDocumentPage.tsx",
+    "exportName": "DevelopersWebhooksDocumentPage"
+  },
+  {
+    "route": "/developers/changelog",
+    "product": "website",
+    "content": "src/products/website/pages/developers-changelog/content.json",
+    "component": "src/products/website/pages/developers-changelog/DevelopersChangelogDocumentPage.tsx",
+    "exportName": "DevelopersChangelogDocumentPage"
+  },
+  {
+    "route": "/about",
+    "product": "website",
+    "content": "src/products/website/pages/about/content.json",
+    "component": "src/products/website/pages/about/AboutDocumentPage.tsx",
+    "exportName": "AboutDocumentPage"
+  },
+  {
+    "route": "/about/story",
+    "product": "website",
+    "content": "src/products/website/pages/about-story/content.json",
+    "component": "src/products/website/pages/about-story/AboutStoryDocumentPage.tsx",
+    "exportName": "AboutStoryDocumentPage"
+  },
+  {
+    "route": "/about/leadership",
+    "product": "website",
+    "content": "src/products/website/pages/about-leadership/content.json",
+    "component": "src/products/website/pages/about-leadership/AboutLeadershipDocumentPage.tsx",
+    "exportName": "AboutLeadershipDocumentPage"
+  },
+  {
+    "route": "/careers",
+    "product": "website",
+    "content": "src/products/website/pages/careers/content.json",
+    "component": "src/products/website/pages/careers/CareersDocumentPage.tsx",
+    "exportName": "CareersDocumentPage"
+  },
+  {
+    "route": "/press",
+    "product": "website",
+    "content": "src/products/website/pages/press/content.json",
+    "component": "src/products/website/pages/press/PressDocumentPage.tsx",
+    "exportName": "PressDocumentPage"
+  },
+  {
+    "route": "/contact",
+    "product": "website",
+    "content": "src/products/website/pages/contact/content.json",
+    "component": "src/products/website/pages/contact/ContactDocumentPage.tsx",
+    "exportName": "ContactDocumentPage"
+  },
+  {
+    "route": "/legal/privacy",
+    "product": "website",
+    "content": "src/products/website/pages/legal-privacy/content.json",
+    "component": "src/products/website/pages/legal-privacy/LegalPrivacyDocumentPage.tsx",
+    "exportName": "LegalPrivacyDocumentPage"
+  },
+  {
+    "route": "/legal/terms",
+    "product": "website",
+    "content": "src/products/website/pages/legal-terms/content.json",
+    "component": "src/products/website/pages/legal-terms/LegalTermsDocumentPage.tsx",
+    "exportName": "LegalTermsDocumentPage"
+  },
+  {
+    "route": "/legal/cookies",
+    "product": "website",
+    "content": "src/products/website/pages/legal-cookies/content.json",
+    "component": "src/products/website/pages/legal-cookies/LegalCookiesDocumentPage.tsx",
+    "exportName": "LegalCookiesDocumentPage"
+  },
+  {
+    "route": "/legal/acceptable-use",
+    "product": "website",
+    "content": "src/products/website/pages/legal-acceptable-use/content.json",
+    "component": "src/products/website/pages/legal-acceptable-use/LegalAcceptableUseDocumentPage.tsx",
+    "exportName": "LegalAcceptableUseDocumentPage"
+  },
+  {
+    "route": "/legal/dpa",
+    "product": "website",
+    "content": "src/products/website/pages/legal-dpa/content.json",
+    "component": "src/products/website/pages/legal-dpa/LegalDpaDocumentPage.tsx",
+    "exportName": "LegalDpaDocumentPage"
+  },
+  {
+    "route": "/accessibility",
+    "product": "website",
+    "content": "src/products/website/pages/accessibility/content.json",
+    "component": "src/products/website/pages/accessibility/AccessibilityDocumentPage.tsx",
+    "exportName": "AccessibilityDocumentPage"
+  },
+  {
+    "route": "/login",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/login/content.json",
+    "component": "src/products/accounts/pages/login/LoginDocumentPage.tsx",
+    "exportName": "LoginDocumentPage"
+  },
+  {
+    "route": "/signup",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/signup/content.json",
+    "component": "src/products/accounts/pages/signup/SignupDocumentPage.tsx",
+    "exportName": "SignupDocumentPage"
+  },
+  {
+    "route": "/forgot-password",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/forgot-password/content.json",
+    "component": "src/products/accounts/pages/forgot-password/ForgotPasswordDocumentPage.tsx",
+    "exportName": "ForgotPasswordDocumentPage"
+  },
+  {
+    "route": "/reset-password",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/reset-password/content.json",
+    "component": "src/products/accounts/pages/reset-password/ResetPasswordDocumentPage.tsx",
+    "exportName": "ResetPasswordDocumentPage"
+  },
+  {
+    "route": "/verify",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/verify/content.json",
+    "component": "src/products/accounts/pages/verify/VerifyDocumentPage.tsx",
+    "exportName": "VerifyDocumentPage"
+  },
+  {
+    "route": "/onboarding",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/onboarding/content.json",
+    "component": "src/products/accounts/pages/onboarding/OnboardingDocumentPage.tsx",
+    "exportName": "OnboardingDocumentPage"
+  },
+  {
+    "route": "/os",
+    "product": "workspace",
+    "content": "src/products/workspace/pages/os/content.json",
+    "component": "src/products/workspace/pages/os/OsDocumentPage.tsx",
+    "exportName": "OsDocumentPage"
+  },
+  {
+    "route": "/os/today",
+    "product": "consistency",
+    "content": "src/products/consistency/pages/os-today/content.json",
+    "component": "src/products/consistency/pages/os-today/OsTodayDocumentPage.tsx",
+    "exportName": "OsTodayDocumentPage"
+  },
+  {
+    "route": "/os/clarity",
+    "product": "clarity",
+    "content": "src/products/clarity/pages/os-clarity/content.json",
+    "component": "src/products/clarity/pages/os-clarity/OsClarityDocumentPage.tsx",
+    "exportName": "OsClarityDocumentPage"
+  },
+  {
+    "route": "/os/capability",
+    "product": "capability",
+    "content": "src/products/capability/pages/os-capability/content.json",
+    "component": "src/products/capability/pages/os-capability/OsCapabilityDocumentPage.tsx",
+    "exportName": "OsCapabilityDocumentPage"
+  },
+  {
+    "route": "/os/consistency",
+    "product": "consistency",
+    "content": "src/products/consistency/pages/os-consistency/content.json",
+    "component": "src/products/consistency/pages/os-consistency/OsConsistencyDocumentPage.tsx",
+    "exportName": "OsConsistencyDocumentPage"
+  },
+  {
+    "route": "/os/progress",
+    "product": "progress",
+    "content": "src/products/progress/pages/os-progress/content.json",
+    "component": "src/products/progress/pages/os-progress/OsProgressDocumentPage.tsx",
+    "exportName": "OsProgressDocumentPage"
+  },
+  {
+    "route": "/os/rhythm",
+    "product": "rhythm",
+    "content": "src/products/rhythm/pages/os-rhythm/content.json",
+    "component": "src/products/rhythm/pages/os-rhythm/OsRhythmDocumentPage.tsx",
+    "exportName": "OsRhythmDocumentPage"
+  },
+  {
+    "route": "/os/companion",
+    "product": "companion",
+    "content": "src/products/companion/pages/os-companion/content.json",
+    "component": "src/products/companion/pages/os-companion/OsCompanionDocumentPage.tsx",
+    "exportName": "OsCompanionDocumentPage"
+  },
+  {
+    "route": "/os/insights",
+    "product": "intelligence",
+    "content": "src/products/intelligence/pages/os-insights/content.json",
+    "component": "src/products/intelligence/pages/os-insights/OsInsightsDocumentPage.tsx",
+    "exportName": "OsInsightsDocumentPage"
+  },
+  {
+    "route": "/os/business",
+    "product": "business",
+    "content": "src/products/business/pages/os-business/content.json",
+    "component": "src/products/business/pages/os-business/OsBusinessDocumentPage.tsx",
+    "exportName": "OsBusinessDocumentPage"
+  },
+  {
+    "route": "/os/opportunities",
+    "product": "commercial",
+    "content": "src/products/commercial/pages/os-opportunities/content.json",
+    "component": "src/products/commercial/pages/os-opportunities/OsOpportunitiesDocumentPage.tsx",
+    "exportName": "OsOpportunitiesDocumentPage"
+  },
+  {
+    "route": "/os/finance",
+    "product": "finance",
+    "content": "src/products/finance/pages/os-finance/content.json",
+    "component": "src/products/finance/pages/os-finance/OsFinanceDocumentPage.tsx",
+    "exportName": "OsFinanceDocumentPage"
+  },
+  {
+    "route": "/os/people",
+    "product": "talent",
+    "content": "src/products/talent/pages/os-people/content.json",
+    "component": "src/products/talent/pages/os-people/OsPeopleDocumentPage.tsx",
+    "exportName": "OsPeopleDocumentPage"
+  },
+  {
+    "route": "/os/workflows",
+    "product": "workflows",
+    "content": "src/products/workflows/pages/os-workflows/content.json",
+    "component": "src/products/workflows/pages/os-workflows/OsWorkflowsDocumentPage.tsx",
+    "exportName": "OsWorkflowsDocumentPage"
+  },
+  {
+    "route": "/os/workflows/[id]",
+    "product": "workflows",
+    "content": "src/products/workflows/pages/os-workflows-detail/content.json",
+    "component": "src/products/workflows/pages/os-workflows-detail/OsWorkflowsDetailDocumentPage.tsx",
+    "exportName": "OsWorkflowsDetailDocumentPage"
+  },
+  {
+    "route": "/os/organization",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/os-organization/content.json",
+    "component": "src/products/organizations/pages/os-organization/OsOrganizationDocumentPage.tsx",
+    "exportName": "OsOrganizationDocumentPage"
+  },
+  {
+    "route": "/os/teams",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/os-teams/content.json",
+    "component": "src/products/organizations/pages/os-teams/OsTeamsDocumentPage.tsx",
+    "exportName": "OsTeamsDocumentPage"
+  },
+  {
+    "route": "/os/organization/rhythm",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/os-organization-rhythm/content.json",
+    "component": "src/products/organizations/pages/os-organization-rhythm/OsOrganizationRhythmDocumentPage.tsx",
+    "exportName": "OsOrganizationRhythmDocumentPage"
+  },
+  {
+    "route": "/os/analytics",
+    "product": "analytics",
+    "content": "src/products/analytics/pages/os-analytics/content.json",
+    "component": "src/products/analytics/pages/os-analytics/OsAnalyticsDocumentPage.tsx",
+    "exportName": "OsAnalyticsDocumentPage"
+  },
+  {
+    "route": "/os/integrations",
+    "product": "integrations",
+    "content": "src/products/integrations/pages/os-integrations/content.json",
+    "component": "src/products/integrations/pages/os-integrations/OsIntegrationsDocumentPage.tsx",
+    "exportName": "OsIntegrationsDocumentPage"
+  },
+  {
+    "route": "/os/governance",
+    "product": "governance",
+    "content": "src/products/governance/pages/os-governance/content.json",
+    "component": "src/products/governance/pages/os-governance/OsGovernanceDocumentPage.tsx",
+    "exportName": "OsGovernanceDocumentPage"
+  },
+  {
+    "route": "/os/audit",
+    "product": "governance",
+    "content": "src/products/governance/pages/os-audit/content.json",
+    "component": "src/products/governance/pages/os-audit/OsAuditDocumentPage.tsx",
+    "exportName": "OsAuditDocumentPage"
+  },
+  {
+    "route": "/os/admin",
+    "product": "organizations",
+    "content": "src/products/organizations/pages/os-admin/content.json",
+    "component": "src/products/organizations/pages/os-admin/OsAdminDocumentPage.tsx",
+    "exportName": "OsAdminDocumentPage"
+  },
+  {
+    "route": "/os/profile",
+    "product": "accounts",
+    "content": "src/products/accounts/pages/os-profile/content.json",
+    "component": "src/products/accounts/pages/os-profile/OsProfileDocumentPage.tsx",
+    "exportName": "OsProfileDocumentPage"
+  },
+  {
+    "route": "/os/settings",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings/content.json",
+    "component": "src/products/settings/pages/os-settings/OsSettingsDocumentPage.tsx",
+    "exportName": "OsSettingsDocumentPage"
+  },
+  {
+    "route": "/os/settings/ai",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-ai/content.json",
+    "component": "src/products/settings/pages/os-settings-ai/OsSettingsAiDocumentPage.tsx",
+    "exportName": "OsSettingsAiDocumentPage"
+  },
+  {
+    "route": "/os/settings/privacy",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-privacy/content.json",
+    "component": "src/products/settings/pages/os-settings-privacy/OsSettingsPrivacyDocumentPage.tsx",
+    "exportName": "OsSettingsPrivacyDocumentPage"
+  },
+  {
+    "route": "/os/notifications",
+    "product": "notifications",
+    "content": "src/products/notifications/pages/os-notifications/content.json",
+    "component": "src/products/notifications/pages/os-notifications/OsNotificationsDocumentPage.tsx",
+    "exportName": "OsNotificationsDocumentPage"
+  },
+  {
+    "route": "/os/settings/workspace",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-workspace/content.json",
+    "component": "src/products/settings/pages/os-settings-workspace/OsSettingsWorkspaceDocumentPage.tsx",
+    "exportName": "OsSettingsWorkspaceDocumentPage"
+  },
+  {
+    "route": "/os/settings/members",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-members/content.json",
+    "component": "src/products/settings/pages/os-settings-members/OsSettingsMembersDocumentPage.tsx",
+    "exportName": "OsSettingsMembersDocumentPage"
+  },
+  {
+    "route": "/os/settings/billing",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-billing/content.json",
+    "component": "src/products/settings/pages/os-settings-billing/OsSettingsBillingDocumentPage.tsx",
+    "exportName": "OsSettingsBillingDocumentPage"
+  },
+  {
+    "route": "/os/settings/plan",
+    "product": "settings",
+    "content": "src/products/settings/pages/os-settings-plan/content.json",
+    "component": "src/products/settings/pages/os-settings-plan/OsSettingsPlanDocumentPage.tsx",
+    "exportName": "OsSettingsPlanDocumentPage"
+  }
+]

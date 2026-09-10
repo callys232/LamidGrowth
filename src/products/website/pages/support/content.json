@@ -1,0 +1,87 @@
+{
+  "page": 42,
+  "name": "SUPPORT",
+  "source_paragraph": 882,
+  "gates": [],
+  "route": "/support",
+  "indexing": "index, follow",
+  "canonical": "/support",
+  "seo_title": "Support | LAMID ONE",
+  "meta_description": "Tell us what you are trying to resolve and we will route the request to the right support path.",
+  "title": "How Can We Help?",
+  "description": "Tell us what you are trying to resolve and we will route the request to the right support path.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "How Can We Help?",
+    "paragraphs": [
+      {
+        "text": "How Can We Help?",
+        "sourceParagraph": 888
+      },
+      {
+        "text": "Tell us what you are trying to resolve and we will route the request to the right support path.",
+        "sourceParagraph": 889
+      },
+      {
+        "text": "CTA: Contact Support",
+        "sourceParagraph": 890
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Choose a Topic",
+      "title": "Choose a Topic",
+      "paragraphs": [
+        {
+          "text": "Choose a Topic",
+          "sourceParagraph": 891
+        },
+        {
+          "text": "• Product use",
+          "sourceParagraph": 892
+        },
+        {
+          "text": "• Account access",
+          "sourceParagraph": 893
+        },
+        {
+          "text": "• Billing",
+          "sourceParagraph": 894
+        }
+      ]
+    },
+    {
+      "label": "Describe the Outcome",
+      "title": "Describe the Outcome",
+      "paragraphs": [
+        {
+          "text": "Describe the Outcome",
+          "sourceParagraph": 895
+        },
+        {
+          "text": "Tell us what you expected, what happened, and what you need to achieve.",
+          "sourceParagraph": 896
+        }
+      ]
+    },
+    {
+      "label": "Submit",
+      "title": "Submit",
+      "paragraphs": [
+        {
+          "text": "Submit",
+          "sourceParagraph": 897
+        },
+        {
+          "text": "Send the issue with enough context for support to route it correctly and respond efficiently.",
+          "sourceParagraph": 898
+        },
+        {
+          "text": "CTA: Contact Support",
+          "sourceParagraph": 899
+        }
+      ]
+    }
+  ]
+}

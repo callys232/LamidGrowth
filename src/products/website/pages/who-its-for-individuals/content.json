@@ -1,0 +1,93 @@
+{
+  "page": 15,
+  "name": "INDIVIDUALS",
+  "source_paragraph": 352,
+  "gates": [],
+  "route": "/who-its-for/individuals",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/individuals",
+  "seo_title": "Individuals | LAMID ONE",
+  "meta_description": "Use a private operating environment for decisions, capability, priorities, and progress.",
+  "title": "More Clarity for What Matters to You.",
+  "description": "Use a private operating environment for decisions, capability, priorities, and progress.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "More Clarity for What Matters to You.",
+    "paragraphs": [
+      {
+        "text": "More Clarity for What Matters to You.",
+        "sourceParagraph": 358
+      },
+      {
+        "text": "Use a private operating environment for decisions, capability, priorities, and progress.",
+        "sourceParagraph": 359
+      },
+      {
+        "text": "CTA: Start With LAMID ONE",
+        "sourceParagraph": 360
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Set the Focus",
+      "title": "Set the Focus",
+      "paragraphs": [
+        {
+          "text": "Set the Focus",
+          "sourceParagraph": 361
+        },
+        {
+          "text": "Bring competing priorities into one clear view.",
+          "sourceParagraph": 362
+        }
+      ]
+    },
+    {
+      "label": "Strengthen Capability",
+      "title": "Strengthen Capability",
+      "paragraphs": [
+        {
+          "text": "Strengthen Capability",
+          "sourceParagraph": 363
+        },
+        {
+          "text": "Identify what you need to learn, access, build, or change.",
+          "sourceParagraph": 364
+        }
+      ]
+    },
+    {
+      "label": "Keep Progress Moving",
+      "title": "Keep Progress Moving",
+      "paragraphs": [
+        {
+          "text": "Keep Progress Moving",
+          "sourceParagraph": 365
+        },
+        {
+          "text": "Turn important intentions into realistic action and review.",
+          "sourceParagraph": 366
+        }
+      ]
+    },
+    {
+      "label": "Your Personal Context Stays Personal.",
+      "title": "Your Personal Context Stays Personal.",
+      "paragraphs": [
+        {
+          "text": "Your Personal Context Stays Personal.",
+          "sourceParagraph": 367
+        },
+        {
+          "text": "Your personal experience stays focused on your work without exposing organization-level complexity.",
+          "sourceParagraph": 368
+        },
+        {
+          "text": "CTA: Start With LAMID ONE",
+          "sourceParagraph": 369
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+﻿tool_id,domain,capability,engine,epic,phase,tier,visibility
+T-001,Decision & Diagnostics,Business Health Check,Clarity,CL-02,P3,Foundation,User-facing
+T-002,Decision & Diagnostics,Project Health Check,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-003,Decision & Diagnostics,Organizational Diagnostic,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-004,Decision & Diagnostics,Digital Readiness Assessment,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-005,Decision & Diagnostics,Modernization Readiness Assessment,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-006,Decision & Diagnostics,Talent Diagnostic,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-007,Decision & Diagnostics,Root Cause Analyzer,Clarity,CL-02,P3,Foundation,User-facing
+T-008,Decision & Diagnostics,Gap Analyzer,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-009,Decision & Diagnostics,Constraint Analyzer,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-010,Decision & Diagnostics,Dependency Mapper,Clarity,CL-02,P5/P6,Expansion,User-facing
+T-011,Decision & Diagnostics,Decision Landscape Mapper,Clarity,CL-03,P5/P6,Expansion,User-facing
+T-012,Decision & Diagnostics,Decision Status Analyzer,Clarity,CL-03,P5/P6,Expansion,User-facing
+T-013,Decision & Diagnostics,Decision Path Simulator,Clarity,CL-03,P3,Foundation,User-facing
+T-014,Decision & Diagnostics,Outcome Probability Analyzer,Clarity,CL-04,P5/P6,Expansion,User-facing
+T-015,Decision & Diagnostics,Decision Timing Optimizer,Clarity,CL-04,P5/P6,Expansion,User-facing
+T-016,Decision & Diagnostics,Conflicting Priorities Detector,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-017,Decision & Diagnostics,Decision Consistency Check,Clarity,CL-03,P5/P6,Expansion,User-facing
+T-018,Decision & Diagnostics,Option Selection Assistant,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-019,Decision & Diagnostics,Multi-Factor Decision Analyzer,Clarity,CL-03,P5/P6,Expansion,User-facing
+T-020,Decision & Diagnostics,Decision Framework Builder,Clarity,CL-03,P5/P6,Expansion,User-facing
+T-021,Decision & Diagnostics,Scenario Explorer,Clarity,CL-04,P5/P6,Expansion,User-facing
+T-022,Decision & Diagnostics,Scenario Reality Check,Clarity,CL-04,P5/P6,Expansion,User-facing
+T-023,Decision & Diagnostics,Scenario Planner,Clarity,CL-04,P3,Foundation,User-facing
+T-024,Decision & Diagnostics,Strategic Identity Builder,Clarity,CL-05,P5/P6,Expansion,User-facing
+T-025,Decision & Diagnostics,Strategic Direction Setter,Clarity,CL-05,P5/P6,Expansion,User-facing
+T-026,Decision & Diagnostics,Strategic Priority Analyzer,Clarity,CL-05,P5/P6,Expansion,User-facing
+T-027,Decision & Diagnostics,Cross-Function Strategy Alignment,Clarity,CL-05,P5/P6,Expansion,User-facing
+T-028,Decision & Diagnostics,Data Source Validator,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-029,Decision & Diagnostics,Evidence Analyzer,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-030,Decision & Diagnostics,Early Warning Signal Monitor,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-031,Decision & Diagnostics,Stakeholder Alignment Analyzer,Clarity,CL-06,P5/P6,Expansion,User-facing
+T-032,Decision & Diagnostics,Risk Assessment,Clarity,CL-06,P3,Foundation,User-facing
+T-033,Decision & Diagnostics,Opportunity Analyzer,Clarity,CL-06,P3,Foundation,User-facing
+T-034,Planning / Commercial / Talent / Creation,Strategy Builder,Capability,CP-02,P5/P6,Expansion,User-facing
+T-035,Planning / Commercial / Talent / Creation,Business Plan Builder,Capability,CP-02,P5/P6,Expansion,User-facing
+T-036,Planning / Commercial / Talent / Creation,Transformation Planner,Capability,CP-02,P5/P6,Expansion,User-facing
+T-037,Planning / Commercial / Talent / Creation,Enterprise Blueprint Generator,Capability,CP-02,P5/P6,Expansion,User-facing
+T-038,Planning / Commercial / Talent / Creation,Project Plan Builder,Capability,CP-02,P3,Foundation,User-facing
+T-039,Planning / Commercial / Talent / Creation,Roadmap Builder,Capability,CP-02,P5/P6,Expansion,User-facing
+T-040,Planning / Commercial / Talent / Creation,Milestone Generator,Capability,CP-02,P5/P6,Expansion,User-facing
+T-041,Planning / Commercial / Talent / Creation,Timeline Builder,Capability,CP-02,P5/P6,Expansion,User-facing
+T-042,Planning / Commercial / Talent / Creation,Resource Planner,Capability,CP-02,P5/P6,Expansion,User-facing
+T-043,Planning / Commercial / Talent / Creation,Capacity Planner,Capability,CP-02,P5/P6,Expansion,User-facing
+T-044,Planning / Commercial / Talent / Creation,Proposal Drafter,Capability,CP-03,P3,Foundation,User-facing
+T-045,Planning / Commercial / Talent / Creation,Scope of Work Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-046,Planning / Commercial / Talent / Creation,Statement of Work Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-047,Planning / Commercial / Talent / Creation,Client Brief Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-048,Planning / Commercial / Talent / Creation,Deliverable Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-049,Planning / Commercial / Talent / Creation,Acceptance Criteria Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-050,Planning / Commercial / Talent / Creation,Quote Generator,Capability,CP-03,P5/P6,Expansion,User-facing
+T-051,Planning / Commercial / Talent / Creation,Estimate Generator,Capability,CP-03,P5/P6,Expansion,User-facing
+T-052,Planning / Commercial / Talent / Creation,Budget Estimator,Capability,CP-04,P3,Foundation,User-facing
+T-053,Planning / Commercial / Talent / Creation,Pricing Builder,Capability,CP-04,P5/P6,Expansion,User-facing
+T-054,Planning / Commercial / Talent / Creation,Invoice Generator,Capability,CP-04,P3,Foundation,User-facing
+T-055,Planning / Commercial / Talent / Creation,Contract Builder,Capability,CP-04,P3,Foundation,User-facing
+T-056,Planning / Commercial / Talent / Creation,Payment Schedule Builder,Capability,CP-04,P5/P6,Expansion,User-facing
+T-057,Planning / Commercial / Talent / Creation,Change Order Generator,Capability,CP-03,P5/P6,Expansion,User-facing
+T-058,Planning / Commercial / Talent / Creation,Consultant Matcher,Capability,CP-05,P3,Foundation,User-facing
+T-059,Planning / Commercial / Talent / Creation,Expert Finder,Capability,CP-05,P5/P6,Expansion,User-facing
+T-060,Planning / Commercial / Talent / Creation,Project-to-Talent Matcher,Capability,CP-05,P5/P6,Expansion,User-facing
+T-061,Planning / Commercial / Talent / Creation,Talent Vetting,Capability,CP-05,P5/P6,Expansion,User-facing
+T-062,Planning / Commercial / Talent / Creation,Candidate Screening,Capability,CP-05,P5/P6,Expansion,User-facing
+T-063,Planning / Commercial / Talent / Creation,Skills Assessment,Capability,CP-07,P5/P6,Expansion,User-facing
+T-064,Planning / Commercial / Talent / Creation,Capability Mapper,Capability,CP-06,P3,Foundation,User-facing
+T-065,Planning / Commercial / Talent / Creation,Skill Gap Analyzer,Capability,CP-06,P5/P6,Expansion,User-facing
+T-066,Planning / Commercial / Talent / Creation,Workforce Planner,Capability,CP-06,P5/P6,Expansion,User-facing
+T-067,Planning / Commercial / Talent / Creation,Role Architecture Builder,Capability,CP-06,P5/P6,Expansion,User-facing
+T-068,Planning / Commercial / Talent / Creation,Recruitment / ATS,Capability,CP-06,P5/P6,Expansion,User-facing
+T-069,Planning / Commercial / Talent / Creation,Leadership Pipeline,Capability,CP-06,P5/P6,Expansion,User-facing
+T-070,Planning / Commercial / Talent / Creation,Succession Planner,Capability,CP-06,P5/P6,Expansion,User-facing
+T-071,Planning / Commercial / Talent / Creation,LMS,Capability,CP-07,P3,Foundation,User-facing
+T-072,Planning / Commercial / Talent / Creation,Learning Path Builder,Capability,CP-07,P5/P6,Expansion,User-facing
+T-073,Planning / Commercial / Talent / Creation,AI Learning Coach,Capability,CP-07,P5/P6,Expansion,User-facing
+T-074,Planning / Commercial / Talent / Creation,Assessment Builder,Capability,CP-07,P5/P6,Expansion,User-facing
+T-075,Planning / Commercial / Talent / Creation,Simulation Builder,Capability,CP-07,P5/P6,Expansion,User-facing
+T-076,Planning / Commercial / Talent / Creation,Certification Manager,Capability,CP-07,P5/P6,Expansion,User-facing
+T-077,Planning / Commercial / Talent / Creation,Upskilling Planner,Capability,CP-07,P5/P6,Expansion,User-facing
+T-078,Planning / Commercial / Talent / Creation,Reskilling Planner,Capability,CP-07,P5/P6,Expansion,User-facing
+T-079,Planning / Commercial / Talent / Creation,Mentorship Matcher,Capability,CP-07,P5/P6,Expansion,User-facing
+T-080,Planning / Commercial / Talent / Creation,Career Pathing,Capability,CP-06,P5/P6,Expansion,User-facing
+T-081,Planning / Commercial / Talent / Creation,Document Studio,Capability,CP-08,P3,Foundation,User-facing
+T-082,Planning / Commercial / Talent / Creation,Report Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-083,Planning / Commercial / Talent / Creation,Presentation Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-084,Planning / Commercial / Talent / Creation,Research Brief Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-085,Planning / Commercial / Talent / Creation,Content Planner,Capability,CP-08,P5/P6,Expansion,User-facing
+T-086,Planning / Commercial / Talent / Creation,Script Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-087,Planning / Commercial / Talent / Creation,Campaign Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-088,Planning / Commercial / Talent / Creation,SOP Writer,Capability,CP-08,P5/P6,Expansion,User-facing
+T-089,Planning / Commercial / Talent / Creation,Policy Drafter,Capability,CP-08,P5/P6,Expansion,User-facing
+T-090,Planning / Commercial / Talent / Creation,Requirements Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-091,Planning / Commercial / Talent / Creation,RFP/RFQ Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-092,Planning / Commercial / Talent / Creation,Tender Response Builder,Capability,CP-08,P5/P6,Expansion,User-facing
+T-093,Planning / Commercial / Talent / Creation,Grant Proposal Builder,Capability,CP-03,P5/P6,Expansion,User-facing
+T-094,Execution / Quality / Commercial Assurance,Workflow Engine,Consistency,CS-02,P4,Foundation,User-facing
+T-095,Execution / Quality / Commercial Assurance,Workflow Builder,Consistency,CS-02,P5/P6,Expansion,User-facing
+T-096,Execution / Quality / Commercial Assurance,Process Mapper,Consistency,CS-02,P5/P6,Expansion,User-facing
+T-097,Execution / Quality / Commercial Assurance,Operating Rhythm Engine,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-098,Execution / Quality / Commercial Assurance,Operating Calendar,Consistency,CS-08,P5/P6,Expansion,User-facing
+T-099,Execution / Quality / Commercial Assurance,Cadence Mapper,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-100,Execution / Quality / Commercial Assurance,Pace of Execution Monitor,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-101,Execution / Quality / Commercial Assurance,Cadence Drift Alert,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-102,Execution / Quality / Commercial Assurance,Workload Balance Monitor,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-103,Execution / Quality / Commercial Assurance,Cross-Team Cadence Sync,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-104,Execution / Quality / Commercial Assurance,Operational Flow Tracker,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-105,Execution / Quality / Commercial Assurance,Project Workspace,Consistency,CS-03,P4,Foundation,User-facing
+T-106,Execution / Quality / Commercial Assurance,Task Manager,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-107,Execution / Quality / Commercial Assurance,Milestone Tracker,Consistency,CS-03,P4,Foundation,User-facing
+T-108,Execution / Quality / Commercial Assurance,Deliverable Tracker,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-109,Execution / Quality / Commercial Assurance,Project Status Monitor,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-110,Execution / Quality / Commercial Assurance,Blocker Detector,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-111,Execution / Quality / Commercial Assurance,Deadline Intelligence,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-112,Execution / Quality / Commercial Assurance,Commitment Tracker,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-113,Execution / Quality / Commercial Assurance,SLA Tracker,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-114,Execution / Quality / Commercial Assurance,Follow-Up Manager,Consistency,CS-04,P5/P6,Expansion,User-facing
+T-115,Execution / Quality / Commercial Assurance,Change Request Manager,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-116,Execution / Quality / Commercial Assurance,Project Closeout,Consistency,CS-03,P5/P6,Expansion,User-facing
+T-117,Execution / Quality / Commercial Assurance,Quality Standards Builder,Consistency,CS-05,P5/P6,Expansion,User-facing
+T-118,Execution / Quality / Commercial Assurance,Quality Assurance Checker,Consistency,CS-05,P5/P6,Expansion,User-facing
+T-119,Execution / Quality / Commercial Assurance,Quality Drift Detector,Consistency,CS-05,P5/P6,Expansion,User-facing
+T-120,Execution / Quality / Commercial Assurance,Quality Scorecard,Consistency,CS-05,P5/P6,Expansion,User-facing
+T-121,Execution / Quality / Commercial Assurance,Evidence Checklist,Consistency,CS-05,P5/P6,Expansion,User-facing
+T-122,Execution / Quality / Commercial Assurance,Deliverable Verification,Consistency,CS-06,P4,Foundation,User-facing
+T-123,Execution / Quality / Commercial Assurance,Acceptance Criteria Verifier,Consistency,CS-06,P5/P6,Expansion,User-facing
+T-124,Execution / Quality / Commercial Assurance,Submission Integrity Checker,Consistency,CS-06,P5/P6,Expansion,User-facing
+T-125,Execution / Quality / Commercial Assurance,Evidence Validator,Consistency,CS-06,P5/P6,Expansion,User-facing
+T-126,Execution / Quality / Commercial Assurance,Revision Manager,Consistency,CS-06,P5/P6,Expansion,User-facing
+T-127,Execution / Quality / Commercial Assurance,Milestone Approval,Consistency,CS-07,P4,Foundation,User-facing
+T-128,Execution / Quality / Commercial Assurance,Approval Workflow,Consistency,CS-02,P5/P6,Expansion,User-facing
+T-129,Execution / Quality / Commercial Assurance,Dispute Workflow,Consistency,CS-02,P5/P6,Expansion,User-facing
+T-130,Execution / Quality / Commercial Assurance,Payment Release Manager,Consistency,CS-07,P4,Foundation,User-facing
+T-131,Execution / Quality / Commercial Assurance,Milestone Payment Manager,Consistency,CS-07,P5/P6,Expansion,User-facing
+T-132,Execution / Quality / Commercial Assurance,Invoice Tracker,Consistency,CS-08,P5/P6,Expansion,User-facing
+T-133,Execution / Quality / Commercial Assurance,Payment Reconciliation,Consistency,CS-08,P5/P6,Expansion,User-facing
+T-134,Execution / Quality / Commercial Assurance,Ledger,Consistency,CS-08,P4,Foundation,User-facing
+T-135,Execution / Quality / Commercial Assurance,Contract Obligation Tracker,Consistency,CS-08,P5/P6,Expansion,User-facing
+T-136,Execution / Quality / Commercial Assurance,Completion Certificate,Consistency,CS-08,P5/P6,Expansion,User-facing
+T-137,Growth / Market / Modernization,Opportunity Signals Engine,Growth,GR-01,P5,Foundation,User-facing
+T-138,Growth / Market / Modernization,Opportunity Mapper,Growth,GR-02,P5/P6,Expansion,User-facing
+T-139,Growth / Market / Modernization,Growth Opportunity Scanner,Growth,GR-02,P5/P6,Expansion,User-facing
+T-140,Growth / Market / Modernization,Market Intelligence,Growth,GR-02,P5,Foundation,User-facing
+T-141,Growth / Market / Modernization,Competitor Intelligence,Growth,GR-02,P5/P6,Expansion,User-facing
+T-142,Growth / Market / Modernization,Market Trend Analyzer,Growth,GR-02,P5/P6,Expansion,User-facing
+T-143,Growth / Market / Modernization,Customer Insight Analyzer,Growth,GR-02,P5/P6,Expansion,User-facing
+T-144,Growth / Market / Modernization,Market Expansion Planner,Growth,GR-02,P5/P6,Expansion,User-facing
+T-145,Growth / Market / Modernization,Customer Opportunity Scanner,Growth,GR-02,P5/P6,Expansion,User-facing
+T-146,Growth / Market / Modernization,Digital Maturity Assessment,Growth,GR-03,P5,Foundation,User-facing
+T-147,Growth / Market / Modernization,Digital Capability Gap Analyzer,Growth,GR-03,P5/P6,Expansion,User-facing
+T-148,Growth / Market / Modernization,Modernization Roadmap,Growth,GR-03,P5/P6,Expansion,User-facing
+T-149,Growth / Market / Modernization,Technology Opportunity Mapper,Growth,GR-02,P5/P6,Expansion,User-facing
+T-150,Growth / Market / Modernization,Process Digitization Planner,Growth,GR-03,P5/P6,Expansion,User-facing
+T-151,Growth / Market / Modernization,Innovation Opportunity Scanner,Growth,GR-02,P5/P6,Expansion,User-facing
+T-152,Growth / Market / Modernization,KPI Builder,Growth,GR-04,P5,Foundation,User-facing
+T-153,Growth / Market / Modernization,Performance Dashboard,Growth,GR-04,P5,Foundation,User-facing
+T-154,Growth / Market / Modernization,Growth Scorecard,Growth,GR-04,P5/P6,Expansion,User-facing
+T-155,Growth / Market / Modernization,Business Impact Estimator,Growth,GR-04,P5/P6,Expansion,User-facing
+T-156,Growth / Market / Modernization,Outcome Forecast,Growth,GR-04,P5/P6,Expansion,User-facing
+T-157,Growth / Market / Modernization,Trend Analyzer,Growth,GR-04,P5/P6,Expansion,User-facing
+T-158,Growth / Market / Modernization,Variance Analyzer,Growth,GR-04,P5/P6,Expansion,User-facing
+T-159,Growth / Market / Modernization,Progress Benchmark,Growth,GR-04,P5/P6,Expansion,User-facing
+T-160,Growth / Market / Modernization,Performance Benchmark,Growth,GR-04,P5/P6,Expansion,User-facing
+T-161,Growth / Market / Modernization,ROI Analyzer,Growth,GR-04,P5/P6,Expansion,User-facing
+T-162,Growth / Market / Modernization,Impact Measurement,Growth,GR-04,P5/P6,Expansion,User-facing
+T-163,Growth / Market / Modernization,Experiment Builder,Growth,GR-05,P5,Foundation,User-facing
+T-164,Growth / Market / Modernization,Hypothesis Builder,Growth,GR-05,P5/P6,Expansion,User-facing
+T-165,Growth / Market / Modernization,A/B Test Planner,Growth,GR-05,P5/P6,Expansion,User-facing
+T-166,Growth / Market / Modernization,Experiment Tracker,Growth,GR-05,P5/P6,Expansion,User-facing
+T-167,Growth / Market / Modernization,Experiment Analyzer,Growth,GR-05,P5/P6,Expansion,User-facing
+T-168,Growth / Market / Modernization,Optimization Planner,Growth,GR-05,P5/P6,Expansion,User-facing
+T-169,Growth / Market / Modernization,Breakthrough Opportunity Mapping,Growth,GR-02,P5/P6,Expansion,User-facing
+T-170,Growth / Market / Modernization,Pace of Transformation,Growth,GR-06,P5/P6,Expansion,User-facing
+T-171,Growth / Market / Modernization,Transformation Drift Alert,Growth,GR-06,P5/P6,Expansion,User-facing
+T-172,Growth / Market / Modernization,Transformation Stability Score,Growth,GR-06,P5/P6,Expansion,User-facing
+T-173,Growth / Market / Modernization,Transformation Alignment,Growth,GR-06,P5/P6,Expansion,User-facing
+T-174,Growth / Market / Modernization,Transformation Progress Tracker,Growth,GR-06,P5/P6,Expansion,User-facing
+T-175,Growth / Market / Modernization,Transformation Impact Analyzer,Growth,GR-04,P5/P6,Expansion,User-facing
+T-176,Growth / Market / Modernization,Enterprise Renewal Planner,Growth,GR-06,P5/P6,Expansion,User-facing
+T-177,Growth / Market / Modernization,Scale Readiness Assessment,Growth,GR-06,P5/P6,Expansion,User-facing
+T-178,Shared OS Service,Search & Discovery,Shared,SH-05,P1,Foundation,Internal / Platform
+T-179,Shared OS Service,File Upload & Secure Storage,Shared,SH-05,P1,Foundation,Internal / Platform
+T-180,Shared OS Service,In-App Messaging,Shared,SH-06,P2,Foundation,Internal / Platform
+T-181,Shared OS Service,Notifications Hub,Shared,SH-06,P2,Foundation,Internal / Platform
+T-182,Shared OS Service,Booking,Shared,SH-06,P2,Foundation,Internal / Platform
+T-183,Shared OS Service,Organization Management,Shared,SH-07,P1,Foundation,Internal / Platform
+T-184,Shared OS Service,Team Management,Shared,SH-07,P1,Foundation,Internal / Platform
+T-185,Shared OS Service,KYC Verification,Shared,SH-01,P1,Foundation,Internal / Platform
+T-186,Shared OS Service,Role & Permission Manager,Shared,SH-01,P1,Foundation,Internal / Platform
+T-187,Shared OS Service,Audit Log,Shared,SH-09,P1,Foundation,Internal / Platform
+T-188,Shared OS Service,Decision Log,Shared,SH-09,P1,Foundation,Internal / Platform
+T-189,Shared OS Service,Evidence Register,Shared,SH-09,P1,Foundation,Internal / Platform
+T-190,Shared OS Service,Admin Console,Shared,SH-09,P1,Foundation,Internal / Platform
+T-191,Shared OS Service,Subscription & Billing,Shared,SH-08,P1,Foundation,Internal / Platform
+T-192,Shared OS Service,Wallet,Shared,SH-08,P1,Foundation,Internal / Platform
+T-193,Shared OS Service,Payment Gateway Adapter,Shared,SH-08,P1,Foundation,Internal / Platform
+T-194,Shared OS Service,Webhook Processor,Shared,SH-10,P2,Foundation,Internal / Platform
+T-195,Shared OS Service,Model Gateway,Shared,SH-11,P2,Foundation,Internal / Platform
+T-196,Shared OS Service,Context Graph,Shared,SH-02,P2,Foundation,Internal / Platform
+T-197,Shared OS Service,Event Bus,Shared,SH-10,P2,Foundation,Internal / Platform
+T-198,Shared OS Service,Policy Decision Point,Shared,SH-09,P1,Foundation,Internal / Platform
+T-199,Shared OS Service,Rate Limit Service,Shared,SH-12,P1,Foundation,Internal / Platform
+T-200,Shared OS Service,Malware Scan Service,Shared,SH-12,P1,Foundation,Internal / Platform
+T-201,Shared OS Service,Identity Risk Service,Shared,SH-01,P1,Foundation,Internal / Platform
+T-202,Shared OS Service,Connector Registry,Shared,SH-10,P2,Foundation,Internal / Platform

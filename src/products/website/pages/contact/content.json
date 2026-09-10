@@ -1,0 +1,69 @@
+{
+  "page": 54,
+  "name": "CONTACT",
+  "source_paragraph": 1133,
+  "gates": [],
+  "route": "/contact",
+  "indexing": "index, follow",
+  "canonical": "/contact",
+  "seo_title": "Contact | LAMID ONE",
+  "meta_description": "Choose what you need and reach the right team faster.",
+  "title": "Start the Right Conversation.",
+  "description": "Choose what you need and reach the right team faster.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start the Right Conversation.",
+    "paragraphs": [
+      {
+        "text": "Start the Right Conversation.",
+        "sourceParagraph": 1139
+      },
+      {
+        "text": "Choose what you need and reach the right team faster.",
+        "sourceParagraph": 1140
+      },
+      {
+        "text": "CTA: Send Inquiry",
+        "sourceParagraph": 1141
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Choose a Topic",
+      "title": "Choose a Topic",
+      "paragraphs": [
+        {
+          "text": "Choose a Topic",
+          "sourceParagraph": 1142
+        },
+        {
+          "text": "• Product question",
+          "sourceParagraph": 1143
+        },
+        {
+          "text": "• Business inquiry",
+          "sourceParagraph": 1144
+        },
+        {
+          "text": "• Enterprise",
+          "sourceParagraph": 1145
+        }
+      ]
+    },
+    {
+      "label": "Tell Us the Outcome",
+      "title": "Tell Us the Outcome",
+      "paragraphs": [
+        {
+          "text": "Tell Us the Outcome",
+          "sourceParagraph": 1146
+        },
+        {
+          "text": "Describe what you are trying to achieve and the context that matters.",
+          "sourceParagraph": 1147
+        }
+      ]
+    }
+  ]
+}

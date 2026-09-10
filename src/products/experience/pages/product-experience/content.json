@@ -1,0 +1,93 @@
+{
+  "page": 4,
+  "name": "ADAPTIVE PRODUCT EXPERIENCE",
+  "source_paragraph": 138,
+  "gates": [],
+  "route": "/product/experience",
+  "indexing": "index, follow",
+  "canonical": "/product/experience",
+  "seo_title": "Adaptive Product Experience | LAMID ONE",
+  "meta_description": "LAMID ONE changes what you see according to your context, responsibility, and needs. You gain depth without moving into another product.",
+  "title": "The Same OS. Shaped Around Different Work.",
+  "description": "LAMID ONE changes what you see according to your context, responsibility, and needs. You gain depth without moving into another product.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "The Same OS. Shaped Around Different Work.",
+    "paragraphs": [
+      {
+        "text": "The Same OS. Shaped Around Different Work.",
+        "sourceParagraph": 144
+      },
+      {
+        "text": "LAMID ONE changes what you see according to your context, responsibility, and needs. You gain depth without moving into another product.",
+        "sourceParagraph": 145
+      },
+      {
+        "text": "CTA: See LAMID ONE in Action",
+        "sourceParagraph": 146
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Personal",
+      "title": "Personal",
+      "paragraphs": [
+        {
+          "text": "Personal",
+          "sourceParagraph": 147
+        },
+        {
+          "text": "Focus on Today, Clarity, Capability, Consistency, Progress, and the Companion.",
+          "sourceParagraph": 148
+        }
+      ]
+    },
+    {
+      "label": "Professional & Creator",
+      "title": "Professional & Creator",
+      "paragraphs": [
+        {
+          "text": "Professional & Creator",
+          "sourceParagraph": 149
+        },
+        {
+          "text": "Add professional context, opportunity guidance, capability development, progress history, and business context where relevant.",
+          "sourceParagraph": 150
+        }
+      ]
+    },
+    {
+      "label": "Founder & SME",
+      "title": "Founder & SME",
+      "paragraphs": [
+        {
+          "text": "Founder & SME",
+          "sourceParagraph": 151
+        },
+        {
+          "text": "Add operational clarity, financial insight, opportunity analysis, team capability, and advanced execution.",
+          "sourceParagraph": 152
+        }
+      ]
+    },
+    {
+      "label": "The Context Changes. The System Remains ONE.",
+      "title": "The Context Changes. The System Remains ONE.",
+      "paragraphs": [
+        {
+          "text": "The Context Changes. The System Remains ONE.",
+          "sourceParagraph": 153
+        },
+        {
+          "text": "Your workspace gains relevant depth as your responsibilities grow without forcing you into a separate product.",
+          "sourceParagraph": 154
+        },
+        {
+          "text": "CTA: See LAMID ONE in Action",
+          "sourceParagraph": 155
+        }
+      ]
+    }
+  ]
+}

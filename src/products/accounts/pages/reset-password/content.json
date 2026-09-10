@@ -1,0 +1,81 @@
+{
+  "page": 64,
+  "name": "RESET PASSWORD",
+  "source_paragraph": 1300,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/reset-password",
+  "indexing": "noindex, nofollow",
+  "canonical": "/reset-password",
+  "seo_title": "Reset Password | LAMID ONE",
+  "meta_description": "Choose a secure password for your LAMID ONE account.",
+  "title": "Create a New Password",
+  "description": "Choose a secure password for your LAMID ONE account.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Create a New Password",
+    "paragraphs": [
+      {
+        "text": "Create a New Password",
+        "sourceParagraph": 1306
+      },
+      {
+        "text": "Choose a secure password for your LAMID ONE account.",
+        "sourceParagraph": 1307
+      },
+      {
+        "text": "CTA: Save New Password",
+        "sourceParagraph": 1308
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "New Password",
+      "title": "New Password",
+      "paragraphs": [
+        {
+          "text": "New Password",
+          "sourceParagraph": 1309
+        },
+        {
+          "text": "Choose a password that meets the current account security requirements.",
+          "sourceParagraph": 1310
+        }
+      ]
+    },
+    {
+      "label": "Confirm Password",
+      "title": "Confirm Password",
+      "paragraphs": [
+        {
+          "text": "Confirm Password",
+          "sourceParagraph": 1311
+        },
+        {
+          "text": "Enter the same password again to prevent accidental mismatch.",
+          "sourceParagraph": 1312
+        }
+      ]
+    },
+    {
+      "label": "Complete Reset",
+      "title": "Complete Reset",
+      "paragraphs": [
+        {
+          "text": "Complete Reset",
+          "sourceParagraph": 1313
+        },
+        {
+          "text": "Save the new password and return to sign in when the reset succeeds.",
+          "sourceParagraph": 1314
+        },
+        {
+          "text": "CTA: Save New Password",
+          "sourceParagraph": 1315
+        }
+      ]
+    }
+  ]
+}

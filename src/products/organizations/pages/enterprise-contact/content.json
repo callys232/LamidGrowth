@@ -1,0 +1,117 @@
+{
+  "page": 29,
+  "name": "ENTERPRISE CONTACT",
+  "source_paragraph": 623,
+  "gates": [],
+  "route": "/enterprise/contact",
+  "indexing": "index, follow",
+  "canonical": "/enterprise/contact",
+  "seo_title": "Enterprise Contact | LAMID ONE",
+  "meta_description": "Share the priorities, systems, scale, and governance requirements shaping your evaluation.",
+  "title": "Tell Us About Your Environment.",
+  "description": "Share the priorities, systems, scale, and governance requirements shaping your evaluation.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Tell Us About Your Environment.",
+    "paragraphs": [
+      {
+        "text": "Tell Us About Your Environment.",
+        "sourceParagraph": 629
+      },
+      {
+        "text": "Share the priorities, systems, scale, and governance requirements shaping your evaluation.",
+        "sourceParagraph": 630
+      },
+      {
+        "text": "CTA: Request a Conversation",
+        "sourceParagraph": 631
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Your Organization",
+      "title": "Your Organization",
+      "paragraphs": [
+        {
+          "text": "Your Organization",
+          "sourceParagraph": 632
+        },
+        {
+          "text": "• Organization",
+          "sourceParagraph": 633
+        },
+        {
+          "text": "• Sector",
+          "sourceParagraph": 634
+        },
+        {
+          "text": "• Team or user scale",
+          "sourceParagraph": 635
+        }
+      ]
+    },
+    {
+      "label": "Your Objective",
+      "title": "Your Objective",
+      "paragraphs": [
+        {
+          "text": "Your Objective",
+          "sourceParagraph": 636
+        },
+        {
+          "text": "• Primary outcome",
+          "sourceParagraph": 637
+        },
+        {
+          "text": "• Current operating challenge",
+          "sourceParagraph": 638
+        },
+        {
+          "text": "• Capabilities in scope",
+          "sourceParagraph": 639
+        }
+      ]
+    },
+    {
+      "label": "Your Environment",
+      "title": "Your Environment",
+      "paragraphs": [
+        {
+          "text": "Your Environment",
+          "sourceParagraph": 640
+        },
+        {
+          "text": "• Current systems",
+          "sourceParagraph": 641
+        },
+        {
+          "text": "• Integration needs",
+          "sourceParagraph": 642
+        },
+        {
+          "text": "• Security or governance requirements",
+          "sourceParagraph": 643
+        }
+      ]
+    },
+    {
+      "label": "Next Step",
+      "title": "Next Step",
+      "paragraphs": [
+        {
+          "text": "Next Step",
+          "sourceParagraph": 644
+        },
+        {
+          "text": "Choose a product conversation, technical review, or organizational demo.",
+          "sourceParagraph": 645
+        },
+        {
+          "text": "CTA: Request a Conversation",
+          "sourceParagraph": 646
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "page": 41,
+  "name": "ACCOUNT & BILLING HELP",
+  "source_paragraph": 861,
+  "gates": [],
+  "route": "/help/account",
+  "indexing": "index, follow",
+  "canonical": "/help/account",
+  "seo_title": "Account & Billing Help | LAMID ONE",
+  "meta_description": "Get help with identity, workspaces, membership, plans, billing, usage, and account controls.",
+  "title": "Manage Your Account and Plan.",
+  "description": "Get help with identity, workspaces, membership, plans, billing, usage, and account controls.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Manage Your Account and Plan.",
+    "paragraphs": [
+      {
+        "text": "Manage Your Account and Plan.",
+        "sourceParagraph": 867
+      },
+      {
+        "text": "Get help with identity, workspaces, membership, plans, billing, usage, and account controls.",
+        "sourceParagraph": 868
+      },
+      {
+        "text": "CTA: Browse Account Help",
+        "sourceParagraph": 869
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Workspaces",
+      "title": "Workspaces",
+      "paragraphs": [
+        {
+          "text": "Workspaces",
+          "sourceParagraph": 870
+        },
+        {
+          "text": "• Create or join",
+          "sourceParagraph": 871
+        },
+        {
+          "text": "• Switch context",
+          "sourceParagraph": 872
+        },
+        {
+          "text": "• Members",
+          "sourceParagraph": 873
+        }
+      ]
+    },
+    {
+      "label": "Plans & Billing",
+      "title": "Plans & Billing",
+      "paragraphs": [
+        {
+          "text": "Plans & Billing",
+          "sourceParagraph": 874
+        },
+        {
+          "text": "• Plan",
+          "sourceParagraph": 875
+        },
+        {
+          "text": "• Usage",
+          "sourceParagraph": 876
+        },
+        {
+          "text": "• Invoices",
+          "sourceParagraph": 877
+        }
+      ]
+    },
+    {
+      "label": "Resolve an Access Issue",
+      "title": "Resolve an Access Issue",
+      "paragraphs": [
+        {
+          "text": "Resolve an Access Issue",
+          "sourceParagraph": 878
+        },
+        {
+          "text": "Identify whether the issue belongs to identity, workspace membership, permissions, or plan entitlement, then follow the relevant path.",
+          "sourceParagraph": 879
+        },
+        {
+          "text": "CTA: Browse Account Help",
+          "sourceParagraph": 880
+        }
+      ]
+    }
+  ]
+}

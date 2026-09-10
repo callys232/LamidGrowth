@@ -1,0 +1,73 @@
+{
+  "page": 94,
+  "name": "NOTIFICATIONS",
+  "source_paragraph": 1778,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/notifications",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/notifications",
+  "seo_title": "Notifications | LAMID ONE",
+  "meta_description": "Choose what deserves your attention, when progression or change summaries should reach you, and what can wait until you return.",
+  "title": "Notifications",
+  "description": "Choose what deserves your attention, when progression or change summaries should reach you, and what can wait until you return.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Notifications",
+    "paragraphs": [
+      {
+        "text": "Notifications",
+        "sourceParagraph": 1784
+      },
+      {
+        "text": "Choose what deserves your attention, when progression or change summaries should reach you, and what can wait until you return.",
+        "sourceParagraph": 1785
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Daily Rhythm",
+      "title": "Daily Rhythm",
+      "paragraphs": [
+        {
+          "text": "Daily Rhythm",
+          "sourceParagraph": 1786
+        },
+        {
+          "text": "Choose whether daily operating prompts, change summaries, and reminders should reach you.",
+          "sourceParagraph": 1787
+        }
+      ]
+    },
+    {
+      "label": "Weekly Review",
+      "title": "Weekly Review",
+      "paragraphs": [
+        {
+          "text": "Weekly Review",
+          "sourceParagraph": 1788
+        },
+        {
+          "text": "Control reminders for weekly reflection, alignment, and carry-forward actions.",
+          "sourceParagraph": 1789
+        }
+      ]
+    },
+    {
+      "label": "Workflow Updates",
+      "title": "Workflow Updates",
+      "paragraphs": [
+        {
+          "text": "Workflow Updates",
+          "sourceParagraph": 1790
+        },
+        {
+          "text": "Receive updates when owned or relevant workflow activity needs attention.",
+          "sourceParagraph": 1791
+        }
+      ]
+    }
+  ]
+}

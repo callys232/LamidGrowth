@@ -1,0 +1,87 @@
+{
+  "page": 35,
+  "name": "GUIDES",
+  "source_paragraph": 749,
+  "gates": [],
+  "route": "/guides",
+  "indexing": "index, follow",
+  "canonical": "/guides",
+  "seo_title": "Guides | LAMID ONE",
+  "meta_description": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
+  "title": "Practical Guidance for Real Work.",
+  "description": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Practical Guidance for Real Work.",
+    "paragraphs": [
+      {
+        "text": "Practical Guidance for Real Work.",
+        "sourceParagraph": 755
+      },
+      {
+        "text": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
+        "sourceParagraph": 756
+      },
+      {
+        "text": "CTA: Browse Guides",
+        "sourceParagraph": 757
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Guide Formats",
+      "title": "Guide Formats",
+      "paragraphs": [
+        {
+          "text": "Guide Formats",
+          "sourceParagraph": 758
+        },
+        {
+          "text": "• Decision frameworks",
+          "sourceParagraph": 759
+        },
+        {
+          "text": "• Capability maps",
+          "sourceParagraph": 760
+        },
+        {
+          "text": "• Review templates",
+          "sourceParagraph": 761
+        }
+      ]
+    },
+    {
+      "label": "Run a Better Weekly Review",
+      "title": "Run a Better Weekly Review",
+      "paragraphs": [
+        {
+          "text": "Run a Better Weekly Review",
+          "sourceParagraph": 762
+        },
+        {
+          "text": "Use a weekly review guide to inspect movement, blockers, capability needs, and next priorities.",
+          "sourceParagraph": 763
+        }
+      ]
+    },
+    {
+      "label": "Put the Guide to Work.",
+      "title": "Put the Guide to Work.",
+      "paragraphs": [
+        {
+          "text": "Put the Guide to Work.",
+          "sourceParagraph": 764
+        },
+        {
+          "text": "Each guide connects the framework to a practical application or next step.",
+          "sourceParagraph": 765
+        },
+        {
+          "text": "CTA: Browse Guides",
+          "sourceParagraph": 766
+        }
+      ]
+    }
+  ]
+}

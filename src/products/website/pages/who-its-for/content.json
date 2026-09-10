@@ -1,0 +1,93 @@
+{
+  "page": 14,
+  "name": "WHO IT'S FOR",
+  "source_paragraph": 333,
+  "gates": [],
+  "route": "/who-its-for",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for",
+  "seo_title": "Who It's For | LAMID ONE",
+  "meta_description": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
+  "title": "One OS. Different Contexts.",
+  "description": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "One OS. Different Contexts.",
+    "paragraphs": [
+      {
+        "text": "One OS. Different Contexts.",
+        "sourceParagraph": 339
+      },
+      {
+        "text": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
+        "sourceParagraph": 340
+      },
+      {
+        "text": "CTA: Choose Your Context",
+        "sourceParagraph": 341
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Individual",
+      "title": "Individual",
+      "paragraphs": [
+        {
+          "text": "Individual",
+          "sourceParagraph": 342
+        },
+        {
+          "text": "Find clarity and make progress.",
+          "sourceParagraph": 343
+        }
+      ]
+    },
+    {
+      "label": "Professional",
+      "title": "Professional",
+      "paragraphs": [
+        {
+          "text": "Professional",
+          "sourceParagraph": 344
+        },
+        {
+          "text": "Strengthen decisions, capability, and execution.",
+          "sourceParagraph": 345
+        }
+      ]
+    },
+    {
+      "label": "Creator",
+      "title": "Creator",
+      "paragraphs": [
+        {
+          "text": "Creator",
+          "sourceParagraph": 346
+        },
+        {
+          "text": "Turn ideas into clearer action and opportunity.",
+          "sourceParagraph": 347
+        }
+      ]
+    },
+    {
+      "label": "One Master Proposition",
+      "title": "One Master Proposition",
+      "paragraphs": [
+        {
+          "text": "One Master Proposition",
+          "sourceParagraph": 348
+        },
+        {
+          "text": "Different context changes the emphasis, not the product.",
+          "sourceParagraph": 349
+        },
+        {
+          "text": "CTA: Choose Your Context",
+          "sourceParagraph": 350
+        }
+      ]
+    }
+  ]
+}

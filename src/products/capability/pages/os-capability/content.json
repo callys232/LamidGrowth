@@ -1,0 +1,89 @@
+{
+  "page": 70,
+  "name": "CAPABILITY WORKSPACE",
+  "source_paragraph": 1405,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/capability",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/capability",
+  "seo_title": "Capability Workspace | LAMID ONE",
+  "meta_description": "Map the knowledge, resources, methods, support, people, and specialist context needed to act well.",
+  "title": "What Does the Next Step Require?",
+  "description": "Map the knowledge, resources, methods, support, people, and specialist context needed to act well.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "What Does the Next Step Require?",
+    "paragraphs": [
+      {
+        "text": "What Does the Next Step Require?",
+        "sourceParagraph": 1411
+      },
+      {
+        "text": "Map the knowledge, resources, methods, support, people, and specialist context needed to act well.",
+        "sourceParagraph": 1412
+      },
+      {
+        "text": "CTA: Continue to Consistency",
+        "sourceParagraph": 1413
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Requirements",
+      "title": "Requirements",
+      "paragraphs": [
+        {
+          "text": "Requirements",
+          "sourceParagraph": 1414
+        },
+        {
+          "text": "• Knowledge",
+          "sourceParagraph": 1415
+        },
+        {
+          "text": "• Resources",
+          "sourceParagraph": 1416
+        },
+        {
+          "text": "• Methods",
+          "sourceParagraph": 1417
+        }
+      ]
+    },
+    {
+      "label": "Available Now",
+      "title": "Available Now",
+      "paragraphs": [
+        {
+          "text": "Available Now",
+          "sourceParagraph": 1418
+        },
+        {
+          "text": "What is already in place?",
+          "sourceParagraph": 1419
+        }
+      ]
+    },
+    {
+      "label": "Close the Critical Gap First",
+      "title": "Close the Critical Gap First",
+      "paragraphs": [
+        {
+          "text": "Close the Critical Gap First",
+          "sourceParagraph": 1420
+        },
+        {
+          "text": "Prioritize the capability gap that most constrains the objective.",
+          "sourceParagraph": 1421
+        },
+        {
+          "text": "CTA: Continue to Consistency",
+          "sourceParagraph": 1422
+        }
+      ]
+    }
+  ]
+}

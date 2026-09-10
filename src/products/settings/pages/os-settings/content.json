@@ -1,0 +1,73 @@
+{
+  "page": 91,
+  "name": "SETTINGS",
+  "source_paragraph": 1733,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings",
+  "seo_title": "Settings | LAMID ONE",
+  "meta_description": "Manage account, AI, privacy, notifications, workspace, members, billing, and plan settings.",
+  "title": "Settings",
+  "description": "Manage account, AI, privacy, notifications, workspace, members, billing, and plan settings.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Settings",
+    "paragraphs": [
+      {
+        "text": "Settings",
+        "sourceParagraph": 1739
+      },
+      {
+        "text": "Manage account, AI, privacy, notifications, workspace, members, billing, and plan settings.",
+        "sourceParagraph": 1740
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Privacy",
+      "title": "Privacy",
+      "paragraphs": [
+        {
+          "text": "Privacy",
+          "sourceParagraph": 1741
+        },
+        {
+          "text": "Review available data, connected-source, export, deletion, and privacy controls.",
+          "sourceParagraph": 1742
+        }
+      ]
+    },
+    {
+      "label": "Workspace",
+      "title": "Workspace",
+      "paragraphs": [
+        {
+          "text": "Workspace",
+          "sourceParagraph": 1743
+        },
+        {
+          "text": "Manage the active workspace identity, defaults, ownership, and context.",
+          "sourceParagraph": 1744
+        }
+      ]
+    },
+    {
+      "label": "Plan & Usage",
+      "title": "Plan & Usage",
+      "paragraphs": [
+        {
+          "text": "Plan & Usage",
+          "sourceParagraph": 1745
+        },
+        {
+          "text": "See plan access, available capabilities, usage, limits, and upgrade paths.",
+          "sourceParagraph": 1746
+        }
+      ]
+    }
+  ]
+}

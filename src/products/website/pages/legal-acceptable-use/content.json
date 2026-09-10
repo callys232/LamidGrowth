@@ -1,0 +1,73 @@
+{
+  "page": 58,
+  "name": "ACCEPTABLE USE POLICY",
+  "source_paragraph": 1197,
+  "gates": [
+    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+  ],
+  "route": "/legal/acceptable-use",
+  "indexing": "index, follow",
+  "canonical": "/legal/acceptable-use",
+  "seo_title": "Acceptable Use Policy | LAMID ONE",
+  "meta_description": "Use LAMID ONE responsibly and lawfully.",
+  "title": "Acceptable Use Policy",
+  "description": "Use LAMID ONE responsibly and lawfully.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Acceptable Use Policy",
+    "paragraphs": [
+      {
+        "text": "Acceptable Use Policy",
+        "sourceParagraph": 1203
+      },
+      {
+        "text": "Use LAMID ONE responsibly and lawfully.",
+        "sourceParagraph": 1204
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Prohibited Activity",
+      "title": "Prohibited Activity",
+      "paragraphs": [
+        {
+          "text": "Prohibited Activity",
+          "sourceParagraph": 1205
+        },
+        {
+          "text": "Do not use LAMID ONE for illegal activity, unauthorized access, malware, privacy violations, fraud, deception, intellectual-property violations, or other prohibited abuse.",
+          "sourceParagraph": 1206
+        }
+      ]
+    },
+    {
+      "label": "AI and Automation",
+      "title": "AI and Automation",
+      "paragraphs": [
+        {
+          "text": "AI and Automation",
+          "sourceParagraph": 1207
+        },
+        {
+          "text": "Do not use AI or automation to bypass safeguards, manipulate people, misuse sensitive information, or carry out prohibited activity.",
+          "sourceParagraph": 1208
+        }
+      ]
+    },
+    {
+      "label": "Organizational Data and Access",
+      "title": "Organizational Data and Access",
+      "paragraphs": [
+        {
+          "text": "Organizational Data and Access",
+          "sourceParagraph": 1209
+        },
+        {
+          "text": "Use organizational information only within the permissions and responsibilities granted to you.",
+          "sourceParagraph": 1210
+        }
+      ]
+    }
+  ]
+}

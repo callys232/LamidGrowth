@@ -1,0 +1,189 @@
+/* Shared typography and navigation; distinct color, geometry and editorial rhythm. */
+[data-page-theme] {
+  --page-accent: #0d1a2b;
+  --page-tint: #eceff2;
+  --page-pattern: linear-gradient(90deg, transparent 49.8%, #0d1a2b0c 50%, transparent 50.2%);
+}
+[data-page-theme='growth'],
+[data-page-theme='founders'] {
+  --page-accent: #26753f;
+  --page-tint: #edf5ed;
+  --page-pattern: repeating-linear-gradient(-35deg, transparent 0 55px, #2e8f4e10 56px 57px);
+}
+[data-page-theme='talent'],
+[data-page-theme='creators'] {
+  --page-accent: #6a4fbf;
+  --page-tint: #f0edf8;
+  --page-pattern: radial-gradient(
+    circle at 75% 30%,
+    #6a4fbf12 0 20%,
+    transparent 20.2% 30%,
+    #6a4fbf0a 30.2% 40%,
+    transparent 40.2%
+  );
+}
+[data-page-theme='finance'],
+[data-page-theme='teams'] {
+  --page-accent: #126a6a;
+  --page-tint: #eaf4f3;
+  --page-pattern:
+    repeating-linear-gradient(0deg, transparent 0 39px, #1ca8a810 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, #1ca8a810 40px);
+}
+[data-page-theme='individuals'] {
+  --page-accent: #76604c;
+  --page-tint: #f3eee6;
+  --page-pattern: radial-gradient(ellipse at 80% 50%, #d8cfc460, transparent 65%);
+}
+[data-page-theme='professionals'] {
+  --page-accent: #465e79;
+  --page-tint: #edf1f6;
+  --page-pattern: repeating-linear-gradient(90deg, transparent 0 100px, #465e7910 101px 102px);
+}
+[data-page-theme='smes'] {
+  --page-accent: #526533;
+  --page-tint: #f0f3e9;
+  --page-pattern: radial-gradient(#52653320 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+[data-page-theme='enterprises'] {
+  --page-accent: #0d1a2b;
+  --page-tint: #e8edf3;
+}
+[data-page-theme='institutions'] {
+  --page-accent: #5a5f66;
+  --page-tint: #eeede9;
+  --page-pattern: repeating-linear-gradient(0deg, transparent 0 70px, #5a5f6610 71px 72px);
+}
+[data-page-theme='audiences'] {
+  --page-accent: #465e79;
+  --page-tint: #edf1f6;
+}
+.content-page[data-page-theme] .content-hero {
+  background-color: var(--page-tint);
+  background-image: var(--page-pattern);
+  border-radius: 24px;
+  padding: 56px 4%;
+  margin-top: 24px;
+  margin-bottom: 56px;
+  border-top: 3px solid var(--page-accent);
+}
+.content-page[data-page-theme] .content-hero .eyebrow,
+.content-page[data-page-theme] .editorial-number {
+  color: var(--page-accent);
+}
+.content-page[data-page-theme] .editorial-section {
+  border-left: 3px solid var(--page-accent);
+}
+.content-page[data-page-theme] .editorial-section:not(.dark-section):nth-child(even) {
+  background: var(--page-tint);
+}
+.content-page[data-page-theme] .dark-section {
+  background: var(--page-accent);
+  color: #fff;
+}
+.content-page[data-page-theme] .dark-section :is(p, .editorial-number) {
+  color: #fff;
+}
+.content-page[data-page-theme] .content-closing {
+  border-top: 2px solid var(--page-accent);
+}
+.content-page[data-page-theme] .button-primary {
+  background: var(--page-accent);
+  color: #fff;
+}
+.content-page[data-page-theme] .button-primary:hover {
+  background: #0d1a2b;
+}
+/* Growth: a visible progression; Talent/Creators: offset editorial tiles. */
+.content-page:is([data-page-theme='growth'], [data-page-theme='founders']) .editorial-section {
+  border-radius: 6px 32px 32px 6px;
+}
+.content-page:is([data-page-theme='talent'], [data-page-theme='creators']) .editorial-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+}
+.content-page:is([data-page-theme='talent'], [data-page-theme='creators']) .editorial-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px;
+  min-width: 0;
+  border-radius: 24px;
+}
+.content-page:is([data-page-theme='talent'], [data-page-theme='creators'])
+  .editorial-section:nth-child(even) {
+  margin-top: 40px;
+}
+.content-page:is([data-page-theme='talent'], [data-page-theme='creators']) .editorial-symbol {
+  display: none;
+}
+.content-page[data-page-theme='individuals'] .editorial-section {
+  border-radius: 36px;
+  border-left-width: 1px;
+}
+.content-page:is(
+    [data-page-theme='professionals'],
+    [data-page-theme='enterprises'],
+    [data-page-theme='institutions']
+  )
+  .editorial-section {
+  border-radius: 4px;
+}
+.content-page:is([data-page-theme='teams'], [data-page-theme='smes'], [data-page-theme='audiences'])
+  .editorial-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.content-page:is([data-page-theme='teams'], [data-page-theme='smes'], [data-page-theme='audiences'])
+  .editorial-section {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 20px;
+  padding: 32px;
+  min-width: 0;
+}
+.content-page:is([data-page-theme='teams'], [data-page-theme='smes'], [data-page-theme='audiences'])
+  .editorial-symbol {
+  display: none;
+}
+.workspace-main[data-page-theme] .page-heading {
+  padding: 28px;
+  border-radius: 18px;
+  background-color: var(--page-tint);
+  background-image: var(--page-pattern);
+  border-top: 3px solid var(--page-accent);
+}
+.workspace-main[data-page-theme] .page-heading .eyebrow {
+  color: var(--page-accent);
+}
+.workspace-main[data-page-theme='finance'] .page-heading {
+  border-radius: 4px;
+}
+.workspace-main[data-page-theme='talent'] .capability-card {
+  border-top: 3px solid var(--page-accent);
+  border-radius: 24px;
+}
+.workspace-main[data-page-theme='growth'] .review-card {
+  border-left: 3px solid var(--page-accent);
+}
+@media (max-width: 760px) {
+  .content-page[data-page-theme] .content-hero {
+    padding: 32px 6%;
+    margin-top: 16px;
+    border-radius: 16px;
+  }
+  .content-page[data-page-theme] .editorial-sections {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .content-page[data-page-theme] .editorial-section:nth-child(even) {
+    margin-top: 0;
+  }
+  .content-page[data-page-theme] .editorial-section {
+    padding: 24px;
+  }
+}

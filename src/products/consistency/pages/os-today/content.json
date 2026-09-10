@@ -1,0 +1,81 @@
+{
+  "page": 68,
+  "name": "TODAY",
+  "source_paragraph": 1371,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/today",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/today",
+  "seo_title": "Today | LAMID ONE",
+  "meta_description": "Move one important objective through clarity, capability, and action.",
+  "title": "Start With What Matters Today.",
+  "description": "Move one important objective through clarity, capability, and action.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start With What Matters Today.",
+    "paragraphs": [
+      {
+        "text": "Start With What Matters Today.",
+        "sourceParagraph": 1377
+      },
+      {
+        "text": "Move one important objective through clarity, capability, and action.",
+        "sourceParagraph": 1378
+      },
+      {
+        "text": "CTA: Complete Today",
+        "sourceParagraph": 1379
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Clarity",
+      "title": "Clarity",
+      "paragraphs": [
+        {
+          "text": "Clarity",
+          "sourceParagraph": 1380
+        },
+        {
+          "text": "What deserves attention? What is true now?",
+          "sourceParagraph": 1381
+        }
+      ]
+    },
+    {
+      "label": "Capability",
+      "title": "Capability",
+      "paragraphs": [
+        {
+          "text": "Capability",
+          "sourceParagraph": 1382
+        },
+        {
+          "text": "What does the next step require?",
+          "sourceParagraph": 1383
+        }
+      ]
+    },
+    {
+      "label": "Resolve Today's Priority",
+      "title": "Resolve Today's Priority",
+      "paragraphs": [
+        {
+          "text": "Resolve Today's Priority",
+          "sourceParagraph": 1384
+        },
+        {
+          "text": "Finish with one clear action, owner, or decision - not a longer task list.",
+          "sourceParagraph": 1385
+        },
+        {
+          "text": "CTA: Complete Today",
+          "sourceParagraph": 1386
+        }
+      ]
+    }
+  ]
+}

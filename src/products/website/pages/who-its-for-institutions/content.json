@@ -1,0 +1,93 @@
+{
+  "page": 22,
+  "name": "INSTITUTIONS",
+  "source_paragraph": 485,
+  "gates": [],
+  "route": "/who-its-for/institutions",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/institutions",
+  "seo_title": "Institutions | LAMID ONE",
+  "meta_description": "Operate across longer timelines, broader responsibilities, and deeper accountability while keeping human judgment and institutional context central.",
+  "title": "Strengthen Capability, Continuity, and Decision-Making at Institutional Scale.",
+  "description": "Operate across longer timelines, broader responsibilities, and deeper accountability while keeping human judgment and institutional context central.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Strengthen Capability, Continuity, and Decision-Making at Institutional Scale.",
+    "paragraphs": [
+      {
+        "text": "Strengthen Capability, Continuity, and Decision-Making at Institutional Scale.",
+        "sourceParagraph": 491
+      },
+      {
+        "text": "Operate across longer timelines, broader responsibilities, and deeper accountability while keeping human judgment and institutional context central.",
+        "sourceParagraph": 492
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Institutions",
+        "sourceParagraph": 493
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Institutional Clarity",
+      "title": "Institutional Clarity",
+      "paragraphs": [
+        {
+          "text": "Institutional Clarity",
+          "sourceParagraph": 494
+        },
+        {
+          "text": "Understand complex priorities, dependencies, and long-term considerations.",
+          "sourceParagraph": 495
+        }
+      ]
+    },
+    {
+      "label": "Workforce Capability",
+      "title": "Workforce Capability",
+      "paragraphs": [
+        {
+          "text": "Workforce Capability",
+          "sourceParagraph": 496
+        },
+        {
+          "text": "See the capabilities required to support institutional objectives.",
+          "sourceParagraph": 497
+        }
+      ]
+    },
+    {
+      "label": "Governance",
+      "title": "Governance",
+      "paragraphs": [
+        {
+          "text": "Governance",
+          "sourceParagraph": 498
+        },
+        {
+          "text": "Support oversight, responsibility, and human review.",
+          "sourceParagraph": 499
+        }
+      ]
+    },
+    {
+      "label": "Technology Should Strengthen the Institution, Not Blur Its Responsibility.",
+      "title": "Technology Should Strengthen the Institution, Not Blur Its Responsibility.",
+      "paragraphs": [
+        {
+          "text": "Technology Should Strengthen the Institution, Not Blur Its Responsibility.",
+          "sourceParagraph": 500
+        },
+        {
+          "text": "Use AI and organizational intelligence with clear accountability, continuity, and human oversight.",
+          "sourceParagraph": 501
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Institutions",
+          "sourceParagraph": 502
+        }
+      ]
+    }
+  ]
+}

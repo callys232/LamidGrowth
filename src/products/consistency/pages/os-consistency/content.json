@@ -1,0 +1,81 @@
+{
+  "page": 71,
+  "name": "CONSISTENCY WORKSPACE",
+  "source_paragraph": 1424,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/consistency",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/consistency",
+  "seo_title": "Consistency Workspace | LAMID ONE",
+  "meta_description": "Turn the decision into actions, commitments, cadence, and review.",
+  "title": "Keep Important Work Moving.",
+  "description": "Turn the decision into actions, commitments, cadence, and review.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Keep Important Work Moving.",
+    "paragraphs": [
+      {
+        "text": "Keep Important Work Moving.",
+        "sourceParagraph": 1430
+      },
+      {
+        "text": "Turn the decision into actions, commitments, cadence, and review.",
+        "sourceParagraph": 1431
+      },
+      {
+        "text": "CTA: Save Commitment",
+        "sourceParagraph": 1432
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Next Action",
+      "title": "Next Action",
+      "paragraphs": [
+        {
+          "text": "Next Action",
+          "sourceParagraph": 1433
+        },
+        {
+          "text": "What moves first?",
+          "sourceParagraph": 1434
+        }
+      ]
+    },
+    {
+      "label": "Rhythm",
+      "title": "Rhythm",
+      "paragraphs": [
+        {
+          "text": "Rhythm",
+          "sourceParagraph": 1435
+        },
+        {
+          "text": "When will progress be reviewed?",
+          "sourceParagraph": 1436
+        }
+      ]
+    },
+    {
+      "label": "Convert the Decision Into a Working Commitment",
+      "title": "Convert the Decision Into a Working Commitment",
+      "paragraphs": [
+        {
+          "text": "Convert the Decision Into a Working Commitment",
+          "sourceParagraph": 1437
+        },
+        {
+          "text": "Finish with an owner, action, timing, and review trigger.",
+          "sourceParagraph": 1438
+        },
+        {
+          "text": "CTA: Save Commitment",
+          "sourceParagraph": 1439
+        }
+      ]
+    }
+  ]
+}

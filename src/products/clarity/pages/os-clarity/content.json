@@ -1,0 +1,81 @@
+{
+  "page": 69,
+  "name": "CLARITY WORKSPACE",
+  "source_paragraph": 1388,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/clarity",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/clarity",
+  "seo_title": "Clarity Workspace | LAMID ONE",
+  "meta_description": "Work through the situation, context, assumptions, and priority before choosing a direction.",
+  "title": "Understand Before You Act.",
+  "description": "Work through the situation, context, assumptions, and priority before choosing a direction.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understand Before You Act.",
+    "paragraphs": [
+      {
+        "text": "Understand Before You Act.",
+        "sourceParagraph": 1394
+      },
+      {
+        "text": "Work through the situation, context, assumptions, and priority before choosing a direction.",
+        "sourceParagraph": 1395
+      },
+      {
+        "text": "CTA: Continue to Capability",
+        "sourceParagraph": 1396
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Define the Objective",
+      "title": "Define the Objective",
+      "paragraphs": [
+        {
+          "text": "Define the Objective",
+          "sourceParagraph": 1397
+        },
+        {
+          "text": "What are you trying to understand or decide?",
+          "sourceParagraph": 1398
+        }
+      ]
+    },
+    {
+      "label": "Add Context",
+      "title": "Add Context",
+      "paragraphs": [
+        {
+          "text": "Add Context",
+          "sourceParagraph": 1399
+        },
+        {
+          "text": "What information, constraints, or stakeholders matter?",
+          "sourceParagraph": 1400
+        }
+      ]
+    },
+    {
+      "label": "Turn Ambiguity Into a Decision Frame",
+      "title": "Turn Ambiguity Into a Decision Frame",
+      "paragraphs": [
+        {
+          "text": "Turn Ambiguity Into a Decision Frame",
+          "sourceParagraph": 1401
+        },
+        {
+          "text": "Leave with a defined objective, relevant context, explicit assumptions, and a clear priority.",
+          "sourceParagraph": 1402
+        },
+        {
+          "text": "CTA: Continue to Capability",
+          "sourceParagraph": 1403
+        }
+      ]
+    }
+  ]
+}

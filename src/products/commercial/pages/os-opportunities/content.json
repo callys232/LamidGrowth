@@ -1,0 +1,73 @@
+{
+  "page": 77,
+  "name": "OPPORTUNITIES",
+  "source_paragraph": 1517,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/opportunities",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/opportunities",
+  "seo_title": "Opportunities | LAMID ONE",
+  "meta_description": "Compare opportunities against current position, expected value, required capability, trade-offs, and assumptions.",
+  "title": "Explore Where You Could Go Next.",
+  "description": "Compare opportunities against current position, expected value, required capability, trade-offs, and assumptions.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Explore Where You Could Go Next.",
+    "paragraphs": [
+      {
+        "text": "Explore Where You Could Go Next.",
+        "sourceParagraph": 1523
+      },
+      {
+        "text": "Compare opportunities against current position, expected value, required capability, trade-offs, and assumptions.",
+        "sourceParagraph": 1524
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Opportunity",
+      "title": "Opportunity",
+      "paragraphs": [
+        {
+          "text": "Opportunity",
+          "sourceParagraph": 1525
+        },
+        {
+          "text": "Define the opportunity clearly enough to compare it with alternatives.",
+          "sourceParagraph": 1526
+        }
+      ]
+    },
+    {
+      "label": "Required Capability",
+      "title": "Required Capability",
+      "paragraphs": [
+        {
+          "text": "Required Capability",
+          "sourceParagraph": 1527
+        },
+        {
+          "text": "Identify the people, resources, knowledge, systems, and funding required to pursue it.",
+          "sourceParagraph": 1528
+        }
+      ]
+    },
+    {
+      "label": "Choose Between Two Growth Paths",
+      "title": "Choose Between Two Growth Paths",
+      "paragraphs": [
+        {
+          "text": "Choose Between Two Growth Paths",
+          "sourceParagraph": 1529
+        },
+        {
+          "text": "Compare expected value, financial implications, capability needs, timing, and execution burden before selecting a route.",
+          "sourceParagraph": 1530
+        }
+      ]
+    }
+  ]
+}

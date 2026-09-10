@@ -1,0 +1,73 @@
+{
+  "page": 57,
+  "name": "COOKIE POLICY",
+  "source_paragraph": 1181,
+  "gates": [
+    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+  ],
+  "route": "/legal/cookies",
+  "indexing": "index, follow",
+  "canonical": "/legal/cookies",
+  "seo_title": "Cookie Policy | LAMID ONE",
+  "meta_description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+  "title": "Cookie Policy",
+  "description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Cookie Policy",
+    "paragraphs": [
+      {
+        "text": "Cookie Policy",
+        "sourceParagraph": 1187
+      },
+      {
+        "text": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+        "sourceParagraph": 1188
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Necessary Technologies",
+      "title": "Necessary Technologies",
+      "paragraphs": [
+        {
+          "text": "Necessary Technologies",
+          "sourceParagraph": 1189
+        },
+        {
+          "text": "Necessary technologies support security, authentication, preferences, and core service operation.",
+          "sourceParagraph": 1190
+        }
+      ]
+    },
+    {
+      "label": "Preferences and Analytics",
+      "title": "Preferences and Analytics",
+      "paragraphs": [
+        {
+          "text": "Preferences and Analytics",
+          "sourceParagraph": 1191
+        },
+        {
+          "text": "This policy describes optional preference or analytics technologies and the purposes they serve.",
+          "sourceParagraph": 1192
+        }
+      ]
+    },
+    {
+      "label": "Advertising and Third Parties",
+      "title": "Advertising and Third Parties",
+      "paragraphs": [
+        {
+          "text": "Advertising and Third Parties",
+          "sourceParagraph": 1193
+        },
+        {
+          "text": "Where applicable, this policy identifies advertising technologies, third-party providers, and their purposes.",
+          "sourceParagraph": 1194
+        }
+      ]
+    }
+  ]
+}

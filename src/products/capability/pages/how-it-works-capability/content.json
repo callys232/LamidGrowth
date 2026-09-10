@@ -1,0 +1,101 @@
+{
+  "page": 10,
+  "name": "CAPABILITY",
+  "source_paragraph": 255,
+  "gates": [],
+  "route": "/how-it-works/capability",
+  "indexing": "index, follow",
+  "canonical": "/how-it-works/capability",
+  "seo_title": "Capability | LAMID ONE",
+  "meta_description": "Clarity shows what matters. Capability determines whether you can act on it effectively.",
+  "title": "Know What the Next Step Requires.",
+  "description": "Clarity shows what matters. Capability determines whether you can act on it effectively.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Know What the Next Step Requires.",
+    "paragraphs": [
+      {
+        "text": "Know What the Next Step Requires.",
+        "sourceParagraph": 261
+      },
+      {
+        "text": "Clarity shows what matters. Capability determines whether you can act on it effectively.",
+        "sourceParagraph": 262
+      },
+      {
+        "text": "CTA: Explore Capability",
+        "sourceParagraph": 263
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Capability Is More Than Skill",
+      "title": "Capability Is More Than Skill",
+      "paragraphs": [
+        {
+          "text": "Capability Is More Than Skill",
+          "sourceParagraph": 264
+        },
+        {
+          "text": "• Knowledge",
+          "sourceParagraph": 265
+        },
+        {
+          "text": "• Resources",
+          "sourceParagraph": 266
+        },
+        {
+          "text": "• Methods",
+          "sourceParagraph": 267
+        }
+      ]
+    },
+    {
+      "label": "Personal Capability",
+      "title": "Personal Capability",
+      "paragraphs": [
+        {
+          "text": "Personal Capability",
+          "sourceParagraph": 268
+        },
+        {
+          "text": "Strengthen how you think, decide, and work.",
+          "sourceParagraph": 269
+        }
+      ]
+    },
+    {
+      "label": "Organizational Capability",
+      "title": "Organizational Capability",
+      "paragraphs": [
+        {
+          "text": "Organizational Capability",
+          "sourceParagraph": 270
+        },
+        {
+          "text": "Connect capabilities to priorities instead of treating them as isolated competencies.",
+          "sourceParagraph": 271
+        }
+      ]
+    },
+    {
+      "label": "Growth Without Capability Becomes Pressure.",
+      "title": "Growth Without Capability Becomes Pressure.",
+      "paragraphs": [
+        {
+          "text": "Growth Without Capability Becomes Pressure.",
+          "sourceParagraph": 272
+        },
+        {
+          "text": "Build or access what the next stage requires before asking people or systems to carry more load.",
+          "sourceParagraph": 273
+        },
+        {
+          "text": "CTA: Explore Capability",
+          "sourceParagraph": 274
+        }
+      ]
+    }
+  ]
+}

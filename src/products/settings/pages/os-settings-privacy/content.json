@@ -1,0 +1,73 @@
+{
+  "page": 93,
+  "name": "PRIVACY & DATA CONTROLS",
+  "source_paragraph": 1763,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/privacy",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/privacy",
+  "seo_title": "Privacy & Data Controls | LAMID ONE",
+  "meta_description": "Persistent progression is permissioned by design: control which sources and workflows may continue, and revoke or override that permission when needed.",
+  "title": "Your Data Controls",
+  "description": "Persistent progression is permissioned by design: control which sources and workflows may continue, and revoke or override that permission when needed.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Your Data Controls",
+    "paragraphs": [
+      {
+        "text": "Your Data Controls",
+        "sourceParagraph": 1769
+      },
+      {
+        "text": "Persistent progression is permissioned by design: control which sources and workflows may continue, and revoke or override that permission when needed.",
+        "sourceParagraph": 1770
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "View Data",
+      "title": "View Data",
+      "paragraphs": [
+        {
+          "text": "View Data",
+          "sourceParagraph": 1771
+        },
+        {
+          "text": "Review the data categories and records available through your account and workspaces.",
+          "sourceParagraph": 1772
+        }
+      ]
+    },
+    {
+      "label": "Export Data",
+      "title": "Export Data",
+      "paragraphs": [
+        {
+          "text": "Export Data",
+          "sourceParagraph": 1773
+        },
+        {
+          "text": "Request or download supported exports for your personal or workspace data.",
+          "sourceParagraph": 1774
+        }
+      ]
+    },
+    {
+      "label": "Delete Data",
+      "title": "Delete Data",
+      "paragraphs": [
+        {
+          "text": "Delete Data",
+          "sourceParagraph": 1775
+        },
+        {
+          "text": "Use available deletion controls and review any exceptions that must be retained for legal or operational reasons.",
+          "sourceParagraph": 1776
+        }
+      ]
+    }
+  ]
+}

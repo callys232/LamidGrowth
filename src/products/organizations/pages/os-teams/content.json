@@ -1,0 +1,73 @@
+{
+  "page": 83,
+  "name": "TEAMS",
+  "source_paragraph": 1609,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/teams",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/teams",
+  "seo_title": "Teams | LAMID ONE",
+  "meta_description": "See each team's priorities, membership, capability, active work, and operating rhythm.",
+  "title": "Teams",
+  "description": "See each team's priorities, membership, capability, active work, and operating rhythm.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Teams",
+    "paragraphs": [
+      {
+        "text": "Teams",
+        "sourceParagraph": 1615
+      },
+      {
+        "text": "See each team's priorities, membership, capability, active work, and operating rhythm.",
+        "sourceParagraph": 1616
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Team Overview",
+      "title": "Team Overview",
+      "paragraphs": [
+        {
+          "text": "Team Overview",
+          "sourceParagraph": 1617
+        },
+        {
+          "text": "See the team purpose, active priorities, membership, capability, and current work in one view.",
+          "sourceParagraph": 1618
+        }
+      ]
+    },
+    {
+      "label": "Capability",
+      "title": "Capability",
+      "paragraphs": [
+        {
+          "text": "Capability",
+          "sourceParagraph": 1619
+        },
+        {
+          "text": "Review what the team can already do and where the work requires additional support.",
+          "sourceParagraph": 1620
+        }
+      ]
+    },
+    {
+      "label": "Rhythm",
+      "title": "Rhythm",
+      "paragraphs": [
+        {
+          "text": "Rhythm",
+          "sourceParagraph": 1621
+        },
+        {
+          "text": "Review progress and recurring issues at the cadence the team needs.",
+          "sourceParagraph": 1622
+        }
+      ]
+    }
+  ]
+}

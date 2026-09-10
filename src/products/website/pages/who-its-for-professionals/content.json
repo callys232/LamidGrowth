@@ -1,0 +1,93 @@
+{
+  "page": 16,
+  "name": "PROFESSIONALS",
+  "source_paragraph": 371,
+  "gates": [],
+  "route": "/who-its-for/professionals",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/professionals",
+  "seo_title": "Professionals | LAMID ONE",
+  "meta_description": "Strengthen how you understand problems, make decisions, develop capability, and follow through on important work.",
+  "title": "Work With Greater Clarity and Capability.",
+  "description": "Strengthen how you understand problems, make decisions, develop capability, and follow through on important work.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Work With Greater Clarity and Capability.",
+    "paragraphs": [
+      {
+        "text": "Work With Greater Clarity and Capability.",
+        "sourceParagraph": 377
+      },
+      {
+        "text": "Strengthen how you understand problems, make decisions, develop capability, and follow through on important work.",
+        "sourceParagraph": 378
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Professionals",
+        "sourceParagraph": 379
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Make Stronger Decisions",
+      "title": "Make Stronger Decisions",
+      "paragraphs": [
+        {
+          "text": "Make Stronger Decisions",
+          "sourceParagraph": 380
+        },
+        {
+          "text": "Bring context, priorities, trade-offs, and options into view.",
+          "sourceParagraph": 381
+        }
+      ]
+    },
+    {
+      "label": "Build Relevant Capability",
+      "title": "Build Relevant Capability",
+      "paragraphs": [
+        {
+          "text": "Build Relevant Capability",
+          "sourceParagraph": 382
+        },
+        {
+          "text": "Identify the capabilities your role or next stage requires.",
+          "sourceParagraph": 383
+        }
+      ]
+    },
+    {
+      "label": "Create a Professional Rhythm",
+      "title": "Create a Professional Rhythm",
+      "paragraphs": [
+        {
+          "text": "Create a Professional Rhythm",
+          "sourceParagraph": 384
+        },
+        {
+          "text": "Connect immediate work with longer-term capability development.",
+          "sourceParagraph": 385
+        }
+      ]
+    },
+    {
+      "label": "Your Context Grows With You.",
+      "title": "Your Context Grows With You.",
+      "paragraphs": [
+        {
+          "text": "Your Context Grows With You.",
+          "sourceParagraph": 386
+        },
+        {
+          "text": "Expand into team or organizational work without leaving the OS.",
+          "sourceParagraph": 387
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Professionals",
+          "sourceParagraph": 388
+        }
+      ]
+    }
+  ]
+}

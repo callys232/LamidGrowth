@@ -1,0 +1,73 @@
+{
+  "page": 97,
+  "name": "BILLING",
+  "source_paragraph": 1823,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/billing",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/billing",
+  "seo_title": "Billing | LAMID ONE",
+  "meta_description": "Review subscription billing, payment methods, invoices, contacts, and history.",
+  "title": "Billing",
+  "description": "Review subscription billing, payment methods, invoices, contacts, and history.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Billing",
+    "paragraphs": [
+      {
+        "text": "Billing",
+        "sourceParagraph": 1829
+      },
+      {
+        "text": "Review subscription billing, payment methods, invoices, contacts, and history.",
+        "sourceParagraph": 1830
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Current Subscription",
+      "title": "Current Subscription",
+      "paragraphs": [
+        {
+          "text": "Current Subscription",
+          "sourceParagraph": 1831
+        },
+        {
+          "text": "See the active subscription associated with the billing account.",
+          "sourceParagraph": 1832
+        }
+      ]
+    },
+    {
+      "label": "Payment Method",
+      "title": "Payment Method",
+      "paragraphs": [
+        {
+          "text": "Payment Method",
+          "sourceParagraph": 1833
+        },
+        {
+          "text": "Review or update supported payment methods for future charges.",
+          "sourceParagraph": 1834
+        }
+      ]
+    },
+    {
+      "label": "Invoices",
+      "title": "Invoices",
+      "paragraphs": [
+        {
+          "text": "Invoices",
+          "sourceParagraph": 1835
+        },
+        {
+          "text": "Access available invoices and billing documents.",
+          "sourceParagraph": 1836
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "page": 80,
+  "name": "WORKFLOWS",
+  "source_paragraph": 1562,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/workflows",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/workflows",
+  "seo_title": "Workflows | LAMID ONE",
+  "meta_description": "Create, review, and continue the workflows that move important work forward.",
+  "title": "Turn Decisions Into Execution.",
+  "description": "Create, review, and continue the workflows that move important work forward.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Turn Decisions Into Execution.",
+    "paragraphs": [
+      {
+        "text": "Turn Decisions Into Execution.",
+        "sourceParagraph": 1568
+      },
+      {
+        "text": "Create, review, and continue the workflows that move important work forward.",
+        "sourceParagraph": 1569
+      },
+      {
+        "text": "CTA: Create Workflow",
+        "sourceParagraph": 1570
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Active Workflows",
+      "title": "Active Workflows",
+      "paragraphs": [
+        {
+          "text": "Active Workflows",
+          "sourceParagraph": 1571
+        },
+        {
+          "text": "See work in progress, what continued under prior authorization, current status, owners, dependencies, approvals, and next actions.",
+          "sourceParagraph": 1572
+        }
+      ]
+    },
+    {
+      "label": "Templates",
+      "title": "Templates",
+      "paragraphs": [
+        {
+          "text": "Templates",
+          "sourceParagraph": 1573
+        },
+        {
+          "text": "Start from approved repeatable patterns when a process occurs often enough to justify structure.",
+          "sourceParagraph": 1574
+        }
+      ]
+    },
+    {
+      "label": "Convert a Decision Into a Repeatable Process",
+      "title": "Convert a Decision Into a Repeatable Process",
+      "paragraphs": [
+        {
+          "text": "Convert a Decision Into a Repeatable Process",
+          "sourceParagraph": 1575
+        },
+        {
+          "text": "Start from an approved decision, add owners, dependencies, approval boundaries, and progression permissions, then save the pattern when repetition creates value.",
+          "sourceParagraph": 1576
+        },
+        {
+          "text": "CTA: Create Workflow",
+          "sourceParagraph": 1577
+        }
+      ]
+    }
+  ]
+}

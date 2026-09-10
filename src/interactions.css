@@ -1,0 +1,123 @@
+/* Feedback follows actual hover, focus, pressed and selected states. */
+:root {
+  --feedback-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --card-highlight: #f0eee8;
+}
+.button,
+.icon-button,
+.text-button,
+.context-selector > button,
+.segmented > button,
+.cycle-card,
+.context-card,
+.kanban-card,
+.action-row,
+.objective-card,
+.capability-card,
+.mega-group a {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 220ms ease,
+    transform 220ms var(--feedback-ease);
+}
+.button > svg,
+.text-button > svg,
+.cycle-card-bottom svg,
+.context-card svg {
+  transition: transform 220ms var(--feedback-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .button:not(:disabled):not([aria-disabled='true']):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgb(13 26 43 / 12%);
+  }
+  .button-primary:not(:disabled):hover {
+    background: #263448;
+    color: #fbfaf7;
+  }
+  .button-secondary:not(:disabled):hover,
+  .button-ghost:not(:disabled):hover,
+  .button-light:not(:disabled):hover {
+    background: #e8e2d9;
+    color: #0d1a2b;
+  }
+  .icon-button:not(:disabled):hover {
+    background: #eeeae5;
+    color: #0d1a2b;
+    transform: scale(1.04);
+  }
+  .text-button:not(:disabled):hover {
+    color: #126a6a;
+  }
+  .button:not(:disabled):hover > svg,
+  .text-button:not(:disabled):hover > svg {
+    transform: translateX(2px);
+  }
+  .cycle-card:hover,
+  .context-card:hover,
+  .kanban-card:hover,
+  .context-selector > button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgb(13 26 43 / 7%);
+  }
+  .context-card:hover,
+  .kanban-card:hover,
+  .context-selector > button:hover,
+  .workspace-layout .action-row:hover,
+  .workspace-layout .objective-card:hover,
+  .workspace-layout .capability-card:hover {
+    background: var(--card-highlight);
+    border-color: #aaa298;
+  }
+}
+.button:not(:disabled):active,
+.icon-button:not(:disabled):active,
+.context-card:active,
+.cycle-card:active,
+.kanban-card:active,
+.context-selector > button:active {
+  transform: translateY(0) scale(0.985);
+  box-shadow: none;
+  transition-duration: 90ms;
+}
+.workspace-layout .objective-card:focus-within,
+.workspace-layout .capability-card:focus-within,
+.workspace-layout .action-row:focus-visible,
+.workspace-layout .action-row[data-active='true'],
+.kanban-card:focus-visible,
+.context-card:focus-visible {
+  background: var(--card-highlight);
+  border-color: #5a5f66;
+}
+.context-selector > button[aria-pressed='true'] {
+  background: #e7e1d8;
+  border-color: #5a5f66;
+  box-shadow: inset 0 0 0 1px #5a5f66;
+}
+.segmented > button[aria-pressed='true'] {
+  background: #0d1a2b;
+  color: #fbfaf7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .icon-button,
+  .text-button,
+  .context-selector > button,
+  .segmented > button,
+  .cycle-card,
+  .context-card,
+  .kanban-card,
+  .action-row,
+  .objective-card,
+  .capability-card,
+  .mega-group a,
+  .button > svg,
+  .text-button > svg,
+  .cycle-card-bottom svg,
+  .context-card svg {
+    transition: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "page": 67,
+  "name": "OS HOME",
+  "source_paragraph": 1356,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os",
+  "seo_title": "OS Home | LAMID ONE",
+  "meta_description": "Return to what progressed, what changed, what improved, what needs approval, and the priorities and active work relevant now.",
+  "title": "What Needs Your Attention?",
+  "description": "Return to what progressed, what changed, what improved, what needs approval, and the priorities and active work relevant now.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "What Needs Your Attention?",
+    "paragraphs": [
+      {
+        "text": "What Needs Your Attention?",
+        "sourceParagraph": 1362
+      },
+      {
+        "text": "Return to what progressed, what changed, what improved, what needs approval, and the priorities and active work relevant now.",
+        "sourceParagraph": 1363
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Today",
+      "title": "Today",
+      "paragraphs": [
+        {
+          "text": "Today",
+          "sourceParagraph": 1364
+        },
+        {
+          "text": "Your current priority and next action.",
+          "sourceParagraph": 1365
+        }
+      ]
+    },
+    {
+      "label": "Progress",
+      "title": "Progress",
+      "paragraphs": [
+        {
+          "text": "Progress",
+          "sourceParagraph": 1366
+        },
+        {
+          "text": "Recent movement across clarity, capability, and consistency, including material changes since your previous state.",
+          "sourceParagraph": 1367
+        }
+      ]
+    },
+    {
+      "label": "Rhythm",
+      "title": "Rhythm",
+      "paragraphs": [
+        {
+          "text": "Rhythm",
+          "sourceParagraph": 1368
+        },
+        {
+          "text": "Daily, weekly, or monthly review when due.",
+          "sourceParagraph": 1369
+        }
+      ]
+    }
+  ]
+}

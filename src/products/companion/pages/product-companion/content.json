@@ -1,0 +1,101 @@
+{
+  "page": 3,
+  "name": "LAMID ONE COMPANION",
+  "source_paragraph": 117,
+  "gates": [],
+  "route": "/product/companion",
+  "indexing": "index, follow",
+  "canonical": "/product/companion",
+  "seo_title": "LAMID ONE Companion | LAMID ONE",
+  "meta_description": "The LAMID ONE Companion turns your objective and evolving context into clearer understanding, stronger decisions, and practical action.",
+  "title": "Work With the Situation in Front of You.",
+  "description": "The LAMID ONE Companion turns your objective and evolving context into clearer understanding, stronger decisions, and practical action.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Work With the Situation in Front of You.",
+    "paragraphs": [
+      {
+        "text": "Work With the Situation in Front of You.",
+        "sourceParagraph": 123
+      },
+      {
+        "text": "The LAMID ONE Companion turns your objective and evolving context into clearer understanding, stronger decisions, and practical action.",
+        "sourceParagraph": 124
+      },
+      {
+        "text": "CTA: Experience the Companion",
+        "sourceParagraph": 125
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Start With Intent",
+      "title": "Start With Intent",
+      "paragraphs": [
+        {
+          "text": "Start With Intent",
+          "sourceParagraph": 126
+        },
+        {
+          "text": "A decision. A challenge. An opportunity. A plan.",
+          "sourceParagraph": 127
+        }
+      ]
+    },
+    {
+      "label": "Context Before Answers",
+      "title": "Context Before Answers",
+      "paragraphs": [
+        {
+          "text": "Context Before Answers",
+          "sourceParagraph": 128
+        },
+        {
+          "text": "Your objective, role, workspace, priorities, previous decisions, permitted information, authorized work, and relevant changes since your last interaction shape what matters. The Companion works from an evolving context instead of treating every interaction as isolated.",
+          "sourceParagraph": 129
+        }
+      ]
+    },
+    {
+      "label": "From Understanding to Action",
+      "title": "From Understanding to Action",
+      "paragraphs": [
+        {
+          "text": "From Understanding to Action",
+          "sourceParagraph": 130
+        },
+        {
+          "text": "• Clarify the situation.",
+          "sourceParagraph": 131
+        },
+        {
+          "text": "• Compare options.",
+          "sourceParagraph": 132
+        },
+        {
+          "text": "• Surface assumptions.",
+          "sourceParagraph": 133
+        }
+      ]
+    },
+    {
+      "label": "Context You Control",
+      "title": "Context You Control",
+      "paragraphs": [
+        {
+          "text": "Context You Control",
+          "sourceParagraph": 134
+        },
+        {
+          "text": "Persistent progression remains bounded by the permissions, sources, policies, and controls established by you or your organization.",
+          "sourceParagraph": 135
+        },
+        {
+          "text": "Link: Responsible AI",
+          "sourceParagraph": 136
+        }
+      ]
+    }
+  ]
+}

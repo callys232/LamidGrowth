@@ -1,0 +1,77 @@
+{
+  "page": 53,
+  "name": "PRESS & MEDIA",
+  "source_paragraph": 1117,
+  "gates": [
+    "CONTENT GATE - Publish only approved company facts, announcements, assets, and media contacts."
+  ],
+  "route": "/press",
+  "indexing": "index, follow",
+  "canonical": "/press",
+  "seo_title": "Press & Media | LAMID ONE",
+  "meta_description": "Find verified company information, announcements, approved assets, and media contacts.",
+  "title": "LAMID ONE - Press & Media",
+  "description": "Find verified company information, announcements, approved assets, and media contacts.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "LAMID ONE - Press & Media",
+    "paragraphs": [
+      {
+        "text": "LAMID ONE - Press & Media",
+        "sourceParagraph": 1123
+      },
+      {
+        "text": "Find verified company information, announcements, approved assets, and media contacts.",
+        "sourceParagraph": 1124
+      },
+      {
+        "text": "CTA: Contact Media",
+        "sourceParagraph": 1125
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Company Facts",
+      "title": "Company Facts",
+      "paragraphs": [
+        {
+          "text": "Company Facts",
+          "sourceParagraph": 1126
+        },
+        {
+          "text": "Find the approved category description, company summary, leadership information, and key facts.",
+          "sourceParagraph": 1127
+        }
+      ]
+    },
+    {
+      "label": "Announcements",
+      "title": "Announcements",
+      "paragraphs": [
+        {
+          "text": "Announcements",
+          "sourceParagraph": 1128
+        },
+        {
+          "text": "Read dated, attributable company news and announcements.",
+          "sourceParagraph": 1129
+        }
+      ]
+    },
+    {
+      "label": "Media Assets",
+      "title": "Media Assets",
+      "paragraphs": [
+        {
+          "text": "Media Assets",
+          "sourceParagraph": 1130
+        },
+        {
+          "text": "Access approved logos, screenshots, and brand guidance.",
+          "sourceParagraph": 1131
+        }
+      ]
+    }
+  ]
+}

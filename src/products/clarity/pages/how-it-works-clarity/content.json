@@ -1,0 +1,93 @@
+{
+  "page": 9,
+  "name": "CLARITY",
+  "source_paragraph": 236,
+  "gates": [],
+  "route": "/how-it-works/clarity",
+  "indexing": "index, follow",
+  "canonical": "/how-it-works/clarity",
+  "seo_title": "Clarity | LAMID ONE",
+  "meta_description": "Before choosing what to do, understand what matters, what is changing, and what may be getting in the way.",
+  "title": "See the Situation More Clearly.",
+  "description": "Before choosing what to do, understand what matters, what is changing, and what may be getting in the way.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "See the Situation More Clearly.",
+    "paragraphs": [
+      {
+        "text": "See the Situation More Clearly.",
+        "sourceParagraph": 242
+      },
+      {
+        "text": "Before choosing what to do, understand what matters, what is changing, and what may be getting in the way.",
+        "sourceParagraph": 243
+      },
+      {
+        "text": "CTA: Experience Clarity",
+        "sourceParagraph": 244
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Reduce Noise",
+      "title": "Reduce Noise",
+      "paragraphs": [
+        {
+          "text": "Reduce Noise",
+          "sourceParagraph": 245
+        },
+        {
+          "text": "Separate the important from the merely urgent.",
+          "sourceParagraph": 246
+        }
+      ]
+    },
+    {
+      "label": "Understand Context",
+      "title": "Understand Context",
+      "paragraphs": [
+        {
+          "text": "Understand Context",
+          "sourceParagraph": 247
+        },
+        {
+          "text": "Bring relevant information, priorities, assumptions, and constraints into view.",
+          "sourceParagraph": 248
+        }
+      ]
+    },
+    {
+      "label": "Reveal Patterns",
+      "title": "Reveal Patterns",
+      "paragraphs": [
+        {
+          "text": "Reveal Patterns",
+          "sourceParagraph": 249
+        },
+        {
+          "text": "Recognize recurring issues and relationships that fragmented information can hide.",
+          "sourceParagraph": 250
+        }
+      ]
+    },
+    {
+      "label": "Better Action Starts With Better Understanding.",
+      "title": "Better Action Starts With Better Understanding.",
+      "paragraphs": [
+        {
+          "text": "Better Action Starts With Better Understanding.",
+          "sourceParagraph": 251
+        },
+        {
+          "text": "Leave Clarity with a defined objective, relevant context, explicit assumptions, and a clear priority.",
+          "sourceParagraph": 252
+        },
+        {
+          "text": "CTA: Experience Clarity",
+          "sourceParagraph": 253
+        }
+      ]
+    }
+  ]
+}

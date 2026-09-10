@@ -1,0 +1,95 @@
+{
+  "page": 40,
+  "name": "PRODUCT GUIDES",
+  "source_paragraph": 840,
+  "gates": [],
+  "route": "/help/product",
+  "indexing": "index, follow",
+  "canonical": "/help/product",
+  "seo_title": "Product Guides | LAMID ONE",
+  "meta_description": "Browse guidance by what you are trying to accomplish, with deeper and continuous context revealed only when it is relevant.",
+  "title": "Understand the Human-AI Growth OS as You Need It.",
+  "description": "Browse guidance by what you are trying to accomplish, with deeper and continuous context revealed only when it is relevant.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understand the Human-AI Growth OS as You Need It.",
+    "paragraphs": [
+      {
+        "text": "Understand the Human-AI Growth OS as You Need It.",
+        "sourceParagraph": 846
+      },
+      {
+        "text": "Browse guidance by what you are trying to accomplish, with deeper and continuous context revealed only when it is relevant.",
+        "sourceParagraph": 847
+      },
+      {
+        "text": "CTA: Browse Product Guides",
+        "sourceParagraph": 848
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Core Experience",
+      "title": "Core Experience",
+      "paragraphs": [
+        {
+          "text": "Core Experience",
+          "sourceParagraph": 849
+        },
+        {
+          "text": "• Companion",
+          "sourceParagraph": 850
+        },
+        {
+          "text": "• Clarity",
+          "sourceParagraph": 851
+        },
+        {
+          "text": "• Capability",
+          "sourceParagraph": 852
+        }
+      ]
+    },
+    {
+      "label": "Deeper Capability",
+      "title": "Deeper Capability",
+      "paragraphs": [
+        {
+          "text": "Deeper Capability",
+          "sourceParagraph": 853
+        },
+        {
+          "text": "• Business",
+          "sourceParagraph": 854
+        },
+        {
+          "text": "• Finance",
+          "sourceParagraph": 855
+        },
+        {
+          "text": "• People",
+          "sourceParagraph": 856
+        }
+      ]
+    },
+    {
+      "label": "Outcome Collections",
+      "title": "Outcome Collections",
+      "paragraphs": [
+        {
+          "text": "Outcome Collections",
+          "sourceParagraph": 857
+        },
+        {
+          "text": "Use guided paths such as 'plan a hiring decision', 'create a weekly team rhythm', or 'build an approval workflow'.",
+          "sourceParagraph": 858
+        },
+        {
+          "text": "CTA: Browse Product Guides",
+          "sourceParagraph": 859
+        }
+      ]
+    }
+  ]
+}

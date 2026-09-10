@@ -1,0 +1,93 @@
+{
+  "page": 21,
+  "name": "ENTERPRISES",
+  "source_paragraph": 466,
+  "gates": [],
+  "route": "/who-its-for/enterprises",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/enterprises",
+  "seo_title": "Enterprises | LAMID ONE",
+  "meta_description": "Create clearer operating context across people, teams, systems, workflows, and decisions - while keeping the everyday experience focused on what each person.",
+  "title": "Connect Decisions, Capability, and Execution Across the Organization.",
+  "description": "Create clearer operating context across people, teams, systems, workflows, and decisions - while keeping the everyday experience focused on what each person actually needs.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Connect Decisions, Capability, and Execution Across the Organization.",
+    "paragraphs": [
+      {
+        "text": "Connect Decisions, Capability, and Execution Across the Organization.",
+        "sourceParagraph": 472
+      },
+      {
+        "text": "Create clearer operating context across people, teams, systems, workflows, and decisions - while keeping the everyday experience focused on what each person actually needs.",
+        "sourceParagraph": 473
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Enterprise",
+        "sourceParagraph": 474
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Shared Organizational Context",
+      "title": "Shared Organizational Context",
+      "paragraphs": [
+        {
+          "text": "Shared Organizational Context",
+          "sourceParagraph": 475
+        },
+        {
+          "text": "Connect strategic priorities, operating signals, relevant information, and decisions across functions without creating another layer of noise.",
+          "sourceParagraph": 476
+        }
+      ]
+    },
+    {
+      "label": "Organizational Capability",
+      "title": "Organizational Capability",
+      "paragraphs": [
+        {
+          "text": "Organizational Capability",
+          "sourceParagraph": 477
+        },
+        {
+          "text": "Understand where current capability supports strategic priorities, where constraints are emerging, and what needs to strengthen next.",
+          "sourceParagraph": 478
+        }
+      ]
+    },
+    {
+      "label": "Govern Growth Without Slowing the Work",
+      "title": "Govern Growth Without Slowing the Work",
+      "paragraphs": [
+        {
+          "text": "Govern Growth Without Slowing the Work",
+          "sourceParagraph": 479
+        },
+        {
+          "text": "Keep roles, permissions, review, accountability, and decision authority clear as more people and responsibilities enter the operating environment.",
+          "sourceParagraph": 480
+        }
+      ]
+    },
+    {
+      "label": "Enterprise Depth Without Enterprise Clutter.",
+      "title": "Enterprise Depth Without Enterprise Clutter.",
+      "paragraphs": [
+        {
+          "text": "Enterprise Depth Without Enterprise Clutter.",
+          "sourceParagraph": 481
+        },
+        {
+          "text": "Give governance, analytics, integrations, administration, and organizational controls to the people who need them while keeping ordinary work clear and focused.",
+          "sourceParagraph": 482
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Enterprise",
+          "sourceParagraph": 483
+        }
+      ]
+    }
+  ]
+}

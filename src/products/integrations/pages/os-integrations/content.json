@@ -1,0 +1,73 @@
+{
+  "page": 86,
+  "name": "OS INTEGRATIONS",
+  "source_paragraph": 1658,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/integrations",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/integrations",
+  "seo_title": "OS Integrations | LAMID ONE",
+  "meta_description": "Review available integrations, connected systems, permissions, authorized progression, synchronization, freshness, and activity.",
+  "title": "Connect Relevant Systems.",
+  "description": "Review available integrations, connected systems, permissions, authorized progression, synchronization, freshness, and activity.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Connect Relevant Systems.",
+    "paragraphs": [
+      {
+        "text": "Connect Relevant Systems.",
+        "sourceParagraph": 1664
+      },
+      {
+        "text": "Review available integrations, connected systems, permissions, authorized progression, synchronization, freshness, and activity.",
+        "sourceParagraph": 1665
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Available",
+      "title": "Available",
+      "paragraphs": [
+        {
+          "text": "Available",
+          "sourceParagraph": 1666
+        },
+        {
+          "text": "See integrations approved for the current workspace or organization.",
+          "sourceParagraph": 1667
+        }
+      ]
+    },
+    {
+      "label": "Connected",
+      "title": "Connected",
+      "paragraphs": [
+        {
+          "text": "Connected",
+          "sourceParagraph": 1668
+        },
+        {
+          "text": "Review active connections, owners, scopes, progression permissions, health, last successful activity, and data freshness.",
+          "sourceParagraph": 1669
+        }
+      ]
+    },
+    {
+      "label": "Requires Attention",
+      "title": "Requires Attention",
+      "paragraphs": [
+        {
+          "text": "Requires Attention",
+          "sourceParagraph": 1670
+        },
+        {
+          "text": "Surface expired credentials, failed syncs, revoked access, or configuration issues.",
+          "sourceParagraph": 1671
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+.canonical-copy .content-hero p {
+  white-space: pre-line;
+  color: #5a5f66;
+}
+.canonical-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
+.canonical-cta-label {
+  display: inline-block;
+  font-weight: 600;
+  padding: 8px 0;
+}
+.canonical-preview {
+  margin: 24px auto;
+  max-width: 1280px;
+  padding: 16px 24px;
+  background: #eeeae5;
+  color: #0d1a2b;
+  border-left: 3px solid #5a5f66;
+  font-size: 14px;
+}
+.canonical-copy .editorial-section {
+  grid-template-columns: 48px minmax(0, 1fr);
+}
+.canonical-copy .editorial-section p {
+  max-width: 80ch;
+}
+.canonical-copy .dark-section .button {
+  background: #fbfaf7;
+  color: #0d1a2b;
+}
+.canonical-controls {
+  margin: 48px auto;
+}
+.workspace-main > .canonical-copy {
+  margin-top: 64px;
+  border-top: 1px solid #d8cfc4;
+}
+.workspace-main > .canonical-copy .content-hero {
+  display: block;
+}
+.workspace-main > .canonical-copy .section-wrap {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+.workspace-main > .canonical-copy .editorial-section {
+  padding: 24px;
+}
+@media (max-width: 760px) {
+  .canonical-copy .content-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .canonical-copy .editorial-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.canonical-copy {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.canonical-copy .editorial-section > div {
+  min-width: 0;
+}
+.canonical-copy .editorial-section p,
+.canonical-copy .editorial-number {
+  color: #5a5f66;
+}
+.canonical-copy .dark-section p,
+.canonical-copy .dark-section .editorial-number {
+  color: #fbfaf7;
+}
+.canonical-copy .content-hero > div {
+  min-width: 0;
+}
+.canonical-copy .button {
+  white-space: normal;
+  max-width: 100%;
+  text-align: left;
+}
+.workspace-main > .canonical-copy .section-wrap {
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+.canonical-controls .auth-content h2 {
+  font-family: var(--font-editorial);
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,73 @@
+{
+  "page": 88,
+  "name": "AUDIT",
+  "source_paragraph": 1688,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/audit",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/audit",
+  "seo_title": "Audit | LAMID ONE",
+  "meta_description": "See who or what changed or progressed the operating context, when it happened, which permission and policy applied, whether it was later overridden or.",
+  "title": "Review Consequential Activity.",
+  "description": "See who or what changed or progressed the operating context, when it happened, which permission and policy applied, whether it was later overridden or reversed, and what result followed.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Review Consequential Activity.",
+    "paragraphs": [
+      {
+        "text": "Review Consequential Activity.",
+        "sourceParagraph": 1694
+      },
+      {
+        "text": "See who or what changed or progressed the operating context, when it happened, which permission and policy applied, whether it was later overridden or reversed, and what result followed.",
+        "sourceParagraph": 1695
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Actor",
+      "title": "Actor",
+      "paragraphs": [
+        {
+          "text": "Actor",
+          "sourceParagraph": 1696
+        },
+        {
+          "text": "Identify the user, service, or authorized system responsible for the recorded action.",
+          "sourceParagraph": 1697
+        }
+      ]
+    },
+    {
+      "label": "Action",
+      "title": "Action",
+      "paragraphs": [
+        {
+          "text": "Action",
+          "sourceParagraph": 1698
+        },
+        {
+          "text": "Describe the material context update, progression, permission change, override, reversal, approval, execution, or administrative event.",
+          "sourceParagraph": 1699
+        }
+      ]
+    },
+    {
+      "label": "Trace Commercial Approval and Release",
+      "title": "Trace Commercial Approval and Release",
+      "paragraphs": [
+        {
+          "text": "Trace Commercial Approval and Release",
+          "sourceParagraph": 1700
+        },
+        {
+          "text": "For supported commercial workflows, link proposal or agreement state, acceptance criteria, submission evidence, verification result, human approval, payment-release instruction, reconciliation state, and any later dispute, reversal, or compensating action.",
+          "sourceParagraph": 1701
+        }
+      ]
+    }
+  ]
+}

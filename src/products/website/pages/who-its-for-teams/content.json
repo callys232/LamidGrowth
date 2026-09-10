@@ -1,0 +1,93 @@
+{
+  "page": 19,
+  "name": "TEAMS",
+  "source_paragraph": 428,
+  "gates": [],
+  "route": "/who-its-for/teams",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/teams",
+  "seo_title": "Teams | LAMID ONE",
+  "meta_description": "Move better when everyone understands what matters, what they own, and how the work connects.",
+  "title": "Shared Clarity. Stronger Execution.",
+  "description": "Move better when everyone understands what matters, what they own, and how the work connects.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Shared Clarity. Stronger Execution.",
+    "paragraphs": [
+      {
+        "text": "Shared Clarity. Stronger Execution.",
+        "sourceParagraph": 434
+      },
+      {
+        "text": "Move better when everyone understands what matters, what they own, and how the work connects.",
+        "sourceParagraph": 435
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Teams",
+        "sourceParagraph": 436
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Shared Priorities",
+      "title": "Shared Priorities",
+      "paragraphs": [
+        {
+          "text": "Shared Priorities",
+          "sourceParagraph": 437
+        },
+        {
+          "text": "Create a clear view of what deserves collective attention.",
+          "sourceParagraph": 438
+        }
+      ]
+    },
+    {
+      "label": "Capability",
+      "title": "Capability",
+      "paragraphs": [
+        {
+          "text": "Capability",
+          "sourceParagraph": 439
+        },
+        {
+          "text": "See strengths, gaps, and where support is required.",
+          "sourceParagraph": 440
+        }
+      ]
+    },
+    {
+      "label": "Rhythm",
+      "title": "Rhythm",
+      "paragraphs": [
+        {
+          "text": "Rhythm",
+          "sourceParagraph": 441
+        },
+        {
+          "text": "Review progress, blockers, and next priorities together.",
+          "sourceParagraph": 442
+        }
+      ]
+    },
+    {
+      "label": "Alignment Becomes Visible in the Work.",
+      "title": "Alignment Becomes Visible in the Work.",
+      "paragraphs": [
+        {
+          "text": "Alignment Becomes Visible in the Work.",
+          "sourceParagraph": 443
+        },
+        {
+          "text": "Shared priorities, ownership, capability, and review make alignment observable rather than assumed.",
+          "sourceParagraph": 444
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Teams",
+          "sourceParagraph": 445
+        }
+      ]
+    }
+  ]
+}

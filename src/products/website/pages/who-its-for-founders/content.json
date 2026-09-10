@@ -1,0 +1,93 @@
+{
+  "page": 18,
+  "name": "FOUNDERS",
+  "source_paragraph": 409,
+  "gates": [],
+  "route": "/who-its-for/founders",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/founders",
+  "seo_title": "Founders | LAMID ONE",
+  "meta_description": "Move across strategy, finance, customers, people, opportunity, and execution without managing a disconnected stack for every decision.",
+  "title": "Build With More Clarity Around the Decisions That Matter.",
+  "description": "Move across strategy, finance, customers, people, opportunity, and execution without managing a disconnected stack for every decision.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Build With More Clarity Around the Decisions That Matter.",
+    "paragraphs": [
+      {
+        "text": "Build With More Clarity Around the Decisions That Matter.",
+        "sourceParagraph": 415
+      },
+      {
+        "text": "Move across strategy, finance, customers, people, opportunity, and execution without managing a disconnected stack for every decision.",
+        "sourceParagraph": 416
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Founders",
+        "sourceParagraph": 417
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Business Clarity",
+      "title": "Business Clarity",
+      "paragraphs": [
+        {
+          "text": "Business Clarity",
+          "sourceParagraph": 418
+        },
+        {
+          "text": "Understand the priorities, assumptions, and dependencies shaping the business.",
+          "sourceParagraph": 419
+        }
+      ]
+    },
+    {
+      "label": "Financial Context",
+      "title": "Financial Context",
+      "paragraphs": [
+        {
+          "text": "Financial Context",
+          "sourceParagraph": 420
+        },
+        {
+          "text": "See runway, cash flow, pricing, scenarios, and decision impact with transparent assumptions.",
+          "sourceParagraph": 421
+        }
+      ]
+    },
+    {
+      "label": "Team Capability",
+      "title": "Team Capability",
+      "paragraphs": [
+        {
+          "text": "Team Capability",
+          "sourceParagraph": 422
+        },
+        {
+          "text": "See what the next stage requires from the people building it.",
+          "sourceParagraph": 423
+        }
+      ]
+    },
+    {
+      "label": "One Founder. Many Contexts. One Operating System.",
+      "title": "One Founder. Many Contexts. One Operating System.",
+      "paragraphs": [
+        {
+          "text": "One Founder. Many Contexts. One Operating System.",
+          "sourceParagraph": 424
+        },
+        {
+          "text": "Move between strategy, finance, people, opportunity, and execution without rebuilding context in separate tools.",
+          "sourceParagraph": 425
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Founders",
+          "sourceParagraph": 426
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "page": 61,
+  "name": "SIGN IN",
+  "source_paragraph": 1246,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/login",
+  "indexing": "noindex, nofollow",
+  "canonical": "/login",
+  "seo_title": "Sign In | LAMID ONE",
+  "meta_description": "Continue into your LAMID ONE context.",
+  "title": "Welcome Back",
+  "description": "Continue into your LAMID ONE context.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Welcome Back",
+    "paragraphs": [
+      {
+        "text": "Welcome Back",
+        "sourceParagraph": 1252
+      },
+      {
+        "text": "Continue into your LAMID ONE context.",
+        "sourceParagraph": 1253
+      },
+      {
+        "text": "CTA: Sign In | Create Account",
+        "sourceParagraph": 1254
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Sign In",
+      "title": "Sign In",
+      "paragraphs": [
+        {
+          "text": "Sign In",
+          "sourceParagraph": 1255
+        },
+        {
+          "text": "• Email",
+          "sourceParagraph": 1256
+        },
+        {
+          "text": "• Password or supported identity method",
+          "sourceParagraph": 1257
+        },
+        {
+          "text": "• Remembered session where appropriate",
+          "sourceParagraph": 1258
+        },
+        {
+          "text": "CTA: Sign In",
+          "sourceParagraph": 1259
+        }
+      ]
+    },
+    {
+      "label": "Protect Access Without Adding Friction Everywhere",
+      "title": "Protect Access Without Adding Friction Everywhere",
+      "paragraphs": [
+        {
+          "text": "Protect Access Without Adding Friction Everywhere",
+          "sourceParagraph": 1260
+        },
+        {
+          "text": "Apply phishing-resistant MFA and step-up authentication where supported and appropriate to risk. Use rate limiting, session protection, device or risk signals where implemented, and secure server-side authorization for sensitive actions.",
+          "sourceParagraph": 1261
+        }
+      ]
+    },
+    {
+      "label": "New to LAMID ONE?",
+      "title": "New to LAMID ONE?",
+      "paragraphs": [
+        {
+          "text": "New to LAMID ONE?",
+          "sourceParagraph": 1262
+        },
+        {
+          "text": "Create one identity and add contexts as your work grows.",
+          "sourceParagraph": 1263
+        },
+        {
+          "text": "CTA: Create Account",
+          "sourceParagraph": 1264
+        }
+      ]
+    }
+  ]
+}

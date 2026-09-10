@@ -1,0 +1,97 @@
+{
+  "page": 44,
+  "name": "API DOCUMENTATION",
+  "source_paragraph": 918,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/developers/api",
+  "indexing": "index, follow",
+  "canonical": "/developers/api",
+  "seo_title": "API Documentation | LAMID ONE",
+  "meta_description": "Use documented APIs with clear authentication, schemas, permissions, errors, and versioning.",
+  "title": "Build Against Stable Interfaces.",
+  "description": "Use documented APIs with clear authentication, schemas, permissions, errors, and versioning.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Build Against Stable Interfaces.",
+    "paragraphs": [
+      {
+        "text": "Build Against Stable Interfaces.",
+        "sourceParagraph": 924
+      },
+      {
+        "text": "Use documented APIs with clear authentication, schemas, permissions, errors, and versioning.",
+        "sourceParagraph": 925
+      },
+      {
+        "text": "CTA: View API Reference",
+        "sourceParagraph": 926
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "API Principles",
+      "title": "API Principles",
+      "paragraphs": [
+        {
+          "text": "API Principles",
+          "sourceParagraph": 927
+        },
+        {
+          "text": "• Versioned endpoints",
+          "sourceParagraph": 928
+        },
+        {
+          "text": "• Explicit schemas",
+          "sourceParagraph": 929
+        },
+        {
+          "text": "• Scoped authorization",
+          "sourceParagraph": 930
+        }
+      ]
+    },
+    {
+      "label": "Core Domains",
+      "title": "Core Domains",
+      "paragraphs": [
+        {
+          "text": "Core Domains",
+          "sourceParagraph": 931
+        },
+        {
+          "text": "• Workflows",
+          "sourceParagraph": 932
+        },
+        {
+          "text": "• AI orchestration",
+          "sourceParagraph": 933
+        },
+        {
+          "text": "• Organization rhythm",
+          "sourceParagraph": 934
+        }
+      ]
+    },
+    {
+      "label": "Start With the Contract.",
+      "title": "Start With the Contract.",
+      "paragraphs": [
+        {
+          "text": "Start With the Contract.",
+          "sourceParagraph": 935
+        },
+        {
+          "text": "Use explicit authentication, schemas, permissions, errors, and version behavior before building integration logic.",
+          "sourceParagraph": 936
+        },
+        {
+          "text": "CTA: View API Reference",
+          "sourceParagraph": 937
+        }
+      ]
+    }
+  ]
+}

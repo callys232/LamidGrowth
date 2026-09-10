@@ -1,0 +1,89 @@
+{
+  "page": 85,
+  "name": "ANALYTICS",
+  "source_paragraph": 1639,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/analytics",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/analytics",
+  "seo_title": "Analytics | LAMID ONE",
+  "meta_description": "Use defined metrics to understand product, workflow, team, or organizational patterns.",
+  "title": "Understand the Patterns Behind the Work.",
+  "description": "Use defined metrics to understand product, workflow, team, or organizational patterns.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understand the Patterns Behind the Work.",
+    "paragraphs": [
+      {
+        "text": "Understand the Patterns Behind the Work.",
+        "sourceParagraph": 1645
+      },
+      {
+        "text": "Use defined metrics to understand product, workflow, team, or organizational patterns.",
+        "sourceParagraph": 1646
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Every Metric Shows",
+      "title": "Every Metric Shows",
+      "paragraphs": [
+        {
+          "text": "Every Metric Shows",
+          "sourceParagraph": 1647
+        },
+        {
+          "text": "• Definition",
+          "sourceParagraph": 1648
+        },
+        {
+          "text": "• Data source",
+          "sourceParagraph": 1649
+        },
+        {
+          "text": "• Calculation",
+          "sourceParagraph": 1650
+        }
+      ]
+    },
+    {
+      "label": "Views",
+      "title": "Views",
+      "paragraphs": [
+        {
+          "text": "Views",
+          "sourceParagraph": 1651
+        },
+        {
+          "text": "• Trends",
+          "sourceParagraph": 1652
+        },
+        {
+          "text": "• Comparisons",
+          "sourceParagraph": 1653
+        },
+        {
+          "text": "• Segments",
+          "sourceParagraph": 1654
+        }
+      ]
+    },
+    {
+      "label": "Explain a Delivery Trend",
+      "title": "Explain a Delivery Trend",
+      "paragraphs": [
+        {
+          "text": "Explain a Delivery Trend",
+          "sourceParagraph": 1655
+        },
+        {
+          "text": "Trace the metric to source events and workflow stages before drawing a conclusion.",
+          "sourceParagraph": 1656
+        }
+      ]
+    }
+  ]
+}

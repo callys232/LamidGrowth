@@ -1,0 +1,95 @@
+{
+  "page": 6,
+  "name": "WORKFLOWS & EXECUTION",
+  "source_paragraph": 179,
+  "gates": [
+    "CAPABILITY GATE - Commercial execution, verification, approval, and payment-release statements must match implemented workflow, legal, payment, and human-authorization controls."
+  ],
+  "route": "/product/workflows",
+  "indexing": "index, follow",
+  "canonical": "/product/workflows",
+  "seo_title": "Workflows & Execution | LAMID ONE",
+  "meta_description": "Connect decisions to action - from one clear next step to structured workflows when the work requires more coordination.",
+  "title": "Move From Insight to Execution.",
+  "description": "Connect decisions to action - from one clear next step to structured workflows when the work requires more coordination.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Move From Insight to Execution.",
+    "paragraphs": [
+      {
+        "text": "Move From Insight to Execution.",
+        "sourceParagraph": 185
+      },
+      {
+        "text": "Connect decisions to action - from one clear next step to structured workflows when the work requires more coordination.",
+        "sourceParagraph": 186
+      },
+      {
+        "text": "CTA: See Workflow Capability",
+        "sourceParagraph": 187
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Start Simple",
+      "title": "Start Simple",
+      "paragraphs": [
+        {
+          "text": "Start Simple",
+          "sourceParagraph": 188
+        },
+        {
+          "text": "For lighter work, execution may be one priority, one action, and one commitment. You do not need a workflow builder for everything.",
+          "sourceParagraph": 189
+        }
+      ]
+    },
+    {
+      "label": "Repeat What Works",
+      "title": "Repeat What Works",
+      "paragraphs": [
+        {
+          "text": "Repeat What Works",
+          "sourceParagraph": 190
+        },
+        {
+          "text": "Turn useful processes into repeatable patterns without removing judgment where circumstances differ.",
+          "sourceParagraph": 191
+        }
+      ]
+    },
+    {
+      "label": "Progress Within the Boundaries You Set",
+      "title": "Progress Within the Boundaries You Set",
+      "paragraphs": [
+        {
+          "text": "Progress Within the Boundaries You Set",
+          "sourceParagraph": 192
+        },
+        {
+          "text": "Authorized work may continue between interactions only inside the exact workflow scope already granted.",
+          "sourceParagraph": 193
+        }
+      ]
+    },
+    {
+      "label": "Execution Stays Connected to the Decision That Created It.",
+      "title": "Execution Stays Connected to the Decision That Created It.",
+      "paragraphs": [
+        {
+          "text": "Execution Stays Connected to the Decision That Created It.",
+          "sourceParagraph": 194
+        },
+        {
+          "text": "Keep the objective, reasoning, owners, and actions connected so execution does not lose the context behind the decision.",
+          "sourceParagraph": 195
+        },
+        {
+          "text": "CTA: See Workflow Capability",
+          "sourceParagraph": 196
+        }
+      ]
+    }
+  ]
+}

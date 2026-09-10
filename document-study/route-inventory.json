@@ -1,0 +1,1008 @@
+[
+  {
+    "page": 1,
+    "name": "HOME",
+    "source_paragraph": 153,
+    "gates": [],
+    "route": "/",
+    "seo_title": "LAMID ONE | Continuous Human-AI Growth Operating System",
+    "meta_description": "LAMID ONE is the Continuous Human-AI Growth Operating System: continuous intelligence that keeps progress moving within the boundaries you set."
+  },
+  {
+    "page": 2,
+    "name": "PRODUCT OVERVIEW",
+    "source_paragraph": 280,
+    "gates": [],
+    "route": "/product",
+    "seo_title": "Product Overview | LAMID ONE",
+    "meta_description": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context."
+  },
+  {
+    "page": 3,
+    "name": "LAMID ONE COMPANION",
+    "source_paragraph": 326,
+    "gates": [],
+    "route": "/product/companion",
+    "seo_title": "LAMID ONE Companion | LAMID ONE",
+    "meta_description": "The LAMID ONE Companion turns your objective and evolving context into clearer understanding, stronger decisions, and practical action."
+  },
+  {
+    "page": 4,
+    "name": "ADAPTIVE PRODUCT EXPERIENCE",
+    "source_paragraph": 363,
+    "gates": [],
+    "route": "/product/experience",
+    "seo_title": "Adaptive Product Experience | LAMID ONE",
+    "meta_description": "LAMID ONE changes what you see according to your context, responsibility, and needs. You gain depth without moving into another product."
+  },
+  {
+    "page": 5,
+    "name": "CONTEXTUAL INTELLIGENCE",
+    "source_paragraph": 392,
+    "gates": [],
+    "route": "/product/intelligence",
+    "seo_title": "Contextual Intelligence | LAMID ONE",
+    "meta_description": "Start with the outcome. LAMID ONE brings together the relevant analysis, context, and specialist depth inside one operating experience."
+  },
+  {
+    "page": 6,
+    "name": "WORKFLOWS & EXECUTION",
+    "source_paragraph": 429,
+    "gates": [
+      "CAPABILITY GATE - Commercial execution, verification, approval, and payment-release statements must match implemented workflow, legal, payment, and human-authorization controls."
+    ],
+    "route": "/product/workflows",
+    "seo_title": "Workflows & Execution | LAMID ONE",
+    "meta_description": "Connect decisions to action - from one clear next step to structured workflows when the work requires more coordination."
+  },
+  {
+    "page": 7,
+    "name": "ORGANIZATIONS",
+    "source_paragraph": 475,
+    "gates": [],
+    "route": "/product/organizations",
+    "seo_title": "Organizations | LAMID ONE",
+    "meta_description": "Extend the same operating principles across teams and organizations while keeping each person's experience clear and relevant."
+  },
+  {
+    "page": 8,
+    "name": "HOW IT WORKS",
+    "source_paragraph": 504,
+    "gates": [],
+    "route": "/how-it-works",
+    "seo_title": "How It Works | LAMID ONE",
+    "meta_description": "Move from understanding to capability, from capability to consistent action, and let permitted progress carry forward between interactions so growth can."
+  },
+  {
+    "page": 9,
+    "name": "CLARITY",
+    "source_paragraph": 540,
+    "gates": [],
+    "route": "/how-it-works/clarity",
+    "seo_title": "Clarity | LAMID ONE",
+    "meta_description": "Before choosing what to do, understand what matters, what is changing, and what may be getting in the way."
+  },
+  {
+    "page": 10,
+    "name": "CAPABILITY",
+    "source_paragraph": 569,
+    "gates": [],
+    "route": "/how-it-works/capability",
+    "seo_title": "Capability | LAMID ONE",
+    "meta_description": "Clarity shows what matters. Capability determines whether you can act on it effectively."
+  },
+  {
+    "page": 11,
+    "name": "CONSISTENCY",
+    "source_paragraph": 607,
+    "gates": [],
+    "route": "/how-it-works/consistency",
+    "seo_title": "Consistency | LAMID ONE",
+    "meta_description": "Consistency connects understanding and capability to sustained action."
+  },
+  {
+    "page": 12,
+    "name": "GROWTH",
+    "source_paragraph": 636,
+    "gates": [],
+    "route": "/how-it-works/growth",
+    "seo_title": "Growth | LAMID ONE",
+    "meta_description": "Growth emerges when clearer understanding, stronger capability, consistent action, and continuously refreshed context compound over time."
+  },
+  {
+    "page": 13,
+    "name": "OPERATING RHYTHM",
+    "source_paragraph": 662,
+    "gates": [],
+    "route": "/how-it-works/rhythm",
+    "seo_title": "Operating Rhythm | LAMID ONE",
+    "meta_description": "Connect persistent, permissioned progression with deliberate daily action, weekly review, monthly patterns, and organizational learning."
+  },
+  {
+    "page": 14,
+    "name": "WHO IT'S FOR",
+    "source_paragraph": 691,
+    "gates": [],
+    "route": "/who-its-for",
+    "seo_title": "Who It's For | LAMID ONE",
+    "meta_description": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly."
+  },
+  {
+    "page": 15,
+    "name": "INDIVIDUALS",
+    "source_paragraph": 729,
+    "gates": [],
+    "route": "/who-its-for/individuals",
+    "seo_title": "Individuals | LAMID ONE",
+    "meta_description": "Use a private operating environment for decisions, capability, priorities, and progress."
+  },
+  {
+    "page": 16,
+    "name": "PROFESSIONALS",
+    "source_paragraph": 755,
+    "gates": [],
+    "route": "/who-its-for/professionals",
+    "seo_title": "Professionals | LAMID ONE",
+    "meta_description": "Strengthen how you understand problems, make decisions, develop capability, and follow through on important work."
+  },
+  {
+    "page": 17,
+    "name": "CREATORS",
+    "source_paragraph": 781,
+    "gates": [],
+    "route": "/who-its-for/creators",
+    "seo_title": "Creators | LAMID ONE",
+    "meta_description": "Bring direction, opportunity, capability, execution, and business context together without crowding out the creative work."
+  },
+  {
+    "page": 18,
+    "name": "FOUNDERS",
+    "source_paragraph": 810,
+    "gates": [],
+    "route": "/who-its-for/founders",
+    "seo_title": "Founders | LAMID ONE",
+    "meta_description": "Move across strategy, finance, customers, people, opportunity, and execution without managing a disconnected stack for every decision."
+  },
+  {
+    "page": 19,
+    "name": "TEAMS",
+    "source_paragraph": 842,
+    "gates": [],
+    "route": "/who-its-for/teams",
+    "seo_title": "Teams | LAMID ONE",
+    "meta_description": "Move better when everyone understands what matters, what they own, and how the work connects."
+  },
+  {
+    "page": 20,
+    "name": "SMES",
+    "source_paragraph": 871,
+    "gates": [],
+    "route": "/who-its-for/smes",
+    "seo_title": "SMEs | LAMID ONE",
+    "meta_description": "Bring operations, people, finance, opportunity, and execution into one operating context."
+  },
+  {
+    "page": 21,
+    "name": "ENTERPRISES",
+    "source_paragraph": 903,
+    "gates": [],
+    "route": "/who-its-for/enterprises",
+    "seo_title": "Enterprises | LAMID ONE",
+    "meta_description": "Create clearer operating context across people, teams, systems, workflows, and decisions - while keeping the everyday experience focused on what each person."
+  },
+  {
+    "page": 22,
+    "name": "INSTITUTIONS",
+    "source_paragraph": 935,
+    "gates": [],
+    "route": "/who-its-for/institutions",
+    "seo_title": "Institutions | LAMID ONE",
+    "meta_description": "Operate across longer timelines, broader responsibilities, and deeper accountability while keeping human judgment and institutional context central."
+  },
+  {
+    "page": 23,
+    "name": "ENTERPRISE PLATFORM & DEPLOYMENT",
+    "source_paragraph": 967,
+    "gates": [
+      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+    ],
+    "route": "/enterprise",
+    "seo_title": "Enterprise Platform & Deployment | LAMID ONE",
+    "meta_description": "Evaluate LAMID ONE architecture, governance, integrations, administration, security boundaries, and deployment readiness at organizational scale."
+  },
+  {
+    "page": 24,
+    "name": "SECURITY",
+    "source_paragraph": 1002,
+    "gates": [
+      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+    ],
+    "route": "/security",
+    "seo_title": "Security | LAMID ONE",
+    "meta_description": "Evaluate the controls protecting identity, authorization, data, integrations, AI-assisted actions, commercial activity, infrastructure, and operational."
+  },
+  {
+    "page": 25,
+    "name": "RESPONSIBLE AI",
+    "source_paragraph": 1044,
+    "gates": [
+      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+    ],
+    "route": "/responsible-ai",
+    "seo_title": "Responsible AI | LAMID ONE",
+    "meta_description": "LAMID ONE keeps intent, accountability, and consequential control with people while continuous intelligence and already-authorized work can progress over."
+  },
+  {
+    "page": 26,
+    "name": "PRIVACY & DATA",
+    "source_paragraph": 1095,
+    "gates": [
+      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+    ],
+    "route": "/trust/privacy",
+    "seo_title": "Privacy & Data | LAMID ONE",
+    "meta_description": "Understand what information LAMID ONE uses, what may progress or update over time, which permission allows it, where it belongs, and what controls apply."
+  },
+  {
+    "page": 27,
+    "name": "GOVERNANCE",
+    "source_paragraph": 1128,
+    "gates": [
+      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+    ],
+    "route": "/trust/governance",
+    "seo_title": "Governance | LAMID ONE",
+    "meta_description": "As LAMID ONE becomes more capable and more continuous, governance must make progression, permission, authority, override, and accountability clearer."
+  },
+  {
+    "page": 28,
+    "name": "PRICING",
+    "source_paragraph": 1171,
+    "gates": [
+      "COMMERCIAL GATE - Final plan names, prices, limits, entitlements, taxes, and billing terms require commercial approval before publication."
+    ],
+    "route": "/pricing",
+    "seo_title": "Pricing | LAMID ONE",
+    "meta_description": "Use the same operating system at the level that fits your current context. Expand as your work, team, or organization grows."
+  },
+  {
+    "page": 29,
+    "name": "ENTERPRISE CONTACT",
+    "source_paragraph": 1204,
+    "gates": [],
+    "route": "/enterprise/contact",
+    "seo_title": "Enterprise Contact | LAMID ONE",
+    "meta_description": "Share the priorities, systems, scale, and governance requirements shaping your evaluation."
+  },
+  {
+    "page": 30,
+    "name": "DEMO",
+    "source_paragraph": 1236,
+    "gates": [],
+    "route": "/demo",
+    "seo_title": "Demo | LAMID ONE",
+    "meta_description": "Explore how the same Human-AI Growth OS adapts across individual, business, team, and organizational contexts while carrying relevant change forward over time."
+  },
+  {
+    "page": 31,
+    "name": "REQUEST DEMO",
+    "source_paragraph": 1275,
+    "gates": [],
+    "route": "/demo/request",
+    "seo_title": "Request Demo | LAMID ONE",
+    "meta_description": "Tell us what you are trying to improve, decide, or coordinate. We will shape the demo around those priorities."
+  },
+  {
+    "page": 32,
+    "name": "START",
+    "source_paragraph": 1305,
+    "gates": [],
+    "route": "/start",
+    "seo_title": "Start | LAMID ONE",
+    "meta_description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built."
+  },
+  {
+    "page": 33,
+    "name": "RESOURCES",
+    "source_paragraph": 1337,
+    "gates": [],
+    "route": "/resources",
+    "seo_title": "Resources | LAMID ONE",
+    "meta_description": "Explore practical insights, guides, research, and evidence around Human-AI collaboration, capability, execution, and organizations."
+  },
+  {
+    "page": 34,
+    "name": "INSIGHTS",
+    "source_paragraph": 1369,
+    "gates": [],
+    "route": "/insights",
+    "seo_title": "Insights | LAMID ONE",
+    "meta_description": "Perspectives on Human-AI collaboration, decision-making, capability, execution, growth, and modern organizations."
+  },
+  {
+    "page": 35,
+    "name": "GUIDES",
+    "source_paragraph": 1395,
+    "gates": [],
+    "route": "/guides",
+    "seo_title": "Guides | LAMID ONE",
+    "meta_description": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution."
+  },
+  {
+    "page": 36,
+    "name": "CASE STUDIES",
+    "source_paragraph": 1420,
+    "gates": [
+      "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+    ],
+    "route": "/case-studies",
+    "seo_title": "Case Studies | LAMID ONE",
+    "meta_description": "Explore published case studies with verified context, outcomes, and lessons."
+  },
+  {
+    "page": 37,
+    "name": "RESEARCH",
+    "source_paragraph": 1451,
+    "gates": [
+      "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+    ],
+    "route": "/research",
+    "seo_title": "Research | LAMID ONE",
+    "meta_description": "Explore published research and evidence informing LAMID ONE's approach to decision support, capability, organizations, and responsible AI."
+  },
+  {
+    "page": 38,
+    "name": "HELP CENTER",
+    "source_paragraph": 1478,
+    "gates": [],
+    "route": "/help",
+    "seo_title": "Help Center | LAMID ONE",
+    "meta_description": "Get started, understand the product, manage your account, or resolve an issue."
+  },
+  {
+    "page": 39,
+    "name": "GETTING STARTED HELP",
+    "source_paragraph": 1504,
+    "gates": [],
+    "route": "/help/getting-started",
+    "seo_title": "Getting Started Help | LAMID ONE",
+    "meta_description": "Set your context, begin your first Clarity session, use the Companion, and establish an operating rhythm that can carry relevant change forward over time."
+  },
+  {
+    "page": 40,
+    "name": "PRODUCT GUIDES",
+    "source_paragraph": 1530,
+    "gates": [],
+    "route": "/help/product",
+    "seo_title": "Product Guides | LAMID ONE",
+    "meta_description": "Browse guidance by what you are trying to accomplish, with deeper and continuous context revealed only when it is relevant."
+  },
+  {
+    "page": 41,
+    "name": "ACCOUNT & BILLING HELP",
+    "source_paragraph": 1561,
+    "gates": [],
+    "route": "/help/account",
+    "seo_title": "Account & Billing Help | LAMID ONE",
+    "meta_description": "Get help with identity, workspaces, membership, plans, billing, usage, and account controls."
+  },
+  {
+    "page": 42,
+    "name": "SUPPORT",
+    "source_paragraph": 1594,
+    "gates": [],
+    "route": "/support",
+    "seo_title": "Support | LAMID ONE",
+    "meta_description": "Tell us what you are trying to resolve and we will route the request to the right support path."
+  },
+  {
+    "page": 43,
+    "name": "DEVELOPERS",
+    "source_paragraph": 1624,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/developers",
+    "seo_title": "Developers | LAMID ONE",
+    "meta_description": "Build integrations and approved extensions around the same operating architecture used throughout LAMID ONE."
+  },
+  {
+    "page": 44,
+    "name": "API DOCUMENTATION",
+    "source_paragraph": 1657,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/developers/api",
+    "seo_title": "API Documentation | LAMID ONE",
+    "meta_description": "Use documented APIs with clear authentication, schemas, permissions, errors, and versioning."
+  },
+  {
+    "page": 45,
+    "name": "SDKS",
+    "source_paragraph": 1698,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/developers/sdks",
+    "seo_title": "SDKs | LAMID ONE",
+    "meta_description": "Use supported SDKs to work with documented platform interfaces without rebuilding core protocol, authorization, and event handling."
+  },
+  {
+    "page": 46,
+    "name": "INTEGRATIONS",
+    "source_paragraph": 1727,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/integrations",
+    "seo_title": "Integrations | LAMID ONE",
+    "meta_description": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness."
+  },
+  {
+    "page": 47,
+    "name": "WEBHOOKS & EVENTS",
+    "source_paragraph": 1756,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/developers/webhooks",
+    "seo_title": "Webhooks & Events | LAMID ONE",
+    "meta_description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems."
+  },
+  {
+    "page": 48,
+    "name": "DEVELOPER CHANGELOG",
+    "source_paragraph": 1792,
+    "gates": [
+      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+    ],
+    "route": "/developers/changelog",
+    "seo_title": "Developer Changelog | LAMID ONE",
+    "meta_description": "Follow API, SDK, schema, integration, and platform updates."
+  },
+  {
+    "page": 49,
+    "name": "ABOUT",
+    "source_paragraph": 1815,
+    "gates": [],
+    "route": "/about",
+    "seo_title": "About | LAMID ONE",
+    "meta_description": "People and organizations work across more information, tools, decisions, and complexity. Better technology should make that complexity easier to navigate."
+  },
+  {
+    "page": 50,
+    "name": "OUR STORY",
+    "source_paragraph": 1841,
+    "gates": [
+      "EVIDENCE GATE - Any specific heritage duration, dates, credentials, or legacy claims require verification and attribution before publication."
+    ],
+    "route": "/about/story",
+    "seo_title": "Our Story | LAMID ONE",
+    "meta_description": "Built from consulting and organizational experience, LAMID ONE began with a recurring observation: more tools were being added while decisions, workflows."
+  },
+  {
+    "page": 51,
+    "name": "FOUNDER & LEADERSHIP",
+    "source_paragraph": 1868,
+    "gates": [
+      "PUBLICATION GATE - Insert verified founder name, formal role, responsibilities, biography, experience, and approved links before publication. Do not imply a broader executive team than exists."
+    ],
+    "route": "/about/leadership",
+    "seo_title": "Founder & Leadership | LAMID ONE",
+    "meta_description": "Meet the founder currently responsible for the direction, product, technology, and operating principles behind LAMID ONE."
+  },
+  {
+    "page": 52,
+    "name": "CAREERS",
+    "source_paragraph": 1894,
+    "gates": [
+      "CONTENT GATE - Publish only current, approved roles and verified employment information."
+    ],
+    "route": "/careers",
+    "seo_title": "Careers | LAMID ONE",
+    "meta_description": "Work on a system designed to make capable AI more useful, understandable, and accountable in real work."
+  },
+  {
+    "page": 53,
+    "name": "PRESS & MEDIA",
+    "source_paragraph": 1928,
+    "gates": [
+      "CONTENT GATE - Publish only approved company facts, announcements, assets, and media contacts."
+    ],
+    "route": "/press",
+    "seo_title": "Press & Media | LAMID ONE",
+    "meta_description": "Find verified company information, announcements, approved assets, and media contacts."
+  },
+  {
+    "page": 54,
+    "name": "CONTACT",
+    "source_paragraph": 1951,
+    "gates": [],
+    "route": "/contact",
+    "seo_title": "Contact | LAMID ONE",
+    "meta_description": "Choose what you need and reach the right team faster."
+  },
+  {
+    "page": 55,
+    "name": "PRIVACY POLICY",
+    "source_paragraph": 1974,
+    "gates": [
+      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+    ],
+    "route": "/legal/privacy",
+    "seo_title": "Privacy Policy | LAMID ONE",
+    "meta_description": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information."
+  },
+  {
+    "page": 56,
+    "name": "TERMS OF SERVICE",
+    "source_paragraph": 2002,
+    "gates": [
+      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+    ],
+    "route": "/legal/terms",
+    "seo_title": "Terms of Service | LAMID ONE",
+    "meta_description": "These terms govern access to and use of LAMID ONE."
+  },
+  {
+    "page": 57,
+    "name": "COOKIE POLICY",
+    "source_paragraph": 2033,
+    "gates": [
+      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+    ],
+    "route": "/legal/cookies",
+    "seo_title": "Cookie Policy | LAMID ONE",
+    "meta_description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you."
+  },
+  {
+    "page": 58,
+    "name": "ACCEPTABLE USE POLICY",
+    "source_paragraph": 2061,
+    "gates": [
+      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+    ],
+    "route": "/legal/acceptable-use",
+    "seo_title": "Acceptable Use Policy | LAMID ONE",
+    "meta_description": "Use LAMID ONE responsibly and lawfully."
+  },
+  {
+    "page": 59,
+    "name": "DATA PROCESSING ADDENDUM",
+    "source_paragraph": 2083,
+    "gates": [
+      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+    ],
+    "route": "/legal/dpa",
+    "seo_title": "Data Processing Addendum | LAMID ONE",
+    "meta_description": "This addendum defines applicable data-processing obligations for eligible business customers."
+  },
+  {
+    "page": 60,
+    "name": "ACCESSIBILITY",
+    "source_paragraph": 2111,
+    "gates": [],
+    "route": "/accessibility",
+    "seo_title": "Accessibility | LAMID ONE",
+    "meta_description": "LAMID ONE aims to provide an accessible experience across devices and interaction modes."
+  },
+  {
+    "page": 61,
+    "name": "SIGN IN",
+    "source_paragraph": 2137,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/login",
+    "seo_title": "Sign In | LAMID ONE",
+    "meta_description": "Continue into your LAMID ONE context."
+  },
+  {
+    "page": 62,
+    "name": "CREATE ACCOUNT",
+    "source_paragraph": 2164,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/signup",
+    "seo_title": "Create Account | LAMID ONE",
+    "meta_description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them."
+  },
+  {
+    "page": 63,
+    "name": "FORGOT PASSWORD",
+    "source_paragraph": 2188,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/forgot-password",
+    "seo_title": "Forgot Password | LAMID ONE",
+    "meta_description": "Enter the email associated with your account. We will send recovery instructions when the account is eligible."
+  },
+  {
+    "page": 64,
+    "name": "RESET PASSWORD",
+    "source_paragraph": 2207,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/reset-password",
+    "seo_title": "Reset Password | LAMID ONE",
+    "meta_description": "Choose a secure password for your LAMID ONE account."
+  },
+  {
+    "page": 65,
+    "name": "VERIFY ACCOUNT",
+    "source_paragraph": 2231,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/verify",
+    "seo_title": "Verify Account | LAMID ONE",
+    "meta_description": "Complete verification to continue into LAMID ONE."
+  },
+  {
+    "page": 66,
+    "name": "ONBOARDING",
+    "source_paragraph": 2256,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/onboarding",
+    "seo_title": "Onboarding | LAMID ONE",
+    "meta_description": "Tell LAMID ONE where you are starting and what you want to move forward."
+  },
+  {
+    "page": 67,
+    "name": "OS HOME",
+    "source_paragraph": 2292,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os",
+    "seo_title": "OS Home | LAMID ONE",
+    "meta_description": "Return to what progressed, what changed, what improved, what needs approval, and the priorities and active work relevant now."
+  },
+  {
+    "page": 68,
+    "name": "TODAY",
+    "source_paragraph": 2326,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/today",
+    "seo_title": "Today | LAMID ONE",
+    "meta_description": "Move one important objective through clarity, capability, and action."
+  },
+  {
+    "page": 69,
+    "name": "CLARITY WORKSPACE",
+    "source_paragraph": 2353,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/clarity",
+    "seo_title": "Clarity Workspace | LAMID ONE",
+    "meta_description": "Work through the situation, context, assumptions, and priority before choosing a direction."
+  },
+  {
+    "page": 70,
+    "name": "CAPABILITY WORKSPACE",
+    "source_paragraph": 2380,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/capability",
+    "seo_title": "Capability Workspace | LAMID ONE",
+    "meta_description": "Map the knowledge, resources, methods, support, people, and specialist context needed to act well."
+  },
+  {
+    "page": 71,
+    "name": "CONSISTENCY WORKSPACE",
+    "source_paragraph": 2412,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/consistency",
+    "seo_title": "Consistency Workspace | LAMID ONE",
+    "meta_description": "Turn the decision into actions, commitments, cadence, and review."
+  },
+  {
+    "page": 72,
+    "name": "PROGRESS",
+    "source_paragraph": 2439,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/progress",
+    "seo_title": "Progress | LAMID ONE",
+    "meta_description": "Growth becomes more useful when you can compare the current state with what changed since the previous one."
+  },
+  {
+    "page": 73,
+    "name": "RHYTHM WORKSPACE",
+    "source_paragraph": 2468,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/rhythm",
+    "seo_title": "Rhythm Workspace | LAMID ONE",
+    "meta_description": "Move between today's work, authorized progression since your last review, weekly review, monthly patterns, and history."
+  },
+  {
+    "page": 74,
+    "name": "COMPANION WORKSPACE",
+    "source_paragraph": 2493,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/companion",
+    "seo_title": "Companion Workspace | LAMID ONE",
+    "meta_description": "Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You."
+  },
+  {
+    "page": 75,
+    "name": "INSIGHTS",
+    "source_paragraph": 2518,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/insights",
+    "seo_title": "Insights | LAMID ONE",
+    "meta_description": "The priority is not more alerts. It is a calm explanation of the changes that now matter."
+  },
+  {
+    "page": 76,
+    "name": "BUSINESS",
+    "source_paragraph": 2543,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/business",
+    "seo_title": "Business | LAMID ONE",
+    "meta_description": "See the priorities, operations, finances, people, opportunities, and active execution shaping the business."
+  },
+  {
+    "page": 77,
+    "name": "OPPORTUNITIES",
+    "source_paragraph": 2581,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/opportunities",
+    "seo_title": "Opportunities | LAMID ONE",
+    "meta_description": "Compare opportunities against current position, expected value, required capability, trade-offs, and assumptions."
+  },
+  {
+    "page": 78,
+    "name": "FINANCE",
+    "source_paragraph": 2615,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/finance",
+    "seo_title": "Finance | LAMID ONE",
+    "meta_description": "Use current inputs and explicit assumptions to explore cash, runway, forecasts, scenarios, pricing, and decision impact."
+  },
+  {
+    "page": 79,
+    "name": "PEOPLE & CAPABILITY",
+    "source_paragraph": 2655,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/people",
+    "seo_title": "People & Capability | LAMID ONE",
+    "meta_description": "See capability requirements, strengths, gaps, alignment, and development needs in context."
+  },
+  {
+    "page": 80,
+    "name": "WORKFLOWS",
+    "source_paragraph": 2689,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/workflows",
+    "seo_title": "Workflows | LAMID ONE",
+    "meta_description": "Create, review, and continue the workflows that move important work forward."
+  },
+  {
+    "page": 81,
+    "name": "WORKFLOW BUILDER",
+    "source_paragraph": 2720,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/workflows/[id]",
+    "seo_title": "Workflow Builder | LAMID ONE",
+    "meta_description": "Structure steps, ownership, dependencies, approvals, status, and review around a defined result."
+  },
+  {
+    "page": 82,
+    "name": "ORGANIZATION",
+    "source_paragraph": 2760,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/organization",
+    "seo_title": "Organization | LAMID ONE",
+    "meta_description": "Connect priorities, teams, capability, workflows, rhythm, governance, and organizational insights in an operating context that can keep relevant change."
+  },
+  {
+    "page": 83,
+    "name": "TEAMS",
+    "source_paragraph": 2794,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/teams",
+    "seo_title": "Teams | LAMID ONE",
+    "meta_description": "See each team's priorities, membership, capability, active work, and operating rhythm."
+  },
+  {
+    "page": 84,
+    "name": "ORGANIZATIONAL RHYTHM",
+    "source_paragraph": 2825,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/organization/rhythm",
+    "seo_title": "Organizational Rhythm | LAMID ONE",
+    "meta_description": "Organizational Rhythm converts continuously changing context into deliberate human review and coordinated action."
+  },
+  {
+    "page": 85,
+    "name": "ANALYTICS",
+    "source_paragraph": 2854,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/analytics",
+    "seo_title": "Analytics | LAMID ONE",
+    "meta_description": "Use defined metrics to understand product, workflow, team, or organizational patterns."
+  },
+  {
+    "page": 86,
+    "name": "OS INTEGRATIONS",
+    "source_paragraph": 2882,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/integrations",
+    "seo_title": "OS Integrations | LAMID ONE",
+    "meta_description": "Review available integrations, connected systems, permissions, authorized progression, synchronization, freshness, and activity."
+  },
+  {
+    "page": 87,
+    "name": "OS GOVERNANCE",
+    "source_paragraph": 2913,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/governance",
+    "seo_title": "OS Governance | LAMID ONE",
+    "meta_description": "Set the policies that govern AI, persistent progression, permissions, delegation, capability availability, data, workflows, overrides, and approvals."
+  },
+  {
+    "page": 88,
+    "name": "AUDIT",
+    "source_paragraph": 2948,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/audit",
+    "seo_title": "Audit | LAMID ONE",
+    "meta_description": "See who or what changed or progressed the operating context, when it happened, which permission and policy applied, whether it was later overridden or."
+  },
+  {
+    "page": 89,
+    "name": "ADMIN",
+    "source_paragraph": 2982,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/admin",
+    "seo_title": "Admin | LAMID ONE",
+    "meta_description": "Manage the organization, membership, roles, plans, capabilities, policies, integrations, and support settings."
+  },
+  {
+    "page": 90,
+    "name": "PROFILE",
+    "source_paragraph": 3019,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/profile",
+    "seo_title": "Profile | LAMID ONE",
+    "meta_description": "Manage personal information, professional context, preferences, and active contexts."
+  },
+  {
+    "page": 91,
+    "name": "SETTINGS",
+    "source_paragraph": 3041,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings",
+    "seo_title": "Settings | LAMID ONE",
+    "meta_description": "Manage account, AI, privacy, notifications, workspace, members, billing, and plan settings."
+  },
+  {
+    "page": 92,
+    "name": "AI & MEMORY",
+    "source_paragraph": 3075,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/ai",
+    "seo_title": "AI & Memory | LAMID ONE",
+    "meta_description": "Choose what LAMID ONE may remember, what may progress between interactions, and how those changes are surfaced."
+  },
+  {
+    "page": 93,
+    "name": "PRIVACY & DATA CONTROLS",
+    "source_paragraph": 3108,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/privacy",
+    "seo_title": "Privacy & Data Controls | LAMID ONE",
+    "meta_description": "Persistent progression is permissioned by design: control which sources and workflows may continue, and revoke or override that permission when needed."
+  },
+  {
+    "page": 94,
+    "name": "NOTIFICATIONS",
+    "source_paragraph": 3141,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/notifications",
+    "seo_title": "Notifications | LAMID ONE",
+    "meta_description": "Choose what deserves your attention, when progression or change summaries should reach you, and what can wait until you return."
+  },
+  {
+    "page": 95,
+    "name": "WORKSPACE SETTINGS",
+    "source_paragraph": 3173,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/workspace",
+    "seo_title": "Workspace Settings | LAMID ONE",
+    "meta_description": "Manage the workspace name, type, context, defaults, ownership, and permitted settings."
+  },
+  {
+    "page": 96,
+    "name": "MEMBERS & ROLES",
+    "source_paragraph": 3198,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/members",
+    "seo_title": "Members & Roles | LAMID ONE",
+    "meta_description": "Manage members, roles, invitations, permissions, and team assignments."
+  },
+  {
+    "page": 97,
+    "name": "BILLING",
+    "source_paragraph": 3223,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/billing",
+    "seo_title": "Billing | LAMID ONE",
+    "meta_description": "Review subscription billing, payment methods, invoices, contacts, and history."
+  },
+  {
+    "page": 98,
+    "name": "PLAN & USAGE",
+    "source_paragraph": 3248,
+    "gates": [
+      "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+    ],
+    "route": "/os/settings/plan",
+    "seo_title": "Plan & Usage | LAMID ONE",
+    "meta_description": "See your current plan, available capabilities, usage, limits, and options for more depth or scale."
+  }
+]

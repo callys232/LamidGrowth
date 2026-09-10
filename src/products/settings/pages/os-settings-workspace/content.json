@@ -1,0 +1,73 @@
+{
+  "page": 95,
+  "name": "WORKSPACE SETTINGS",
+  "source_paragraph": 1793,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/settings/workspace",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/settings/workspace",
+  "seo_title": "Workspace Settings | LAMID ONE",
+  "meta_description": "Manage the workspace name, type, context, defaults, ownership, and permitted settings.",
+  "title": "Workspace Settings",
+  "description": "Manage the workspace name, type, context, defaults, ownership, and permitted settings.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Workspace Settings",
+    "paragraphs": [
+      {
+        "text": "Workspace Settings",
+        "sourceParagraph": 1799
+      },
+      {
+        "text": "Manage the workspace name, type, context, defaults, ownership, and permitted settings.",
+        "sourceParagraph": 1800
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Name",
+      "title": "Name",
+      "paragraphs": [
+        {
+          "text": "Name",
+          "sourceParagraph": 1801
+        },
+        {
+          "text": "Set the workspace name people will recognize across the product.",
+          "sourceParagraph": 1802
+        }
+      ]
+    },
+    {
+      "label": "Type",
+      "title": "Type",
+      "paragraphs": [
+        {
+          "text": "Type",
+          "sourceParagraph": 1803
+        },
+        {
+          "text": "Define the current workspace type when that setting affects available context or administration.",
+          "sourceParagraph": 1804
+        }
+      ]
+    },
+    {
+      "label": "Audience Context",
+      "title": "Audience Context",
+      "paragraphs": [
+        {
+          "text": "Audience Context",
+          "sourceParagraph": 1805
+        },
+        {
+          "text": "Choose the working context that best reflects how the workspace is being used.",
+          "sourceParagraph": 1806
+        }
+      ]
+    }
+  ]
+}

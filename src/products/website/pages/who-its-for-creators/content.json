@@ -1,0 +1,93 @@
+{
+  "page": 17,
+  "name": "CREATORS",
+  "source_paragraph": 390,
+  "gates": [],
+  "route": "/who-its-for/creators",
+  "indexing": "index, follow",
+  "canonical": "/who-its-for/creators",
+  "seo_title": "Creators | LAMID ONE",
+  "meta_description": "Bring direction, opportunity, capability, execution, and business context together without crowding out the creative work.",
+  "title": "Turn Ideas Into Clearer Action.",
+  "description": "Bring direction, opportunity, capability, execution, and business context together without crowding out the creative work.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Turn Ideas Into Clearer Action.",
+    "paragraphs": [
+      {
+        "text": "Turn Ideas Into Clearer Action.",
+        "sourceParagraph": 396
+      },
+      {
+        "text": "Bring direction, opportunity, capability, execution, and business context together without crowding out the creative work.",
+        "sourceParagraph": 397
+      },
+      {
+        "text": "CTA: Explore LAMID ONE for Creators",
+        "sourceParagraph": 398
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Clarify the Direction",
+      "title": "Clarify the Direction",
+      "paragraphs": [
+        {
+          "text": "Clarify the Direction",
+          "sourceParagraph": 399
+        },
+        {
+          "text": "Define what you are building and what success means.",
+          "sourceParagraph": 400
+        }
+      ]
+    },
+    {
+      "label": "Explore Opportunity",
+      "title": "Explore Opportunity",
+      "paragraphs": [
+        {
+          "text": "Explore Opportunity",
+          "sourceParagraph": 401
+        },
+        {
+          "text": "Compare channels, audiences, offers, and next moves.",
+          "sourceParagraph": 402
+        }
+      ]
+    },
+    {
+      "label": "Build the Business Behind the Work",
+      "title": "Build the Business Behind the Work",
+      "paragraphs": [
+        {
+          "text": "Build the Business Behind the Work",
+          "sourceParagraph": 403
+        },
+        {
+          "text": "Add pricing, monetization, planning, and financial context when the work becomes a business.",
+          "sourceParagraph": 404
+        }
+      ]
+    },
+    {
+      "label": "Structure Supports the Work. It Does Not Replace It.",
+      "title": "Structure Supports the Work. It Does Not Replace It.",
+      "paragraphs": [
+        {
+          "text": "Structure Supports the Work. It Does Not Replace It.",
+          "sourceParagraph": 405
+        },
+        {
+          "text": "Use planning, commercial context, and execution structure where they strengthen the creative outcome.",
+          "sourceParagraph": 406
+        },
+        {
+          "text": "CTA: Explore LAMID ONE for Creators",
+          "sourceParagraph": 407
+        }
+      ]
+    }
+  ]
+}

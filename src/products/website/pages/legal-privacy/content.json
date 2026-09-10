@@ -1,0 +1,73 @@
+{
+  "page": 55,
+  "name": "PRIVACY POLICY",
+  "source_paragraph": 1149,
+  "gates": [
+    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
+  ],
+  "route": "/legal/privacy",
+  "indexing": "index, follow",
+  "canonical": "/legal/privacy",
+  "seo_title": "Privacy Policy | LAMID ONE",
+  "meta_description": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+  "title": "Privacy Policy",
+  "description": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Privacy Policy",
+    "paragraphs": [
+      {
+        "text": "Privacy Policy",
+        "sourceParagraph": 1155
+      },
+      {
+        "text": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+        "sourceParagraph": 1156
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Information We Collect",
+      "title": "Information We Collect",
+      "paragraphs": [
+        {
+          "text": "Information We Collect",
+          "sourceParagraph": 1157
+        },
+        {
+          "text": "Personal information may come from your account, service use, workspaces, uploads, connected sources, and other interactions covered by this policy.",
+          "sourceParagraph": 1158
+        }
+      ]
+    },
+    {
+      "label": "How Information Is Used",
+      "title": "How Information Is Used",
+      "paragraphs": [
+        {
+          "text": "How Information Is Used",
+          "sourceParagraph": 1159
+        },
+        {
+          "text": "Personal information is processed for purposes described in this policy, including service delivery, security, support, permitted improvement, and applicable legal obligations.",
+          "sourceParagraph": 1160
+        }
+      ]
+    },
+    {
+      "label": "Security, Changes, and Contact",
+      "title": "Security, Changes, and Contact",
+      "paragraphs": [
+        {
+          "text": "Security, Changes, and Contact",
+          "sourceParagraph": 1161
+        },
+        {
+          "text": "This policy also covers relevant security practices, policy changes, and how to contact LAMID ONE about privacy.",
+          "sourceParagraph": 1162
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "page": 82,
+  "name": "ORGANIZATION",
+  "source_paragraph": 1594,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/organization",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/organization",
+  "seo_title": "Organization | LAMID ONE",
+  "meta_description": "Connect priorities, teams, capability, workflows, rhythm, governance, and organizational insights in an operating context that can keep relevant change.",
+  "title": "See the Organization in Context.",
+  "description": "Connect priorities, teams, capability, workflows, rhythm, governance, and organizational insights in an operating context that can keep relevant change current over time.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "See the Organization in Context.",
+    "paragraphs": [
+      {
+        "text": "See the Organization in Context.",
+        "sourceParagraph": 1600
+      },
+      {
+        "text": "Connect priorities, teams, capability, workflows, rhythm, governance, and organizational insights in an operating context that can keep relevant change current over time.",
+        "sourceParagraph": 1601
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Capability",
+      "title": "Capability",
+      "paragraphs": [
+        {
+          "text": "Capability",
+          "sourceParagraph": 1602
+        },
+        {
+          "text": "Review organizational strengths and constraints against current priorities.",
+          "sourceParagraph": 1603
+        }
+      ]
+    },
+    {
+      "label": "Rhythm",
+      "title": "Rhythm",
+      "paragraphs": [
+        {
+          "text": "Rhythm",
+          "sourceParagraph": 1604
+        },
+        {
+          "text": "Connect daily and team activity to weekly, monthly, and organization-level review.",
+          "sourceParagraph": 1605
+        }
+      ]
+    },
+    {
+      "label": "Governance",
+      "title": "Governance",
+      "paragraphs": [
+        {
+          "text": "Governance",
+          "sourceParagraph": 1606
+        },
+        {
+          "text": "Apply roles, policies, approvals, and accountability to the organizational context.",
+          "sourceParagraph": 1607
+        }
+      ]
+    }
+  ]
+}

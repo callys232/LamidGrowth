@@ -1,0 +1,71 @@
+{
+  "page": 48,
+  "name": "DEVELOPER CHANGELOG",
+  "source_paragraph": 996,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/developers/changelog",
+  "indexing": "index, follow",
+  "canonical": "/developers/changelog",
+  "seo_title": "Developer Changelog | LAMID ONE",
+  "meta_description": "Follow API, SDK, schema, integration, and platform updates.",
+  "title": "Know What Changed.",
+  "description": "Follow API, SDK, schema, integration, and platform updates.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Know What Changed.",
+    "paragraphs": [
+      {
+        "text": "Know What Changed.",
+        "sourceParagraph": 1002
+      },
+      {
+        "text": "Follow API, SDK, schema, integration, and platform updates.",
+        "sourceParagraph": 1003
+      },
+      {
+        "text": "CTA: View Changelog",
+        "sourceParagraph": 1004
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Each Entry Includes",
+      "title": "Each Entry Includes",
+      "paragraphs": [
+        {
+          "text": "Each Entry Includes",
+          "sourceParagraph": 1005
+        },
+        {
+          "text": "• Date",
+          "sourceParagraph": 1006
+        },
+        {
+          "text": "• Version",
+          "sourceParagraph": 1007
+        },
+        {
+          "text": "• Area",
+          "sourceParagraph": 1008
+        }
+      ]
+    },
+    {
+      "label": "Breaking Changes",
+      "title": "Breaking Changes",
+      "paragraphs": [
+        {
+          "text": "Breaking Changes",
+          "sourceParagraph": 1009
+        },
+        {
+          "text": "Use explicit notice periods and migration paths.",
+          "sourceParagraph": 1010
+        }
+      ]
+    }
+  ]
+}

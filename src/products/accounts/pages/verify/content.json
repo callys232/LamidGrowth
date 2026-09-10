@@ -1,0 +1,85 @@
+{
+  "page": 65,
+  "name": "VERIFY ACCOUNT",
+  "source_paragraph": 1317,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/verify",
+  "indexing": "noindex, nofollow",
+  "canonical": "/verify",
+  "seo_title": "Verify Account | LAMID ONE",
+  "meta_description": "Complete verification to continue into LAMID ONE.",
+  "title": "Confirm Your Account",
+  "description": "Complete verification to continue into LAMID ONE.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Confirm Your Account",
+    "paragraphs": [
+      {
+        "text": "Confirm Your Account",
+        "sourceParagraph": 1323
+      },
+      {
+        "text": "Complete verification to continue into LAMID ONE.",
+        "sourceParagraph": 1324
+      },
+      {
+        "text": "CTA: Continue to LAMID ONE",
+        "sourceParagraph": 1325
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Verification Status",
+      "title": "Verification Status",
+      "paragraphs": [
+        {
+          "text": "Verification Status",
+          "sourceParagraph": 1326
+        },
+        {
+          "text": "See whether account verification is complete, pending, expired, or requires another step.",
+          "sourceParagraph": 1327
+        }
+      ]
+    },
+    {
+      "label": "Resend Verification",
+      "title": "Resend Verification",
+      "paragraphs": [
+        {
+          "text": "Resend Verification",
+          "sourceParagraph": 1328
+        },
+        {
+          "text": "Request a new verification message when the previous one is no longer usable.",
+          "sourceParagraph": 1329
+        },
+        {
+          "text": "CTA: Resend",
+          "sourceParagraph": 1330
+        }
+      ]
+    },
+    {
+      "label": "Continue",
+      "title": "Continue",
+      "paragraphs": [
+        {
+          "text": "Continue",
+          "sourceParagraph": 1331
+        },
+        {
+          "text": "Enter LAMID ONE when verification is complete.",
+          "sourceParagraph": 1332
+        },
+        {
+          "text": "CTA: Continue to LAMID ONE",
+          "sourceParagraph": 1333
+        }
+      ]
+    }
+  ]
+}

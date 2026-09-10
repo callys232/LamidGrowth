@@ -1,0 +1,89 @@
+{
+  "page": 47,
+  "name": "WEBHOOKS & EVENTS",
+  "source_paragraph": 977,
+  "gates": [
+    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
+  ],
+  "route": "/developers/webhooks",
+  "indexing": "index, follow",
+  "canonical": "/developers/webhooks",
+  "seo_title": "Webhooks & Events | LAMID ONE",
+  "meta_description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems.",
+  "title": "Keep Context Current Through Meaningful Events.",
+  "description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems without requiring the user to be present.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Keep Context Current Through Meaningful Events.",
+    "paragraphs": [
+      {
+        "text": "Keep Context Current Through Meaningful Events.",
+        "sourceParagraph": 983
+      },
+      {
+        "text": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems without requiring the user to be present.",
+        "sourceParagraph": 984
+      },
+      {
+        "text": "CTA: Read Webhook Docs",
+        "sourceParagraph": 985
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Event Model",
+      "title": "Event Model",
+      "paragraphs": [
+        {
+          "text": "Event Model",
+          "sourceParagraph": 986
+        },
+        {
+          "text": "• Event type",
+          "sourceParagraph": 987
+        },
+        {
+          "text": "• Workspace or organization context",
+          "sourceParagraph": 988
+        },
+        {
+          "text": "• Timestamp",
+          "sourceParagraph": 989
+        }
+      ]
+    },
+    {
+      "label": "Notify an External System After Approval",
+      "title": "Notify an External System After Approval",
+      "paragraphs": [
+        {
+          "text": "Notify an External System After Approval",
+          "sourceParagraph": 990
+        },
+        {
+          "text": "Receive the approved workflow event, verify the signature, process once, and return a successful acknowledgement.",
+          "sourceParagraph": 991
+        }
+      ]
+    },
+    {
+      "label": "Build for Reliable, Traceable Delivery.",
+      "title": "Build for Reliable, Traceable Delivery.",
+      "paragraphs": [
+        {
+          "text": "Build for Reliable, Traceable Delivery.",
+          "sourceParagraph": 992
+        },
+        {
+          "text": "Use signed events, retry handling, idempotency, observable failures, event timestamps, permission checks, and replay controls so persistent progression remains dependable, bounded, and traceable.",
+          "sourceParagraph": 993
+        },
+        {
+          "text": "CTA: Read Webhook Docs",
+          "sourceParagraph": 994
+        }
+      ]
+    }
+  ]
+}

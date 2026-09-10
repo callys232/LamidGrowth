@@ -1,0 +1,97 @@
+{
+  "page": 52,
+  "name": "CAREERS",
+  "source_paragraph": 1096,
+  "gates": [
+    "CONTENT GATE - Publish only current, approved roles and verified employment information."
+  ],
+  "route": "/careers",
+  "indexing": "index, follow",
+  "canonical": "/careers",
+  "seo_title": "Careers | LAMID ONE",
+  "meta_description": "Work on a system designed to make capable AI more useful, understandable, and accountable in real work.",
+  "title": "Help Build a Better Human-AI Operating Model.",
+  "description": "Work on a system designed to make capable AI more useful, understandable, and accountable in real work.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Help Build a Better Human-AI Operating Model.",
+    "paragraphs": [
+      {
+        "text": "Help Build a Better Human-AI Operating Model.",
+        "sourceParagraph": 1102
+      },
+      {
+        "text": "Work on a system designed to make capable AI more useful, understandable, and accountable in real work.",
+        "sourceParagraph": 1103
+      },
+      {
+        "text": "CTA: Explore Careers",
+        "sourceParagraph": 1104
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "How We Work",
+      "title": "How We Work",
+      "paragraphs": [
+        {
+          "text": "How We Work",
+          "sourceParagraph": 1105
+        },
+        {
+          "text": "• Clarity over noise.",
+          "sourceParagraph": 1106
+        },
+        {
+          "text": "• Responsibility over hype.",
+          "sourceParagraph": 1107
+        },
+        {
+          "text": "• Depth without unnecessary complexity.",
+          "sourceParagraph": 1108
+        }
+      ]
+    },
+    {
+      "label": "What We Build",
+      "title": "What We Build",
+      "paragraphs": [
+        {
+          "text": "What We Build",
+          "sourceParagraph": 1109
+        },
+        {
+          "text": "• Product",
+          "sourceParagraph": 1110
+        },
+        {
+          "text": "• AI systems",
+          "sourceParagraph": 1111
+        },
+        {
+          "text": "• Platform engineering",
+          "sourceParagraph": 1112
+        }
+      ]
+    },
+    {
+      "label": "Build Technology People Can Use With Confidence.",
+      "title": "Build Technology People Can Use With Confidence.",
+      "paragraphs": [
+        {
+          "text": "Build Technology People Can Use With Confidence.",
+          "sourceParagraph": 1113
+        },
+        {
+          "text": "Work where capability, context, control, and accountability strengthen each other.",
+          "sourceParagraph": 1114
+        },
+        {
+          "text": "CTA: Explore Careers",
+          "sourceParagraph": 1115
+        }
+      ]
+    }
+  ]
+}

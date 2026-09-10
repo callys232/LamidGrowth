@@ -1,0 +1,73 @@
+{
+  "page": 78,
+  "name": "FINANCE",
+  "source_paragraph": 1532,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/finance",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/finance",
+  "seo_title": "Finance | LAMID ONE",
+  "meta_description": "Use current inputs and explicit assumptions to explore cash, runway, forecasts, scenarios, pricing, and decision impact.",
+  "title": "Understand the Financial Context Behind the Decision.",
+  "description": "Use current inputs and explicit assumptions to explore cash, runway, forecasts, scenarios, pricing, and decision impact.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Understand the Financial Context Behind the Decision.",
+    "paragraphs": [
+      {
+        "text": "Understand the Financial Context Behind the Decision.",
+        "sourceParagraph": 1538
+      },
+      {
+        "text": "Use current inputs and explicit assumptions to explore cash, runway, forecasts, scenarios, pricing, and decision impact.",
+        "sourceParagraph": 1539
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Cash Position",
+      "title": "Cash Position",
+      "paragraphs": [
+        {
+          "text": "Cash Position",
+          "sourceParagraph": 1540
+        },
+        {
+          "text": "See the current cash picture using the latest available inputs and clearly defined scope.",
+          "sourceParagraph": 1541
+        }
+      ]
+    },
+    {
+      "label": "Pricing",
+      "title": "Pricing",
+      "paragraphs": [
+        {
+          "text": "Pricing",
+          "sourceParagraph": 1542
+        },
+        {
+          "text": "Test how price, volume, margin, and cost assumptions affect the business case.",
+          "sourceParagraph": 1543
+        }
+      ]
+    },
+    {
+      "label": "Test a Hiring Plan",
+      "title": "Test a Hiring Plan",
+      "paragraphs": [
+        {
+          "text": "Test a Hiring Plan",
+          "sourceParagraph": 1544
+        },
+        {
+          "text": "Compare base, conservative, and growth scenarios before adding headcount.",
+          "sourceParagraph": 1545
+        }
+      ]
+    }
+  ]
+}

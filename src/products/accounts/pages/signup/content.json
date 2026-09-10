@@ -1,0 +1,89 @@
+{
+  "page": 62,
+  "name": "CREATE ACCOUNT",
+  "source_paragraph": 1266,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/signup",
+  "indexing": "noindex, nofollow",
+  "canonical": "/signup",
+  "seo_title": "Create Account | LAMID ONE",
+  "meta_description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
+  "title": "Start With Your Context.",
+  "description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start With Your Context.",
+    "paragraphs": [
+      {
+        "text": "Start With Your Context.",
+        "sourceParagraph": 1272
+      },
+      {
+        "text": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
+        "sourceParagraph": 1273
+      },
+      {
+        "text": "CTA: Create Account",
+        "sourceParagraph": 1274
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Create Your Identity",
+      "title": "Create Your Identity",
+      "paragraphs": [
+        {
+          "text": "Create Your Identity",
+          "sourceParagraph": 1275
+        },
+        {
+          "text": "• Name",
+          "sourceParagraph": 1276
+        },
+        {
+          "text": "• Email",
+          "sourceParagraph": 1277
+        },
+        {
+          "text": "• Password or identity provider",
+          "sourceParagraph": 1278
+        }
+      ]
+    },
+    {
+      "label": "Choose a Starting Context",
+      "title": "Choose a Starting Context",
+      "paragraphs": [
+        {
+          "text": "Choose a Starting Context",
+          "sourceParagraph": 1279
+        },
+        {
+          "text": "Select the context that best matches your work today.",
+          "sourceParagraph": 1280
+        }
+      ]
+    },
+    {
+      "label": "Continue",
+      "title": "Continue",
+      "paragraphs": [
+        {
+          "text": "Continue",
+          "sourceParagraph": 1281
+        },
+        {
+          "text": "Choose the context that best matches how you plan to use LAMID ONE today.",
+          "sourceParagraph": 1282
+        },
+        {
+          "text": "CTA: Create Account",
+          "sourceParagraph": 1283
+        }
+      ]
+    }
+  ]
+}

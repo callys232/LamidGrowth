@@ -1,0 +1,183 @@
+{
+  "page": 50,
+  "name": "OUR STORY",
+  "source_paragraph": 1045,
+  "gates": [
+    "EVIDENCE GATE - Any specific heritage duration, dates, credentials, or legacy claims require verification and attribution before publication."
+  ],
+  "route": "/about/story",
+  "indexing": "index, follow",
+  "canonical": "/about/story",
+  "seo_title": "Our Story | Why We Built LAMID ONE",
+  "meta_description": "For 35+ years, consulting work meant moving between disconnected tools, rebuilding context, and watching momentum stall. LAMID ONE was built piece by piece to change that.",
+  "title": "We Didn't Set Out to Build Another Tool.",
+  "description": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist tools, but the work kept becoming fragmented.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "We Didn't Set Out to Build Another Tool.",
+    "paragraphs": [
+      {
+        "text": "We Didn't Set Out to Build Another Tool.",
+        "sourceParagraph": 1051
+      },
+      {
+        "text": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist tools, but the work kept becoming fragmented.",
+        "sourceParagraph": 1052
+      },
+      {
+        "text": "We built LAMID ONE one piece at a time from those recurring problems so your work can move with greater continuity than ours often could.",
+        "sourceParagraph": 1053
+      },
+      {
+        "text": "CTA: Explore LAMID ONE | See How It Works",
+        "sourceParagraph": 1054
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "The Work Came First",
+      "title": "The Work Came First",
+      "paragraphs": [
+        {
+          "text": "The Work Came First",
+          "sourceParagraph": 1055
+        },
+        {
+          "text": "Consulting taught us that progress is a chain of connected moments: understand the situation, decide what matters, build what is needed, follow through, learn, and carry that learning into what happens next.",
+          "sourceParagraph": 1056
+        }
+      ]
+    },
+    {
+      "label": "But the Tools Were Not Connected",
+      "title": "But the Tools Were Not Connected",
+      "paragraphs": [
+        {
+          "text": "But the Tools Were Not Connected",
+          "sourceParagraph": 1057
+        },
+        {
+          "text": "One system knew the plan. Another knew the conversation. Another knew the numbers. Another knew the people. Very few knew the whole story.",
+          "sourceParagraph": 1058
+        },
+        {
+          "text": "So the user had to become the integration layer.",
+          "sourceParagraph": 1059
+        }
+      ]
+    },
+    {
+      "label": "That Had a Cost",
+      "title": "That Had a Cost",
+      "paragraphs": [
+        {
+          "text": "That Had a Cost",
+          "sourceParagraph": 1060
+        },
+        {
+          "text": "Context disappeared between handoffs. Restarts consumed attention. Plans stayed visible after reality had changed. Work could become stale because the environment around it did not keep up.",
+          "sourceParagraph": 1061
+        }
+      ]
+    },
+    {
+      "label": "The Turning Point",
+      "title": "The Turning Point",
+      "paragraphs": [
+        {
+          "text": "The Turning Point",
+          "sourceParagraph": 1062
+        },
+        {
+          "text": "What if the user did not have to keep stitching the journey together? What if one environment could carry context forward, make sense of change, bring in the right capability, support the next action, and keep the person responsible in control?",
+          "sourceParagraph": 1063
+        },
+        {
+          "text": "That question became the beginning of LAMID ONE.",
+          "sourceParagraph": 1064
+        }
+      ]
+    },
+    {
+      "label": "Built One Piece at a Time",
+      "title": "Built One Piece at a Time",
+      "paragraphs": [
+        {
+          "text": "Built One Piece at a Time",
+          "sourceParagraph": 1065
+        },
+        {
+          "text": "We built from recurring problems: preserve context, clarify the next decision, bring in capability at the right time, turn plans into execution, connect evidence and approvals, and help progress continue without giving technology authority it was never meant to have.",
+          "sourceParagraph": 1066
+        },
+        {
+          "text": "Each answer became another piece. Over time, the pieces began to work as one.",
+          "sourceParagraph": 1067
+        }
+      ]
+    },
+    {
+      "label": "Then AI Expanded What Was Possible",
+      "title": "Then AI Expanded What Was Possible",
+      "paragraphs": [
+        {
+          "text": "Then AI Expanded What Was Possible",
+          "sourceParagraph": 1068
+        },
+        {
+          "text": "AI made it possible to understand more context, compare more possibilities, surface patterns, create useful work faster, and reassess what matters as conditions change.",
+          "sourceParagraph": 1069
+        },
+        {
+          "text": "The principle stayed human: intelligence should strengthen capability, not quietly replace authority.",
+          "sourceParagraph": 1070
+        }
+      ]
+    },
+    {
+      "label": "Why We Call It an Operating System",
+      "title": "Why We Call It an Operating System",
+      "paragraphs": [
+        {
+          "text": "Why We Call It an Operating System",
+          "sourceParagraph": 1071
+        },
+        {
+          "text": "LAMID ONE is designed around continuity. It can keep track of what changed, reassess what those changes mean, and allow work you already approved to keep moving within the boundaries you set.",
+          "sourceParagraph": 1072
+        },
+        {
+          "text": "When you return, see what moved forward, what changed, what improved, what became possible, and what now needs your judgment.",
+          "sourceParagraph": 1073
+        },
+        {
+          "text": "Progress keeps moving. Control stays with you.",
+          "sourceParagraph": 1074
+        }
+      ]
+    },
+    {
+      "label": "Now the Story Becomes Yours",
+      "title": "Now the Story Becomes Yours",
+      "paragraphs": [
+        {
+          "text": "Now the Story Becomes Yours",
+          "sourceParagraph": 1075
+        },
+        {
+          "text": "Whatever your starting point, you should not have to spend years learning the same lesson through fragmented work. LAMID ONE helps each next step build on the last with clearer context, stronger capability, more consistent execution, and a connected path toward growth.",
+          "sourceParagraph": 1076
+        },
+        {
+          "text": "Clarity -> Capability -> Consistency. Growth is the outcome.",
+          "sourceParagraph": 1077
+        },
+        {
+          "text": "CTA: Experience LAMID ONE | See How It Works",
+          "sourceParagraph": 1078
+        }
+      ]
+    }
+  ]
+}

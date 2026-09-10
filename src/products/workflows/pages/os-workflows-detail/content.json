@@ -1,0 +1,73 @@
+{
+  "page": 81,
+  "name": "WORKFLOW BUILDER",
+  "source_paragraph": 1579,
+  "gates": [
+    "IMPLEMENTATION GATE - Authenticated product copy is noindex and must match the implemented UI, permission model, and current product behavior."
+  ],
+  "route": "/os/workflows/[id]",
+  "indexing": "noindex, nofollow",
+  "canonical": "/os/workflows/[id]",
+  "seo_title": "Workflow Builder | LAMID ONE",
+  "meta_description": "Structure steps, ownership, dependencies, approvals, status, and review around a defined result.",
+  "title": "Build the Work Around the Outcome.",
+  "description": "Structure steps, ownership, dependencies, approvals, status, and review around a defined result.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Build the Work Around the Outcome.",
+    "paragraphs": [
+      {
+        "text": "Build the Work Around the Outcome.",
+        "sourceParagraph": 1585
+      },
+      {
+        "text": "Structure steps, ownership, dependencies, approvals, status, and review around a defined result.",
+        "sourceParagraph": 1586
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Outcome",
+      "title": "Outcome",
+      "paragraphs": [
+        {
+          "text": "Outcome",
+          "sourceParagraph": 1587
+        },
+        {
+          "text": "Define the result the workflow is intended to produce before adding steps.",
+          "sourceParagraph": 1588
+        }
+      ]
+    },
+    {
+      "label": "Approvals",
+      "title": "Approvals",
+      "paragraphs": [
+        {
+          "text": "Approvals",
+          "sourceParagraph": 1589
+        },
+        {
+          "text": "Define what may progress automatically, what must pause for approval, who can override it, and where policy, risk, or consequence requires human authorization.",
+          "sourceParagraph": 1590
+        }
+      ]
+    },
+    {
+      "label": "Define How Completion Will Be Judged",
+      "title": "Define How Completion Will Be Judged",
+      "paragraphs": [
+        {
+          "text": "Define How Completion Will Be Judged",
+          "sourceParagraph": 1591
+        },
+        {
+          "text": "For deliverable-based work, define outputs, acceptance criteria, evidence requirements, milestone value, revision rules, and release conditions before execution.",
+          "sourceParagraph": 1592
+        }
+      ]
+    }
+  ]
+}

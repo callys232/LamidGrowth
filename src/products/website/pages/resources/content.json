@@ -1,0 +1,79 @@
+{
+  "page": 33,
+  "name": "RESOURCES",
+  "source_paragraph": 713,
+  "gates": [],
+  "route": "/resources",
+  "indexing": "index, follow",
+  "canonical": "/resources",
+  "seo_title": "Resources | LAMID ONE",
+  "meta_description": "Explore practical insights, guides, research, and evidence around Human-AI collaboration, capability, execution, and organizations.",
+  "title": "Useful Thinking for Better Decisions and Better Work.",
+  "description": "Explore practical insights, guides, research, and evidence around Human-AI collaboration, capability, execution, and organizations.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Useful Thinking for Better Decisions and Better Work.",
+    "paragraphs": [
+      {
+        "text": "Useful Thinking for Better Decisions and Better Work.",
+        "sourceParagraph": 719
+      },
+      {
+        "text": "Explore practical insights, guides, research, and evidence around Human-AI collaboration, capability, execution, and organizations.",
+        "sourceParagraph": 720
+      },
+      {
+        "text": "CTA: Explore Resources",
+        "sourceParagraph": 721
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Insights",
+      "title": "Insights",
+      "paragraphs": [
+        {
+          "text": "Insights",
+          "sourceParagraph": 722
+        },
+        {
+          "text": "Ideas and analysis worth applying.",
+          "sourceParagraph": 723
+        }
+      ]
+    },
+    {
+      "label": "Guides",
+      "title": "Guides",
+      "paragraphs": [
+        {
+          "text": "Guides",
+          "sourceParagraph": 724
+        },
+        {
+          "text": "Practical frameworks and playbooks.",
+          "sourceParagraph": 725
+        }
+      ]
+    },
+    {
+      "label": "Improve Decision Quality",
+      "title": "Improve Decision Quality",
+      "paragraphs": [
+        {
+          "text": "Improve Decision Quality",
+          "sourceParagraph": 726
+        },
+        {
+          "text": "Start with an insight, use a practical guide, review a relevant case study, and move into the product when you are ready.",
+          "sourceParagraph": 727
+        },
+        {
+          "text": "CTA: Explore Resources",
+          "sourceParagraph": 728
+        }
+      ]
+    }
+  ]
+}

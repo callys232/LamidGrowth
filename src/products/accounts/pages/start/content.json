@@ -1,0 +1,95 @@
+{
+  "page": 32,
+  "name": "START",
+  "source_paragraph": 692,
+  "gates": [],
+  "route": "/start",
+  "indexing": "index, follow",
+  "canonical": "/start",
+  "seo_title": "Start | LAMID ONE",
+  "meta_description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
+  "title": "Start With Your Context.",
+  "description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Start With Your Context.",
+    "paragraphs": [
+      {
+        "text": "Start With Your Context.",
+        "sourceParagraph": 698
+      },
+      {
+        "text": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
+        "sourceParagraph": 699
+      },
+      {
+        "text": "CTA: Continue",
+        "sourceParagraph": 700
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Choose Your Starting Context",
+      "title": "Choose Your Starting Context",
+      "paragraphs": [
+        {
+          "text": "Choose Your Starting Context",
+          "sourceParagraph": 701
+        },
+        {
+          "text": "• For myself",
+          "sourceParagraph": 702
+        },
+        {
+          "text": "• Professional work",
+          "sourceParagraph": 703
+        },
+        {
+          "text": "• Creative work",
+          "sourceParagraph": 704
+        }
+      ]
+    },
+    {
+      "label": "Choose Your First Objective",
+      "title": "Choose Your First Objective",
+      "paragraphs": [
+        {
+          "text": "Choose Your First Objective",
+          "sourceParagraph": 705
+        },
+        {
+          "text": "• Get clear",
+          "sourceParagraph": 706
+        },
+        {
+          "text": "• Build capability",
+          "sourceParagraph": 707
+        },
+        {
+          "text": "• Improve execution",
+          "sourceParagraph": 708
+        }
+      ]
+    },
+    {
+      "label": "Start Before You Configure Everything.",
+      "title": "Start Before You Configure Everything.",
+      "paragraphs": [
+        {
+          "text": "Start Before You Configure Everything.",
+          "sourceParagraph": 709
+        },
+        {
+          "text": "LAMID ONE refines the experience as your context develops and permitted information changes over time.",
+          "sourceParagraph": 710
+        },
+        {
+          "text": "CTA: Continue",
+          "sourceParagraph": 711
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "page": 49,
+  "name": "ABOUT",
+  "source_paragraph": 1012,
+  "gates": [],
+  "route": "/about",
+  "indexing": "index, follow",
+  "canonical": "/about",
+  "seo_title": "About LAMID ONE | Built From 35+ Years of Consulting Experience",
+  "meta_description": "LAMID ONE grew from 35+ years of consulting experience and firsthand frustration with fragmented tools. One Human-AI Growth OS brings context, capability, execution, and continuous progress together.",
+  "title": "We Built the Operating System We Wished We Had.",
+  "description": "For more than 35 years, we have worked alongside people and organizations solving difficult problems, making decisions, building capability, delivering important work, and growing.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "We Built the Operating System We Wished We Had.",
+    "paragraphs": [
+      {
+        "text": "We Built the Operating System We Wished We Had.",
+        "sourceParagraph": 1018
+      },
+      {
+        "text": "For more than 35 years, we have worked alongside people and organizations solving difficult problems, making decisions, building capability, delivering important work, and growing.",
+        "sourceParagraph": 1019
+      },
+      {
+        "text": "Again and again, the work was scattered across disconnected tools. Plans, conversations, evidence, projects, finances, people, and follow-up lived in different places. We experienced that fragmentation ourselves.",
+        "sourceParagraph": 1020
+      },
+      {
+        "text": "CTA: Read Our Story | Explore LAMID ONE",
+        "sourceParagraph": 1021
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "The Problem Wasn't That We Needed More Tools",
+      "title": "The Problem Wasn't That We Needed More Tools",
+      "paragraphs": [
+        {
+          "text": "The Problem Wasn't That We Needed More Tools",
+          "sourceParagraph": 1022
+        },
+        {
+          "text": "Context had to be rebuilt. Decisions had to be explained again. Plans became outdated while the work moved on. The user became responsible for holding everything together.",
+          "sourceParagraph": 1023
+        },
+        {
+          "text": "The answer was not another disconnected application. The pieces needed to work together around the work itself.",
+          "sourceParagraph": 1024
+        }
+      ]
+    },
+    {
+      "label": "So We Started Connecting the Pieces",
+      "title": "So We Started Connecting the Pieces",
+      "paragraphs": [
+        {
+          "text": "So We Started Connecting the Pieces",
+          "sourceParagraph": 1025
+        },
+        {
+          "text": "LAMID ONE was built gradually from problems we had already lived through - clearer decisions, planning, capability, execution, expertise, learning, evidence, commercial work, measurement, and follow-through.",
+          "sourceParagraph": 1026
+        },
+        {
+          "text": "Piece by piece, those solutions became one connected operating environment.",
+          "sourceParagraph": 1027
+        }
+      ]
+    },
+    {
+      "label": "What LAMID ONE Is Today",
+      "title": "What LAMID ONE Is Today",
+      "paragraphs": [
+        {
+          "text": "What LAMID ONE Is Today",
+          "sourceParagraph": 1028
+        },
+        {
+          "text": "LAMID ONE is the Continuous Human-AI Growth Operating System. It brings human judgment, AI capability, tools, workflows, expertise, and work context together so you can focus on what matters instead of managing the gaps between systems.",
+          "sourceParagraph": 1029
+        },
+        {
+          "text": "Think clearly. Build capability. Make consistent progress.",
+          "sourceParagraph": 1030
+        },
+        {
+          "text": "Clarity -> Capability -> Consistency. Growth is the outcome.",
+          "sourceParagraph": 1031
+        }
+      ]
+    },
+    {
+      "label": "What That Means for You",
+      "title": "What That Means for You",
+      "paragraphs": [
+        {
+          "text": "What That Means for You",
+          "sourceParagraph": 1032
+        },
+        {
+          "text": "• Start with what you are trying to achieve, not with a catalogue of tools.",
+          "sourceParagraph": 1033
+        },
+        {
+          "text": "• Keep important context connected as your work develops.",
+          "sourceParagraph": 1034
+        },
+        {
+          "text": "• Bring in the right intelligence, tools, expertise, and support when needed.",
+          "sourceParagraph": 1035
+        },
+        {
+          "text": "• Keep approved work moving within the boundaries you set.",
+          "sourceParagraph": 1036
+        },
+        {
+          "text": "• Return to what changed, what progressed, and what needs your attention.",
+          "sourceParagraph": 1037
+        },
+        {
+          "text": "• Stay in control of the decisions and actions that matter.",
+          "sourceParagraph": 1038
+        },
+        {
+          "text": "You should not have to inherit the fragmentation that led us here. Our aim is to make your journey easier to understand, easier to continue, and easier to grow from.",
+          "sourceParagraph": 1039
+        }
+      ]
+    },
+    {
+      "label": "What We Believe",
+      "title": "What We Believe",
+      "paragraphs": [
+        {
+          "text": "What We Believe",
+          "sourceParagraph": 1040
+        },
+        {
+          "text": "The strongest future is people and intelligent systems working together in a way that strengthens judgment, reduces unnecessary complexity, and keeps responsibility where it belongs.",
+          "sourceParagraph": 1041
+        },
+        {
+          "text": "Progress keeps moving. Control stays with you.",
+          "sourceParagraph": 1042
+        },
+        {
+          "text": "CTA: Read Our Story | Experience LAMID ONE",
+          "sourceParagraph": 1043
+        }
+      ]
+    }
+  ]
+}

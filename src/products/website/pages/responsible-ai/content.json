@@ -1,0 +1,107 @@
+{
+  "page": 25,
+  "name": "RESPONSIBLE AI",
+  "source_paragraph": 544,
+  "gates": [
+    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
+  ],
+  "route": "/responsible-ai",
+  "indexing": "index, follow",
+  "canonical": "/responsible-ai",
+  "seo_title": "Responsible AI | LAMID ONE",
+  "meta_description": "LAMID ONE keeps intent, accountability, and consequential control with people while continuous intelligence and already-authorized work can progress over.",
+  "title": "AI Should Strengthen Human Judgment.",
+  "description": "LAMID ONE keeps intent, accountability, and consequential control with people while continuous intelligence and already-authorized work can progress over time within defined boundaries.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "AI Should Strengthen Human Judgment.",
+    "paragraphs": [
+      {
+        "text": "AI Should Strengthen Human Judgment.",
+        "sourceParagraph": 550
+      },
+      {
+        "text": "LAMID ONE keeps intent, accountability, and consequential control with people while continuous intelligence and already-authorized work can progress over time within defined boundaries.",
+        "sourceParagraph": 551
+      },
+      {
+        "text": "CTA: Read Our AI Principles",
+        "sourceParagraph": 552
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Context & Privacy",
+      "title": "Context & Privacy",
+      "paragraphs": [
+        {
+          "text": "Context & Privacy",
+          "sourceParagraph": 553
+        },
+        {
+          "text": "Use only information, connected sources, and progression scopes permitted for the task, workspace, or organization. No permission expands itself.",
+          "sourceParagraph": 554
+        }
+      ]
+    },
+    {
+      "label": "Memory & Continuity Control",
+      "title": "Memory & Continuity Control",
+      "paragraphs": [
+        {
+          "text": "Memory & Continuity Control",
+          "sourceParagraph": 555
+        },
+        {
+          "text": "Review, edit, disable, or delete remembered context; control eligible progression permissions; and revoke them where available.",
+          "sourceParagraph": 556
+        }
+      ]
+    },
+    {
+      "label": "Progression Does Not Equal Unlimited Authority",
+      "title": "Progression Does Not Equal Unlimited Authority",
+      "paragraphs": [
+        {
+          "text": "Progression Does Not Equal Unlimited Authority",
+          "sourceParagraph": 557
+        },
+        {
+          "text": "• Observe & Update - permitted context ingestion, synchronization, recalculation, status refresh, pattern detection, and analysis.",
+          "sourceParagraph": 558
+        },
+        {
+          "text": "• Progress Within Authorization - already-approved workflow steps, scheduled processing, defined notifications, and explicitly delegated work within scope.",
+          "sourceParagraph": 559
+        },
+        {
+          "text": "• Consequential Commitment - financial, legal, strategic, external, permission-changing, reputational, or irreversible actions pause for human approval unless that exact authority was explicitly delegated in advance under policy.",
+          "sourceParagraph": 560
+        },
+        {
+          "text": "A lower authority band never silently becomes a higher one.",
+          "sourceParagraph": 561
+        }
+      ]
+    },
+    {
+      "label": "More Capable AI Requires More Deliberate Governance.",
+      "title": "More Capable AI Requires More Deliberate Governance.",
+      "paragraphs": [
+        {
+          "text": "More Capable AI Requires More Deliberate Governance.",
+          "sourceParagraph": 562
+        },
+        {
+          "text": "Increase evaluation, freshness checks, explanation, permission controls, override paths, auditability, and human review as persistent progression influences more consequential work.",
+          "sourceParagraph": 563
+        },
+        {
+          "text": "CTA: Read Our AI Principles",
+          "sourceParagraph": 564
+        }
+      ]
+    }
+  ]
+}
