@@ -11,9 +11,23 @@ export function MembersMembershipManagementSlide({
   busy,
   change,
   add,
+  isEcosystemAdmin,
+  conciergeApplications,
+  decideConciergeApplication,
+  escrowOverview,
 }: Pick<
   ReturnType<typeof useMembersPage>,
-  'canManage' | 'error' | 'members' | 'state' | 'busy' | 'change' | 'add'
+  | 'canManage'
+  | 'error'
+  | 'members'
+  | 'state'
+  | 'busy'
+  | 'change'
+  | 'add'
+  | 'isEcosystemAdmin'
+  | 'conciergeApplications'
+  | 'decideConciergeApplication'
+  | 'escrowOverview'
 >) {
   return (
     <>
@@ -73,6 +87,66 @@ export function MembersMembershipManagementSlide({
             <p>Shared membership is available in enterprise workspaces.</p>
           )}
         </>
+      )}
+      {isEcosystemAdmin && escrowOverview && (
+        <section className="panel settings-card">
+          <h2>Escrow overview (platform-wide)</h2>
+          <p>
+            Held: ${(escrowOverview.totals.heldMinor / 100).toFixed(2)} · Released: $
+            {(escrowOverview.totals.releasedMinor / 100).toFixed(2)} · Refunded: $
+            {(escrowOverview.totals.refundedMinor / 100).toFixed(2)} · Pending: $
+            {(escrowOverview.totals.pendingMinor / 100).toFixed(2)}
+          </p>
+          {escrowOverview.currentlyHeld.length === 0 ? (
+            <Empty title="Nothing currently held">No milestone has funds in escrow right now.</Empty>
+          ) : (
+            escrowOverview.currentlyHeld.map((item) => (
+              <div className="audit-event" key={item.milestoneId}>
+                <div>
+                  <strong>
+                    ${(item.amountMinor / 100).toFixed(2)} {item.currency}
+                  </strong>
+                  <p>Held since {new Date(item.heldAt).toLocaleString()}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </section>
+      )}
+
+      {isEcosystemAdmin && (
+        <section className="panel settings-card">
+          <h2>Concierge applications</h2>
+          <p>Platform-wide review — approving a provider lets any workspace owner assign them as a concierge.</p>
+          {conciergeApplications.length === 0 && <Empty title="No applications yet">Nothing to review.</Empty>}
+          {conciergeApplications.map((application) => (
+            <div className="audit-event" key={application.id}>
+              <div>
+                <strong>{application.headline}</strong>
+                <p>
+                  {application.applicantName} · {application.applicantEmail} · {application.status}
+                  {application.monthly_rate_minor > 0 &&
+                    ` · $${(application.monthly_rate_minor / 100).toFixed(2)}/mo`}
+                </p>
+                {application.experience && <p>{application.experience}</p>}
+              </div>
+              {application.status === 'pending' && (
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button disabled={busy} onClick={() => void decideConciergeApplication(application.id, 'approve')}>
+                    Approve
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => void decideConciergeApplication(application.id, 'reject')}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </section>
       )}
     </>
   );

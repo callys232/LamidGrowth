@@ -68,6 +68,34 @@
           "sourceParagraph": 1530
         }
       ]
+    },
+    {
+      "label": "Goal-Aware Opportunity Matching",
+      "title": "Goal-Aware Opportunity Matching",
+      "paragraphs": [
+        {
+          "text": "Goal-Aware Opportunity Matching",
+          "sourceParagraph": 1531
+        },
+        {
+          "text": "Compare jobs, projects, grants, training, events, experts, funding, markets and other supported opportunities against active goals, current readiness and constraints.",
+          "sourceParagraph": 1532
+        }
+      ]
+    },
+    {
+      "label": "Ready Now. Near Ready. Development Opportunity.",
+      "title": "Ready Now. Near Ready. Development Opportunity.",
+      "paragraphs": [
+        {
+          "text": "Ready Now. Near Ready. Development Opportunity.",
+          "sourceParagraph": 1533
+        },
+        {
+          "text": "Understand whether you can act now, what gap remains, or what development would make an opportunity realistic.",
+          "sourceParagraph": 1534
+        }
+      ]
     }
   ]
 }

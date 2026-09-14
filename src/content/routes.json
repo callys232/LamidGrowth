@@ -168,6 +168,12 @@
     "gated": true
   },
   {
+    "route": "/experts",
+    "page": 99,
+    "name": "EXPERT NETWORK",
+    "gated": false
+  },
+  {
     "route": "/enterprise/contact",
     "page": 29,
     "name": "ENTERPRISE CONTACT",

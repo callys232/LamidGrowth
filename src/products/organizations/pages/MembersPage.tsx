@@ -16,6 +16,10 @@ export function Members() {
         busy={page.busy}
         change={page.change}
         add={page.add}
+        isEcosystemAdmin={page.isEcosystemAdmin}
+        conciergeApplications={page.conciergeApplications}
+        decideConciergeApplication={page.decideConciergeApplication}
+        escrowOverview={page.escrowOverview}
       />
     </>
   );

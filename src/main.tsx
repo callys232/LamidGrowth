@@ -8,6 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
+import { applyTheme, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
 import './styles.css';
 import './readability.css';
@@ -38,6 +39,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
     );
   }
 }
+applyTheme(getStoredTheme());
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>

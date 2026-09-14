@@ -5,7 +5,10 @@ import { loadPageManifest, readProductPages } from '../scripts/lib/page-content.
 test('product-owned pages preserve every original paragraph without clipping or prefix filtering', () => {
   const source = JSON.parse(readFileSync('document-study/pithy-v1.4-source.json', 'utf8'));
   const lines = source.paragraphs;
-  const pages = readProductPages();
+  // /experts is a later addition (consolidating the five Expert Network pages from the v1.8
+  // pithy update) and has no corresponding block in the frozen v1.4 source doc, so it's excluded
+  // from this verbatim-against-source check but still covered by the route/manifest test below.
+  const pages = readProductPages().filter((page) => page.route !== '/experts');
   assert.equal(pages.length, 98);
   for (const [index, page] of pages.entries()) {
     const start = page.source_paragraph - 1;
@@ -15,11 +18,18 @@ test('product-owned pages preserve every original paragraph without clipping or 
       .slice(block.findIndex((p) => p.text === 'PRIMARY MESSAGE') + 1)
       .filter((p) => p.text && !/^\u2014+$/.test(p.text) && !p.text.startsWith('Publication note:'))
       .map(({ text, sourceParagraph }) => ({ text, sourceParagraph }));
-    assert.deepEqual(
-      [page.hero, ...page.sections].flatMap((b) => b.paragraphs),
-      expected,
-      page.route,
-    );
+    // Pages may carry later additive content (e.g. the v1.8 pithy update appended new trailing
+    // sections to several pages) that has no counterpart in this frozen v1.4 source — so the
+    // guarantee this test enforces is "every original paragraph survives, in order," i.e. the
+    // source block must appear as a subsequence of the page's paragraphs, not an exact match.
+    const actual = [page.hero, ...page.sections].flatMap((b) => b.paragraphs);
+    let cursor = 0;
+    for (const line of expected) {
+      while (cursor < actual.length && !(actual[cursor].text === line.text && actual[cursor].sourceParagraph === line.sourceParagraph))
+        cursor += 1;
+      assert.ok(cursor < actual.length, `${page.route}: missing original paragraph ${JSON.stringify(line)}`);
+      cursor += 1;
+    }
     assert.equal(page.seo_title, block.find((p) => p.text.startsWith('SEO: ')).text.slice(5));
     assert.equal(
       page.meta_description,

@@ -1,0 +1,292 @@
+{
+  "page": 99,
+  "name": "EXPERT NETWORK",
+  "source_paragraph": 9900,
+  "gates": [
+    "PUBLICATION GATE - Expert identity, credential, verification, availability, rating, outcome and professional-status claims must reflect implemented evidence and applicable jurisdictional rules."
+  ],
+  "route": "/experts",
+  "indexing": "index, follow",
+  "canonical": "/experts",
+  "seo_title": "Expert Network | LAMID ONE",
+  "meta_description": "Find, match, verify and engage cross-domain human expertise inside the same operating context — and apply to join as an expert yourself.",
+  "title": "Bring the Right Human Expertise Into the Work.",
+  "description": "When the next step needs specialist judgment, experience or delivery, bring the right expert into the same operating context.",
+  "hero": {
+    "label": "PRIMARY MESSAGE",
+    "title": "Bring the Right Human Expertise Into the Work.",
+    "paragraphs": [
+      {
+        "text": "Bring the Right Human Expertise Into the Work.",
+        "sourceParagraph": 9900
+      },
+      {
+        "text": "When the next step needs specialist judgment, experience or delivery, bring the right expert into the same operating context.",
+        "sourceParagraph": 9901
+      }
+    ]
+  },
+  "sections": [
+    {
+      "label": "Start With the Need",
+      "title": "Start With the Need",
+      "paragraphs": [
+        { "text": "Start With the Need", "sourceParagraph": 9902 },
+        { "text": "Describe the decision, capability gap, project, challenge or outcome. LAMID ONE can translate it into an expertise requirement instead of forcing you to guess a category.", "sourceParagraph": 9903 }
+      ]
+    },
+    {
+      "label": "Expertise Across the Work",
+      "title": "Expertise Across the Work",
+      "paragraphs": [
+        { "text": "Expertise Across the Work", "sourceParagraph": 9904 },
+        { "text": "Strategy, finance, people, marketing, commercial, operations, technology/data/AI, product/design, legal/risk/compliance, engineering, manufacturing, energy, healthcare, sustainability, research, education, public sector, development/impact, program management, creative and other supported domains.", "sourceParagraph": 9905 }
+      ]
+    },
+    {
+      "label": "Flexible Engagements",
+      "title": "Flexible Engagements",
+      "paragraphs": [
+        { "text": "Flexible Engagements", "sourceParagraph": 9906 },
+        { "text": "Use advisory sessions, projects, milestone engagements, retainers, fractional roles, workshops, coaching, assessments or multi-expert teams.", "sourceParagraph": 9907 }
+      ]
+    },
+    {
+      "label": "Context Stays Connected",
+      "title": "Context Stays Connected",
+      "paragraphs": [
+        { "text": "Context Stays Connected", "sourceParagraph": 9908 },
+        { "text": "Keep approved briefs, decisions, deliverables, evidence and outcomes connected according to permissions.", "sourceParagraph": 9909 }
+      ]
+    },
+    {
+      "label": "Human Choice Remains Central",
+      "title": "Human Choice Remains Central",
+      "paragraphs": [
+        { "text": "Human Choice Remains Central", "sourceParagraph": 9910 },
+        { "text": "LAMID ONE can recommend and explain matches. You choose who to engage, what authority they receive, and what work is accepted.", "sourceParagraph": 9911 },
+        { "text": "CTA: Find Expertise | Become an Expert", "sourceParagraph": 9912 }
+      ]
+    },
+    {
+      "label": "Need Help Defining the Work?",
+      "title": "Need Help Defining the Work?",
+      "paragraphs": [
+        { "text": "Need Help Defining the Work?", "sourceParagraph": 9913 },
+        { "text": "Start with the outcome or problem even if you do not know the scope. LAMID ONE can build a working project brief, explain unfamiliar fields and identify what still needs specialist judgment.", "sourceParagraph": 9914 }
+      ]
+    },
+    {
+      "label": "No Expert Available Right Now?",
+      "title": "No Expert Available Right Now?",
+      "paragraphs": [
+        { "text": "No Expert Available Right Now?", "sourceParagraph": 9915 },
+        { "text": "Your work does not stop. Keep the draft, unresolved questions and context intact, then queue the specific parts that need qualified human review. You approve the revised scope before it becomes canonical unless a defined policy says otherwise.", "sourceParagraph": 9916 }
+      ]
+    },
+    {
+      "label": "Match Expertise to the Work - Not Just a Keyword.",
+      "title": "Match Expertise to the Work - Not Just a Keyword.",
+      "paragraphs": [
+        { "text": "Match Expertise to the Work - Not Just a Keyword.", "sourceParagraph": 9917 },
+        { "text": "Start from the objective, context and capability gap, then compare experts using evidence relevant to the actual work.", "sourceParagraph": 9918 }
+      ]
+    },
+    {
+      "label": "Define the Expertise Requirement",
+      "title": "Define the Expertise Requirement",
+      "paragraphs": [
+        { "text": "Define the Expertise Requirement", "sourceParagraph": 9919 },
+        { "text": "Capability, domain, function, industry, seniority, jurisdiction, timing and engagement model.", "sourceParagraph": 9920 }
+      ]
+    },
+    {
+      "label": "Evaluate Fit",
+      "title": "Evaluate Fit",
+      "paragraphs": [
+        { "text": "Evaluate Fit", "sourceParagraph": 9921 },
+        { "text": "Relevant experience, verified claims, credentials where required, evidence, availability, language, geography, engagement preferences and conflicts.", "sourceParagraph": 9922 }
+      ]
+    },
+    {
+      "label": "See Why a Match Appears",
+      "title": "See Why a Match Appears",
+      "paragraphs": [
+        { "text": "See Why a Match Appears", "sourceParagraph": 9923 },
+        { "text": "Show the factors behind the recommendation and distinguish verified evidence from self-declared profile information.", "sourceParagraph": 9924 }
+      ]
+    },
+    {
+      "label": "Select the Expert Yourself",
+      "title": "Select the Expert Yourself",
+      "paragraphs": [
+        { "text": "Select the Expert Yourself", "sourceParagraph": 9925 },
+        { "text": "Review the shortlist, compare fit, invite or decline, and approve the final scope.", "sourceParagraph": 9926 }
+      ]
+    },
+    {
+      "label": "Build an Expert Team",
+      "title": "Build an Expert Team",
+      "paragraphs": [
+        { "text": "Build an Expert Team", "sourceParagraph": 9927 },
+        { "text": "Compose complementary specialists around a complex objective while preserving responsibilities and access boundaries.", "sourceParagraph": 9928 },
+        { "text": "CTA: Start an Expert Match", "sourceParagraph": 9929 }
+      ]
+    },
+    {
+      "label": "Know What Has Been Verified.",
+      "title": "Know What Has Been Verified.",
+      "paragraphs": [
+        { "text": "Know What Has Been Verified.", "sourceParagraph": 9930 },
+        { "text": "Verification should state exactly what was checked, how, when and what remains self-declared.", "sourceParagraph": 9931 }
+      ]
+    },
+    {
+      "label": "Identity",
+      "title": "Identity",
+      "paragraphs": [
+        { "text": "Identity", "sourceParagraph": 9932 },
+        { "text": "Confirm the person or organization behind the expert profile at the appropriate verification level.", "sourceParagraph": 9933 }
+      ]
+    },
+    {
+      "label": "Expertise Claims",
+      "title": "Expertise Claims",
+      "paragraphs": [
+        { "text": "Expertise Claims", "sourceParagraph": 9934 },
+        { "text": "Support skills, roles, methods and specialist claims with work history, portfolio evidence, assessments, references or other proof.", "sourceParagraph": 9935 }
+      ]
+    },
+    {
+      "label": "Credentials & Licensing",
+      "title": "Credentials & Licensing",
+      "paragraphs": [
+        { "text": "Credentials & Licensing", "sourceParagraph": 9936 },
+        { "text": "Where required, record scope, issuer, jurisdiction, status and expiry. A badge never implies more than was actually verified.", "sourceParagraph": 9937 }
+      ]
+    },
+    {
+      "label": "Experience & Outcomes",
+      "title": "Experience & Outcomes",
+      "paragraphs": [
+        { "text": "Experience & Outcomes", "sourceParagraph": 9938 },
+        { "text": "Show relevant work and permitted outcome evidence without fabricating proof or exposing confidential information.", "sourceParagraph": 9939 }
+      ]
+    },
+    {
+      "label": "Ongoing Status",
+      "title": "Ongoing Status",
+      "paragraphs": [
+        { "text": "Ongoing Status", "sourceParagraph": 9940 },
+        { "text": "Verification may expire, be revoked, require refresh, or become inapplicable when jurisdiction or scope changes.", "sourceParagraph": 9941 },
+        { "text": "CTA: Explore Experts | View Verification Principles", "sourceParagraph": 9942 }
+      ]
+    },
+    {
+      "label": "Strengthen Capability - Then Keep Building It.",
+      "title": "Strengthen Capability - Then Keep Building It.",
+      "paragraphs": [
+        { "text": "Strengthen Capability - Then Keep Building It.", "sourceParagraph": 9943 },
+        { "text": "Not every gap requires the same answer. Use experts, hiring, learning, coaching, tools, role redesign or a blended route according to the need.", "sourceParagraph": 9944 }
+      ]
+    },
+    {
+      "label": "Diagnose the Gap",
+      "title": "Diagnose the Gap",
+      "paragraphs": [
+        { "text": "Diagnose the Gap", "sourceParagraph": 9945 },
+        { "text": "Identify missing knowledge, specialist capacity, leadership, methods, tools, funding, data or authority.", "sourceParagraph": 9946 }
+      ]
+    },
+    {
+      "label": "Choose the Right Route",
+      "title": "Choose the Right Route",
+      "paragraphs": [
+        { "text": "Choose the Right Route", "sourceParagraph": 9947 },
+        { "text": "Compare expert engagement, recruitment, fractional leadership, upskilling, reskilling, mentoring, coaching, learning and Tool Fabric options.", "sourceParagraph": 9948 }
+      ]
+    },
+    {
+      "label": "Build Workforce Capability",
+      "title": "Build Workforce Capability",
+      "paragraphs": [
+        { "text": "Build Workforce Capability", "sourceParagraph": 9949 },
+        { "text": "Connect role architecture, capability maps, skills gaps, workforce planning, succession and learning where needed.", "sourceParagraph": 9950 }
+      ]
+    },
+    {
+      "label": "Learn From the Engagement",
+      "title": "Learn From the Engagement",
+      "paragraphs": [
+        { "text": "Learn From the Engagement", "sourceParagraph": 9951 },
+        { "text": "With permission, capture reusable methods, evidence, decisions and lessons so external expertise strengthens internal capability.", "sourceParagraph": 9952 }
+      ]
+    },
+    {
+      "label": "Measure the Change",
+      "title": "Measure the Change",
+      "paragraphs": [
+        { "text": "Measure the Change", "sourceParagraph": 9953 },
+        { "text": "Review whether the capability gap narrowed and the intended outcome improved.", "sourceParagraph": 9954 },
+        { "text": "CTA: Strengthen Capability", "sourceParagraph": 9955 }
+      ]
+    },
+    {
+      "label": "Bring Your Expertise Into Better-Defined Work.",
+      "title": "Bring Your Expertise Into Better-Defined Work.",
+      "paragraphs": [
+        { "text": "Bring Your Expertise Into Better-Defined Work.", "sourceParagraph": 9956 },
+        { "text": "Create a cross-domain expert profile, evidence your capabilities and choose how you want to engage.", "sourceParagraph": 9957 }
+      ]
+    },
+    {
+      "label": "Create Your Expert Profile",
+      "title": "Create Your Expert Profile",
+      "paragraphs": [
+        { "text": "Create Your Expert Profile", "sourceParagraph": 9958 },
+        { "text": "Add domains, functions, industries, specialist capabilities, seniority, languages, geography and engagement preferences.", "sourceParagraph": 9959 }
+      ]
+    },
+    {
+      "label": "Evidence What You Claim",
+      "title": "Evidence What You Claim",
+      "paragraphs": [
+        { "text": "Evidence What You Claim", "sourceParagraph": 9960 },
+        { "text": "Add work history, portfolio evidence, credentials, assessments, references or other proof appropriate to your claims.", "sourceParagraph": 9961 }
+      ]
+    },
+    {
+      "label": "Set How You Work",
+      "title": "Set How You Work",
+      "paragraphs": [
+        { "text": "Set How You Work", "sourceParagraph": 9962 },
+        { "text": "Define availability and supported advisory, project, retainer, fractional, coaching, workshop or assessment models.", "sourceParagraph": 9963 }
+      ]
+    },
+    {
+      "label": "Receive Relevant Opportunities",
+      "title": "Receive Relevant Opportunities",
+      "paragraphs": [
+        { "text": "Receive Relevant Opportunities", "sourceParagraph": 9964 },
+        { "text": "Matching prioritizes fit with the objective and requirements rather than generic visibility.", "sourceParagraph": 9965 }
+      ]
+    },
+    {
+      "label": "Deliver in Context",
+      "title": "Deliver in Context",
+      "paragraphs": [
+        { "text": "Deliver in Context", "sourceParagraph": 9966 },
+        { "text": "Use structured scope, milestones, evidence, communication and acceptance criteria where the engagement requires them.", "sourceParagraph": 9967 }
+      ]
+    },
+    {
+      "label": "Build a Traceable Record",
+      "title": "Build a Traceable Record",
+      "paragraphs": [
+        { "text": "Build a Traceable Record", "sourceParagraph": 9968 },
+        { "text": "Completed work and permitted outcome signals can strengthen future matching without exposing confidential client information.", "sourceParagraph": 9969 },
+        { "text": "CTA: Apply to Join the Expert Network", "sourceParagraph": 9970 }
+      ]
+    }
+  ]
+}

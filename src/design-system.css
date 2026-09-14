@@ -22,13 +22,61 @@
   --serif: var(--font-editorial);
   --sage: #f5f3ef;
   --gold: var(--sandstone);
+  --surface: #ffffff;
+  --surface-alt: var(--sage);
+  --border: var(--line);
+  --text-muted: #898d92;
+  --danger: #b3261e;
   font-family: var(--font-ui);
-  color: var(--midnight);
-  background: var(--warm-white);
+  color: var(--ink);
+  background: var(--paper);
 }
-body,
+
+.cycle-card {
+  border-top: 2px solid var(--sandstone) !important;
+}
+
+/* Dark mode: follows the OS preference by default; an explicit choice
+   (data-theme="light"|"dark") always overrides it. Brand tokens
+   (--midnight/--graphite/--sandstone) are left untouched so branded
+   surfaces such as buttons and the dark navy header keep their intended
+   color in both themes — only the generic surface/text aliases flip. */
+:root:not([data-theme='light']) {
+  @media (prefers-color-scheme: dark) {
+    --paper: #10151c;
+    --ink: #eef1f5;
+    --text-secondary: #b7bcc2;
+    --text-subtle: #b7bcc2;
+    --muted: #b7bcc2;
+    --surface: #1a2029;
+    --surface-alt: #212832;
+    --border: #2a313c;
+    --text-muted: #9aa0a6;
+    color: var(--ink);
+    background: var(--paper);
+  }
+}
+:root[data-theme='dark'] {
+  --paper: #10151c;
+  --ink: #eef1f5;
+  --text-secondary: #b7bcc2;
+  --text-subtle: #b7bcc2;
+  --muted: #b7bcc2;
+  --surface: #1a2029;
+  --surface-alt: #212832;
+  --border: #2a313c;
+  --text-muted: #9aa0a6;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+body {
+  background: var(--paper);
+}
 .public-header,
 .auth-page {
+  /* Public marketing surfaces are intentionally out of scope for dark mode
+     in this pass (see plan) and always render on the light brand paper. */
   background: var(--warm-white);
 }
 em,
@@ -86,9 +134,6 @@ em,
 .cycle-card.blue {
   background: #f5f3ef;
   border-color: #e4dfd8;
-}
-.cycle-card {
-  border-top: 2px solid var(--sandstone) !important;
 }
 .cycle-card-top svg {
   color: var(--midnight);

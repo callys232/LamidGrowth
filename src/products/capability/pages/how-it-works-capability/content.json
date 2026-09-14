@@ -96,6 +96,34 @@
           "sourceParagraph": 274
         }
       ]
+    },
+    {
+      "label": "Build the Project Even When You Do Not Know the Scope.",
+      "title": "Build the Project Even When You Do Not Know the Scope.",
+      "paragraphs": [
+        {
+          "text": "Build the Project Even When You Do Not Know the Scope.",
+          "sourceParagraph": 275
+        },
+        {
+          "text": "Start with the problem or outcome. LAMID ONE can explain unfamiliar fields, show examples, suggest likely boundaries and help you decide without requiring you to already know professional scoping language.",
+          "sourceParagraph": 276
+        }
+      ]
+    },
+    {
+      "label": "Not Sure Yet Is a Valid Starting Point",
+      "title": "Not Sure Yet Is a Valid Starting Point",
+      "paragraphs": [
+        {
+          "text": "Not Sure Yet Is a Valid Starting Point",
+          "sourceParagraph": 277
+        },
+        {
+          "text": "Use guided discovery to move from idea or problem to working scope, deliverables, acceptance criteria, assumptions, dependencies, constraints and the expertise the work may require.",
+          "sourceParagraph": 278
+        }
+      ]
     }
   ]
 }

@@ -56,7 +56,7 @@ export interface WorkspaceState {
     context: Context;
     tier: string;
     member_limit: number;
-    role: 'owner' | 'member';
+    role: 'owner' | 'member' | 'concierge';
   };
   permissions: string[];
   workspaces: Array<{

@@ -68,6 +68,34 @@
           "sourceParagraph": 1791
         }
       ]
+    },
+    {
+      "label": "Attention That Matches Your Goals",
+      "title": "Attention That Matches Your Goals",
+      "paragraphs": [
+        {
+          "text": "Attention That Matches Your Goals",
+          "sourceParagraph": 1792
+        },
+        {
+          "text": "Receive the changes and opportunities that materially affect active goals, owned work or required decisions. Let routine progression wait for a digest or your return.",
+          "sourceParagraph": 1793
+        }
+      ]
+    },
+    {
+      "label": "Opportunity Preferences",
+      "title": "Opportunity Preferences",
+      "paragraphs": [
+        {
+          "text": "Opportunity Preferences",
+          "sourceParagraph": 1794
+        },
+        {
+          "text": "Control whether jobs, training, events, grants, projects, experts and other supported opportunities may be matched to your goals and how often they reach you.",
+          "sourceParagraph": 1795
+        }
+      ]
     }
   ]
 }

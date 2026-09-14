@@ -4,6 +4,10 @@
   --page-tint: #eceff2;
   --page-pattern: linear-gradient(90deg, transparent 49.8%, #0d1a2b0c 50%, transparent 50.2%);
 }
+[data-page-theme='product'] {
+  --page-accent: #c12129;
+  --page-tint: #fbecea;
+}
 [data-page-theme='growth'],
 [data-page-theme='founders'] {
   --page-accent: #26753f;
@@ -58,6 +62,22 @@
 [data-page-theme='audiences'] {
   --page-accent: #465e79;
   --page-tint: #edf1f6;
+}
+
+/* Every --page-tint above is a light-mode-only literal. Text inside tinted elements
+   (.content-hero, .editorial-section, .page-heading) uses `color: var(--ink)`, which flips
+   light in dark mode — so a light literal tint behind light text goes invisible. Override the
+   tint (not the accent, which stays legible on dark backgrounds regardless of theme) to a
+   theme-aware surface in dark mode, for every family at once. */
+:root:not([data-theme='light']) {
+  @media (prefers-color-scheme: dark) {
+    [data-page-theme] {
+      --page-tint: var(--surface-alt);
+    }
+  }
+}
+:root[data-theme='dark'] [data-page-theme] {
+  --page-tint: var(--surface-alt);
 }
 .content-page[data-page-theme] .content-hero {
   background-color: var(--page-tint);
@@ -170,6 +190,50 @@
 }
 .workspace-main[data-page-theme='growth'] .review-card {
   border-left: 3px solid var(--page-accent);
+}
+
+/* Product pages: no "On this page" nav at all (removed in DocumentPageLayout.tsx for this
+   family) — instead a single-column, editorial "story" layout in place of the 2-column card
+   grid everyone else uses. Same content, same section order, just read top-to-bottom as a
+   continuous narrative rather than a reference grid. */
+.content-page[data-page-theme='product'] .showcase-copy .editorial-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-top: 20px;
+}
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section {
+  border: 0;
+  border-left: 3px solid var(--page-accent);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 44px 0 44px 40px;
+}
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section:hover,
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section:focus-within {
+  border-color: var(--page-accent);
+  box-shadow: none;
+  background: transparent;
+}
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section + .editorial-section {
+  border-top: 1px solid var(--border);
+}
+.content-page[data-page-theme='product'] .showcase-copy .section-heading .editorial-number {
+  margin-bottom: 20px;
+  color: var(--page-accent);
+  background: transparent;
+  border: 0;
+  width: auto;
+  height: auto;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section h2 {
+  font-size: clamp(26px, 3vw, 36px);
 }
 @media (max-width: 760px) {
   .content-page[data-page-theme] .content-hero {

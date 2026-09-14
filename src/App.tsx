@@ -8,13 +8,19 @@ import { VerifyAccount } from './products/accounts/pages/VerifyAccount';
 import { Capability } from './products/capability/pages/CapabilityPage';
 import { Clarity } from './products/clarity/pages/ClarityPage';
 import { Commercial } from './products/commercial/pages/CommercialPage';
+import { ProjectDetailPage } from './products/commercial/pages/ProjectDetailPage';
+import { ProjectsListPage } from './products/commercial/pages/ProjectsListPage';
+import { ConciergePage } from './products/concierge/pages/ConciergePage';
+import { TalentDashboardPage } from './products/talent/pages/TalentDashboardPage';
 import { Companion } from './products/companion/pages/CompanionPage';
+import { CompanionChatPage } from './products/companion/pages/CompanionChatPage';
 import { ActionsPage } from './products/consistency/pages/ActionsPage';
 import { Governance } from './products/governance/pages/GovernancePage';
 import { Intelligence } from './products/intelligence/pages/IntelligencePage';
 import { Knowledge } from './products/knowledge/pages/KnowledgePage';
 import { Notifications } from './products/notifications/pages/NotificationsPage';
 import { Members } from './products/organizations/pages/MembersPage';
+import { PricingBillablesPage } from './products/pricing/pages/PricingBillablesPage';
 import { Progress } from './products/progress/pages/ProgressPage';
 import { Rhythm } from './products/rhythm/pages/RhythmPage';
 import { Settings } from './products/settings/pages/SettingsPage';
@@ -116,6 +122,7 @@ export function App() {
           <Route path="capability" element={<Capability />} />
           <Route path="consistency" element={<ActionsPage />} />
           <Route path="companion" element={<Companion />} />
+          <Route path="companion/chat" element={<CompanionChatPage />} />
           <Route path="workflows" element={<Workflows />} />
           <Route path="workflows/:id" element={<Workflows />} />
           <Route path="settings/notifications" element={<Notifications />} />
@@ -127,6 +134,11 @@ export function App() {
           <Route path="admin" element={<Members />} />
           <Route path="settings/members" element={<Members />} />
           <Route path="commercial" element={<Commercial />} />
+          <Route path="commercial/projects" element={<ProjectsListPage />} />
+          <Route path="commercial/projects/:id" element={<ProjectDetailPage />} />
+          <Route path="concierge" element={<ConciergePage />} />
+          <Route path="talent" element={<TalentDashboardPage />} />
+          <Route path="pricing" element={<PricingBillablesPage />} />
           <Route path="knowledge" element={<Knowledge />} />
           <Route path="insights" element={<Intelligence />} />
           <Route path="settings/ai" element={<Intelligence settings />} />

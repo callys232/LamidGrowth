@@ -68,6 +68,34 @@
           "sourceParagraph": 1560
         }
       ]
+    },
+    {
+      "label": "Career & Role Pathways",
+      "title": "Career & Role Pathways",
+      "paragraphs": [
+        {
+          "text": "Career & Role Pathways",
+          "sourceParagraph": 1561
+        },
+        {
+          "text": "Define a target role or development direction, connect it to current skills and gaps, and keep the pathway responsive to changing requirements, learning progress and relevant opportunities.",
+          "sourceParagraph": 1562
+        }
+      ]
+    },
+    {
+      "label": "Choose How to Close the Gap",
+      "title": "Choose How to Close the Gap",
+      "paragraphs": [
+        {
+          "text": "Choose How to Close the Gap",
+          "sourceParagraph": 1563
+        },
+        {
+          "text": "Compare learning, free or paid training, coaching, mentors, experts, projects, hiring or Tool Fabric support according to the goal and constraints.",
+          "sourceParagraph": 1564
+        }
+      ]
     }
   ]
 }

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/ui/Button';
 import { PageHeading } from '../../../shared/workspace/PageHeading';
 import type { useCommercialPage } from '../hooks/useCommercialPage';
@@ -16,6 +17,9 @@ export function CommercialHeadingSlide({
         <Button onClick={() => setCreating(true)} disabled={!options}>
           Post a job
         </Button>
+        <Link className="button button-secondary" to="/os/commercial/projects">
+          View projects &amp; milestones
+        </Link>
       </PageHeading>
     </>
   );

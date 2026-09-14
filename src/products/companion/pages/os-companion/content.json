@@ -68,6 +68,34 @@
           "sourceParagraph": 1484
         }
       ]
+    },
+    {
+      "label": "Results Stay Connected",
+      "title": "Results Stay Connected",
+      "paragraphs": [
+        {
+          "text": "Results Stay Connected",
+          "sourceParagraph": 1485
+        },
+        {
+          "text": "Useful results from tools, workflows, experts and prior decisions can inform later work when they remain relevant, current and permitted. You should not have to re-enter the same context for every engine.",
+          "sourceParagraph": 1486
+        }
+      ]
+    },
+    {
+      "label": "Active Goals Can Keep Listening",
+      "title": "Active Goals Can Keep Listening",
+      "paragraphs": [
+        {
+          "text": "Active Goals Can Keep Listening",
+          "sourceParagraph": 1487
+        },
+        {
+          "text": "Choose which goals may watch for relevant changes and opportunities, what sources may be used, and what deserves your attention.",
+          "sourceParagraph": 1488
+        }
+      ]
     }
   ]
 }

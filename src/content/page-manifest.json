@@ -196,6 +196,13 @@
     "exportName": "PricingDocumentPage"
   },
   {
+    "route": "/experts",
+    "product": "experts",
+    "content": "src/products/experts/pages/experts/content.json",
+    "component": "src/products/experts/pages/experts/ExpertsDocumentPage.tsx",
+    "exportName": "ExpertsDocumentPage"
+  },
+  {
     "route": "/enterprise/contact",
     "product": "organizations",
     "content": "src/products/organizations/pages/enterprise-contact/content.json",

@@ -6,6 +6,28 @@ import { permissionsFor, requirePermission } from './policy.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
 import { mountAI, openAIProvider } from './ai.mjs';
+import { createAgentRuntime, mountAgents, agentManifests } from './agents.mjs';
+import { mountModelRegistry } from './models.mjs';
+import { mountProjects } from './projects.mjs';
+import {
+  mountPayments,
+  mountPaystackWebhook,
+  mountPointsPurchase,
+  paystackProvider,
+  cryptoUsdtProvider,
+} from './payments.mjs';
+import { mountDocuments } from './documents.mjs';
+import { mountFx } from './fx.mjs';
+import { mountConcierge } from './concierge.mjs';
+import { mountBilling } from './billing.mjs';
+import { mountPricing } from './pricing.mjs';
+import { mountTalent } from './talent.mjs';
+import { mountInvitations } from './invitations.mjs';
+import { createRateLimiter } from './ratelimit.mjs';
+import { mountMessaging } from './messaging.mjs';
+import { mountEstimator } from './estimator.mjs';
+import { JOB_CATEGORIES, PROJECT_TYPES } from './jobTaxonomy.mjs';
+import { wordSet, scoreBid } from './text.mjs';
 
 const text = z.string().trim().min(1).max(500);
 const longText = z.string().trim().max(5000).default('');
@@ -53,36 +75,8 @@ const actionSchema = z
   })
   .strict();
 const reviewSchema = z.object({ progressed: text, learned: longText, next: text }).strict();
-const jobCategories = z.enum([
-  'Strategy and consulting',
-  'Business operations',
-  'Finance and accounting',
-  'Marketing and growth',
-  'Sales and partnerships',
-  'Product management',
-  'UX/UI design',
-  'Software engineering',
-  'Data and analytics',
-  'AI and automation',
-  'Content and communications',
-  'Research',
-  'People and recruiting',
-  'Legal and compliance',
-  'Administration and support',
-  'Creative and media',
-]);
-const projectTypes = z.enum([
-  'Fixed-scope project',
-  'Ongoing retainer',
-  'Hourly engagement',
-  'Short-term contract',
-  'Long-term contract',
-  'Advisory engagement',
-  'Audit or assessment',
-  'Implementation',
-  'Research assignment',
-  'Training or workshop',
-]);
+const jobCategories = z.enum(JOB_CATEGORIES);
+const projectTypes = z.enum(PROJECT_TYPES);
 const currency = z.string().regex(/^[A-Z]{3}$/);
 const jobPostSchema = z
   .object({
@@ -95,6 +89,7 @@ const jobPostSchema = z
     budgetMax: z.number().int().positive().max(100000000),
     currency,
     timeline: text.max(200),
+    tags: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
   })
   .strict()
   .refine((value) => value.budgetMax >= value.budgetMin, {
@@ -125,37 +120,13 @@ const tokenLifetime = 30 * 60 * 1000;
 const jobPostCost = 10;
 const bidCost = 2;
 
-function createRateLimiter({ windowMs, max, message, maxKeys = 10000, key = (req) => req.ip }) {
-  const entries = new Map();
-  return (req, res, next) => {
-    const now = Date.now();
-    for (const [entryKey, entry] of entries) {
-      if (entry.resetAt <= now) entries.delete(entryKey);
-    }
-    const currentKey = key(req) || 'unknown';
-    let entry = entries.get(currentKey);
-    if (!entry || entry.resetAt <= now) {
-      if (entries.size >= maxKeys) {
-        const oldest = entries.keys().next().value;
-        if (oldest !== undefined) entries.delete(oldest);
-      }
-      entry = { count: 0, resetAt: now + windowMs };
-      entries.set(currentKey, entry);
-    }
-    entry.count += 1;
-    if (entry.count > max) {
-      res.setHeader('Retry-After', String(Math.max(1, Math.ceil((entry.resetAt - now) / 1000))));
-      return res.status(429).json({ error: message });
-    }
-    next();
-  };
-}
-
 export function createApp({
   filename = 'data/lamid.db',
   production = false,
   rateLimits = {},
   aiProvider = openAIProvider(),
+  paymentProvider = (name) =>
+    name === 'paystack' ? paystackProvider() : name === 'crypto_usdt' ? cryptoUsdtProvider() : null,
   ecosystemAdminEmails = (process.env.ECOSYSTEM_ADMIN_EMAILS || '')
     .split(',')
     .map((email) => email.trim().toLowerCase())
@@ -169,6 +140,7 @@ export function createApp({
   const store = openStore(filename);
   const { db, transaction, log, insert, records } = store;
   const runtime = createWorkflowRuntime(store);
+  const agentRuntime = createAgentRuntime(store, { aiProvider, workflowRuntime: runtime });
   const trustProxyHops = Number.parseInt(process.env.TRUST_PROXY_HOPS || '', 10);
   if (Number.isInteger(trustProxyHops) && trustProxyHops > 0)
     app.set('trust proxy', trustProxyHops);
@@ -178,17 +150,29 @@ export function createApp({
     auth: { windowMs: 60_000, max: 20, ...rateLimits.auth },
     mutation: { windowMs: 60_000, max: 60, ...rateLimits.mutation },
   };
-  const apiLimiter = createRateLimiter({
+  const apiLimiter = createRateLimiter(store, {
     ...limits.api,
     message: 'Too many requests. Please wait a minute and try again.',
   });
-  const authLimiter = createRateLimiter({
+  const authLimiter = createRateLimiter(store, {
     ...limits.auth,
     message: 'Too many sign-in attempts. Please wait a minute and try again.',
   });
-  const mutationLimiter = createRateLimiter({
+  const mutationLimiter = createRateLimiter(store, {
     ...limits.mutation,
     message: 'Too many changes. Please wait a minute and try again.',
+  });
+  // Applied only on routes mounted after the session middleware below, so
+  // req.user is always populated here: keying on the account (not just IP)
+  // means rotating IPs cannot evade the ceiling on points-spending actions.
+  // Backed by the shared rate_limit_buckets table (see ratelimit.mjs), so this
+  // ceiling holds even across multiple cluster worker processes.
+  const spendLimiter = createRateLimiter(store, {
+    windowMs: 60_000,
+    max: 20,
+    ...rateLimits.spend,
+    message: 'Too many spending actions. Please wait a minute and try again.',
+    key: (req) => (req.user ? `user:${req.user.id}` : `ip:${req.ip}`),
   });
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -217,7 +201,15 @@ export function createApp({
     }
     next();
   });
-  app.use(express.json({ limit: '32kb' }));
+  app.use(
+    express.json({
+      limit: '32kb',
+      verify: (req, _res, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+  );
+  mountPaystackWebhook(app, store, { paymentProvider });
   app.use('/api', apiLimiter);
   app.use('/api/auth', (req, res, next) => {
     if (req.method === 'GET') return next();
@@ -274,7 +266,7 @@ export function createApp({
         email: z
           .string()
           .trim()
-          .email()
+          .email('Enter a valid email address using standard letters, numbers, and symbols.')
           .max(254)
           .transform((x) => x.toLowerCase()),
         password: z.string().min(12).max(128),
@@ -328,7 +320,13 @@ export function createApp({
   });
   app.post('/api/auth/resend-verification', (req, res) => {
     const input = z
-      .object({ email: z.string().trim().email().max(254) })
+      .object({
+        email: z
+          .string()
+          .trim()
+          .email('Enter a valid email address using standard letters, numbers, and symbols.')
+          .max(254),
+      })
       .strict()
       .parse(req.body);
     const user = db
@@ -353,7 +351,13 @@ export function createApp({
   });
   app.post('/api/auth/request-recovery', (req, res) => {
     const input = z
-      .object({ email: z.string().trim().email().max(254) })
+      .object({
+        email: z
+          .string()
+          .trim()
+          .email('Enter a valid email address using standard letters, numbers, and symbols.')
+          .max(254),
+      })
       .strict()
       .parse(req.body);
     const user = db
@@ -384,7 +388,14 @@ export function createApp({
   });
   app.post('/api/auth/login', async (req, res) => {
     const input = z
-      .object({ email: z.string().trim().email().max(254), password: z.string().min(1).max(128) })
+      .object({
+        email: z
+          .string()
+          .trim()
+          .email('Enter a valid email address using standard letters, numbers, and symbols.')
+          .max(254),
+        password: z.string().min(1).max(128),
+      })
       .strict()
       .parse(req.body);
     const user = db
@@ -589,7 +600,7 @@ export function createApp({
         .all(query.q, query.q, query.offset),
     );
   });
-  app.post('/api/jobs', (req, res) => {
+  app.post('/api/jobs', spendLimiter, (req, res) => {
     const input = jobPostSchema.parse(req.body);
     const id = randomUUID();
     const result = replayable(req, 'job.create', input, () => {
@@ -609,7 +620,7 @@ export function createApp({
         id,
         Date.now(),
       );
-      db.prepare('INSERT INTO job_posts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      db.prepare('INSERT INTO job_posts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
         id,
         req.workspace.id,
         req.user.id,
@@ -624,6 +635,7 @@ export function createApp({
         input.timeline,
         'open',
         Date.now(),
+        JSON.stringify(input.tags),
       );
       log(req.workspace.id, req.user.name, 'Job post created', id, input.title);
       return { id, ...input, status: 'open', pointsCharged: jobPostCost };
@@ -641,7 +653,18 @@ export function createApp({
       db.prepare('SELECT * FROM bids WHERE job_id = ? ORDER BY created_at DESC').all(job.id),
     );
   });
-  app.post('/api/jobs/:id/bids', (req, res) => {
+  app.get('/api/jobs/:id/matches', (req, res) => {
+    const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
+    if (!job) return res.status(404).json({ error: 'Job post not found.' });
+    if (job.client_user_id !== req.user.id)
+      return res.status(403).json({ error: 'Only the job owner can review matches.' });
+    const bids = db.prepare('SELECT * FROM bids WHERE job_id = ?').all(job.id);
+    const scored = bids
+      .map((bid) => ({ bid, ...scoreBid(job, bid) }))
+      .sort((a, b) => b.total - a.total);
+    res.json(scored);
+  });
+  app.post('/api/jobs/:id/bids', spendLimiter, (req, res) => {
     const input = bidSchema.parse(req.body);
     const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
     if (!job || job.status !== 'open')
@@ -918,7 +941,11 @@ export function createApp({
   app.post('/api/admin/members', (req, res) => {
     const input = z
       .object({
-        email: z.string().trim().email().max(254),
+        email: z
+          .string()
+          .trim()
+          .email('Enter a valid email address using standard letters, numbers, and symbols.')
+          .max(254),
         role: z.literal('member').default('member'),
       })
       .strict()
@@ -1007,6 +1034,94 @@ export function createApp({
       .all(req.workspace.id),
   });
   app.get('/api/state', (req, res) => res.json(state(req)));
+  app.get('/api/activity', (req, res) => {
+    const agentName = (agentId) => agentManifests.find((a) => a.id === agentId)?.name || agentId;
+    const items = [
+      ...records(req.workspace.id, 'objective').map((o) => ({
+        id: o.id,
+        type: 'objective',
+        title: o.title,
+        status: o.status,
+        createdAt: o.createdAt,
+      })),
+      ...records(req.workspace.id, 'action').map((a) => ({
+        id: a.id,
+        type: 'action',
+        title: a.title,
+        status: a.status,
+        createdAt: a.createdAt,
+      })),
+      ...db
+        .prepare('SELECT * FROM job_posts WHERE workspace_id = ?')
+        .all(req.workspace.id)
+        .map((j) => ({
+          id: j.id,
+          type: 'job',
+          title: j.title,
+          status: j.status,
+          createdAt: new Date(j.created_at).toISOString(),
+        })),
+      ...db
+        .prepare('SELECT * FROM bids WHERE freelancer_user_id = ?')
+        .all(req.user.id)
+        .map((b) => ({
+          id: b.id,
+          type: 'bid',
+          title: `Bid on job ${b.job_id}`,
+          status: b.status,
+          createdAt: new Date(b.created_at).toISOString(),
+        })),
+      ...db
+        .prepare('SELECT * FROM proposals WHERE author_user_id = ?')
+        .all(req.user.id)
+        .map((p) => ({
+          id: p.id,
+          type: 'proposal',
+          title: p.title,
+          status: p.status,
+          createdAt: new Date(p.created_at).toISOString(),
+        })),
+      ...runtime.list(req.workspace.id).map((w) => ({
+        id: w.id,
+        type: 'workflow',
+        title: w.title,
+        status: w.state,
+        createdAt: w.created_at,
+      })),
+      ...db
+        .prepare('SELECT * FROM agent_runs WHERE workspace_id = ? AND principal_id = ?')
+        .all(req.workspace.id, req.user.id)
+        .map((r) => ({
+          id: r.id,
+          type: 'agent_run',
+          title: agentName(r.agent_id),
+          status: r.status,
+          createdAt: r.created_at,
+        })),
+      ...db
+        .prepare('SELECT * FROM points_ledger WHERE user_id = ?')
+        .all(req.user.id)
+        .map((p) => ({
+          id: p.id,
+          type: 'points',
+          title: p.reason,
+          status: p.amount >= 0 ? 'credited' : 'charged',
+          createdAt: new Date(p.created_at).toISOString(),
+        })),
+      ...db
+        .prepare('SELECT * FROM job_invitations WHERE invited_by = ? OR freelancer_user_id = ?')
+        .all(req.user.id, req.user.id)
+        .map((i) => ({
+          id: i.id,
+          type: 'invitation',
+          title: `Project invitation ${i.invited_by === req.user.id ? 'sent' : 'received'}`,
+          status: i.status,
+          createdAt: new Date(i.created_at).toISOString(),
+        })),
+    ];
+    items.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+    res.json(items.slice(0, 50));
+  });
   app.get('/api/export', requirePermission('workspace:export'), (req, res) => {
     res.attachment('lamid-one-workspace.json');
     const exported = transaction(() => {
@@ -1255,6 +1370,20 @@ export function createApp({
   mountWorkflows(app, store, runtime);
   mountKnowledge(app, store);
   mountAI(app, store, aiProvider);
+  mountAgents(app, store, agentRuntime, { spendLimiter });
+  mountModelRegistry(app, store);
+  mountProjects(app, store, { aiProvider });
+  mountPayments(app, store, { paymentProvider });
+  mountPointsPurchase(app, store, { paymentProvider });
+  mountDocuments(app, store);
+  mountFx(app, store);
+  mountConcierge(app, store, { ecosystemAdminEmails });
+  mountBilling(app, store, { paymentProvider, ecosystemAdminEmails });
+  mountPricing(app, store, { ecosystemAdminEmails });
+  mountTalent(app, store, { ecosystemAdminEmails });
+  mountInvitations(app, store);
+  mountMessaging(app, store);
+  mountEstimator(app, store);
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint not found.' }));
   app.use((error, _req, res, _next) => {
     if (error instanceof z.ZodError)

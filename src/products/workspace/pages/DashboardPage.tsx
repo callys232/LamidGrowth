@@ -1,4 +1,5 @@
 import { useDashboardPage } from '../hooks/useDashboardPage';
+import { DashboardActivitySlide } from '../slides/DashboardActivitySlide';
 import { DashboardFocusSlide } from '../slides/DashboardFocusSlide';
 import { DashboardHeadingSlide } from '../slides/DashboardHeadingSlide';
 import { DashboardNextStepsSlide } from '../slides/DashboardNextStepsSlide';
@@ -15,6 +16,7 @@ export function Dashboard() {
       <DashboardStatisticsSlide active={page.active} state={page.state} done={page.done} />
       <DashboardObjectivesSlide active={page.active} newObjective={page.newObjective} />
       <DashboardNextStepsSlide newAction={page.newAction} next={page.next} />
+      <DashboardActivitySlide />
     </>
   );
 }

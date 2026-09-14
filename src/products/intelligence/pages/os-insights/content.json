@@ -66,6 +66,20 @@
           "sourceParagraph": 1500
         }
       ]
+    },
+    {
+      "label": "Why Now?",
+      "title": "Why Now?",
+      "paragraphs": [
+        {
+          "text": "Why Now?",
+          "sourceParagraph": 1501
+        },
+        {
+          "text": "For time-sensitive insights, see why the change matters now, which goal or plan it affects, and what evidence or source triggered the recommendation.",
+          "sourceParagraph": 1502
+        }
+      ]
     }
   ]
 }

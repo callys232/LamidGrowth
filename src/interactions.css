@@ -44,7 +44,7 @@
     color: #0d1a2b;
   }
   .icon-button:not(:disabled):hover {
-    background: #eeeae5;
+    background: var(--border);
     color: #0d1a2b;
     transform: scale(1.04);
   }

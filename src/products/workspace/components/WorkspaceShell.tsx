@@ -19,6 +19,8 @@ import {
   Sparkles,
   Sun,
   TrendingUp,
+  Users,
+  Wallet,
   X,
 } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -64,6 +66,9 @@ const navigation = [
   ['Rhythm', '/os/rhythm', CalendarDays],
   ['Commercial', '/os/commercial', GitBranch],
   ['Knowledge', '/os/knowledge', Layers3],
+  ['Concierge', '/os/concierge', ShieldCheck],
+  ['Talent', '/os/talent', Users],
+  ['Pricing', '/os/pricing', Wallet],
 ] as const;
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);

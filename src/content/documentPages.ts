@@ -29,6 +29,7 @@ import { ResponsibleAiDocumentPage } from '../products/website/pages/responsible
 import { TrustPrivacyDocumentPage } from '../products/governance/pages/trust-privacy/TrustPrivacyDocumentPage';
 import { TrustGovernanceDocumentPage } from '../products/governance/pages/trust-governance/TrustGovernanceDocumentPage';
 import { PricingDocumentPage } from '../products/website/pages/pricing/PricingDocumentPage';
+import { ExpertsDocumentPage } from '../products/experts/pages/experts/ExpertsDocumentPage';
 import { EnterpriseContactDocumentPage } from '../products/organizations/pages/enterprise-contact/EnterpriseContactDocumentPage';
 import { DemoDocumentPage } from '../products/website/pages/demo/DemoDocumentPage';
 import { DemoRequestDocumentPage } from '../products/website/pages/demo-request/DemoRequestDocumentPage';
@@ -128,6 +129,7 @@ export const documentPages: Record<string, ComponentType<DocumentPageProps>> = {
 "/trust/privacy": TrustPrivacyDocumentPage,
 "/trust/governance": TrustGovernanceDocumentPage,
 "/pricing": PricingDocumentPage,
+"/experts": ExpertsDocumentPage,
 "/enterprise/contact": EnterpriseContactDocumentPage,
 "/demo": DemoDocumentPage,
 "/demo/request": DemoRequestDocumentPage,

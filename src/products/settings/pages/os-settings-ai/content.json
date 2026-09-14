@@ -68,6 +68,20 @@
           "sourceParagraph": 1761
         }
       ]
+    },
+    {
+      "label": "Cross-Result Use",
+      "title": "Cross-Result Use",
+      "paragraphs": [
+        {
+          "text": "Cross-Result Use",
+          "sourceParagraph": 1762
+        },
+        {
+          "text": "Choose how eligible results may be reused across LAMID ONE. A related result never grants another engine or workspace permission to see data it is not authorized to access.",
+          "sourceParagraph": 1763
+        }
+      ]
     }
   ]
 }

@@ -1,8 +1,33 @@
 import { BrainCircuit, Layers3, ShieldCheck, Workflow } from 'lucide-react';
+import type { MouseEvent } from 'react';
 import { CopyLine } from '../../../../../shared/content/CopyLine';
 import content from '../content.json';
 import { HomeOperatingCycle } from '../components/HomeOperatingCycle';
 import { CompanionExample } from '../components/CompanionExample';
+
+const SCROLL_DURATION_MS = 1100;
+
+function slowScrollTo(event: MouseEvent<HTMLAnchorElement>) {
+  const href = event.currentTarget.getAttribute('href');
+  if (!href?.startsWith('#')) return;
+  const target = document.querySelector(href);
+  if (!target) return;
+  event.preventDefault();
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    target.scrollIntoView();
+    return;
+  }
+  const startY = window.scrollY;
+  const targetY = startY + target.getBoundingClientRect().top;
+  const startTime = performance.now();
+  const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function step(now: number) {
+    const progress = Math.min(1, (now - startTime) / SCROLL_DURATION_MS);
+    window.scrollTo(0, startY + (targetY - startY) * easeInOutCubic(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
 
 export function HomeHeroSlide() {
   const [title, description, , actions, continuity, control] = content.hero.paragraphs;
@@ -88,7 +113,11 @@ export function HomeHeroSlide() {
         <div className="home-container">
           <span>Discover LAMID ONE</span>
           {content.sections.slice(0, 4).map((section) => (
-            <a key={section.label} href={`#section-${section.paragraphs[0].sourceParagraph}`}>
+            <a
+              key={section.label}
+              href={`#section-${section.paragraphs[0].sourceParagraph}`}
+              onClick={slowScrollTo}
+            >
               {section.title}
             </a>
           ))}

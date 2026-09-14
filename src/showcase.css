@@ -7,15 +7,15 @@
   align-items: center;
   gap: 24px;
   padding: 0 max(24px, calc((100vw - 1280px) / 2));
-  background: #fbfaf7f5;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
   backdrop-filter: blur(16px);
-  border-block: 1px solid #dedfdc;
+  border-block: 1px solid var(--border);
 }
 .section-index-label {
   flex: 0 0 auto;
   font-size: 12px;
   font-weight: 600;
-  color: #5a5f66;
+  color: var(--text-muted);
 }
 .section-index-links {
   display: flex;
@@ -35,7 +35,7 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
-  color: #5a5f66;
+  color: var(--text-muted);
   text-decoration: none;
 }
 .section-index a span {

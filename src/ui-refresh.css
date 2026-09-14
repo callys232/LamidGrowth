@@ -1,7 +1,7 @@
 /* Presentation layer: visual hierarchy only. Source copy and interaction markup stay unchanged. */
 :root {
   --surface-0: #f7f8f6;
-  --surface-1: #ffffff;
+  --surface-1: var(--surface);
   --surface-2: #eef1ee;
   --surface-dark: #122331;
   --text-primary: #142333;
@@ -119,8 +119,46 @@ select:focus-visible {
 }
 
 .section-index {
-  border-block-color: var(--line-soft);
-  background: rgb(247 248 246 / 88%);
+  border-block-color: var(--line-soft, var(--border));
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  box-shadow: 0 1px 0 rgb(13 26 43 / 4%);
+}
+.section-index a {
+  position: relative;
+  border-bottom-color: transparent;
+  transition: color 0.3s ease;
+}
+.section-index a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -3px;
+  height: 3px;
+  background: var(--page-accent, #0d1a2b);
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.section-index a:hover::after,
+.section-index a[aria-current]::after {
+  right: 0;
+}
+.section-index a span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 2px;
+  border-radius: 999px;
+  background: var(--page-tint, rgb(13 26 43 / 6%));
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+.section-index a:hover span,
+.section-index a[aria-current] span {
+  background: var(--page-accent, #0d1a2b);
+  color: #fff;
 }
 
 .content-page .showcase-copy .editorial-sections {

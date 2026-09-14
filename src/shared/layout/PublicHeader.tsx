@@ -78,21 +78,21 @@ const menus: {
   },
   {
     title: 'Experts',
-    description: 'Expert services are planned and are not yet available in this release.',
+    description: 'Bring the right human expertise into the work — discover, match, verify and engage.',
     groups: [
       {
-        title: 'Expert support · Planned',
+        title: 'Expert support',
         entries: [
-          ['Expert Network', 'Discover specialist support.'],
-          ['Consultant Matching', 'Find expertise relevant to your context.'],
-          ['Verified Expertise', 'Review evidence of specialist capability.'],
+          ['Expert Network', 'Discover specialist support.', '/experts'],
+          ['Expert Matching', 'Find expertise relevant to your context.', '/experts'],
+          ['Verified Expertise', 'Review evidence of specialist capability.', '/experts'],
         ],
       },
       {
-        title: 'Capability & participation · Planned',
+        title: 'Capability & participation',
         entries: [
-          ['Talent & Capability', 'Connect people and capability needs.'],
-          ['Become an Expert', 'Contribute your professional expertise.'],
+          ['Talent & Capability', 'Connect people and capability needs.', '/experts'],
+          ['Become an Expert', 'Contribute your professional expertise.', '/experts'],
         ],
       },
     ],

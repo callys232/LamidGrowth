@@ -1,4 +1,5 @@
 import { useSettingsPage } from '../hooks/useSettingsPage';
+import { SettingsAppearanceSlide } from '../slides/SettingsAppearanceSlide';
 import { SettingsHeadingSlide } from '../slides/SettingsHeadingSlide';
 import { SettingsWorkspaceSettingsSlide } from '../slides/SettingsWorkspaceSettingsSlide';
 
@@ -8,6 +9,7 @@ export function Settings() {
   return (
     <>
       <SettingsHeadingSlide />
+      <SettingsAppearanceSlide />
       <SettingsWorkspaceSettingsSlide
         save={page.save}
         state={page.state}
