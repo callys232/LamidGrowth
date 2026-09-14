@@ -7,6 +7,7 @@ import {
   OrganizationalGrowthSlide2,
   GrowWithoutLosingControlSlide3,
   GrowthChangesByContextTheOperatingPrinciplesStayConsistentSlide4,
+  KeepGoalsConnectedSlide5,
 } from './slides';
 
 /** /how-it-works/growth — sections in reading order. */
@@ -21,6 +22,7 @@ export function HowItWorksGrowthDocumentPage({ embedded = false }: DocumentPageP
       <OrganizationalGrowthSlide2 embedded={embedded} />
       <GrowWithoutLosingControlSlide3 embedded={embedded} />
       <GrowthChangesByContextTheOperatingPrinciplesStayConsistentSlide4 embedded={embedded} />
+      <KeepGoalsConnectedSlide5 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

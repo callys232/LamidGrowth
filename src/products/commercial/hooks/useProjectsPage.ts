@@ -31,6 +31,8 @@ export type Milestone = {
   deliverables: Deliverable[];
   submissions: Submission[];
 };
+export type AssignedTeamMember = { id: string; team_id: string; user_id: string; role: string; access_scope: string };
+export type AssignedTeam = { id: string; name: string; lead_user_id: string; description: string; members: AssignedTeamMember[] };
 export type Project = {
   id: string;
   workspace_id: string;
@@ -38,6 +40,8 @@ export type Project = {
   title: string;
   status: string;
   freelancer_user_id: string;
+  assigned_team_id: string | null;
+  assignedTeam: AssignedTeam | null;
   milestones: Milestone[];
 };
 export type CriterionResult = {
@@ -66,6 +70,29 @@ export type VerificationCase = {
   confidence: number;
   results: CriterionResult[];
 };
+
+export type Handoff = {
+  id: string;
+  source: string;
+  context_summary: string;
+  target_user_id: string | null;
+  status: 'pending' | 'accepted' | 'declined' | 'completed';
+  created_at: string;
+  resolved_at: string | null;
+};
+
+export function useHandoffsList() {
+  const [handoffs, setHandoffs] = useState<Handoff[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    api<Handoff[]>('/handoffs/mine', undefined, 'GET')
+      .then(setHandoffs)
+      .catch((e) => setError((e as Error).message))
+      .finally(() => setLoading(false));
+  }, []);
+  return { handoffs, loading, error };
+}
 
 export function useProjectsList() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -234,6 +261,32 @@ export function useProjectDetail(projectId: string) {
     }
   }
 
+  async function assignTeam(teamId: string | null) {
+    setBusy(true);
+    try {
+      await api(`/projects/${projectId}/team`, { teamId }, 'PATCH');
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitReview(milestoneId: string, rating: number, comment: string) {
+    setBusy(true);
+    try {
+      await api(`/milestones/${milestoneId}/review`, { rating, comment });
+      await refresh();
+      return true;
+    } catch (e) {
+      setError((e as Error).message);
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return {
     project,
     loading,
@@ -250,5 +303,7 @@ export function useProjectDetail(projectId: string) {
     refundMilestone,
     loadMessages,
     sendMessage,
+    submitReview,
+    assignTeam,
   };
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../../shared/ui/Button';
 import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
+import { WeekCalendar } from '../../../shared/ui/WeekCalendar';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { useTalentPage } from '../hooks/useTalentPage';
 
@@ -134,6 +135,226 @@ export function TalentDashboardPage() {
       </section>
 
       <section className="panel settings-card">
+        <h3>This week</h3>
+        <p>Your open availability and confirmed bookings, at a glance.</p>
+        <WeekCalendar
+          events={[
+            ...page.availability
+              .filter((slot) => slot.status === 'open')
+              .map((slot) => ({
+                id: slot.id,
+                startAt: slot.start_at,
+                endAt: slot.end_at,
+                label: slot.format.replace(/_/g, ' '),
+                status: slot.status,
+              })),
+            ...page.bookings
+              .filter((b) => b.status === 'confirmed')
+              .map((booking) => ({
+                id: booking.id,
+                startAt: booking.start_at,
+                endAt: booking.end_at,
+                label: `Booked — ${booking.format.replace(/_/g, ' ')}`,
+                status: booking.status,
+              })),
+          ]}
+        />
+      </section>
+
+      <section className="panel settings-card">
+        <h3>Availability</h3>
+        <p>Open slots for advisory sessions, workshops, or fractional blocks that clients can book directly.</p>
+        <form onSubmit={page.addAvailability}>
+          <Field label="Starts">
+            <input name="startAt" type="datetime-local" required />
+          </Field>
+          <Field label="Ends">
+            <input name="endAt" type="datetime-local" required />
+          </Field>
+          <Field label="Format">
+            <select name="format" defaultValue="advisory_session">
+              <option value="advisory_session">Advisory session</option>
+              <option value="workshop">Workshop</option>
+              <option value="fractional_block">Fractional block</option>
+            </select>
+          </Field>
+          <Button type="submit" disabled={page.busy}>
+            Publish slot
+          </Button>
+        </form>
+        {page.availability.length === 0 ? (
+          <Empty title="No availability published">Publish a slot so clients can book time with you.</Empty>
+        ) : (
+          <ol className="activity-feed-list">
+            {page.availability.map((slot) => (
+              <li key={slot.id} className="activity-feed-row">
+                <span className="activity-feed-title">
+                  <strong>
+                    {new Date(slot.start_at).toLocaleString()} → {new Date(slot.end_at).toLocaleString()}
+                  </strong>
+                  <br />
+                  <small>{slot.format.replace(/_/g, ' ')}</small>
+                </span>
+                <StatusPill status={slot.status} />
+                {slot.status === 'open' && (
+                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.removeAvailability(slot.id)}>
+                    Remove
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section className="panel settings-card">
+        <h3>Bookings</h3>
+        <p>Confirmed sessions where you are the client or the expert.</p>
+        {page.bookings.length === 0 ? (
+          <Empty title="No bookings yet">Book a slot from an expert's profile, or publish your own availability above.</Empty>
+        ) : (
+          <ol className="activity-feed-list">
+            {page.bookings.map((booking) => (
+              <li key={booking.id} className="activity-feed-row">
+                <span className="activity-feed-title">
+                  <strong>
+                    {new Date(booking.start_at).toLocaleString()} → {new Date(booking.end_at).toLocaleString()}
+                  </strong>
+                  <br />
+                  <small>{booking.format.replace(/_/g, ' ')}</small>
+                </span>
+                <StatusPill status={booking.status} />
+                {booking.status === 'confirmed' && (
+                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.cancelBooking(booking.id)}>
+                    Cancel
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section className="panel settings-card">
+        <h3>Expert teams</h3>
+        <p>Compose complementary specialists around a complex objective while preserving responsibilities and access boundaries.</p>
+        <form onSubmit={page.createTeam}>
+          <Field label="Team name">
+            <input name="name" required maxLength={200} placeholder="e.g. Growth Pod" />
+          </Field>
+          <Field label="Description">
+            <input name="description" maxLength={2000} placeholder="What this team is composed for" />
+          </Field>
+          <Button type="submit" disabled={page.busy}>
+            Create team
+          </Button>
+        </form>
+        {page.teams.length === 0 ? (
+          <Empty title="No expert teams yet">Create a team to compose specialists around a complex objective.</Empty>
+        ) : (
+          <ol className="activity-feed-list">
+            {page.teams.map((team) => (
+              <li key={team.id} className="activity-feed-row">
+                <span className="activity-feed-title">
+                  <strong>{team.name}</strong>
+                  <br />
+                  <small>
+                    {team.members.length} member{team.members.length === 1 ? '' : 's'}
+                    {team.description ? ` · ${team.description}` : ''}
+                  </small>
+                  <br />
+                  <small>
+                    Team ID (share with a client to assign this team to their project): <code>{team.id}</code>
+                  </small>
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section className="panel settings-card">
+        <h3>Review queue</h3>
+        <p>Scoping cases flagged for qualified human review — claim one, then mark it complete when you've reviewed it.</p>
+        {page.reviewQueue.length === 0 ? (
+          <Empty title="Nothing pending">Amber and red-flagged scoping cases that need review will appear here.</Empty>
+        ) : (
+          <ol className="activity-feed-list">
+            {page.reviewQueue.map((entry) => (
+              <li key={entry.id} className="activity-feed-row">
+                <span className="activity-feed-title">
+                  <strong>{entry.objective}</strong>
+                  <br />
+                  <small>
+                    {entry.category || 'No category'}
+                    {entry.jurisdiction ? ` · ${entry.jurisdiction}` : ''}
+                  </small>
+                </span>
+                <StatusPill status={entry.risk_band} />
+                <StatusPill status={entry.status} />
+                {entry.status === 'pending' && (
+                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.claimReview(entry.id)}>
+                    Claim
+                  </Button>
+                )}
+                {entry.status === 'claimed' && (
+                  <form
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      const notes = new FormData(event.currentTarget).get('notes');
+                      void page.completeReview(entry.id, String(notes || ''));
+                    }}
+                    style={{ display: 'flex', gap: 8, gridColumn: '1 / -1' }}
+                  >
+                    <input name="notes" placeholder="Review notes" style={{ flex: 1 }} />
+                    <Button type="submit" disabled={page.busy}>
+                      Mark reviewed
+                    </Button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section className="panel settings-card">
+        <h3>Handoff inbox</h3>
+        <p>Work an AI agent could not complete on its own and handed off with its full context.</p>
+        {page.handoffInbox.length === 0 ? (
+          <Empty title="No handoffs waiting">When an agent needs qualified human judgment, it will appear here.</Empty>
+        ) : (
+          <ol className="activity-feed-list">
+            {page.handoffInbox.map((handoff) => (
+              <li key={handoff.id} className="activity-feed-row">
+                <span className="activity-feed-title">
+                  <strong>{handoff.source}</strong>
+                  <br />
+                  <small>{handoff.context_summary}</small>
+                </span>
+                <StatusPill status={handoff.status} />
+                {handoff.status === 'pending' && (
+                  <>
+                    <Button disabled={page.busy} onClick={() => void page.acceptHandoff(handoff.id)}>
+                      Accept
+                    </Button>
+                    <Button variant="secondary" disabled={page.busy} onClick={() => void page.declineHandoff(handoff.id)}>
+                      Decline
+                    </Button>
+                  </>
+                )}
+                {handoff.status === 'accepted' && (
+                  <Button disabled={page.busy} onClick={() => void page.completeHandoff(handoff.id)}>
+                    Mark complete
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      <section className="panel settings-card">
         <h3>Skills assessment</h3>
         <p>A deterministic multiple-choice quiz — 80% or higher earns a pass badge.</p>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -223,7 +444,7 @@ export function TalentDashboardPage() {
                     {result.skills.join(', ')}
                     {result.domains.length > 0 && ` · ${result.domains.join(', ')}`} · score {result.score} (skill{' '}
                     {result.breakdown.skillScore}, rate {result.breakdown.rateFit}, vetting {result.breakdown.vettingBonus}, credentials{' '}
-                    {result.breakdown.credentialBonus})
+                    {result.breakdown.credentialBonus}, reputation {result.breakdown.reputationBonus})
                   </small>
                 </span>
                 <StatusPill status={result.vettingStatus} />

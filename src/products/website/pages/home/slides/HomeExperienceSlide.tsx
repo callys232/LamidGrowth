@@ -42,7 +42,6 @@ export function HomeExperienceSlide() {
     <HomeSection
       section={1}
       className="home-experience-section"
-      introduction="Choose a context to see how the same OS helps with different decisions. Add depth as your responsibilities grow."
     >
       <div className="home-context-selector" role="group" aria-label="Choose an audience context">
         {contexts.map((item, index) => (
@@ -65,7 +64,9 @@ export function HomeExperienceSlide() {
         aria-atomic="true"
       >
         <div>
-          <span className="home-eyebrow">{context.name.toUpperCase()} · ILLUSTRATIVE EXAMPLE</span>
+          <span className="home-eyebrow" data-source-paragraph={context.source}>
+            {context.name.toUpperCase()} · ILLUSTRATIVE EXAMPLE
+          </span>
           <h3>{scenario.objective}</h3>
           <p className="home-context-capabilities" data-source-paragraph={context.source}>
             {context.items.join(' · ')}

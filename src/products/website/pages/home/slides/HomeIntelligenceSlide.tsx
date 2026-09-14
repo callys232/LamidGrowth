@@ -27,7 +27,6 @@ export function HomeIntelligenceSlide() {
   return (
     <HomeSection
       section={3}
-      introduction="When permitted information changes, reassess the plan. Keep every action within the authority you have granted."
       className={`home-intelligence-section${visible ? ' intelligence-visible' : ''}`}
     >
       <aside

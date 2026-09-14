@@ -5,9 +5,16 @@ test('public experience and workspace complete a connected operating cycle', asy
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'The Continuous Human-AI Growth Operating System',
+    'The Human-AI Growth Operating System',
   );
-  await page.getByRole('button', { name: 'Explore the workspace', exact: true }).click();
+  await page.getByRole('link', { name: 'Experience LAMID ONE', exact: true }).first().click();
+  await expect(page).toHaveURL('/start');
+  await page.getByRole('button', { name: 'Founder', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByLabel('Your name').fill('Journey Test User');
+  await page.getByLabel('Email address').fill(`journey-${Date.now()}@example.test`);
+  await page.getByLabel('Password', { exact: true }).fill('secure-journey-test-password');
+  await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
   await expect(page).toHaveURL('/os');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('What Needs Your Attention?');
   await page.getByRole('button', { name: 'New objective', exact: true }).click();
@@ -102,8 +109,12 @@ test('mobile navigation and onboarding work without horizontal overflow', async 
   ).toBeTruthy();
 });
 test('keyboard search, dialogs, and accessibility semantics', async ({ page }) => {
+  // This test needs the pre-seeded demo workspace ("Launch our advisory practice") for its
+  // search assertion below, so it signs into a demo account directly rather than through the
+  // real signup flow (which starts from an empty workspace).
   await page.goto('/');
-  await page.getByRole('button', { name: 'Explore the workspace', exact: true }).click();
+  await page.request.post('/api/auth/demo', { data: {} });
+  await page.goto('/os');
   await expect(page).toHaveURL('/os');
   await page.keyboard.press('Control+k');
   await expect(page.getByRole('dialog')).toBeVisible();

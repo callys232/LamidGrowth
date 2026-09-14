@@ -6,6 +6,8 @@ import {
   CapabilityRequirementsSlide1,
   StrengthsSlide2,
   GapsSlide3,
+  CareerAndRolePathwaysSlide4,
+  ChooseHowToCloseTheGapSlide5,
 } from './slides';
 
 /** /os/people — sections in reading order. */
@@ -19,6 +21,8 @@ export function OsPeopleDocumentPage({ embedded = false }: DocumentPageProps) {
       <CapabilityRequirementsSlide1 embedded={embedded} />
       <StrengthsSlide2 embedded={embedded} />
       <GapsSlide3 embedded={embedded} />
+      <CareerAndRolePathwaysSlide4 embedded={embedded} />
+      <ChooseHowToCloseTheGapSlide5 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

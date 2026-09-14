@@ -21,7 +21,6 @@ export function HomeOutcomesSlide() {
     <HomeSection
       section={2}
       className="home-outcomes-section"
-      introduction="Start with an outcome. Bring the relevant perspectives together to decide your next step."
     >
       <div className="home-outcome-showcase">
         <div className="home-outcome-choices" role="group" aria-label="Choose an outcome">

@@ -127,7 +127,7 @@ export function PricingBillablesPage() {
               <option value="monthly">Monthly</option>
             </select>
           </Field>
-          <Field label="Included tools & engines" hint="Select every tool this bundle grants access to">
+          <Field label="Included tools & engines" hint="Select every tool this bundle grants access to" style={{ gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 220, overflowY: 'auto' }}>
               {page.billables?.tools.map((tool) => (
                 <label key={tool.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>

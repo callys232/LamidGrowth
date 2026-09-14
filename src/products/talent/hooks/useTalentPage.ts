@@ -29,6 +29,7 @@ export type ExpertResult = {
   industries: string[];
   hourlyRate: number | null;
   currency: string | null;
+  jurisdiction: string | null;
   vettingStatus: string;
   score: number;
   breakdown: Record<string, number>;
@@ -62,6 +63,51 @@ export type JobMatch = {
   score: number;
   breakdown: Record<string, number>;
 };
+export type AvailabilitySlot = {
+  id: string;
+  profile_id: string;
+  start_at: string;
+  end_at: string;
+  format: string;
+  status: 'open' | 'booked';
+  created_at: string;
+};
+export type Booking = {
+  id: string;
+  slot_id: string;
+  client_user_id: string;
+  expert_user_id: string;
+  project_id: string | null;
+  status: 'confirmed' | 'cancelled';
+  notes: string;
+  start_at: string;
+  end_at: string;
+  format: string;
+  created_at: string;
+};
+export type ExpertTeamMember = { id: string; team_id: string; user_id: string; role: string; access_scope: string; created_at: string };
+export type ExpertTeam = { id: string; name: string; lead_user_id: string; description: string; created_at: string; members: ExpertTeamMember[] };
+export type ReviewQueueEntry = {
+  id: string;
+  scoping_case_id: string;
+  risk_band: 'green' | 'amber' | 'red';
+  status: 'pending' | 'claimed' | 'completed';
+  objective: string;
+  category: string | null;
+  jurisdiction: string | null;
+  claimed_by: string | null;
+  notes: string;
+  created_at: string;
+};
+export type HandoffItem = {
+  id: string;
+  source: string;
+  context_summary: string;
+  context_snapshot: string;
+  target_user_id: string | null;
+  status: 'pending' | 'accepted' | 'declined' | 'completed';
+  created_at: string;
+};
 
 export function useTalentPage() {
   const { notify } = useWorkspace();
@@ -73,6 +119,11 @@ export function useTalentPage() {
   const [lastAssessment, setLastAssessment] = useState<AssessmentResult | null>(null);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [teams, setTeams] = useState<ExpertTeam[]>([]);
+  const [reviewQueue, setReviewQueue] = useState<ReviewQueueEntry[]>([]);
+  const [handoffInbox, setHandoffInbox] = useState<HandoffItem[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -267,6 +318,190 @@ export function useTalentPage() {
     }
   }
 
+  async function loadAvailability() {
+    try {
+      setAvailability(await api<AvailabilitySlot[]>('/booking/availability/mine', undefined, 'GET'));
+    } catch {
+      // No expert profile yet — availability naturally starts empty until one is created.
+    }
+  }
+  useEffect(() => {
+    void loadAvailability();
+  }, []);
+
+  async function addAvailability(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setBusy(true);
+    setError('');
+    try {
+      await api<AvailabilitySlot>('/booking/availability', {
+        startAt: new Date(String(data.get('startAt'))).toISOString(),
+        endAt: new Date(String(data.get('endAt'))).toISOString(),
+        format: data.get('format'),
+      });
+      form.reset();
+      await loadAvailability();
+      notify('Availability published.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function removeAvailability(id: string) {
+    setBusy(true);
+    try {
+      await api(`/booking/availability/${id}`, {}, 'DELETE');
+      await loadAvailability();
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadBookings() {
+    try {
+      setBookings(await api<Booking[]>('/booking/mine', undefined, 'GET'));
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  }
+  useEffect(() => {
+    void loadBookings();
+  }, []);
+
+  async function cancelBooking(id: string) {
+    setBusy(true);
+    try {
+      await api(`/booking/${id}/cancel`, {}, 'PATCH');
+      await loadBookings();
+      notify('Booking cancelled.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadTeams() {
+    try {
+      setTeams(await api<ExpertTeam[]>('/expert-teams/mine', undefined, 'GET'));
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  }
+  useEffect(() => {
+    void loadTeams();
+  }, []);
+
+  async function createTeam(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    setBusy(true);
+    setError('');
+    try {
+      await api('/expert-teams', { name: data.get('name'), description: data.get('description') || undefined });
+      form.reset();
+      await loadTeams();
+      notify('Expert team created.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadReviewQueue() {
+    try {
+      setReviewQueue(await api<ReviewQueueEntry[]>('/review-queue', undefined, 'GET'));
+    } catch {
+      // Not a registered expert yet, or no profile — queue naturally starts empty/inaccessible.
+    }
+  }
+  useEffect(() => {
+    void loadReviewQueue();
+  }, []);
+
+  async function claimReview(id: string) {
+    setBusy(true);
+    try {
+      await api(`/review-queue/${id}/claim`, {});
+      await loadReviewQueue();
+      notify('Review claimed.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function completeReview(id: string, notes: string) {
+    setBusy(true);
+    try {
+      await api(`/review-queue/${id}/complete`, { notes });
+      await loadReviewQueue();
+      notify('Review completed.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadHandoffInbox() {
+    try {
+      setHandoffInbox(await api<HandoffItem[]>('/handoffs/inbox', undefined, 'GET'));
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  }
+  useEffect(() => {
+    void loadHandoffInbox();
+  }, []);
+
+  async function acceptHandoff(id: string) {
+    setBusy(true);
+    try {
+      await api(`/handoffs/${id}/accept`, {});
+      await loadHandoffInbox();
+      notify('Handoff accepted.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function declineHandoff(id: string) {
+    setBusy(true);
+    try {
+      await api(`/handoffs/${id}/decline`, {});
+      await loadHandoffInbox();
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function completeHandoff(id: string) {
+    setBusy(true);
+    try {
+      await api(`/handoffs/${id}/complete`, {});
+      await loadHandoffInbox();
+      notify('Handoff completed.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return {
     profile,
     expertResults,
@@ -276,6 +511,11 @@ export function useTalentPage() {
     lastAssessment,
     invitations,
     credentials,
+    availability,
+    bookings,
+    teams,
+    reviewQueue,
+    handoffInbox,
     busy,
     error,
     saveProfile,
@@ -287,5 +527,14 @@ export function useTalentPage() {
     respondToInvitation,
     inviteToJob,
     addCredential,
+    addAvailability,
+    removeAvailability,
+    cancelBooking,
+    createTeam,
+    claimReview,
+    completeReview,
+    acceptHandoff,
+    declineHandoff,
+    completeHandoff,
   };
 }

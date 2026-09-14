@@ -171,7 +171,7 @@
     "route": "/experts",
     "page": 99,
     "name": "EXPERT NETWORK",
-    "gated": false
+    "gated": true
   },
   {
     "route": "/enterprise/contact",

@@ -21,6 +21,7 @@ export type ChatTurn = {
   balance?: number;
   evidence?: unknown;
   signedBy?: string[];
+  humanHandoffRequested?: boolean;
 };
 
 export const documentAgentIds = new Set([
@@ -44,6 +45,8 @@ type CompanionResponse = {
   balance: number;
   toolCalls: Array<{ toolId: string; input: unknown }>;
   evidence: unknown;
+  humanHandoffRequested?: boolean;
+  handoffId?: string;
 };
 
 export function useCompanionChat(agents: AgentManifest[]) {
@@ -75,10 +78,12 @@ export function useCompanionChat(agents: AgentManifest[]) {
           balance: result.balance,
           evidence: result.evidence,
           signedBy: [],
+          humanHandoffRequested: result.humanHandoffRequested,
         },
       ]);
       if (manifest?.humanGate && manifest.humanGate !== 'none')
         notify('This agent may propose changes that still require your approval.');
+      if (result.humanHandoffRequested) notify('This also went to a qualified human expert for review.');
     } catch (e) {
       setError((e as Error).message);
     } finally {

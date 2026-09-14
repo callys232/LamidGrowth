@@ -48,6 +48,13 @@ export function GrowthChangesByContextTheOperatingPrinciplesStayConsistentSlide4
   embedded = false,
 }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Keep Goals Connected to What Changes Around Them. */
+export function KeepGoalsConnectedSlide5({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={true} embedded={embedded} />
   );
 }

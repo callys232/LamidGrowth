@@ -1,6 +1,7 @@
 import { existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { loadPageManifest } from './lib/page-content.mjs';
+import { buildPagesCatalog } from './lib/build-pages-catalog.mjs';
 
 const manifest = loadPageManifest();
 const routes = new Set(),
@@ -48,3 +49,4 @@ writeFileSync(
     `\nexport const documentPages: Record<string, ComponentType<DocumentPageProps>> = {\n${manifest.map((entry) => `${JSON.stringify(entry.route)}: ${entry.exportName}`).join(',\n')}\n};\n`,
 );
 console.log(`Registered ${manifest.length} product-owned document pages.`);
+buildPagesCatalog();

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import { DocumentSectionSlide } from '../../../../shared/content/slides/DocumentSectionSlide';
 import type { DocumentPageProps } from '../../../../shared/content/types';
@@ -14,13 +15,19 @@ export function ExpertsDocumentPage({ embedded = false }: DocumentPageProps) {
       hero={<ExpertNetworkHeroSlide embedded={embedded} />}
     >
       {content.sections.map((section, index) => (
-        <DocumentSectionSlide
-          key={section.label}
-          section={section}
-          index={index}
-          last={index === content.sections.length - 1}
-          embedded={embedded}
-        />
+        <Fragment key={section.label}>
+          {'group' in section && section.group && (
+            <div className="experts-group-header">
+              <span>{section.group}</span>
+            </div>
+          )}
+          <DocumentSectionSlide
+            section={section}
+            index={index}
+            last={index === content.sections.length - 1}
+            embedded={embedded}
+          />
+        </Fragment>
       ))}
     </DocumentPageLayout>
   );

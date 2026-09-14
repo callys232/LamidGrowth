@@ -1,13 +1,15 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Children, cloneElement, isValidElement, useId } from 'react';
 export function Field({
   label,
   children,
   hint,
+  style,
 }: {
   label: string;
   children: ReactNode;
   hint?: string;
+  style?: CSSProperties;
 }) {
   const id = useId();
   const attach = (nodes: ReactNode): ReactNode =>
@@ -21,7 +23,7 @@ export function Field({
       return child.props.children ? cloneElement(child, {}, attach(child.props.children)) : child;
     });
   return (
-    <div className="field">
+    <div className="field" style={style}>
       <label htmlFor={id}>{label}</label>
       {attach(children)}
       {hint && <small id={`${id}-hint`}>{hint}</small>}

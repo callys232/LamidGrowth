@@ -34,6 +34,20 @@ export function ContextSlide2({ embedded = false }: DocumentPageProps) {
 /** Relevant Intelligence */
 export function RelevantIntelligenceSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+  );
+}
+
+/** Results Stay Connected */
+export function ResultsStayConnectedSlide4({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Active Goals Can Keep Listening */
+export function ActiveGoalsCanKeepListeningSlide5({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={true} embedded={embedded} />
   );
 }

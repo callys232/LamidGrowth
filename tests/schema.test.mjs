@@ -81,7 +81,7 @@ test('new domain tables support a basic insert/select roundtrip', () => {
 
     const profileId = randomUUID();
     store.db
-      .prepare('INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .prepare('INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .run(
         profileId,
         user,
@@ -102,6 +102,7 @@ test('new domain tables support a basic insert/select roundtrip', () => {
         '[]',
         '[]',
         '[]',
+        null,
       );
     const row = store.db.prepare('SELECT * FROM talent_profiles WHERE id = ?').get(profileId);
     assert.equal(row.user_id, user);
@@ -109,8 +110,8 @@ test('new domain tables support a basic insert/select roundtrip', () => {
 
     const projectId = randomUUID();
     store.db
-      .prepare('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(projectId, workspace, null, 'Test project', 'active', new Date().toISOString(), null);
+      .prepare('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(projectId, workspace, null, 'Test project', 'active', new Date().toISOString(), null, null);
     const milestoneId = randomUUID();
     store.db
       .prepare('INSERT INTO milestones VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')

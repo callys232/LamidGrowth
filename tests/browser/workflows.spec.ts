@@ -4,9 +4,22 @@ test('a scheduled operating cycle requires each write approval and delivers a re
   page,
 }) => {
   test.setTimeout(60000);
-  await page.goto('/');
-  await page.getByRole('button', { name: 'Explore the workspace', exact: true }).click();
+  await page.goto('/start');
+  await page.getByRole('button', { name: 'Founder', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByLabel('Your name').fill('Workflows Tester');
+  await page.getByLabel('Email address').fill(`workflows-${Date.now()}@example.test`);
+  await page.getByLabel('Password', { exact: true }).fill('secure-workflows-test-password');
+  await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
   await expect(page).toHaveURL('/os');
+  // A workflow attaches to an open objective, so one must exist before the "Create a workflow"
+  // panel appears.
+  await page.getByRole('button', { name: 'New objective', exact: true }).click();
+  await page.getByLabel('Your objective', { exact: true }).fill('Prepare the weekly decision cycle');
+  await page.getByLabel('Why it matters').fill('Keep the weekly review consistent.');
+  await page.getByLabel('What does success look like?').fill('A repeatable weekly workflow.');
+  await page.getByRole('button', { name: 'Create objective', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.getByRole('link', { name: 'Workflows', exact: true }).click();
   await page.getByText('Create a workflow', { exact: true }).click();
   await page.getByLabel('Workflow name').fill('Prepare the weekly decision');

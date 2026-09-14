@@ -1363,6 +1363,28 @@ small {
   padding: 12px 10px;
   border-radius: 7px;
   margin-bottom: 29px;
+  position: relative;
+}
+/* The select drives the switcher (click anywhere to open it) but must stay invisible — with
+   no styling here it renders with the browser's own opaque white chrome, sitting on top of and
+   overlapping the label text/avatar underneath it instead of blending into the sidebar. */
+.workspace-switch select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.workspace-switch svg {
+  flex-shrink: 0;
 }
 .workspace-icon {
   width: 29px;
@@ -2082,7 +2104,7 @@ small {
 }
 .activity-feed-time {
   font-size: 8px;
-  color: var(--text-muted);
+  color: var(--text-muted-strong);
   white-space: nowrap;
 }
 .activity-feed-status {
@@ -2097,10 +2119,11 @@ small {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 7px;
+  padding: 4px 8px;
   background: var(--surface-alt);
   color: var(--text-muted);
-  font-size: 7px;
+  font-size: 10px;
+  font-weight: 600;
   border-radius: 4px;
   white-space: nowrap;
 }
@@ -2109,6 +2132,120 @@ small {
   height: 4px;
   border-radius: 50%;
   background: currentColor;
+}
+.canonical-copy-disclosure {
+  margin-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-alt);
+}
+.canonical-copy-disclosure > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted-strong);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.canonical-copy-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.canonical-copy-disclosure > summary::before {
+  content: '\25B8';
+  transition: transform 0.15s ease;
+}
+.canonical-copy-disclosure[open] > summary::before {
+  transform: rotate(90deg);
+}
+.canonical-copy-disclosure > summary:hover {
+  color: var(--text);
+}
+.canonical-copy-disclosure[open] > summary {
+  border-bottom: 1px solid var(--border);
+}
+.canonical-copy-disclosure > :not(summary) {
+  padding: 14px;
+}
+.companion-chat-handoff-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+  margin-top: 6px;
+}
+.week-calendar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.week-calendar-day {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  min-height: 90px;
+  background: var(--surface-alt);
+}
+.week-calendar-day-heading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.week-calendar-empty {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.week-calendar-day ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.week-calendar-event {
+  font-size: 11px;
+  border-radius: 4px;
+  padding: 4px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.week-calendar-event-booked,
+.week-calendar-event-confirmed {
+  border-color: var(--accent, #b91c1c);
+}
+.experts-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 48px 0 8px;
+  grid-column: 1 / -1;
+}
+.experts-group-header span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.experts-group-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 .status-in-progress {
   background: var(--border);
@@ -2799,6 +2936,24 @@ small {
 }
 .settings-card .button {
   font-size: 11px;
+}
+.settings-card form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0 20px;
+  align-items: start;
+}
+.settings-card form > .field {
+  margin-top: 22px;
+  min-width: 0;
+}
+.settings-card form > .button,
+.settings-card form > input[type='hidden'] {
+  grid-column: 1 / -1;
+}
+.settings-card form > .button {
+  justify-self: start;
+  margin-top: 22px;
 }
 .settings-note {
   display: flex;

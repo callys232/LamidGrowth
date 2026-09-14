@@ -3,7 +3,9 @@ import { test, expect } from '@playwright/test';
 test('canonical palette and Three.js scene respond and settle without an idle loop', async ({
   page,
 }) => {
-  await page.goto('/');
+  // The orbit visual lives on the account entry pages (/start, /login), not the marketing
+  // homepage — it accompanies the signup/login form, not the hero.
+  await page.goto('/start');
   const orbit = page.locator('.orbit-visual').first();
   await orbit.scrollIntoViewIfNeeded();
   await expect(orbit).toHaveAttribute('data-renderer', 'three', { timeout: 15000 });
@@ -29,13 +31,15 @@ test('canonical palette and Three.js scene respond and settle without an idle lo
 
 test('reduced motion keeps the Three.js scene static and interface usable', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
+  await page.goto('/start');
   const orbit = page.locator('.orbit-visual').first();
   await orbit.scrollIntoViewIfNeeded();
   await expect(orbit).toHaveAttribute('data-renderer', 'three', { timeout: 15000 });
   await expect(orbit).toHaveAttribute('data-motion', 'reduced');
   await orbit.hover();
   await expect(orbit).toHaveAttribute('data-motion', 'reduced');
+
+  await page.goto('/');
   await page
     .locator('.canonical-ctas')
     .getByRole('link', { name: 'See How It Works', exact: true })

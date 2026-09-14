@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Users,
   Wallet,
+  Wand2,
   X,
 } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -69,6 +70,7 @@ const navigation = [
   ['Concierge', '/os/concierge', ShieldCheck],
   ['Talent', '/os/talent', Users],
   ['Pricing', '/os/pricing', Wallet],
+  ['Guided Scoping', '/os/scoping/new', Wand2],
 ] as const;
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);
@@ -376,7 +378,13 @@ export function WorkspaceShell() {
             </p>
           )}
           <Outlet key={state.workspace.id} context={ctx} />
-          <CanonicalCopy path={location.pathname} embedded />
+          {/* Collapsed by default — this is the canonical spec copy for the current route, kept
+              for traceability against the copy master, not something a user should scroll past
+              every visit. Expand only on demand. */}
+          <details className="canonical-copy-disclosure">
+            <summary>Canonical page copy (development reference)</summary>
+            <CanonicalCopy path={location.pathname} embedded />
+          </details>
         </main>
         <footer className="workspace-footer">
           <span>

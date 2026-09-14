@@ -3,8 +3,13 @@ import { test, expect } from '@playwright/test';
 test('workspace job posting charges once and knowledge can be edited and deleted', async ({
   page,
 }) => {
-  await page.goto('/');
-  await page.getByRole('button', { name: 'Explore the workspace', exact: true }).click();
+  await page.goto('/start');
+  await page.getByRole('button', { name: 'Founder', exact: true }).click();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
+  await page.getByLabel('Your name').fill('Commercial Knowledge Tester');
+  await page.getByLabel('Email address').fill(`commercial-knowledge-${Date.now()}@example.test`);
+  await page.getByLabel('Password', { exact: true }).fill('secure-commercial-knowledge-password');
+  await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
   await expect(page).toHaveURL('/os');
   await page.getByRole('link', { name: 'Commercial', exact: true }).click();
   await page.getByRole('button', { name: 'Post a job', exact: true }).click();
@@ -13,6 +18,7 @@ test('workspace job posting charges once and knowledge can be edited and deleted
     .getByLabel('Project description')
     .fill('Evaluate the scope and document a clear service offer.');
   await page.getByLabel('Deliverables', { exact: true }).fill('A written service brief');
+  await page.getByLabel('Minimum budget').fill('50');
   await page.getByLabel('Maximum budget').fill('100');
   await page.getByLabel('Timeline', { exact: true }).fill('One week');
   await page.getByRole('button', { name: 'Post job · 10 points' }).click();

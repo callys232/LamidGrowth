@@ -34,6 +34,20 @@ export function WeeklyReviewSlide2({ embedded = false }: DocumentPageProps) {
 /** Workflow Updates */
 export function WorkflowUpdatesSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+  );
+}
+
+/** Attention That Matches Your Goals */
+export function AttentionThatMatchesYourGoalsSlide4({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Opportunity Preferences */
+export function OpportunityPreferencesSlide5({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={true} embedded={embedded} />
   );
 }

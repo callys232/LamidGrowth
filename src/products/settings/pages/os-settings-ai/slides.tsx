@@ -34,6 +34,13 @@ export function RememberedContextSlide2({ embedded = false }: DocumentPageProps)
 /** Explanation Preferences */
 export function ExplanationPreferencesSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+  );
+}
+
+/** Cross-Result Use */
+export function CrossResultUseSlide4({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={true} embedded={embedded} />
   );
 }

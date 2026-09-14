@@ -7,6 +7,8 @@ import {
   PersonalCapabilitySlide2,
   OrganizationalCapabilitySlide3,
   GrowthWithoutCapabilityBecomesPressureSlide4,
+  BuildTheProjectSlide5,
+  NotSureYetSlide6,
 } from './slides';
 
 /** /how-it-works/capability — sections in reading order. */
@@ -21,6 +23,8 @@ export function HowItWorksCapabilityDocumentPage({ embedded = false }: DocumentP
       <PersonalCapabilitySlide2 embedded={embedded} />
       <OrganizationalCapabilitySlide3 embedded={embedded} />
       <GrowthWithoutCapabilityBecomesPressureSlide4 embedded={embedded} />
+      <BuildTheProjectSlide5 embedded={embedded} />
+      <NotSureYetSlide6 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

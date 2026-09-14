@@ -7,6 +7,8 @@ import {
   BuildRelevantCapabilitySlide2,
   CreateAProfessionalRhythmSlide3,
   YourContextGrowsWithYouSlide4,
+  TurnACareerGoalIntoALivingPathSlide5,
+  SeeWhatMattersToTheGoalSlide6,
 } from './slides';
 
 /** /who-its-for/professionals — sections in reading order. */
@@ -21,6 +23,8 @@ export function WhoItsForProfessionalsDocumentPage({ embedded = false }: Documen
       <BuildRelevantCapabilitySlide2 embedded={embedded} />
       <CreateAProfessionalRhythmSlide3 embedded={embedded} />
       <YourContextGrowsWithYouSlide4 embedded={embedded} />
+      <TurnACareerGoalIntoALivingPathSlide5 embedded={embedded} />
+      <SeeWhatMattersToTheGoalSlide6 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

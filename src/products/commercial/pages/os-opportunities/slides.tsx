@@ -34,6 +34,22 @@ export function RequiredCapabilitySlide2({ embedded = false }: DocumentPageProps
 /** Choose Between Two Growth Paths */
 export function ChooseBetweenTwoGrowthPathsSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+  );
+}
+
+/** Goal-Aware Opportunity Matching */
+export function GoalAwareOpportunityMatchingSlide4({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Ready Now. Near Ready. Development Opportunity. */
+export function ReadyNowNearReadyDevelopmentOpportunitySlide5({
+  embedded = false,
+}: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={true} embedded={embedded} />
   );
 }

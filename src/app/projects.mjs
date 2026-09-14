@@ -41,6 +41,7 @@ const decisionSchema = z
     reason: longText,
   })
   .strict();
+const assignTeamSchema = z.object({ teamId: z.string().uuid().nullable() }).strict();
 
 const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
@@ -101,7 +102,13 @@ export function mountProjects(app, store, deps) {
           .prepare('SELECT * FROM submissions WHERE milestone_id = ? ORDER BY created_at DESC')
           .all(milestone.id),
       }));
-    res.json({ ...project, milestones });
+    const assignedTeam = project.assigned_team_id
+      ? {
+          ...db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(project.assigned_team_id),
+          members: db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(project.assigned_team_id),
+        }
+      : null;
+    res.json({ ...project, milestones, assignedTeam });
   });
 
   app.post('/api/projects', (req, res) => {
@@ -124,18 +131,39 @@ export function mountProjects(app, store, deps) {
         .json({ error: 'That user has no bid or accepted invitation on this job and cannot be assigned as the freelancer.' });
     const id = randomUUID();
     transaction(() => {
-      db.prepare('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        job.workspace_id,
-        job.id,
-        input.title,
-        'active',
-        new Date().toISOString(),
-        input.freelancerUserId,
-      );
+      db.prepare(
+        'INSERT INTO projects (id, workspace_id, job_id, title, status, created_at, freelancer_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      ).run(id, job.workspace_id, job.id, input.title, 'active', new Date().toISOString(), input.freelancerUserId);
       log(job.workspace_id, req.user.name, 'Project created', id, input.title);
     });
     res.status(201).json(projectFor(id));
+  });
+
+  // Assigns a whole expert team — led by the freelancer already engaged on this project — as a
+  // unit, rather than only ever being able to add specialists one at a time.
+  app.patch('/api/projects/:id/team', (req, res) => {
+    const project = projectFor(req.params.id);
+    const { isClient } = requireParty(project, req.user.id);
+    if (!isClient) return res.status(403).json({ error: 'Only the project owner can assign an expert team.' });
+    const input = assignTeamSchema.parse(req.body);
+    if (input.teamId) {
+      const team = db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(input.teamId);
+      if (!team) return res.status(404).json({ error: 'Expert team not found.' });
+      if (team.lead_user_id !== project.freelancer_user_id)
+        return res.status(400).json({ error: 'Only a team led by the expert already engaged on this project can be assigned.' });
+    }
+    transaction(() => {
+      db.prepare('UPDATE projects SET assigned_team_id = ? WHERE id = ?').run(input.teamId, project.id);
+      log(req.workspace.id, req.user.name, 'Expert team assigned to project', project.id, input.teamId || 'none');
+    });
+    const updated = projectFor(project.id);
+    const assignedTeam = updated.assigned_team_id
+      ? {
+          ...db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(updated.assigned_team_id),
+          members: db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(updated.assigned_team_id),
+        }
+      : null;
+    res.json({ ...updated, assignedTeam });
   });
 
   app.post('/api/projects/:id/milestones', (req, res) => {

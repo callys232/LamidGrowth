@@ -2,6 +2,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { z } from 'zod';
 import { permissionsFor, requirePermission } from './policy.mjs';
 import { requireApprovedModel } from './models.mjs';
+import { REGULATED_KEYWORDS } from './regulatedKeywords.mjs';
 
 const messageInput = z
   .object({
@@ -633,6 +634,29 @@ export function createAgentRuntime(store, deps) {
         return built;
       });
       log(workspace.id, principal.name, 'Companion agent responded', runId, agentId);
+      // The agent still answers — this only additionally raises a handoff so a qualified human
+      // can pick up what the agent should not decide alone. Keyword-based, same list the scoping
+      // risk-band classifier uses, so "needs a licensed human" reads the same way everywhere.
+      if (REGULATED_KEYWORDS.some((word) => input.message.toLowerCase().includes(word))) {
+        const handoffId = randomUUID();
+        db.prepare('INSERT INTO handoffs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+          handoffId,
+          workspace.id,
+          principal.id,
+          `companion.${agentId}`,
+          input.message.slice(0, 2000),
+          JSON.stringify({ runId, agentId, response: result.response ?? null }),
+          null,
+          'pending',
+          null,
+          null,
+          createdAt,
+          null,
+        );
+        log(workspace.id, principal.name, 'AI-to-human handoff raised', handoffId, agentId);
+        response.humanHandoffRequested = true;
+        response.handoffId = handoffId;
+      }
       return response;
     } catch (error) {
       transaction(() => {

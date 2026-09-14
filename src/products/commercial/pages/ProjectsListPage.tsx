@@ -1,12 +1,13 @@
-import { Briefcase } from 'lucide-react';
+import { Briefcase, HandHelping } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Empty } from '../../../shared/ui/Empty';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
-import { useProjectsList } from '../hooks/useProjectsPage';
+import { useHandoffsList, useProjectsList } from '../hooks/useProjectsPage';
 
 /** /os/commercial/projects — every project you're a client or freelancer on. */
 export function ProjectsListPage() {
   const { projects, loading, error } = useProjectsList();
+  const handoffsList = useHandoffsList();
   return (
     <section className="panel">
       <div className="panel-heading">
@@ -33,6 +34,36 @@ export function ProjectsListPage() {
                 {project.title}
               </Link>
               <StatusPill status={project.status} />
+            </li>
+          ))}
+        </ol>
+      )}
+
+      <div className="panel-heading" style={{ marginTop: 32 }}>
+        <div>
+          <h3>AI-to-human handoffs</h3>
+          <span>Where an agent asked for qualified human judgment, and what happened to that request.</span>
+        </div>
+      </div>
+      {handoffsList.loading && <p className="activity-feed-status">Loading…</p>}
+      {!handoffsList.loading && handoffsList.handoffs.length === 0 && (
+        <Empty title="No handoffs yet">
+          When an agent needs qualified human judgment mid-workflow, it can hand off the exact context here.
+        </Empty>
+      )}
+      {!handoffsList.loading && handoffsList.handoffs.length > 0 && (
+        <ol className="activity-feed-list">
+          {handoffsList.handoffs.map((handoff) => (
+            <li key={handoff.id} className="activity-feed-row">
+              <span className="activity-feed-icon">
+                <HandHelping size={15} />
+              </span>
+              <span className="activity-feed-title">
+                <strong>{handoff.source}</strong>
+                <br />
+                <small>{handoff.context_summary}</small>
+              </span>
+              <StatusPill status={handoff.status} />
             </li>
           ))}
         </ol>

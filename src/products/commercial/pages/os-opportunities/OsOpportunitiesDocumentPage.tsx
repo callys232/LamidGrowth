@@ -6,6 +6,8 @@ import {
   OpportunitySlide1,
   RequiredCapabilitySlide2,
   ChooseBetweenTwoGrowthPathsSlide3,
+  GoalAwareOpportunityMatchingSlide4,
+  ReadyNowNearReadyDevelopmentOpportunitySlide5,
 } from './slides';
 
 /** /os/opportunities — sections in reading order. */
@@ -19,6 +21,8 @@ export function OsOpportunitiesDocumentPage({ embedded = false }: DocumentPagePr
       <OpportunitySlide1 embedded={embedded} />
       <RequiredCapabilitySlide2 embedded={embedded} />
       <ChooseBetweenTwoGrowthPathsSlide3 embedded={embedded} />
+      <GoalAwareOpportunityMatchingSlide4 embedded={embedded} />
+      <ReadyNowNearReadyDevelopmentOpportunitySlide5 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

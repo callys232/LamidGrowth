@@ -5,7 +5,6 @@ export function HomeRhythmSlide() {
     <HomeSection
       section={4}
       className="home-rhythm-section"
-      introduction="Make the next action part of a rhythm: focus today, review each week, and learn over time."
     >
       <div className="home-rhythm-reviews">
         {content.sections[4].paragraphs.slice(2, 6).map((paragraph) => {

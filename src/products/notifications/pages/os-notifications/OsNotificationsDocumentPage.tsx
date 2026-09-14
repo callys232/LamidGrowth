@@ -6,6 +6,8 @@ import {
   DailyRhythmSlide1,
   WeeklyReviewSlide2,
   WorkflowUpdatesSlide3,
+  AttentionThatMatchesYourGoalsSlide4,
+  OpportunityPreferencesSlide5,
 } from './slides';
 
 /** /os/notifications — sections in reading order. */
@@ -19,6 +21,8 @@ export function OsNotificationsDocumentPage({ embedded = false }: DocumentPagePr
       <DailyRhythmSlide1 embedded={embedded} />
       <WeeklyReviewSlide2 embedded={embedded} />
       <WorkflowUpdatesSlide3 embedded={embedded} />
+      <AttentionThatMatchesYourGoalsSlide4 embedded={embedded} />
+      <OpportunityPreferencesSlide5 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

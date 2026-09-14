@@ -26,6 +26,7 @@
   --surface-alt: var(--sage);
   --border: var(--line);
   --text-muted: #898d92;
+  --text-muted-strong: #5f6368;
   --danger: #b3261e;
   font-family: var(--font-ui);
   color: var(--ink);
@@ -52,6 +53,7 @@
     --surface-alt: #212832;
     --border: #2a313c;
     --text-muted: #9aa0a6;
+    --text-muted-strong: #c7ccd1;
     color: var(--ink);
     background: var(--paper);
   }
@@ -66,6 +68,7 @@
   --surface-alt: #212832;
   --border: #2a313c;
   --text-muted: #9aa0a6;
+  --text-muted-strong: #c7ccd1;
   color: var(--ink);
   background: var(--paper);
 }

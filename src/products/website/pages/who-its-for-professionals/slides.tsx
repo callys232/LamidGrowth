@@ -46,6 +46,20 @@ export function CreateAProfessionalRhythmSlide3({ embedded = false }: DocumentPa
 /** Your Context Grows With You. */
 export function YourContextGrowsWithYouSlide4({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Turn a Career Goal Into a Living Path. */
+export function TurnACareerGoalIntoALivingPathSlide5({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={false} embedded={embedded} />
+  );
+}
+
+/** See What Matters to the Goal */
+export function SeeWhatMattersToTheGoalSlide6({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[5]} index={5} last={true} embedded={embedded} />
   );
 }

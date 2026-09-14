@@ -28,6 +28,7 @@
   },
   "sections": [
     {
+      "group": "Finding & Engaging Expertise",
       "label": "Start With the Need",
       "title": "Start With the Need",
       "paragraphs": [
@@ -85,6 +86,7 @@
       ]
     },
     {
+      "group": "Expert Matching",
       "label": "Match Expertise to the Work - Not Just a Keyword.",
       "title": "Match Expertise to the Work - Not Just a Keyword.",
       "paragraphs": [
@@ -134,6 +136,7 @@
       ]
     },
     {
+      "group": "Verification",
       "label": "Know What Has Been Verified.",
       "title": "Know What Has Been Verified.",
       "paragraphs": [
@@ -183,6 +186,7 @@
       ]
     },
     {
+      "group": "Capability Strategy",
       "label": "Strengthen Capability - Then Keep Building It.",
       "title": "Strengthen Capability - Then Keep Building It.",
       "paragraphs": [
@@ -232,6 +236,7 @@
       ]
     },
     {
+      "group": "Become an Expert",
       "label": "Bring Your Expertise Into Better-Defined Work.",
       "title": "Bring Your Expertise Into Better-Defined Work.",
       "paragraphs": [

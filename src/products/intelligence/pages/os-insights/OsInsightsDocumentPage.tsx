@@ -5,6 +5,7 @@ import {
   OsInsightsHeroSlide,
   EachMaterialInsightShouldShowSlide1,
   TurnAnInsightIntoActionSlide2,
+  WhyNowSlide3,
 } from './slides';
 
 /** /os/insights — sections in reading order. */
@@ -17,6 +18,7 @@ export function OsInsightsDocumentPage({ embedded = false }: DocumentPageProps) 
     >
       <EachMaterialInsightShouldShowSlide1 embedded={embedded} />
       <TurnAnInsightIntoActionSlide2 embedded={embedded} />
+      <WhyNowSlide3 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

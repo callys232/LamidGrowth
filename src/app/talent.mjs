@@ -17,9 +17,12 @@ const profileSchema = z
     domains: z.array(z.enum(DOMAINS)).max(10).default([]),
     functions: z.array(z.enum(FUNCTIONS)).max(15).default([]),
     industries: z.array(z.enum(INDUSTRIES)).max(10).default([]),
+    jurisdiction: z.string().trim().max(120).optional(),
   })
   .strict();
 const vettingDecisionSchema = z.object({ decision: z.enum(['verified', 'rejected']) }).strict();
+const conflictDisclosureSchema = z.object({ description: z.string().trim().min(1).max(2000) }).strict();
+const conflictDecisionSchema = z.object({ decision: z.enum(['cleared', 'restricted']) }).strict();
 const credentialSchema = z
   .object({
     type: z.enum(['license', 'certification', 'degree', 'publication', 'prior-role']),
@@ -93,7 +96,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         db.prepare(
           `UPDATE talent_profiles SET headline = ?, skills = ?, experience_years = ?, availability = ?,
            hourly_rate = ?, currency = ?, location = ?, languages = ?, portfolio_url = ?,
-           domains = ?, functions = ?, industries = ?, updated_at = ?
+           domains = ?, functions = ?, industries = ?, jurisdiction = ?, updated_at = ?
            WHERE user_id = ?`,
         ).run(
           input.headline,
@@ -108,14 +111,15 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           JSON.stringify(input.domains),
           JSON.stringify(input.functions),
           JSON.stringify(input.industries),
+          input.jurisdiction ?? null,
           now,
           req.user.id,
         );
       } else {
         db.prepare(
           `INSERT INTO talent_profiles
-           (id, user_id, headline, skills, experience_years, availability, hourly_rate, currency, created_at, updated_at, location, languages, portfolio_url, vetting_status, domains, functions, industries)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?)`,
+           (id, user_id, headline, skills, experience_years, availability, hourly_rate, currency, created_at, updated_at, location, languages, portfolio_url, vetting_status, domains, functions, industries, jurisdiction)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?, ?)`,
         ).run(
           randomUUID(),
           req.user.id,
@@ -133,6 +137,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           JSON.stringify(input.domains),
           JSON.stringify(input.functions),
           JSON.stringify(input.industries),
+          input.jurisdiction ?? null,
         );
       }
       log(req.workspace.id, req.user.name, 'Talent profile saved', req.user.id, input.headline);
@@ -232,6 +237,53 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     res.json(db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id));
   });
 
+  app.post('/api/talent/conflicts', (req, res) => {
+    const input = conflictDisclosureSchema.parse(req.body);
+    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    if (!profile) return res.status(400).json({ error: 'Create your talent profile before disclosing a conflict.' });
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    transaction(() => {
+      db.prepare(
+        "INSERT INTO conflict_disclosures (id, profile_id, description, status, created_at) VALUES (?, ?, ?, 'disclosed', ?)",
+      ).run(id, profile.id, input.description, now);
+      log(req.workspace.id, req.user.name, 'Conflict of interest disclosed', id, input.description);
+    });
+    res.status(201).json(db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(id));
+  });
+
+  app.get('/api/talent/conflicts/mine', (req, res) => {
+    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    res.json(
+      profile ? db.prepare('SELECT * FROM conflict_disclosures WHERE profile_id = ? ORDER BY created_at DESC').all(profile.id) : [],
+    );
+  });
+
+  app.get('/api/admin/talent/conflicts', (req, res) => {
+    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can review conflict disclosures.' });
+    res.json(
+      db
+        .prepare(
+          `SELECT conflict_disclosures.*, users.name, users.email FROM conflict_disclosures
+           JOIN talent_profiles ON talent_profiles.id = conflict_disclosures.profile_id
+           JOIN users ON users.id = talent_profiles.user_id
+           WHERE conflict_disclosures.status = 'disclosed'`,
+        )
+        .all(),
+    );
+  });
+
+  app.patch('/api/admin/talent/conflicts/:id', (req, res) => {
+    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can decide conflict disclosures.' });
+    const input = conflictDecisionSchema.parse(req.body);
+    const disclosure = db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id);
+    if (!disclosure) return res.status(404).json({ error: 'Conflict disclosure not found.' });
+    db.prepare(
+      'UPDATE conflict_disclosures SET status = ?, reviewed_at = ?, reviewed_by = ? WHERE id = ?',
+    ).run(input.decision, new Date().toISOString(), req.user.id, req.params.id);
+    res.json(db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id));
+  });
+
   app.get('/api/talent/experts', (req, res) => {
     const skillQuery = String(req.query.skill || '').trim();
     const maxRate = req.query.maxRate ? Number(req.query.maxRate) : null;
@@ -248,7 +300,19 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         .all()
         .map((row) => [row.profile_id, row.count]),
     );
+    // A restricted conflict disclosure removes an expert from matching outright — this is the
+    // enforcement point for the governance gap, not just a badge shown on their profile.
+    const restrictedProfileIds = new Set(
+      db.prepare("SELECT DISTINCT profile_id FROM conflict_disclosures WHERE status = 'restricted'").all().map((r) => r.profile_id),
+    );
+    const reputationByUserId = new Map(
+      db
+        .prepare('SELECT reviewee_user_id, COALESCE(AVG(rating), 0) AS average FROM reviews GROUP BY reviewee_user_id')
+        .all()
+        .map((row) => [row.reviewee_user_id, row.average]),
+    );
     const results = rows
+      .filter((row) => !restrictedProfileIds.has(row.id))
       .filter((row) => !domainFilter || JSON.parse(row.domains).includes(domainFilter))
       .filter((row) => !functionFilter || JSON.parse(row.functions).includes(functionFilter))
       .filter((row) => !industryFilter || JSON.parse(row.industries).includes(industryFilter))
@@ -260,6 +324,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         const rateFit = maxRate == null || !row.hourly_rate ? 15 : row.hourly_rate <= maxRate ? 15 : 0;
         const vettingBonus = row.vetting_status === 'verified' ? 15 : 0;
         const credentialBonus = Math.min(10, (verifiedCredentialCounts.get(row.id) || 0) * 2);
+        const reputationBonus = Math.round((reputationByUserId.get(row.user_id) || 0) * 2);
         return {
           userId: row.user_id,
           headline: row.headline,
@@ -270,9 +335,10 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           hourlyRate: row.hourly_rate,
           currency: row.currency,
           location: row.location,
+          jurisdiction: row.jurisdiction,
           vettingStatus: row.vetting_status,
-          score: skillScore + rateFit + vettingBonus + credentialBonus,
-          breakdown: { skillScore, rateFit, vettingBonus, credentialBonus },
+          score: skillScore + rateFit + vettingBonus + credentialBonus + reputationBonus,
+          breakdown: { skillScore, rateFit, vettingBonus, credentialBonus, reputationBonus },
         };
       })
       .filter((result) => queryWords.size === 0 || result.breakdown.skillScore > 0)

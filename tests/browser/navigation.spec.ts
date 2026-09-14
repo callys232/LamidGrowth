@@ -15,7 +15,12 @@ test('mega menus expose options on hover and support keyboard navigation', async
     page.getByRole('region', { name: 'Solutions', exact: true }).getByRole('link'),
   ).toHaveCount(14);
   await page.getByRole('button', { name: 'Experts', exact: true }).hover();
-  await expect(page.locator('.mega-planned')).toHaveCount(5);
+  // All five Experts entries link to the live consolidated /experts page now — none are
+  // "planned, not yet available" placeholders anymore.
+  await expect(page.locator('.mega-planned')).toHaveCount(0);
+  const expertsLinks = page.getByRole('region', { name: 'Experts', exact: true }).getByRole('link');
+  await expect(expertsLinks).toHaveCount(5);
+  for (const link of await expertsLinks.all()) await expect(link).toHaveAttribute('href', '/experts');
   await page.getByRole('button', { name: 'Resources', exact: true }).hover();
   await expect(
     page.getByRole('region', { name: 'Resources', exact: true }).getByRole('link'),

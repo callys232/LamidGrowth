@@ -6,6 +6,7 @@ import {
   MemorySlide1,
   RememberedContextSlide2,
   ExplanationPreferencesSlide3,
+  CrossResultUseSlide4,
 } from './slides';
 
 /** /os/settings/ai — sections in reading order. */
@@ -19,6 +20,7 @@ export function OsSettingsAiDocumentPage({ embedded = false }: DocumentPageProps
       <MemorySlide1 embedded={embedded} />
       <RememberedContextSlide2 embedded={embedded} />
       <ExplanationPreferencesSlide3 embedded={embedded} />
+      <CrossResultUseSlide4 embedded={embedded} />
     </DocumentPageLayout>
   );
 }

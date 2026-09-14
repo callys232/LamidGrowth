@@ -26,11 +26,17 @@ export function ProjectDetailPage() {
     refundMilestone,
     loadMessages,
     sendMessage,
+    submitReview,
+    assignTeam,
   } = useProjectDetail(id);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
+  const [teamIdInput, setTeamIdInput] = useState('');
   const [messages, setMessages] = useState<ProjectMessage[]>([]);
   const [draft, setDraft] = useState('');
+  const [reviewRating, setReviewRating] = useState<Record<string, number>>({});
+  const [reviewComment, setReviewComment] = useState<Record<string, string>>({});
+  const [reviewedMilestoneIds, setReviewedMilestoneIds] = useState<string[]>([]);
 
   useEffect(() => {
     void loadMessages().then(setMessages);
@@ -102,6 +108,45 @@ export function ProjectDetailPage() {
         </div>
       )}
 
+      {isClient && (
+        <section className="panel settings-card">
+          <h3>Expert team</h3>
+          <p>Assign the whole team — led by the expert already engaged here — instead of adding specialists one at a time.</p>
+          {project.assignedTeam ? (
+            <div className="activity-feed-row">
+              <span className="activity-feed-title">
+                <strong>{project.assignedTeam.name}</strong>
+                <br />
+                <small>
+                  {project.assignedTeam.members.length} member{project.assignedTeam.members.length === 1 ? '' : 's'}
+                </small>
+              </span>
+              <Button variant="secondary" disabled={busy} onClick={() => void assignTeam(null)}>
+                Remove
+              </Button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                placeholder="Team ID (shared by the freelancer)"
+                value={teamIdInput}
+                onChange={(e) => setTeamIdInput(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <Button
+                disabled={busy || !teamIdInput.trim()}
+                onClick={async () => {
+                  await assignTeam(teamIdInput.trim());
+                  setTeamIdInput('');
+                }}
+              >
+                Assign team
+              </Button>
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="panel settings-card">
         <h3>Messages</h3>
         {messages.length === 0 ? (
@@ -133,6 +178,54 @@ export function ProjectDetailPage() {
           </Button>
         </div>
       </section>
+
+      {project.milestones.some((m) => m.status === 'approved') && (
+        <section className="panel settings-card">
+          <h3>Reviews</h3>
+          <p>Leave a review for the other party on an approved milestone.</p>
+          <ol className="activity-feed-list">
+            {project.milestones
+              .filter((m) => m.status === 'approved')
+              .map((milestone) => (
+                <li key={milestone.id} className="activity-feed-row">
+                  <span className="activity-feed-title">
+                    <strong>{milestone.title}</strong>
+                  </span>
+                  {reviewedMilestoneIds.includes(milestone.id) ? (
+                    <StatusPill status="reviewed" />
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <select
+                        value={reviewRating[milestone.id] ?? 5}
+                        onChange={(e) => setReviewRating((prev) => ({ ...prev, [milestone.id]: Number(e.target.value) }))}
+                      >
+                        {[5, 4, 3, 2, 1].map((n) => (
+                          <option key={n} value={n}>
+                            {n} / 5
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        placeholder="Comment (optional)"
+                        value={reviewComment[milestone.id] ?? ''}
+                        onChange={(e) => setReviewComment((prev) => ({ ...prev, [milestone.id]: e.target.value }))}
+                      />
+                      <Button
+                        disabled={busy}
+                        onClick={async () => {
+                          const ok = await submitReview(milestone.id, reviewRating[milestone.id] ?? 5, reviewComment[milestone.id] ?? '');
+                          if (ok) setReviewedMilestoneIds((prev) => [...prev, milestone.id]);
+                        }}
+                      >
+                        Submit review
+                      </Button>
+                    </div>
+                  )}
+                </li>
+              ))}
+          </ol>
+        </section>
+      )}
     </section>
   );
 }

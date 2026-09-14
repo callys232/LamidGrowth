@@ -87,7 +87,7 @@ export function HomeHeroSlide() {
                 Progress within <em>your permissions.</em>
               </h2>
             </div>
-            <p>{continuityIntro}.</p>
+            <p data-source-paragraph={continuity.sourceParagraph}>{continuityIntro}.</p>
           </header>
           <details className="home-disclosure">
             <summary>Explore the three ways progress continues</summary>

@@ -48,6 +48,20 @@ export function GrowthWithoutCapabilityBecomesPressureSlide4({
   embedded = false,
 }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={true} embedded={embedded} />
+    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+  );
+}
+
+/** Build the Project Even When You Do Not Know the Scope. */
+export function BuildTheProjectSlide5({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[4]} index={4} last={false} embedded={embedded} />
+  );
+}
+
+/** Not Sure Yet Is a Valid Starting Point */
+export function NotSureYetSlide6({ embedded = false }: DocumentPageProps) {
+  return (
+    <DocumentSectionSlide section={content.sections[5]} index={5} last={true} embedded={embedded} />
   );
 }

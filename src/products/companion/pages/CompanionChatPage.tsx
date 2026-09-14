@@ -60,6 +60,11 @@ export function CompanionChatPage() {
                 </div>
               )}
               <p>{turn.text}</p>
+              {turn.role === 'agent' && turn.humanHandoffRequested && (
+                <p className="companion-chat-handoff-note">
+                  This also went to a qualified human expert for review — you'll see it move in your project's handoff list.
+                </p>
+              )}
               {turn.role === 'agent' && turn.runId && turn.agentId && documentAgentIds.has(turn.agentId) && (
                 <div className="companion-chat-document-actions">
                   <a

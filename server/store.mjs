@@ -584,6 +584,128 @@ export function openStore(filename) {
       INSERT INTO migrations VALUES (25, datetime('now'));
     `);
     }
+    if (!db.prepare('SELECT 1 FROM migrations WHERE version = 26').get()) {
+      db.exec(`
+      CREATE TABLE reviews (
+        id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+        milestone_id TEXT NOT NULL REFERENCES milestones(id),
+        reviewer_user_id TEXT NOT NULL REFERENCES users(id),
+        reviewee_user_id TEXT NOT NULL REFERENCES users(id),
+        rating INTEGER NOT NULL, comment TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX reviews_one_per_reviewer_milestone ON reviews(milestone_id, reviewer_user_id);
+      CREATE INDEX reviews_reviewee ON reviews(reviewee_user_id);
+
+      CREATE TABLE conflict_disclosures (
+        id TEXT PRIMARY KEY, profile_id TEXT NOT NULL REFERENCES talent_profiles(id),
+        description TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'disclosed',
+        created_at TEXT NOT NULL, reviewed_at TEXT, reviewed_by TEXT REFERENCES users(id)
+      );
+      CREATE INDEX conflict_disclosures_profile ON conflict_disclosures(profile_id, status);
+
+      INSERT INTO migrations VALUES (26, datetime('now'));
+    `);
+    }
+    const talentProfileColumnsV26 = db.prepare('PRAGMA table_info(talent_profiles)').all();
+    if (!talentProfileColumnsV26.some((column) => column.name === 'jurisdiction'))
+      db.exec('ALTER TABLE talent_profiles ADD COLUMN jurisdiction TEXT');
+    if (!db.prepare('SELECT 1 FROM migrations WHERE version = 27').get()) {
+      db.exec(`
+      CREATE TABLE scoping_cases (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        created_by TEXT NOT NULL REFERENCES users(id),
+        status TEXT NOT NULL DEFAULT 'draft',
+        objective TEXT NOT NULL DEFAULT '', problem_statement TEXT NOT NULL DEFAULT '',
+        desired_outcome TEXT NOT NULL DEFAULT '', in_scope TEXT NOT NULL DEFAULT '',
+        out_of_scope TEXT NOT NULL DEFAULT '', deliverables TEXT NOT NULL DEFAULT '',
+        acceptance_criteria TEXT NOT NULL DEFAULT '', assumptions TEXT NOT NULL DEFAULT '',
+        category TEXT, budget_context TEXT NOT NULL DEFAULT '', timeline_context TEXT NOT NULL DEFAULT '',
+        risk_band TEXT NOT NULL DEFAULT 'green',
+        published_job_id TEXT REFERENCES job_posts(id),
+        created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+      );
+      CREATE INDEX scoping_cases_workspace ON scoping_cases(workspace_id, status);
+
+      INSERT INTO migrations VALUES (27, datetime('now'));
+    `);
+    }
+    const scopingCaseColumnsV27 = db.prepare('PRAGMA table_info(scoping_cases)').all();
+    if (!scopingCaseColumnsV27.some((column) => column.name === 'jurisdiction'))
+      db.exec('ALTER TABLE scoping_cases ADD COLUMN jurisdiction TEXT');
+    if (!db.prepare('SELECT 1 FROM migrations WHERE version = 28').get()) {
+      db.exec(`
+      CREATE TABLE availability_slots (
+        id TEXT PRIMARY KEY, profile_id TEXT NOT NULL REFERENCES talent_profiles(id),
+        start_at TEXT NOT NULL, end_at TEXT NOT NULL, format TEXT NOT NULL DEFAULT 'advisory_session',
+        status TEXT NOT NULL DEFAULT 'open', created_at TEXT NOT NULL
+      );
+      CREATE INDEX availability_slots_profile ON availability_slots(profile_id, status);
+
+      CREATE TABLE bookings (
+        id TEXT PRIMARY KEY, slot_id TEXT NOT NULL REFERENCES availability_slots(id),
+        client_user_id TEXT NOT NULL REFERENCES users(id),
+        expert_user_id TEXT NOT NULL REFERENCES users(id),
+        project_id TEXT REFERENCES projects(id),
+        status TEXT NOT NULL DEFAULT 'confirmed', notes TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX bookings_client ON bookings(client_user_id, status);
+      CREATE INDEX bookings_expert ON bookings(expert_user_id, status);
+
+      CREATE TABLE review_queue_entries (
+        id TEXT PRIMARY KEY, scoping_case_id TEXT NOT NULL UNIQUE REFERENCES scoping_cases(id),
+        risk_band TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending',
+        claimed_by TEXT REFERENCES users(id), claimed_at TEXT, notes TEXT NOT NULL DEFAULT '',
+        completed_at TEXT, created_at TEXT NOT NULL
+      );
+      CREATE INDEX review_queue_status ON review_queue_entries(status, created_at);
+
+      CREATE TABLE jurisdiction_rules (
+        id TEXT PRIMARY KEY, jurisdiction TEXT NOT NULL, category TEXT NOT NULL,
+        requires_license INTEGER NOT NULL DEFAULT 1, notes TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX jurisdiction_rules_unique ON jurisdiction_rules(jurisdiction, category);
+
+      CREATE TABLE handoffs (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        requested_by TEXT NOT NULL REFERENCES users(id),
+        source TEXT NOT NULL, context_summary TEXT NOT NULL, context_snapshot TEXT NOT NULL DEFAULT '{}',
+        target_user_id TEXT REFERENCES users(id), status TEXT NOT NULL DEFAULT 'pending',
+        scoping_case_id TEXT REFERENCES scoping_cases(id), project_id TEXT REFERENCES projects(id),
+        created_at TEXT NOT NULL, resolved_at TEXT
+      );
+      CREATE INDEX handoffs_workspace ON handoffs(workspace_id, status);
+      CREATE INDEX handoffs_target ON handoffs(target_user_id, status);
+
+      CREATE TABLE engagement_outcomes (
+        id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+        workspace_id TEXT NOT NULL REFERENCES workspaces(id), created_by TEXT NOT NULL REFERENCES users(id),
+        summary TEXT NOT NULL, learnings TEXT NOT NULL DEFAULT '', reusable_context TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX engagement_outcomes_workspace ON engagement_outcomes(workspace_id, created_at);
+      CREATE UNIQUE INDEX engagement_outcomes_project ON engagement_outcomes(project_id);
+
+      CREATE TABLE expert_teams (
+        id TEXT PRIMARY KEY, name TEXT NOT NULL, lead_user_id TEXT NOT NULL REFERENCES users(id),
+        description TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL
+      );
+      CREATE TABLE expert_team_members (
+        id TEXT PRIMARY KEY, team_id TEXT NOT NULL REFERENCES expert_teams(id),
+        user_id TEXT NOT NULL REFERENCES users(id), role TEXT NOT NULL DEFAULT '',
+        access_scope TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX expert_team_members_unique ON expert_team_members(team_id, user_id);
+      CREATE INDEX expert_team_members_user ON expert_team_members(user_id);
+
+      INSERT INTO migrations VALUES (28, datetime('now'));
+    `);
+    }
+    const projectColumnsV28 = db.prepare('PRAGMA table_info(projects)').all();
+    if (!projectColumnsV28.some((column) => column.name === 'assigned_team_id'))
+      db.exec('ALTER TABLE projects ADD COLUMN assigned_team_id TEXT REFERENCES expert_teams(id)');
     db.exec('COMMIT');
   } catch (error) {
     db.exec('ROLLBACK');
