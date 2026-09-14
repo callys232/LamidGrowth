@@ -1303,19 +1303,27 @@
   justify-content: space-between;
   align-items: center;
   gap: 32px;
-  margin-top: 30px;
+  margin-top: 24px;
+  padding: 22px 28px;
+  border: 1px solid #dcded8;
+  border-radius: 4px;
+  background: #faf9f6;
 }
 .lamid-home .home-objective-footer > div:first-child {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   max-width: 650px;
 }
 .lamid-home .home-objective-footer svg {
   flex-shrink: 0;
+  color: var(--signature-red);
 }
 .lamid-home .home-objective-footer p {
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--midnight);
 }
 .lamid-home .home-objective-footer .canonical-ctas {
   flex-shrink: 0;
@@ -1963,6 +1971,19 @@
 }
 .lamid-home .home-intelligence-section h2 {
   max-width: none;
+}
+@media (min-width: 1000px) {
+  .lamid-home .home-outcomes-section .home-section-heading,
+  .lamid-home .home-intelligence-section .home-section-heading {
+    max-width: 770px;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .lamid-home .home-outcomes-section .home-section-heading > p,
+  .lamid-home .home-intelligence-section .home-section-heading > p {
+    max-width: 100%;
+    margin-inline: auto;
+  }
 }
 @media (min-width: 1000px) {
   .lamid-home .home-intelligence-section h2 {
