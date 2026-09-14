@@ -704,6 +704,12 @@
 .lamid-home .home-rhythm-section {
   background: #f7f8f6;
 }
+@media (min-width: 1000px) {
+  .lamid-home .home-rhythm-section .home-section-heading,
+  .lamid-home .home-rhythm-section .home-section-heading > p {
+    max-width: 1000px;
+  }
+}
 .lamid-home .home-rhythm-timeline {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1305,9 +1311,9 @@
   gap: 32px;
   margin-top: 24px;
   padding: 22px 28px;
-  border: 1px solid #dcded8;
+  border: 1px solid var(--graphite);
   border-radius: 4px;
-  background: #faf9f6;
+  background: var(--graphite);
 }
 .lamid-home .home-objective-footer > div:first-child {
   display: flex;
@@ -1317,16 +1323,20 @@
 }
 .lamid-home .home-objective-footer svg {
   flex-shrink: 0;
-  color: var(--signature-red);
+  color: var(--sandstone);
 }
 .lamid-home .home-objective-footer p {
   font-size: 15px;
   line-height: 1.5;
   font-weight: 500;
-  color: var(--midnight);
+  color: #fff;
 }
 .lamid-home .home-objective-footer .canonical-ctas {
   flex-shrink: 0;
+}
+.lamid-home .home-objective-footer .canonical-ctas .button-primary {
+  background: var(--signature-red);
+  border-color: var(--signature-red);
 }
 .lamid-home.product-workspace-example {
   padding: 32px 0 64px;
