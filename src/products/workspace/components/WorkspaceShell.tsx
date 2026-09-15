@@ -7,6 +7,7 @@ import {
   Command,
   Compass,
   GitBranch,
+  GraduationCap,
   Layers3,
   LayoutDashboard,
   ListTodo,
@@ -71,6 +72,7 @@ const navigation = [
   ['Talent', '/os/talent', Users],
   ['Pricing', '/os/pricing', Wallet],
   ['Guided Scoping', '/os/scoping/new', Wand2],
+  ['Learning', '/os/learning', GraduationCap],
 ] as const;
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);

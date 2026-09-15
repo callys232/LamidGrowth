@@ -43,10 +43,16 @@ export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
         'SELECT id, name, home_engine, max_authority, human_gate, points_cost FROM agent_manifests ORDER BY home_engine, name',
       )
       .all();
+    const learningPaths = db
+      .prepare(
+        "SELECT id, title AS name, points_cost FROM learning_paths WHERE points_cost IS NOT NULL AND points_cost > 0 ORDER BY title",
+      )
+      .all();
     res.json({
       pointsUnitPriceMinor: POINTS_UNIT_PRICE_MINOR,
       currency: 'USD',
       tools,
+      learningPaths,
     });
   });
 

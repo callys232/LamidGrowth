@@ -24,6 +24,7 @@ import { PricingBillablesPage } from './products/pricing/pages/PricingBillablesP
 import { Progress } from './products/progress/pages/ProgressPage';
 import { Rhythm } from './products/rhythm/pages/RhythmPage';
 import { ScopingWizardPage } from './products/scoping/pages/ScopingWizardPage';
+import { LearningPage } from './products/learning/pages/LearningPage';
 import { Settings } from './products/settings/pages/SettingsPage';
 import { ContentPage } from './products/website/pages/ContentPage';
 import { Workflows } from './products/workflows/pages/WorkflowsPage';
@@ -141,6 +142,7 @@ export function App() {
           <Route path="talent" element={<TalentDashboardPage />} />
           <Route path="pricing" element={<PricingBillablesPage />} />
           <Route path="scoping/new" element={<ScopingWizardPage />} />
+          <Route path="learning" element={<LearningPage />} />
           <Route path="knowledge" element={<Knowledge />} />
           <Route path="insights" element={<Intelligence />} />
           <Route path="settings/ai" element={<Intelligence settings />} />

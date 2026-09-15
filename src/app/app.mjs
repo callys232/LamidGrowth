@@ -27,6 +27,7 @@ import { mountBooking } from './booking.mjs';
 import { mountExpertTeams } from './expertTeams.mjs';
 import { mountHandoff } from './handoff.mjs';
 import { mountOutcomes } from './outcomes.mjs';
+import { mountLearning } from './learning.mjs';
 import { mountTalent } from './talent.mjs';
 import { mountInvitations } from './invitations.mjs';
 import { createRateLimiter } from './ratelimit.mjs';
@@ -1393,6 +1394,7 @@ export function createApp({
   mountExpertTeams(app, store);
   mountHandoff(app, store);
   mountOutcomes(app, store);
+  mountLearning(app, store, { ecosystemAdminEmails });
   mountInvitations(app, store);
   mountMessaging(app, store);
   mountEstimator(app, store);

@@ -208,6 +208,9 @@ export function PublicHeader() {
             aria-label="Main navigation"
             className={mobile ? 'public-nav is-open' : 'public-nav'}
           >
+            <Link to="/" onPointerEnter={close} onClick={navigate}>
+              Home
+            </Link>
             {menus.map((menu) => (
               <div
                 className="mega-section"

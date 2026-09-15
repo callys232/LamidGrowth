@@ -706,6 +706,72 @@ export function openStore(filename) {
     const projectColumnsV28 = db.prepare('PRAGMA table_info(projects)').all();
     if (!projectColumnsV28.some((column) => column.name === 'assigned_team_id'))
       db.exec('ALTER TABLE projects ADD COLUMN assigned_team_id TEXT REFERENCES expert_teams(id)');
+    const learningPathColumnsV28 = db.prepare('PRAGMA table_info(learning_paths)').all();
+    for (const [column, ddl] of [
+      ['domain', "ALTER TABLE learning_paths ADD COLUMN domain TEXT"],
+      ['function', "ALTER TABLE learning_paths ADD COLUMN function TEXT"],
+      ['industry', "ALTER TABLE learning_paths ADD COLUMN industry TEXT"],
+      ['estimated_hours', "ALTER TABLE learning_paths ADD COLUMN estimated_hours REAL"],
+      ['points_cost', "ALTER TABLE learning_paths ADD COLUMN points_cost INTEGER"],
+      ['language', "ALTER TABLE learning_paths ADD COLUMN language TEXT NOT NULL DEFAULT 'en'"],
+      ['coach_user_id', "ALTER TABLE learning_paths ADD COLUMN coach_user_id TEXT REFERENCES users(id)"],
+      ['created_by', "ALTER TABLE learning_paths ADD COLUMN created_by TEXT REFERENCES users(id)"],
+    ])
+      if (!learningPathColumnsV28.some((c) => c.name === column)) db.exec(ddl);
+    const learningEnrollmentColumnsV28 = db.prepare('PRAGMA table_info(learning_enrollments)').all();
+    for (const [column, ddl] of [
+      ['assigned_by', "ALTER TABLE learning_enrollments ADD COLUMN assigned_by TEXT REFERENCES users(id)"],
+      ['due_at', "ALTER TABLE learning_enrollments ADD COLUMN due_at TEXT"],
+      ['completed_at', "ALTER TABLE learning_enrollments ADD COLUMN completed_at TEXT"],
+    ])
+      if (!learningEnrollmentColumnsV28.some((c) => c.name === column)) db.exec(ddl);
+    if (!db.prepare('SELECT 1 FROM migrations WHERE version = 29').get()) {
+      db.exec(`
+      CREATE TABLE learning_modules (
+        id TEXT PRIMARY KEY, path_id TEXT NOT NULL REFERENCES learning_paths(id),
+        title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+        format TEXT NOT NULL DEFAULT 'reading', order_index INTEGER NOT NULL DEFAULT 0,
+        estimated_minutes INTEGER, content_url TEXT, quiz_skill TEXT,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX learning_modules_path ON learning_modules(path_id, order_index);
+
+      CREATE TABLE learning_module_completions (
+        id TEXT PRIMARY KEY, enrollment_id TEXT NOT NULL REFERENCES learning_enrollments(id),
+        module_id TEXT NOT NULL REFERENCES learning_modules(id),
+        score INTEGER, completed_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX learning_module_completions_unique ON learning_module_completions(enrollment_id, module_id);
+
+      CREATE TABLE learning_prerequisites (
+        id TEXT PRIMARY KEY, path_id TEXT NOT NULL REFERENCES learning_paths(id),
+        requires_path_id TEXT NOT NULL REFERENCES learning_paths(id)
+      );
+      CREATE UNIQUE INDEX learning_prerequisites_unique ON learning_prerequisites(path_id, requires_path_id);
+
+      CREATE TABLE learning_certificates (
+        id TEXT PRIMARY KEY, enrollment_id TEXT NOT NULL UNIQUE REFERENCES learning_enrollments(id),
+        credential_id TEXT REFERENCES expert_credentials(id),
+        issued_at TEXT NOT NULL, expires_at TEXT
+      );
+
+      CREATE TABLE learning_feedback (
+        id TEXT PRIMARY KEY, path_id TEXT NOT NULL REFERENCES learning_paths(id),
+        user_id TEXT NOT NULL REFERENCES users(id),
+        rating INTEGER NOT NULL, comment TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL
+      );
+      CREATE UNIQUE INDEX learning_feedback_unique ON learning_feedback(path_id, user_id);
+
+      CREATE TABLE compliance_requirements (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        path_id TEXT NOT NULL REFERENCES learning_paths(id),
+        mandatory INTEGER NOT NULL DEFAULT 1, due_days INTEGER, created_at TEXT NOT NULL
+      );
+      CREATE INDEX compliance_requirements_workspace ON compliance_requirements(workspace_id);
+
+      INSERT INTO migrations VALUES (29, datetime('now'));
+    `);
+    }
     db.exec('COMMIT');
   } catch (error) {
     db.exec('ROLLBACK');

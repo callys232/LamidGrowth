@@ -3837,7 +3837,7 @@ small {
 }
 @media (max-width: 850px) {
   .public-nav {
-    gap: 14px;
+    gap: 10px;
   }
   .header-actions {
     gap: 12px;
@@ -3847,10 +3847,18 @@ small {
   }
   .public-nav > a,
   .nav-trigger {
-    font-size: 10px;
+    font-size: 9px;
   }
   .header-container {
-    gap: 15px;
+    gap: 10px;
+  }
+  .header-actions .button {
+    font-size: 9px;
+    min-height: 35px;
+    padding: 9px 11px;
+  }
+  .public-header .brand small {
+    display: none;
   }
   .home-hero {
     min-height: 550px;
