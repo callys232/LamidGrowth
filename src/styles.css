@@ -1641,7 +1641,7 @@ small {
   border-bottom: 1px solid var(--border);
   background: var(--border);
   font-size: 8px;
-  color: var(--text-muted);
+  color: var(--text-muted-strong);
 }
 .demo-banner > span {
   display: flex;
@@ -1652,7 +1652,8 @@ small {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #5a5f66;
+  color: var(--text-muted-strong);
+  font-weight: 600;
   white-space: nowrap;
 }
 .workspace-main {
@@ -3840,22 +3841,27 @@ small {
     gap: 10px;
   }
   .header-actions {
-    gap: 12px;
+    gap: 4px;
   }
   .sign-in {
     display: none;
+  }
+  .public-header .theme-toggle.icon-button {
+    width: 28px;
+    height: 28px;
   }
   .public-nav > a,
   .nav-trigger {
     font-size: 9px;
   }
   .header-container {
-    gap: 10px;
+    gap: 8px;
+    padding: 0 4%;
   }
-  .header-actions .button {
-    font-size: 9px;
-    min-height: 35px;
-    padding: 9px 11px;
+  .public-header .header-actions .button {
+    font-size: 8px;
+    min-height: 32px;
+    padding: 8px 8px;
   }
   .public-header .brand small {
     display: none;

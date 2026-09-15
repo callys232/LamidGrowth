@@ -167,7 +167,7 @@ select:focus-visible {
   padding-top: 34px;
 }
 
-.content-page .showcase-copy .editorial-section {
+.content-page .showcase-copy .editorial-section:not(.dark-section) {
   border-color: var(--line-soft);
   border-radius: var(--radius-md);
   background: var(--surface-1);
@@ -175,8 +175,8 @@ select:focus-visible {
   padding: clamp(26px, 4vw, 46px);
 }
 
-.content-page .showcase-copy .editorial-section:hover,
-.content-page .showcase-copy .editorial-section:focus-within {
+.content-page .showcase-copy .editorial-section:not(.dark-section):hover,
+.content-page .showcase-copy .editorial-section:not(.dark-section):focus-within {
   border-color: var(--page-accent);
   box-shadow: var(--shadow-soft);
 }
@@ -187,13 +187,13 @@ select:focus-visible {
   letter-spacing: -0.025em;
 }
 
-.content-page .showcase-copy .editorial-section p {
+.content-page .showcase-copy .editorial-section:not(.dark-section) p {
   color: var(--text-secondary);
   font-size: 15px;
   line-height: 1.8;
 }
 
-.content-page .showcase-copy .editorial-section .editorial-number {
+.content-page .showcase-copy .editorial-section:not(.dark-section) .editorial-number {
   background: var(--surface-2);
   border-color: var(--line-soft);
   color: var(--page-accent);

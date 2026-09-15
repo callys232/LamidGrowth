@@ -1,6 +1,6 @@
 .canonical-copy .content-hero p {
   white-space: pre-line;
-  color: #5a5f66;
+  color: var(--text-muted);
 }
 .canonical-ctas {
   display: flex;

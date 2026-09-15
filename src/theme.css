@@ -110,13 +110,16 @@ select {
 .content-page .canonical-copy .editorial-section:not(.dark-section) {
   background: var(--surface);
 }
-.content-page .canonical-copy .editorial-section .editorial-number {
+.content-page .canonical-copy .editorial-section:not(.dark-section) .editorial-number {
   color: var(--ink);
   background: var(--surface-alt);
   border-color: var(--line-strong);
 }
 .content-page[data-page-theme] .showcase-copy .section-heading .editorial-number {
   color: var(--ink);
+}
+.content-page[data-page-theme] .showcase-copy .dark-section .section-heading .editorial-number {
+  color: #fff;
 }
 .section-index a,
 .section-index a span,

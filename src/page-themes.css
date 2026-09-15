@@ -204,7 +204,7 @@
   margin-inline: auto;
   padding-top: 20px;
 }
-.content-page[data-page-theme='product'] .showcase-copy .editorial-section {
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section:not(.dark-section) {
   border: 0;
   border-left: 3px solid var(--page-accent);
   border-radius: 0;
@@ -212,8 +212,8 @@
   background: transparent;
   padding: 44px 0 44px 40px;
 }
-.content-page[data-page-theme='product'] .showcase-copy .editorial-section:hover,
-.content-page[data-page-theme='product'] .showcase-copy .editorial-section:focus-within {
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section:not(.dark-section):hover,
+.content-page[data-page-theme='product'] .showcase-copy .editorial-section:not(.dark-section):focus-within {
   border-color: var(--page-accent);
   box-shadow: none;
   background: transparent;
