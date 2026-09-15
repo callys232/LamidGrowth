@@ -1,0 +1,143 @@
+/* Keep semantic colors in sync across the presentation layers. */
+.brand .brand-mark {
+  display: block;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 0;
+  object-fit: contain;
+}
+.public-header .brand .brand-mark {
+  width: 28px;
+  height: 28px;
+}
+@media (max-width: 480px) {
+  .public-header .brand .brand-mark {
+    width: 22px;
+    height: 22px;
+  }
+}
+:root {
+  color-scheme: light dark;
+  --surface-0: light-dark(#f7f8f6, #10151c);
+  --surface-2: light-dark(#eef1ee, #212832);
+  --text-primary: var(--ink);
+  --text-secondary: light-dark(#5d6870, #b7bcc2);
+  --line-soft: light-dark(#dce3df, #35414e);
+  --line-strong: light-dark(#c7d2cc, #627383);
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+.button-primary {
+  color: #fff;
+}
+.button-secondary {
+  color: var(--ink);
+}
+.button-light {
+  background: var(--warm-white);
+  color: var(--midnight);
+}
+.context-selector > button {
+  color: var(--ink);
+}
+.auth-page,
+.public-header,
+.mega-panel,
+.mega-header .public-nav.is-open {
+  background: var(--paper);
+  color: var(--ink);
+}
+.public-header .brand,
+.public-nav > a,
+.public-header .nav-trigger,
+.public-header .sign-in,
+.mega-link-title {
+  color: var(--ink);
+}
+.brand:not(.brand-light) small,
+.mega-header .mega-intro p,
+.mega-header .mega-group h3,
+.mega-header .mega-description,
+.mega-link-title svg {
+  color: var(--text-secondary);
+}
+.mega-header .mega-group a:hover,
+.mega-header .mega-group a:focus-visible,
+.mega-link-title small {
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+input,
+textarea,
+select {
+  background: var(--surface);
+  color: var(--ink);
+}
+.theme-toggle.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+}
+.theme-toggle:hover {
+  background: var(--surface-alt);
+}
+.context-selector > button[aria-pressed='true'],
+.context-selector > button:hover {
+  background: var(--surface-alt);
+  color: var(--ink);
+  border-color: var(--text-muted-strong);
+}
+.public-footer .footer-column h3,
+.auth-aside blockquote,
+.auth-aside-bottom {
+  color: #eef1f5;
+}
+.content-page .canonical-copy .editorial-section:not(.dark-section) {
+  background: var(--surface);
+}
+.content-page .canonical-copy .editorial-section .editorial-number {
+  color: var(--ink);
+  background: var(--surface-alt);
+  border-color: var(--line-strong);
+}
+.content-page[data-page-theme] .showcase-copy .section-heading .editorial-number {
+  color: var(--ink);
+}
+.section-index a,
+.section-index a span,
+.section-index a[aria-current],
+.section-index a:hover {
+  color: var(--ink);
+}
+@media (max-width: 480px) {
+  .public-header .header-container {
+    padding-inline: 12px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .theme-toggle.icon-button {
+    width: 36px;
+    height: 36px;
+  }
+  .header-actions .button {
+    white-space: normal;
+    max-width: 88px;
+    gap: 4px;
+  }
+}

@@ -1,12 +1,12 @@
 ﻿/* Homepage-owned presentation. Restored from the last verified build. */
 .lamid-home {
-  --home-ink: #132534;
-  --home-muted: #53616a;
-  --home-paper: #f7f6f2;
-  --home-line: #e0e4e2;
+  --home-ink: light-dark(#132534, #eef1f5);
+  --home-muted: light-dark(#53616a, #bac8d2);
+  --home-paper: light-dark(#f7f6f2, #1a2029);
+  --home-line: light-dark(#e0e4e2, #536474);
   --home-red: #b52c33;
   color: var(--home-ink);
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
   font-family:
     DM Sans,
     sans-serif;
@@ -30,7 +30,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: #546268;
+  color: light-dark(#546268, #bac8d2);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -44,7 +44,7 @@
 }
 .lamid-home .home-premium-hero {
   padding: 74px 0 0;
-  background: linear-gradient(#faf9f6 65%, #fff);
+  background: linear-gradient(light-dark(#faf9f6, #1a2029) 65%, light-dark(#fff, #1a2029));
   text-align: center;
 }
 .lamid-home .home-premium-hero h1 {
@@ -105,11 +105,11 @@
 }
 .lamid-home .canonical-ctas .button + .button {
   background: transparent;
-  border-color: #a9b1b3;
+  border-color: light-dark(#a9b1b3, #536474);
   color: var(--home-ink);
 }
 .lamid-home .canonical-ctas .button + .button:hover {
-  background: #e9edeb;
+  background: light-dark(#e9edeb, #27333e);
 }
 .lamid-home .home-hero-assurance {
   display: flex;
@@ -119,7 +119,7 @@
   font-size: 12px;
 }
 .lamid-home .home-hero-assurance svg {
-  color: #426b5b;
+  color: light-dark(#426b5b, #bac8d2);
 }
 .lamid-home .home-product-introduction {
   display: flex;
@@ -147,8 +147,8 @@
   max-width: 1070px;
   margin-inline: auto;
   text-align: left;
-  background: #fff;
-  border: 1px solid #d3dbd7;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#d3dbd7, #536474);
   border-radius: 12px;
   overflow: hidden;
   box-shadow:
@@ -161,13 +161,13 @@
   align-items: center;
   gap: 12px;
   padding: 13px 24px;
-  background: #f1f3f1;
+  background: light-dark(#f1f3f1, #27333e);
   border-bottom: 1px solid var(--home-line);
   font-size: 12px;
   font-weight: 600;
 }
 .lamid-home .home-preview-mark {
-  color: var(--home-red);
+  color: light-dark(var(--home-red), #ff9b9f);
   font-size: 23px;
   vertical-align: middle;
   padding-right: 5px;
@@ -187,7 +187,7 @@
   grid-template-columns: 225px minmax(0, 1fr);
 }
 .lamid-home .home-preview-sidebar {
-  background: #f7f8f6;
+  background: light-dark(#f7f8f6, #1a2029);
   border-right: 1px solid var(--home-line);
   padding: 30px 20px;
 }
@@ -209,7 +209,7 @@
   border: 1px solid transparent;
   border-radius: 5px;
   background: transparent;
-  color: #53616a;
+  color: light-dark(#53616a, #bac8d2);
   text-align: left;
   font:
     500 13px DM Sans,
@@ -230,14 +230,14 @@
   opacity: 1;
 }
 .lamid-home [role='tab']:hover:not([aria-selected='true']) {
-  background: #e9eeea;
-  color: #183140;
+  background: light-dark(#e9eeea, #27333e);
+  color: light-dark(#183140, #eef1f5);
 }
 .lamid-home .home-preview-sidebar-note {
   display: flex;
   gap: 10px;
   margin-top: 38px;
-  color: #486655;
+  color: light-dark(#486655, #bac8d2);
 }
 .lamid-home .home-preview-sidebar-note p {
   font-size: 11px;
@@ -261,8 +261,8 @@
   align-items: center;
   gap: 6px;
   font-size: 10px;
-  color: #41634e;
-  background: #edf4ec;
+  color: light-dark(#41634e, #bac8d2);
+  background: light-dark(#edf4ec, #27333e);
   padding: 4px 9px;
   border-radius: 20px;
   white-space: nowrap;
@@ -306,7 +306,7 @@
   width: 17px;
   height: 17px;
   flex-shrink: 0;
-  border: 1px solid #bbc7bf;
+  border: 1px solid light-dark(#bbc7bf, #536474);
   border-radius: 4px;
 }
 .lamid-home .home-preview-check.is-complete {
@@ -324,7 +324,7 @@
   gap: 9px;
   align-items: center;
   margin-top: 17px;
-  color: #90514a;
+  color: light-dark(#90514a, #bac8d2);
 }
 .lamid-home .home-preview-companion p {
   font-size: 11px;
@@ -372,7 +372,7 @@
 }
 .lamid-home .home-section-nav {
   border-block: 1px solid var(--home-line);
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
   box-shadow: 0 1px 0 rgba(13, 26, 43, 0.03);
 }
 .lamid-home .home-section-nav > div {
@@ -408,7 +408,7 @@
   transition: right 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .lamid-home .home-section-nav a:hover {
-  color: var(--home-red);
+  color: light-dark(var(--home-red), #ff9b9f);
 }
 .lamid-home .home-section-nav a:hover::after {
   right: 0;
@@ -468,7 +468,7 @@
 }
 .lamid-home .home-feature-number {
   display: block;
-  color: #84665d;
+  color: light-dark(#84665d, #bac8d2);
   font-size: 11px;
   font-weight: 500;
   margin-bottom: 25px;
@@ -487,10 +487,10 @@
 .lamid-home .home-cycle-cards li {
   padding: 30px 27px 32px;
   border-right: 1px solid var(--home-line);
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
 }
 .lamid-home .home-cycle-cards li:last-child {
-  background: #edf2ee;
+  background: light-dark(#edf2ee, #27333e);
   border-right: 0;
 }
 .lamid-home .home-cycle-cards strong {
@@ -520,12 +520,12 @@
 }
 .lamid-home .home-companion-illustration {
   padding: 40px;
-  border: 1px solid #d9dcd4;
+  border: 1px solid light-dark(#d9dcd4, #536474);
   border-radius: 9px;
-  background: #edf0e9;
+  background: light-dark(#edf0e9, #27333e);
 }
 .lamid-home .home-companion-illustration > .home-eyebrow {
-  color: #334d41;
+  color: light-dark(#334d41, #eef1f5);
   font-size: 10px;
 }
 .lamid-home .home-example-label {
@@ -535,8 +535,8 @@
 .lamid-home .home-example-message {
   padding: 28px;
   margin: 12px 0 28px 35px;
-  background: #fff;
-  border: 1px solid #dfe4dc;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#dfe4dc, #536474);
   border-radius: 10px 10px 0;
   font-size: 24px;
   line-height: 1.45;
@@ -550,7 +550,7 @@
 }
 .lamid-home .home-example-answer > svg {
   flex-shrink: 0;
-  color: #83614c;
+  color: light-dark(#83614c, #bac8d2);
 }
 .lamid-home .home-example-answer strong {
   font-size: 14px;
@@ -566,7 +566,7 @@
   align-items: center;
   margin-top: 34px;
   padding-top: 22px;
-  border-top: 1px solid #cdd7ce;
+  border-top: 1px solid light-dark(#cdd7ce, #536474);
   color: var(--home-ink);
   font-size: 12px;
   font-weight: 500;
@@ -597,7 +597,7 @@
 }
 .lamid-home .home-detail {
   margin-top: 35px;
-  border-top: 1px solid #dce1d8;
+  border-top: 1px solid light-dark(#dce1d8, #536474);
   padding-top: 20px;
   font-size: 13px;
 }
@@ -629,7 +629,7 @@
 }
 .lamid-home .home-experience-section .home-container {
   padding: 60px;
-  background: #f3f5f1;
+  background: light-dark(#f3f5f1, #27333e);
   border-radius: 8px;
 }
 .lamid-home .home-depth-list {
@@ -638,7 +638,7 @@
   gap: 24px 45px;
 }
 .lamid-home .home-depth-list li {
-  border-top: 1px solid #d4dcd3;
+  border-top: 1px solid light-dark(#d4dcd3, #536474);
   padding-top: 22px;
 }
 .lamid-home .home-depth-list .home-feature-number {
@@ -651,7 +651,7 @@
   font-size: 13px;
 }
 .lamid-home .home-outcomes-section {
-  background: #faf8f5;
+  background: light-dark(#faf8f5, #1a2029);
 }
 .lamid-home .home-outcome-grid {
   display: grid;
@@ -659,8 +659,8 @@
   gap: 20px;
 }
 .lamid-home .home-outcome-grid li {
-  background: #fff;
-  border: 1px solid #e5e2dc;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#e5e2dc, #536474);
   border-radius: 7px;
   padding: 30px;
 }
@@ -670,8 +670,8 @@
 }
 .lamid-home .home-intelligence-visual {
   min-width: 0;
-  background: #f7f8f5;
-  border: 1px solid #e1e5df;
+  background: light-dark(#f7f8f5, #1a2029);
+  border: 1px solid light-dark(#e1e5df, #536474);
   border-radius: 50%;
   aspect-ratio: 1;
   display: grid;
@@ -702,7 +702,7 @@
   font-size: 13px;
 }
 .lamid-home .home-rhythm-section {
-  background: #f7f8f6;
+  background: light-dark(#f7f8f6, #1a2029);
 }
 @media (min-width: 1000px) {
   .lamid-home .home-rhythm-section .home-section-heading,
@@ -716,14 +716,14 @@
   gap: 30px;
 }
 .lamid-home .home-rhythm-timeline li {
-  border-top: 1px solid #a7b7aa;
+  border-top: 1px solid light-dark(#a7b7aa, #536474);
   padding-top: 26px;
 }
 .lamid-home .home-rhythm-timeline .home-feature-number {
   position: absolute;
   top: -12px;
   width: 24px;
-  background: #f7f8f6;
+  background: light-dark(#f7f8f6, #1a2029);
 }
 .lamid-home .home-governance-section {
   background: #142c39;
@@ -790,7 +790,7 @@
 }
 .lamid-home .home-expansion-section .home-section-heading > p {
   font-size: 17px;
-  color: #80584e;
+  color: light-dark(#80584e, #bac8d2);
 }
 .lamid-home .home-expansion-copy {
   max-width: 810px;
@@ -834,7 +834,7 @@
   gap: 24px;
 }
 .lamid-home .home-plan-list li {
-  border-top: 2px solid #b7c6b9;
+  border-top: 2px solid light-dark(#b7c6b9, #536474);
   padding-top: 20px;
 }
 .lamid-home .home-plan-list .home-feature-number {
@@ -849,7 +849,7 @@
 .lamid-home .home-closing-section {
   text-align: center;
   padding-block: 95px;
-  background: #e9efea;
+  background: light-dark(#e9efea, #27333e);
 }
 .lamid-home .home-closing-section .home-section-heading {
   margin: 0 auto 16px;
@@ -872,11 +872,11 @@
   gap: 8px;
   max-width: 650px;
   font-size: 12px;
-  color: #344c40;
+  color: light-dark(#344c40, #eef1f5);
   text-underline-offset: 4px;
 }
 .lamid-home .home-footer {
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
   padding-top: 65px;
 }
 .lamid-home .home-footer-brand {
@@ -909,7 +909,7 @@
   padding-block: 5px;
 }
 .lamid-home .home-footer-columns a:hover {
-  color: var(--home-red);
+  color: light-dark(var(--home-red), #ff9b9f);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -943,7 +943,7 @@
   outline-offset: 4px;
 }
 .lamid-home .home-governance-section a:focus-visible {
-  outline-color: #fff;
+  outline-color: light-dark(#fff, #536474);
 }
 @media (max-width: 1000px) {
   .lamid-home .home-container {
@@ -1247,7 +1247,7 @@
 
 /* Document slide two, composed with the supplied editorial reference. */
 .lamid-home .home-objective-section {
-  background: #f7f6f2;
+  background: light-dark(#f7f6f2, #1a2029);
   padding-block: 100px;
 }
 .lamid-home .home-objective-heading {
@@ -1280,9 +1280,9 @@
 .lamid-home .home-objective-card {
   min-height: 270px;
   padding: 28px;
-  border: 1px solid #dcded8;
+  border: 1px solid light-dark(#dcded8, #536474);
   border-radius: 4px;
-  background: #faf9f6;
+  background: light-dark(#faf9f6, #1a2029);
 }
 .lamid-home .home-objective-card-top {
   display: flex;
@@ -1291,7 +1291,7 @@
 }
 .lamid-home .home-objective-card-top span {
   font-size: 11px;
-  color: #53616a;
+  color: light-dark(#53616a, #bac8d2);
 }
 .lamid-home .home-objective-card h3 {
   margin: 42px 0 12px;
@@ -1366,7 +1366,7 @@
   background: transparent;
 }
 .canonical-copy .product-workspace-example .home-workspace-preview p {
-  color: #53616a;
+  color: light-dark(#53616a, #bac8d2);
   opacity: 1;
 }
 
@@ -1388,7 +1388,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   border: 1px solid var(--home-line);
   border-radius: 5px;
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
 }
 .lamid-home .home-cycle li + li {
   border-left: 1px solid var(--home-line);
@@ -1441,7 +1441,7 @@
 }
 .lamid-home .home-context-selector button {
   padding: 12px 22px;
-  border: 1px solid #c5cec7;
+  border: 1px solid light-dark(#c5cec7, #536474);
   border-radius: 4px;
   color: var(--home-ink);
   background: transparent;
@@ -1459,8 +1459,8 @@
   grid-template-columns: 1fr 1.5fr;
   gap: 32px;
   padding: 32px;
-  background: #fff;
-  border: 1px solid #d4dcd3;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#d4dcd3, #536474);
   border-radius: 5px;
 }
 .lamid-home .home-context-example h3,
@@ -1485,7 +1485,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px;
-  background: #f7f8f5;
+  background: light-dark(#f7f8f5, #1a2029);
   font-size: 14px;
 }
 .lamid-home .home-context-example li span {
@@ -1624,9 +1624,9 @@
   position: relative;
   isolation: isolate;
   padding: 38px;
-  border: 1px solid #deded5;
+  border: 1px solid light-dark(#deded5, #536474);
   border-radius: 14px;
-  background: #f7f6f0;
+  background: light-dark(#f7f6f0, #1a2029);
   box-shadow: 0 16px 40px -28px #13253455;
 }
 .lamid-home .home-permissions-card::before {
@@ -1634,9 +1634,9 @@
   position: absolute;
   z-index: -1;
   inset: 12px 12px -9px;
-  border: 1px solid #e2e3dc;
+  border: 1px solid light-dark(#e2e3dc, #536474);
   border-radius: 14px;
-  background: #eceee7;
+  background: light-dark(#eceee7, #27333e);
 }
 .lamid-home .home-permissions-card::after {
   content: '';
@@ -1644,7 +1644,7 @@
   z-index: -1;
   inset: 0;
   border-radius: inherit;
-  background: #f7f6f0;
+  background: light-dark(#f7f6f0, #1a2029);
 }
 .lamid-home .home-permissions-heading {
   display: grid;
@@ -1658,15 +1658,15 @@
   place-items: center;
   width: 54px;
   height: 54px;
-  border: 1px solid #cdd6ce;
+  border: 1px solid light-dark(#cdd6ce, #536474);
   border-radius: 50%;
-  color: #35594d;
-  background: #e8ede5;
+  color: light-dark(#35594d, #bac8d2);
+  background: light-dark(#e8ede5, #27333e);
 }
 .lamid-home .home-permissions-heading .home-eyebrow {
   font-size: 10px;
   letter-spacing: 0.18em;
-  color: #486052;
+  color: light-dark(#486052, #bac8d2);
 }
 .lamid-home .home-permissions-heading h2 {
   margin: 9px 0 0;
@@ -1675,16 +1675,16 @@
     Georgia,
     serif;
   letter-spacing: -0.025em;
-  color: #182e36;
+  color: light-dark(#182e36, #eef1f5);
 }
 .lamid-home .home-permissions-heading h2 em {
-  color: #476454;
+  color: light-dark(#476454, #bac8d2);
 }
 .lamid-home .home-permissions-heading > p {
   font-size: 14px;
   line-height: 1.7;
   padding-left: 24px;
-  border-left: 1px solid #d6dbd1;
+  border-left: 1px solid light-dark(#d6dbd1, #536474);
 }
 .lamid-home .home-permissions-lanes {
   display: grid;
@@ -1696,32 +1696,32 @@
 }
 .lamid-home .home-permissions-lanes li {
   padding: 24px;
-  border: 1px solid #d1dbd2;
+  border: 1px solid light-dark(#d1dbd2, #536474);
   border-top: 3px solid #597b68;
   border-radius: 7px;
-  background: #eaf0e8;
+  background: light-dark(#eaf0e8, #27333e);
 }
 .lamid-home .home-permissions-lanes li:nth-child(2) {
-  background: #eaf0f3;
-  border-color: #d0dce2;
+  background: light-dark(#eaf0f3, #27333e);
+  border-color: light-dark(#d0dce2, #536474);
   border-top-color: #5b798c;
 }
 .lamid-home .home-permissions-lanes li:nth-child(3) {
-  background: #f1ece3;
-  border-color: #e0d7c8;
+  background: light-dark(#f1ece3, #27333e);
+  border-color: light-dark(#e0d7c8, #536474);
   border-top-color: #947850;
 }
 .lamid-home .home-permissions-lane-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #425c4d;
+  color: light-dark(#425c4d, #bac8d2);
 }
 .lamid-home .home-permissions-lanes li:nth-child(2) .home-permissions-lane-top {
-  color: #435f73;
+  color: light-dark(#435f73, #bac8d2);
 }
 .lamid-home .home-permissions-lanes li:nth-child(3) .home-permissions-lane-top {
-  color: #725d3e;
+  color: light-dark(#725d3e, #bac8d2);
 }
 .lamid-home .home-permissions-lane-top span {
   font-size: 10px;
@@ -1734,7 +1734,7 @@
   letter-spacing: -0.02em;
 }
 .lamid-home .home-permissions-lanes p {
-  color: #44545c;
+  color: light-dark(#44545c, #bac8d2);
   font-size: 14px;
   line-height: 1.75;
 }
@@ -1779,7 +1779,7 @@
 /* Trace the expansion path once as it enters the viewport. */
 .lamid-home .home-expansion-path li {
   --path-delay: 0ms;
-  border-top-color: #d8dfdb;
+  border-top-color: light-dark(#d8dfdb, #536474);
 }
 .lamid-home .home-expansion-path li:nth-child(2) {
   --path-delay: 450ms;
@@ -1808,7 +1808,7 @@
 }
 .lamid-home .home-expansion-path li::before {
   z-index: 1;
-  background: #d8dfdb;
+  background: light-dark(#d8dfdb, #27333e);
   transition:
     background-color 180ms ease var(--path-delay),
     box-shadow 180ms ease var(--path-delay);
@@ -1822,7 +1822,7 @@
 }
 @media (max-width: 800px) {
   .lamid-home .home-expansion-path li {
-    border-left-color: #d8dfdb;
+    border-left-color: light-dark(#d8dfdb, #536474);
   }
   .lamid-home .home-expansion-path li:not(:last-child)::after {
     top: 9px;
@@ -1872,8 +1872,8 @@
   border-radius: 4px;
 }
 .lamid-home .home-context-selector button[aria-pressed='true'] {
-  color: #18372b;
-  background: #dfeadf;
+  color: light-dark(#18372b, #eef1f5);
+  background: light-dark(#dfeadf, #27333e);
   border-color: #708d79;
   box-shadow:
     inset 0 -2px 0 #597b68,
@@ -1885,16 +1885,16 @@
     border-color 260ms ease;
 }
 .lamid-home .home-context-example[data-context='Founder'] {
-  background: #faf7f1;
-  border-color: #ded4c3;
+  background: light-dark(#faf7f1, #1a2029);
+  border-color: light-dark(#ded4c3, #536474);
 }
 .lamid-home .home-context-example[data-context='Team'] {
-  background: #f1f6f2;
-  border-color: #cdddcf;
+  background: light-dark(#f1f6f2, #27333e);
+  border-color: light-dark(#cdddcf, #536474);
 }
 .lamid-home .home-context-example[data-context='Enterprise'] {
-  background: #f0f4f8;
-  border-color: #cbd7e2;
+  background: light-dark(#f0f4f8, #27333e);
+  border-color: light-dark(#cbd7e2, #536474);
 }
 .lamid-home .home-expansion-path strong {
   transition: color 220ms ease;
@@ -1902,8 +1902,8 @@
 @media (hover: hover) and (pointer: fine) {
   .lamid-home :is(.home-objective-card, .home-outcome-grid > li):hover {
     transform: translateY(-4px);
-    background: #f2f5ef;
-    border-color: #bfccbf;
+    background: light-dark(#f2f5ef, #27333e);
+    border-color: light-dark(#bfccbf, #536474);
     box-shadow: 0 12px 25px -20px #13253466;
   }
   .lamid-home .home-permissions-lanes > li:hover {
@@ -1911,43 +1911,43 @@
     box-shadow: 0 10px 22px -17px #13253466;
   }
   .lamid-home .home-permissions-lanes > li:nth-child(1):hover {
-    background: #e0eadd;
+    background: light-dark(#e0eadd, #27333e);
   }
   .lamid-home .home-permissions-lanes > li:nth-child(2):hover {
-    background: #dfe9ef;
+    background: light-dark(#dfe9ef, #27333e);
   }
   .lamid-home .home-permissions-lanes > li:nth-child(3):hover {
-    background: #eae1d3;
+    background: light-dark(#eae1d3, #27333e);
   }
   .lamid-home .home-context-example li:hover {
     transform: translateY(-2px);
-    background: #e4ece2;
+    background: light-dark(#e4ece2, #27333e);
   }
   .lamid-home .home-cycle a:hover {
     transform: translateY(-3px);
-    background: #edf3ec;
+    background: light-dark(#edf3ec, #27333e);
     box-shadow: 0 9px 20px -16px #13253466;
   }
   .lamid-home .home-context-selector button:hover:not([aria-pressed='true']) {
     transform: translateY(-2px);
-    background: #e9eee6;
-    border-color: #9bad9c;
+    background: light-dark(#e9eee6, #27333e);
+    border-color: light-dark(#9bad9c, #536474);
   }
   .lamid-home .canonical-ctas .button:hover {
     transform: translateY(-2px);
     box-shadow: 0 7px 16px -12px #13253480;
   }
   .lamid-home .home-expansion-path li:hover {
-    background: #eff4ed;
+    background: light-dark(#eff4ed, #27333e);
     border-radius: 0 0 6px 6px;
   }
   .lamid-home .home-expansion-path li:hover strong {
-    color: #3c654c;
+    color: light-dark(#3c654c, #bac8d2);
   }
 }
 .lamid-home :is(.home-cycle a, .home-context-selector button):focus-visible {
-  background: #e2eddf;
-  color: #18372b;
+  background: light-dark(#e2eddf, #27333e);
+  color: light-dark(#18372b, #eef1f5);
 }
 .lamid-home :is(.home-cycle a, .home-context-selector button, .canonical-ctas .button):active {
   transform: translateY(1px);
@@ -2082,7 +2082,7 @@
 .lamid-home .home-signal-steps > li {
   padding: 22px 18px;
   border-radius: 6px;
-  background: #f8f9f6;
+  background: light-dark(#f8f9f6, #1a2029);
 }
 .lamid-home .home-signal-example ol > li {
   padding: 16px 14px;
@@ -2091,13 +2091,13 @@
 }
 .lamid-home .home-signal-steps > li.is-scroll-active,
 .lamid-home .home-signal-example ol > li.is-scroll-active {
-  background: #eaf1e8;
-  border-color: #c3d1c0;
+  background: light-dark(#eaf1e8, #27333e);
+  border-color: light-dark(#c3d1c0, #536474);
   box-shadow: 0 5px 14px -12px #29473255;
 }
 .lamid-home .home-signal-example.is-scroll-active {
-  background: #f1f5ee;
-  border-color: #c5d2c1;
+  background: light-dark(#f1f5ee, #27333e);
+  border-color: light-dark(#c5d2c1, #536474);
   box-shadow: 0 14px 32px -26px #29473266;
 }
 .lamid-home .home-signal-example:focus-within {
@@ -2107,13 +2107,13 @@
   .lamid-home .home-signal-steps > li:hover,
   .lamid-home .home-signal-example ol > li:hover {
     translate: 0 -4px;
-    background: #e1ebdd;
-    border-color: #a6b99e;
+    background: light-dark(#e1ebdd, #27333e);
+    border-color: light-dark(#a6b99e, #536474);
     box-shadow: 0 12px 22px -18px #29473266;
   }
   .lamid-home .home-signal-example:hover {
     translate: 0 -2px;
-    border-color: #a6b99e;
+    border-color: light-dark(#a6b99e, #536474);
     box-shadow: 0 18px 35px -28px #29473277;
   }
 }
@@ -2130,15 +2130,15 @@
 .lamid-home .home-intelligence-section .home-signal-steps > li,
 .lamid-home .home-intelligence-section .home-signal-example,
 .lamid-home .home-intelligence-section .home-signal-example ol > li {
-  background-color: #fff;
+  background-color: light-dark(#fff, #1a2029);
 }
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-intelligence-section .home-signal-steps > li:hover,
   .lamid-home .home-intelligence-section .home-signal-example ol > li:hover {
-    background-color: #eaf1e8;
+    background-color: light-dark(#eaf1e8, #27333e);
   }
   .lamid-home .home-intelligence-section .home-signal-example:hover {
-    background-color: #f1f5ee;
+    background-color: light-dark(#f1f5ee, #27333e);
   }
 }
 
@@ -2147,7 +2147,7 @@
 .lamid-home .home-signal-example ol > li strong {
   position: relative;
   isolation: isolate;
-  color: #294a3a;
+  color: light-dark(#294a3a, #eef1f5);
 }
 .lamid-home .home-signal-steps > li strong::before,
 .lamid-home .home-signal-example ol > li strong::before {
@@ -2155,7 +2155,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: #edf2e9;
+  background: light-dark(#edf2e9, #27333e);
   transition: background-color 220ms ease;
 }
 .lamid-home .home-signal-steps > li strong {
@@ -2190,7 +2190,7 @@
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-signal-steps > li:hover strong::before,
   .lamid-home .home-signal-example ol > li:hover strong::before {
-    background: #d7e5cf;
+    background: light-dark(#d7e5cf, #27333e);
   }
 }
 @media (max-width: 480px) {
@@ -2230,29 +2230,29 @@
 .lamid-home .home-illustrated-outcomes > li {
   padding: 0;
   overflow: hidden;
-  --outcome-tint: #eaf0e5;
+  --outcome-tint: light-dark(#eaf0e5, #27333e);
   --outcome-stroke: #789078;
-  --outcome-ink: #355039;
+  --outcome-ink: light-dark(#355039, #eef1f5);
 }
 .lamid-home .home-illustrated-outcomes > li:nth-child(2) {
-  --outcome-tint: #f2eadd;
+  --outcome-tint: light-dark(#f2eadd, #27333e);
   --outcome-stroke: #a18b68;
-  --outcome-ink: #665235;
+  --outcome-ink: light-dark(#665235, #bac8d2);
 }
 .lamid-home .home-illustrated-outcomes > li:nth-child(3) {
-  --outcome-tint: #e6edf3;
+  --outcome-tint: light-dark(#e6edf3, #27333e);
   --outcome-stroke: #7a91a3;
-  --outcome-ink: #3e576a;
+  --outcome-ink: light-dark(#3e576a, #bac8d2);
 }
 .lamid-home .home-illustrated-outcomes > li:nth-child(4) {
-  --outcome-tint: #eeebf3;
+  --outcome-tint: light-dark(#eeebf3, #27333e);
   --outcome-stroke: #92849d;
-  --outcome-ink: #594865;
+  --outcome-ink: light-dark(#594865, #bac8d2);
 }
 .lamid-home .home-outcome-art {
   padding: 22px 24px 0;
-  border-bottom: 1px solid #e7e8e2;
-  background: linear-gradient(145deg, #fafaf7, #fff);
+  border-bottom: 1px solid light-dark(#e7e8e2, #536474);
+  background: linear-gradient(145deg, light-dark(#fafaf7, #1a2029), light-dark(#fff, #1a2029));
 }
 .lamid-home .home-outcome-art .home-eyebrow {
   font-size: 9px;
@@ -2275,7 +2275,7 @@
   font-size: 10px;
 }
 .lamid-home .outcome-paper {
-  fill: #fff;
+  fill: light-dark(#fff, #1a2029);
   stroke: var(--outcome-stroke);
   stroke-width: 1;
 }
@@ -2314,7 +2314,7 @@
 .lamid-home .home-outcome-body .home-outcome-perspectives {
   margin-top: 22px;
   padding-top: 16px;
-  border-top: 1px solid #e0e5dc;
+  border-top: 1px solid light-dark(#e0e5dc, #536474);
   font-size: 11px;
   color: var(--outcome-ink);
 }
@@ -2349,10 +2349,10 @@
   min-height: 108px;
   padding: 24px;
   text-align: left;
-  background: #fff;
-  border: 1px solid #dce1d7;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#dce1d7, #536474);
   border-radius: 8px;
-  color: #243b30;
+  color: light-dark(#243b30, #eef1f5);
   cursor: pointer;
   font:
     400 25px/1.2 'Instrument Serif',
@@ -2367,44 +2367,44 @@
   font:
     11px 'DM Sans',
     sans-serif;
-  color: #53616a;
+  color: light-dark(#53616a, #bac8d2);
 }
 .lamid-home .home-outcome-choices button[aria-pressed='true'] {
-  background: #eaf0e5;
+  background: light-dark(#eaf0e5, #27333e);
   border-color: #849b79;
   box-shadow: inset 3px 0 #597b68;
 }
 .lamid-home .home-outcome-display {
   display: grid;
-  border: 1px solid #dce1d7;
+  border: 1px solid light-dark(#dce1d7, #536474);
   border-radius: 10px;
   overflow: hidden;
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
 }
 .lamid-home .home-outcome-pane {
   grid-area: 1 / 1;
   min-width: 0;
-  --outcome-tint: #eaf0e5;
+  --outcome-tint: light-dark(#eaf0e5, #27333e);
   --outcome-stroke: #789078;
-  --outcome-ink: #355039;
+  --outcome-ink: light-dark(#355039, #eef1f5);
 }
 .lamid-home .home-outcome-pane[aria-hidden='true'] {
   pointer-events: none;
 }
 .lamid-home .outcome-tone-1 {
-  --outcome-tint: #f2eadd;
+  --outcome-tint: light-dark(#f2eadd, #27333e);
   --outcome-stroke: #a18b68;
-  --outcome-ink: #665235;
+  --outcome-ink: light-dark(#665235, #bac8d2);
 }
 .lamid-home .outcome-tone-2 {
-  --outcome-tint: #e6edf3;
+  --outcome-tint: light-dark(#e6edf3, #27333e);
   --outcome-stroke: #7a91a3;
-  --outcome-ink: #3e576a;
+  --outcome-ink: light-dark(#3e576a, #bac8d2);
 }
 .lamid-home .outcome-tone-3 {
-  --outcome-tint: #eeebf3;
+  --outcome-tint: light-dark(#eeebf3, #27333e);
   --outcome-stroke: #92849d;
-  --outcome-ink: #594865;
+  --outcome-ink: light-dark(#594865, #bac8d2);
 }
 .lamid-home .home-outcome-pane .home-outcome-body {
   display: grid;
@@ -2413,8 +2413,8 @@
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-outcome-choices button:hover {
     transform: translateY(-2px);
-    background: #eff3eb;
-    border-color: #a3b59a;
+    background: light-dark(#eff3eb, #27333e);
+    border-color: light-dark(#a3b59a, #536474);
   }
 }
 @media (max-width: 800px) {
@@ -2449,12 +2449,12 @@
   display: flex;
   align-items: center;
   padding: 22px 24px;
-  border: 1px solid #dce1d7;
+  border: 1px solid light-dark(#dce1d7, #536474);
   border-radius: 8px;
-  background: #eef2e9;
+  background: light-dark(#eef2e9, #27333e);
 }
 .lamid-home .home-outcome-summary p {
-  color: #355039;
+  color: light-dark(#355039, #eef1f5);
   font-size: 15px;
   line-height: 1.7;
   text-wrap: pretty;
@@ -2467,12 +2467,12 @@
 
 /* Consistent blue controls, with an unboxed closing statement. */
 .lamid-home .home-outcome-choices button {
-  color: #183449;
-  border-color: #d4dfe8;
-  background: #fff;
+  color: light-dark(#183449, #eef1f5);
+  border-color: light-dark(#d4dfe8, #536474);
+  background: light-dark(#fff, #1a2029);
 }
 .lamid-home .home-outcome-choice-number {
-  color: #526b7d;
+  color: light-dark(#526b7d, #bac8d2);
 }
 .lamid-home .home-outcome-choices button[aria-pressed='true'] {
   color: #fff;
@@ -2490,13 +2490,13 @@
   box-shadow: none;
 }
 .lamid-home .home-outcome-summary p {
-  color: #183449;
+  color: light-dark(#183449, #eef1f5);
 }
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-outcome-choices button:hover:not([aria-pressed='true']) {
-    color: #183449;
-    background: #eaf2f8;
-    border-color: #9fb9ce;
+    color: light-dark(#183449, #eef1f5);
+    background: light-dark(#eaf2f8, #27333e);
+    border-color: light-dark(#9fb9ce, #536474);
   }
   .lamid-home .home-outcome-choices button[aria-pressed='true']:hover {
     color: #fff;
@@ -2507,15 +2507,15 @@
 
 /* Rhythm cards stay white until hovered. */
 .lamid-home .home-rhythm-section {
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
 }
 .lamid-home .home-rhythm-timeline > li {
   position: relative;
   padding: 28px 20px 24px;
-  border: 1px solid #d9e2e9;
-  border-top: 2px solid #a5bdcf;
+  border: 1px solid light-dark(#d9e2e9, #536474);
+  border-top: 2px solid light-dark(#a5bdcf, #536474);
   border-radius: 8px;
-  background: #fff;
+  background: light-dark(#fff, #1a2029);
   transition:
     transform 240ms ease,
     background-color 240ms ease,
@@ -2525,26 +2525,26 @@
 .lamid-home .home-rhythm-timeline .home-feature-number {
   left: 20px;
   text-align: center;
-  color: #526b7d;
-  background: #fff;
+  color: light-dark(#526b7d, #bac8d2);
+  background: light-dark(#fff, #1a2029);
   border-radius: 4px;
   transition:
     color 240ms ease,
     background-color 240ms ease;
 }
 .lamid-home .home-rhythm-timeline strong {
-  color: #183449;
+  color: light-dark(#183449, #eef1f5);
 }
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-rhythm-timeline > li:hover {
     transform: translateY(-4px);
-    background: #edf4fa;
-    border-color: #9fb9ce;
+    background: light-dark(#edf4fa, #27333e);
+    border-color: light-dark(#9fb9ce, #536474);
     box-shadow: 0 12px 26px -18px #18344955;
   }
   .lamid-home .home-rhythm-timeline > li:hover .home-feature-number {
-    background: #edf4fa;
-    color: #183449;
+    background: light-dark(#edf4fa, #27333e);
+    color: light-dark(#183449, #eef1f5);
   }
 }
 @media (max-width: 600px) {
@@ -2564,7 +2564,7 @@
 /* Supporting detail stays available without dominating the first read. */
 .lamid-home .home-disclosure {
   margin-top: 26px;
-  border-top: 1px solid #d7e1e8;
+  border-top: 1px solid light-dark(#d7e1e8, #536474);
   text-align: left;
 }
 .lamid-home .home-disclosure > summary {
@@ -2576,7 +2576,7 @@
   gap: 20px;
   min-height: 52px;
   padding: 15px 4px;
-  color: #183449;
+  color: light-dark(#183449, #eef1f5);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -2610,7 +2610,7 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .lamid-home .home-disclosure > summary:hover {
-    background-color: #edf4fa;
+    background-color: light-dark(#edf4fa, #27333e);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2633,8 +2633,8 @@
   margin: 36px auto 8px;
   padding: 32px;
   text-align: left;
-  background: #fff;
-  border: 1px solid #d4dcd3;
+  background: light-dark(#fff, #1a2029);
+  border: 1px solid light-dark(#d4dcd3, #536474);
   border-radius: 10px;
   box-shadow: 0 16px 40px -30px #18314055;
 }
@@ -2653,7 +2653,7 @@
 .lamid-home .home-companion-example .home-example-objective {
   margin-bottom: 12px;
   padding: 16px;
-  background: #f3f5f1;
+  background: light-dark(#f3f5f1, #27333e);
   border-radius: 8px 8px 0;
   color: var(--home-ink);
   font-size: 17px;

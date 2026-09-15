@@ -1,9 +1,10 @@
-import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Menu, Moon, Sun, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Brand } from '../ui/Brand';
 import { Cta } from '../ui/Cta';
 import { MotionSurface } from '../visuals/Motion';
+import { applyTheme, getStoredTheme } from '../lib/theme';
 
 type Entry = [string, string, string?];
 const menus: {
@@ -78,7 +79,8 @@ const menus: {
   },
   {
     title: 'Experts',
-    description: 'Bring the right human expertise into the work — discover, match, verify and engage.',
+    description:
+      'Bring the right human expertise into the work — discover, match, verify and engage.',
     groups: [
       {
         title: 'Expert support',
@@ -133,6 +135,29 @@ const menus: {
 ];
 
 export function PublicHeader() {
+  const [dark, setDark] = useState(
+    () =>
+      getStoredTheme() === 'dark' ||
+      (getStoredTheme() === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches),
+  );
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const sync = () =>
+      setDark(
+        document.documentElement.dataset.theme === 'dark' ||
+          (!document.documentElement.dataset.theme && media.matches),
+      );
+    const observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+    media.addEventListener('change', sync);
+    return () => {
+      observer.disconnect();
+      media.removeEventListener('change', sync);
+    };
+  }, []);
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState('');
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -314,6 +339,15 @@ export function PublicHeader() {
             </Link>
           </nav>
           <div className="header-actions">
+            <button
+              type="button"
+              className="theme-toggle icon-button"
+              aria-label={`Switch to ${dark ? 'light' : 'dark'} mode`}
+              title={`Switch to ${dark ? 'light' : 'dark'} mode`}
+              onClick={() => applyTheme(dark ? 'light' : 'dark')}
+            >
+              {dark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
+            </button>
             <Link to="/login" className="sign-in" onClick={navigate}>
               Sign in
             </Link>

@@ -1,0 +1,84 @@
+/* Shared feedback uses the element's text color so tinted and dark panels stay legible. */
+:root {
+  --card-highlight: light-dark(#f0eee8, #27333e);
+}
+:where(button, a, summary, input, select, textarea) {
+  transition:
+    color 160ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    translate 180ms ease;
+}
+:where(button, a, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+:where(input, textarea, select):focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 15%, transparent);
+}
+:where(button, summary, a.button):not(:disabled):not([aria-disabled='true']):active {
+  translate: 0 1px;
+}
+details > summary {
+  border-radius: 6px;
+}
+[data-scroll-feedback='true']:focus-within {
+  background-image: linear-gradient(
+    color-mix(in srgb, currentColor 10%, transparent),
+    color-mix(in srgb, currentColor 10%, transparent)
+  ) !important;
+}
+details[open] > summary {
+  background-image: linear-gradient(
+    color-mix(in srgb, currentColor 6%, transparent),
+    color-mix(in srgb, currentColor 6%, transparent)
+  );
+}
+[data-scroll-feedback='true'] {
+  transition:
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+/* Tint the existing surface; never replace its foreground or selected-state colors. */
+[data-scroll-feedback='true'][data-scroll-active='true']:not([aria-selected='true']):not(
+    [aria-current]
+  ):not([data-active='true']) {
+  background-image: linear-gradient(
+    color-mix(in srgb, currentColor 8%, transparent),
+    color-mix(in srgb, currentColor 8%, transparent)
+  ) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(button, summary):not(:disabled):not([aria-disabled='true']):hover {
+    box-shadow: inset 0 0 0 999px color-mix(in srgb, currentColor 5%, transparent);
+  }
+  /* Navigation owns its indicators; operating-cycle cards use surface feedback. */
+  :where(main, .modal)
+    a:not(.button):not(.brand):not(
+      :where(.section-index a, .home-section-nav a, .home-cycle a)
+    ):hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  [data-scroll-feedback='true']:hover,
+  [data-scroll-feedback='true']:focus-within {
+    background-image: linear-gradient(
+      color-mix(in srgb, currentColor 10%, transparent),
+      color-mix(in srgb, currentColor 10%, transparent)
+    ) !important;
+  }
+  .icon-button:not(:disabled):hover {
+    color: var(--ink);
+    background-color: var(--surface-alt);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a, summary, input, select, textarea),
+  [data-scroll-feedback='true'] {
+    transition: none !important;
+    translate: none !important;
+    animation: none !important;
+  }
+}

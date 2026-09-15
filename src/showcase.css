@@ -45,7 +45,6 @@
 .section-index a:hover,
 .section-index a[aria-current] {
   color: var(--page-accent, #0d1a2b);
-  border-color: var(--page-accent, #0d1a2b);
 }
 .section-index a:focus-visible {
   outline: 2px solid var(--page-accent, #0d1a2b);

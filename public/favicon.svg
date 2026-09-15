@@ -1,1 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="12" fill="#0D1A2B"/><circle cx="20" cy="20" r="11" fill="none" stroke="#C12129" stroke-width="2"/><path d="M20 9a11 11 0 0 0 0 22z" fill="#C12129"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>LAMID ONE monogram</title>
+  <defs>
+    <linearGradient id="backing" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1D3047"/>
+      <stop offset="1" stop-color="#09121E"/>
+    </linearGradient>
+    <linearGradient id="red" x1="0" y1="0" x2="1" y2="0.7">
+      <stop stop-color="#F15A60"/>
+      <stop offset="0.4" stop-color="#C12129"/>
+      <stop offset="1" stop-color="#8E1420"/>
+    </linearGradient>
+    <linearGradient id="white" x1="0" y1="0" x2="0.25" y2="1">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="0.48" stop-color="#F5F8FC"/>
+      <stop offset="1" stop-color="#A8B9CB"/>
+    </linearGradient>
+    <!-- Original LamidOne proportions, with small radii at each corner. -->
+    <path id="letter" d="M7 3.5h4.4q1 0 1 1v16.2q0 1 1 1h9.1q1 0 1 1v4.8q0 1-1 1H7q-1 0-1-1v-23q0-1 1-1Z"/>
+    <clipPath id="letter-clip"><use href="#letter"/></clipPath>
+  </defs>
+  <rect width="32" height="32" rx="5" fill="url(#backing)"/>
+  <!-- A shallow lower face gives depth without changing the silhouette's proportions. -->
+  <use href="#letter" transform="translate(.45 .75)" fill="#030911"/>
+  <use href="#letter" fill="url(#red)"/>
+  <g clip-path="url(#letter-clip)">
+    <path d="M12.4 21.7H25v8H7.8Z" fill="url(#white)"/>
+    <path d="m12.4 21.7-3.91 6.8" fill="none" stroke="#FFFFFF" stroke-opacity=".35" stroke-width=".35"/>
+  </g>
+  <use href="#letter" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width=".35"/>
+  <rect x="15.9" y="14.6" width="7.6" height="4.2" rx=".6" fill="url(#white)" opacity=".32"/>
+</svg>

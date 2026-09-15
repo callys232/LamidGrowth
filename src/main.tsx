@@ -10,6 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { applyTheme, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
+import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import './styles.css';
 import './readability.css';
 import './design-system.css';
@@ -20,6 +21,8 @@ import './canonical.css';
 import './cards.css';
 import './showcase.css';
 import './ui-refresh.css';
+import './theme.css';
+import './micro-interactions.css';
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -45,6 +48,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <MotionProvider>
         <BrowserRouter>
+          <InteractionFeedback />
           <App />
         </BrowserRouter>
       </MotionProvider>
