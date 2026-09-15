@@ -16,17 +16,24 @@ export function ContentPage({ children }: { children?: ReactNode }) {
     <>
       <PublicHeader />
       <main id="main" className="content-page" data-page-theme={pageTheme(pathname)}>
+        {children && (
+          <section id="working-controls" className="canonical-controls">
+            {children}
+          </section>
+        )}
         {page ? (
-          <CanonicalCopy path={pathname} />
+          children ? (
+            <details className="canonical-copy-disclosure">
+              <summary>Canonical page copy (development reference)</summary>
+              <CanonicalCopy path={pathname} embedded />
+            </details>
+          ) : (
+            <CanonicalCopy path={pathname} />
+          )
         ) : (
           <section className="section-wrap">
             <h1>Page not found</h1>
             <Cta to="/">Return home</Cta>
-          </section>
-        )}
-        {children && (
-          <section id="working-controls" className="canonical-controls">
-            {children}
           </section>
         )}
         {pathname === '/help' && <HelpSearchSlide />}
