@@ -29,8 +29,16 @@ export async function api<T>(
           },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  const data = await response.json();
+  let data: { error?: string } & Record<string, unknown>;
+  try {
+    data = await response.json();
+  } catch {
+    throw new ApiError(
+      'The server sent an unexpected response. Please try again.',
+      response.status,
+    );
+  }
   if (!response.ok)
     throw new ApiError(data.error || 'Unable to complete this request.', response.status);
-  return data;
+  return data as T;
 }

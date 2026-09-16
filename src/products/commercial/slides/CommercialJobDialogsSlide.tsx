@@ -27,10 +27,11 @@ export function CommercialJobDialogsSlide({
           }}
         />
       )}
-      {selected && (
+      {selected && options && (
         <JobDetail
           job={selected}
           owner={selected.client_user_id === state.user.id}
+          bidCost={options.bidCost}
           onClose={() => setSelected(null)}
           onSaved={() => setRevision((n) => n + 1)}
         />

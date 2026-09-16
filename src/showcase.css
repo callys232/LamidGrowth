@@ -135,9 +135,6 @@
   background: #fbfaf7;
   color: #0d1a2b;
 }
-.workspace-main .canonical-copy .editorial-section {
-  grid-template-columns: minmax(0, 1fr);
-}
 @media (max-width: 760px) {
   .section-index {
     padding-inline: 20px;

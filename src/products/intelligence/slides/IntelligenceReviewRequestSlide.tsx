@@ -55,7 +55,7 @@ export function IntelligenceReviewRequestSlide({
               question, and selected sources to {policy.provider} for this review.
             </label>
             <Button type="submit" disabled={busy}>
-              {busy ? 'Preparing review…' : 'Request AI review'}
+              {busy ? 'Preparing review…' : `Request AI review · ${policy.reviewCost} points`}
             </Button>
           </form>
         </section>

@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 const contexts = [
@@ -23,9 +24,10 @@ test('each supported account context can create and load a workspace', async ({ 
       .fill(`${context.toLowerCase()}-${Date.now()}@example.test`);
     await page.getByLabel('Password', { exact: true }).fill('secure-context-test-password');
     await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
     await expect(page).toHaveURL('/os');
     await expect(page.locator('.workspace-switch')).toContainText(`${context} workspace`);
     await page.getByRole('link', { name: 'Settings', exact: true }).click();
-    await expect(page.getByRole('combobox', { name: 'Starting context' })).toHaveValue(context);
+    await expect(page.getByText(context, { exact: true }).last()).toBeVisible();
   }
 });

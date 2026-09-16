@@ -1,7 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 import { paystackProvider } from '../src/app/payments.mjs';
 
 const PAYSTACK_SECRET = 'sk_test_overview_fixture';
@@ -26,7 +26,7 @@ before(async () => {
   });
   const paymentProvider = (name) =>
     name === 'paystack' ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl }) : null;
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     paymentProvider,

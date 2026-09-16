@@ -1,26 +1,15 @@
-import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
+import { Target, Layers3, ListChecks } from 'lucide-react';
+import { EngineDocumentPage } from '../../../../shared/content/engine/EngineDocumentPage';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
-import {
-  ProductCompanionHeroSlide,
-  StartWithIntentSlide1,
-  ContextBeforeAnswersSlide2,
-  FromUnderstandingToActionSlide3,
-  ContextYouControlSlide4,
-} from './slides';
 
-/** /product/companion — sections in reading order. */
+/** /product/companion — layout shared with the other 4 engine pages (see EngineDocumentPage). */
 export function ProductCompanionDocumentPage({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentPageLayout
-      page={content}
+    <EngineDocumentPage
+      content={content}
       embedded={embedded}
-      hero={<ProductCompanionHeroSlide embedded={embedded} />}
-    >
-      <StartWithIntentSlide1 embedded={embedded} />
-      <ContextBeforeAnswersSlide2 embedded={embedded} />
-      <FromUnderstandingToActionSlide3 embedded={embedded} />
-      <ContextYouControlSlide4 embedded={embedded} />
-    </DocumentPageLayout>
+      icons={[Target, Layers3, ListChecks]}
+    />
   );
 }

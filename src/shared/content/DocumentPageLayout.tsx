@@ -35,12 +35,6 @@ export function DocumentPageLayout({
       className={`canonical-copy ${embedded ? '' : 'showcase-copy'}`}
       data-source-page={page.page}
     >
-      {page.gates.length > 0 && (
-        <aside className="canonical-preview">
-          Document preview — the complete specified copy is shown below. It does not establish that
-          planned services, policies or certifications are available in this development build.
-        </aside>
-      )}
       {hero}
       {!embedded && !isProductPage && page.sections.length > 1 && (
         <SectionIndex sections={page.sections} active={active} onSelect={setActive} />

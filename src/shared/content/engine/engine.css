@@ -1,0 +1,197 @@
+/* Shared layout for the 5 product/engine pages. Scoped to .engine-page. Uses --midnight for the
+   dark bands; every accent color below reads from --page-accent, not a fixed brand color, since
+   each engine has its own individual theme (pageThemes.ts resolves /product/<engine> to its own
+   key; page-themes.css assigns each one a distinct --page-accent/--page-tint). This also means
+   .button-primary is deliberately left alone — the site-wide rule
+   `.content-page[data-page-theme] .button-primary { background: var(--page-accent) }` already
+   colors CTAs with the right per-engine color (an equivalent hand-written override was dead code
+   on the audience page for the same reason). */
+.engine-container {
+  width: min(1200px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.engine-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--page-accent, #c12129);
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.engine-hero {
+  padding: 84px 0 76px;
+  background: var(--midnight);
+  color: #fff;
+  text-align: center;
+}
+.engine-hero .engine-eyebrow {
+  color: #b7c3d6;
+}
+.engine-hero h1 {
+  max-width: 780px;
+  margin: 20px auto 18px;
+  font-family: var(--font-editorial);
+  font-size: clamp(36px, 4.6vw, 58px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+.engine-hero-description {
+  max-width: 620px;
+  margin: 0 auto 28px;
+  color: #c7cedb;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.engine-hero .canonical-ctas {
+  justify-content: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .engine-hero .engine-eyebrow,
+  .engine-hero h1,
+  .engine-hero-description,
+  .engine-hero .canonical-ctas {
+    animation: engine-fade-up 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  .engine-hero .engine-eyebrow {
+    animation-delay: 0s;
+  }
+  .engine-hero h1 {
+    animation-delay: 0.08s;
+  }
+  .engine-hero-description {
+    animation-delay: 0.16s;
+  }
+  .engine-hero .canonical-ctas {
+    animation-delay: 0.24s;
+  }
+}
+@keyframes engine-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Tools grid ────────────────────────────────────────────────────────── */
+.engine-tools {
+  padding: 76px 0;
+  background: var(--surface, #fff);
+}
+.engine-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.engine-tool-card {
+  position: relative;
+  padding: 30px;
+  border-radius: var(--radius-lg, 22px);
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #dedfdc);
+  overflow: hidden;
+  opacity: 0.65;
+  transform: translateY(8px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.22s,
+    border-color 0.18s;
+}
+/* Gentle emphasis while a card is in the read band — piggybacks on the site-wide
+   IntersectionObserver (InteractionFeedback) that already tags every <li> in <main> with
+   data-scroll-feedback/data-scroll-active. No extra JS needed here. */
+.engine-tool-card[data-scroll-active='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+.engine-tool-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--page-accent, #c12129);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.engine-tool-card:hover,
+.engine-tool-card:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 32px #0d1a2b16;
+  border-color: var(--page-accent, #c12129);
+}
+.engine-tool-card:hover::before,
+.engine-tool-card:focus-within::before {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+.engine-tool-card svg {
+  color: var(--page-accent, #c12129);
+  transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.engine-tool-card:hover svg,
+.engine-tool-card:focus-within svg {
+  transform: scale(1.12) rotate(-4deg);
+}
+.engine-tool-card h3 {
+  margin: 16px 0 8px;
+  font-family: var(--font-editorial);
+  font-size: 21px;
+}
+.engine-tool-card p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted, #5a5f66);
+}
+
+/* ── Closing band ──────────────────────────────────────────────────────── */
+.engine-closing {
+  padding: 84px 0;
+  background: var(--midnight);
+  color: #fff;
+  text-align: center;
+}
+.engine-closing h2 {
+  margin: 0 0 14px;
+  font-family: var(--font-editorial);
+  font-size: clamp(30px, 3.5vw, 46px);
+}
+.engine-closing p {
+  max-width: 540px;
+  margin: 0 auto 6px;
+  color: #c7cedb;
+  font-size: 16px;
+}
+.engine-closing .canonical-ctas {
+  justify-content: center;
+  margin-top: 22px;
+}
+
+@media (max-width: 900px) {
+  .engine-container {
+    width: calc(100% - 48px);
+  }
+  .engine-tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .engine-hero {
+    padding: 56px 0 52px;
+  }
+  .engine-tools,
+  .engine-closing {
+    padding: 56px 0;
+  }
+}

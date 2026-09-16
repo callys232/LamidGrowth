@@ -52,51 +52,51 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
   const { db, transaction, log } = store;
   const isAdmin = (req) => (ecosystemAdminEmails || []).includes((req.user.email || '').toLowerCase());
 
-  function jurisdictionRequiresLicense(jurisdiction, category) {
+  async function jurisdictionRequiresLicense(jurisdiction, category) {
     if (!jurisdiction || !category) return false;
-    const rule = db
+    const rule = await db
       .prepare('SELECT requires_license FROM jurisdiction_rules WHERE jurisdiction = ? AND category = ?')
       .get(jurisdiction, category);
     return Boolean(rule && rule.requires_license);
   }
 
-  function caseFor(id, userId) {
-    const row = db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(id);
+  async function caseFor(id, userId) {
+    const row = await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(id);
     if (!row) fail('Scoping case not found.', 404);
     if (row.created_by !== userId) fail('You do not own this scoping case.', 403);
     return row;
   }
 
-  app.post('/api/scoping-cases', (req, res) => {
+  app.post('/api/scoping-cases', async (req, res) => {
     const input = createSchema.parse(req.body);
     const id = randomUUID();
     const now = new Date().toISOString();
     const riskBand = computeRiskBand({ category: null, objective: input.objective, problem_statement: input.problemStatement });
-    transaction(() => {
-      db.prepare(
+    await transaction(async () => {
+      await db.prepare(
         `INSERT INTO scoping_cases
          (id, workspace_id, created_by, status, objective, problem_statement, risk_band, created_at, updated_at)
          VALUES (?, ?, ?, 'draft', ?, ?, ?, ?, ?)`,
       ).run(id, req.workspace.id, req.user.id, input.objective, input.problemStatement, riskBand, now, now);
-      log(req.workspace.id, req.user.name, 'Scoping case started', id, input.objective.slice(0, 80));
+      await log(req.workspace.id, req.user.name, 'Scoping case started', id, input.objective.slice(0, 80));
     });
-    res.status(201).json(db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(id));
   });
 
-  app.get('/api/scoping-cases', (req, res) => {
+  app.get('/api/scoping-cases', async (req, res) => {
     res.json(
-      db
+      await db
         .prepare('SELECT * FROM scoping_cases WHERE workspace_id = ? AND created_by = ? ORDER BY created_at DESC')
         .all(req.workspace.id, req.user.id),
     );
   });
 
-  app.get('/api/scoping-cases/:id', (req, res) => {
-    res.json(caseFor(req.params.id, req.user.id));
+  app.get('/api/scoping-cases/:id', async (req, res) => {
+    res.json(await caseFor(req.params.id, req.user.id));
   });
 
-  app.patch('/api/scoping-cases/:id', (req, res) => {
-    const existing = caseFor(req.params.id, req.user.id);
+  app.patch('/api/scoping-cases/:id', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
     if (existing.status === 'published') return res.status(400).json({ error: 'A published scoping case cannot be edited.' });
     const input = updateSchema.parse(req.body);
     const merged = {
@@ -113,11 +113,11 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
       timeline_context: input.timelineContext ?? existing.timeline_context,
       jurisdiction: input.jurisdiction !== undefined ? input.jurisdiction : existing.jurisdiction,
     };
-    const riskBand = computeRiskBand(merged, jurisdictionRequiresLicense(merged.jurisdiction, merged.category));
+    const riskBand = computeRiskBand(merged, await jurisdictionRequiresLicense(merged.jurisdiction, merged.category));
     const status = existing.status === 'draft' ? 'user_review' : existing.status;
     const now = new Date().toISOString();
-    transaction(() => {
-      db.prepare(
+    await transaction(async () => {
+      await db.prepare(
         `UPDATE scoping_cases SET objective = ?, problem_statement = ?, desired_outcome = ?, in_scope = ?, out_of_scope = ?,
          deliverables = ?, acceptance_criteria = ?, assumptions = ?, category = ?, budget_context = ?, timeline_context = ?,
          jurisdiction = ?, risk_band = ?, status = ?, updated_at = ? WHERE id = ?`,
@@ -140,14 +140,14 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         req.params.id,
       );
     });
-    res.json(db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(req.params.id));
+    res.json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(req.params.id));
   });
 
   // Deterministic, evidence-based suggestions only — consistent with this codebase's estimator
   // philosophy (src/app/estimator.mjs): never fabricate a plausible-looking figure or paragraph
   // with no basis. Suggestions are returned for the user to accept/edit, never silently applied.
-  app.post('/api/scoping-cases/:id/suggest', (req, res) => {
-    const existing = caseFor(req.params.id, req.user.id);
+  app.post('/api/scoping-cases/:id/suggest', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
     const suggestions = {};
     if (!existing.desired_outcome) {
       suggestions.desiredOutcome = `A resolved version of: "${existing.objective}"`;
@@ -159,7 +159,7 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
       suggestions.acceptanceCriteria = 'The deliverable is reviewed and explicitly accepted by you before any payment is released.';
     }
     if (existing.category) {
-      const sample = db
+      const sample = await db
         .prepare('SELECT budget_min, budget_max FROM job_posts WHERE category = ?')
         .all(existing.category);
       if (sample.length >= 3) {
@@ -170,35 +170,35 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     res.json({ suggestions, riskBand: existing.risk_band });
   });
 
-  app.patch('/api/scoping-cases/:id/publish', (req, res) => {
-    const existing = caseFor(req.params.id, req.user.id);
+  app.patch('/api/scoping-cases/:id/publish', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
     if (existing.status === 'published') return res.status(400).json({ error: 'This scoping case is already published.' });
     if (existing.risk_band === 'red' && !req.body?.confirmed)
       return res.status(400).json({ error: 'This scope was flagged for qualified review. Confirm explicitly before publishing, or request expert review first.' });
     const input = publishSchema.parse(req.body);
-    const job = db.prepare('SELECT id FROM job_posts WHERE id = ? AND client_user_id = ?').get(input.publishedJobId, req.user.id);
+    const job = await db.prepare('SELECT id FROM job_posts WHERE id = ? AND client_user_id = ?').get(input.publishedJobId, req.user.id);
     if (!job) return res.status(400).json({ error: 'That job post was not found or was not created by you.' });
-    transaction(() => {
-      db.prepare("UPDATE scoping_cases SET status = 'published', published_job_id = ?, updated_at = ? WHERE id = ?").run(
+    await transaction(async () => {
+      await db.prepare("UPDATE scoping_cases SET status = 'published', published_job_id = ?, updated_at = ? WHERE id = ?").run(
         input.publishedJobId,
         new Date().toISOString(),
         req.params.id,
       );
-      log(req.workspace.id, req.user.name, 'Scoping case published', req.params.id, input.publishedJobId);
+      await log(req.workspace.id, req.user.name, 'Scoping case published', req.params.id, input.publishedJobId);
     });
-    res.json(db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(req.params.id));
+    res.json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(req.params.id));
   });
 
   // Amber/Red cases can request qualified human review instead of publishing straight through —
   // a real SLA-tracked queue, not just a redirect into generic talent matching.
-  app.post('/api/scoping-cases/:id/request-review', (req, res) => {
-    const existing = caseFor(req.params.id, req.user.id);
+  app.post('/api/scoping-cases/:id/request-review', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
     if (existing.risk_band === 'green') return res.status(400).json({ error: 'This scope was not flagged for review.' });
-    if (db.prepare('SELECT 1 FROM review_queue_entries WHERE scoping_case_id = ?').get(existing.id))
+    if (await db.prepare('SELECT 1 FROM review_queue_entries WHERE scoping_case_id = ?').get(existing.id))
       return res.status(400).json({ error: 'Review has already been requested for this scoping case.' });
     const id = randomUUID();
-    transaction(() => {
-      db.prepare('INSERT INTO review_queue_entries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      await db.prepare('INSERT INTO review_queue_entries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
         id,
         existing.id,
         existing.risk_band,
@@ -209,23 +209,23 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         null,
         new Date().toISOString(),
       );
-      log(req.workspace.id, req.user.name, 'Expert review requested', id, existing.objective.slice(0, 80));
+      await log(req.workspace.id, req.user.name, 'Expert review requested', id, existing.objective.slice(0, 80));
     });
-    res.status(201).json(db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(id));
   });
 
-  app.get('/api/scoping-cases/:id/review', (req, res) => {
-    caseFor(req.params.id, req.user.id);
-    res.json(db.prepare('SELECT * FROM review_queue_entries WHERE scoping_case_id = ?').get(req.params.id) ?? null);
+  app.get('/api/scoping-cases/:id/review', async (req, res) => {
+    await caseFor(req.params.id, req.user.id);
+    res.json((await db.prepare('SELECT * FROM review_queue_entries WHERE scoping_case_id = ?').get(req.params.id)) ?? null);
   });
 
   // Any qualified expert can see and claim pending review-queue work — this is the async queue
   // the gap-table asked for, deliberately kept simple (no SLA timers yet, see plan notes).
-  app.get('/api/review-queue', (req, res) => {
-    if (!db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id))
+  app.get('/api/review-queue', async (req, res) => {
+    if (!(await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id)))
       return res.status(403).json({ error: 'Only registered experts can view the review queue.' });
     res.json(
-      db
+      await db
         .prepare(
           `SELECT r.*, s.objective, s.category, s.jurisdiction FROM review_queue_entries r
            JOIN scoping_cases s ON s.id = r.scoping_case_id
@@ -235,45 +235,45 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     );
   });
 
-  app.post('/api/review-queue/:id/claim', (req, res) => {
-    if (!db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id))
+  app.post('/api/review-queue/:id/claim', async (req, res) => {
+    if (!(await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id)))
       return res.status(403).json({ error: 'Only registered experts can claim review queue entries.' });
-    const entry = db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(req.params.id);
+    const entry = await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(req.params.id);
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
     if (entry.status !== 'pending') return res.status(400).json({ error: 'This entry has already been claimed.' });
-    db.prepare("UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ? WHERE id = ?").run(
+    await db.prepare("UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ? WHERE id = ?").run(
       req.user.id,
       new Date().toISOString(),
       entry.id,
     );
-    res.json(db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
+    res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
   });
 
-  app.post('/api/review-queue/:id/complete', (req, res) => {
-    const entry = db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(req.params.id);
+  app.post('/api/review-queue/:id/complete', async (req, res) => {
+    const entry = await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(req.params.id);
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
     if (entry.claimed_by !== req.user.id) return res.status(403).json({ error: 'You have not claimed this entry.' });
     const input = claimSchema.parse(req.body ?? {});
-    db.prepare("UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ? WHERE id = ?").run(
+    await db.prepare("UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ? WHERE id = ?").run(
       input.notes,
       new Date().toISOString(),
       entry.id,
     );
-    res.json(db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
+    res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
   });
 
-  app.get('/api/admin/jurisdiction-rules', (req, res) => {
+  app.get('/api/admin/jurisdiction-rules', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can view jurisdiction rules.' });
-    res.json(db.prepare('SELECT * FROM jurisdiction_rules ORDER BY jurisdiction, category').all());
+    res.json(await db.prepare('SELECT * FROM jurisdiction_rules ORDER BY jurisdiction, category').all());
   });
 
-  app.post('/api/admin/jurisdiction-rules', (req, res) => {
+  app.post('/api/admin/jurisdiction-rules', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can manage jurisdiction rules.' });
     const input = jurisdictionRuleSchema.parse(req.body);
-    if (db.prepare('SELECT 1 FROM jurisdiction_rules WHERE jurisdiction = ? AND category = ?').get(input.jurisdiction, input.category))
+    if (await db.prepare('SELECT 1 FROM jurisdiction_rules WHERE jurisdiction = ? AND category = ?').get(input.jurisdiction, input.category))
       return res.status(400).json({ error: 'A rule for this jurisdiction and category already exists.' });
     const id = randomUUID();
-    db.prepare('INSERT INTO jurisdiction_rules VALUES (?, ?, ?, ?, ?, ?)').run(
+    await db.prepare('INSERT INTO jurisdiction_rules VALUES (?, ?, ?, ?, ?, ?)').run(
       id,
       input.jurisdiction,
       input.category,
@@ -281,12 +281,12 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
       input.notes,
       new Date().toISOString(),
     );
-    res.status(201).json(db.prepare('SELECT * FROM jurisdiction_rules WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM jurisdiction_rules WHERE id = ?').get(id));
   });
 
-  app.delete('/api/admin/jurisdiction-rules/:id', (req, res) => {
+  app.delete('/api/admin/jurisdiction-rules/:id', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can manage jurisdiction rules.' });
-    db.prepare('DELETE FROM jurisdiction_rules WHERE id = ?').run(req.params.id);
+    await db.prepare('DELETE FROM jurisdiction_rules WHERE id = ?').run(req.params.id);
     res.status(204).end();
   });
 }

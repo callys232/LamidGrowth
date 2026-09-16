@@ -1,6 +1,6 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 import { paystackProvider } from '../src/app/payments.mjs';
 
 const PAYSTACK_SECRET = 'sk_test_payout_fixture';
@@ -23,7 +23,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
     name === 'paystack' && configured
       ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl: fetchImpl || fetch })
       : null;
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     paymentProvider,
@@ -149,7 +149,7 @@ test('a mocked Paystack payout marks only the unpaid pm_fee line items paid, lea
 
   const ownerState = (await request('/state', undefined, owner, 'GET')).data;
   const sixtyFiveDaysAgo = Date.now() - 65 * 24 * 60 * 60 * 1000;
-  store.db
+  await store.db
     .prepare("UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'")
     .run(sixtyFiveDaysAgo, ownerState.workspace.id);
 

@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 test('workspace job posting charges once and knowledge can be edited and deleted', async ({
@@ -10,6 +11,7 @@ test('workspace job posting charges once and knowledge can be edited and deleted
   await page.getByLabel('Email address').fill(`commercial-knowledge-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-commercial-knowledge-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   await page.getByRole('link', { name: 'Commercial', exact: true }).click();
   await page.getByRole('button', { name: 'Post a job', exact: true }).click();
@@ -21,9 +23,9 @@ test('workspace job posting charges once and knowledge can be edited and deleted
   await page.getByLabel('Minimum budget').fill('50');
   await page.getByLabel('Maximum budget').fill('100');
   await page.getByLabel('Timeline', { exact: true }).fill('One week');
-  await page.getByRole('button', { name: 'Post job · 10 points' }).click();
+  await page.getByRole('button', { name: 'Post job · 40 points' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.getByText(/90 development points available/)).toBeVisible();
+  await expect(page.getByText(/60 development points available/)).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Evaluate the service offer' })).toBeVisible();
   await page.getByRole('link', { name: 'Knowledge', exact: true }).click();
   await page.getByRole('button', { name: 'Add knowledge' }).click();

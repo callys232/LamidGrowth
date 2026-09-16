@@ -19,18 +19,18 @@ const fail = (message, status) => {
 export function mountBooking(app, store) {
   const { db, transaction, log } = store;
 
-  function ownProfile(userId) {
-    const profile = db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(userId);
+  async function ownProfile(userId) {
+    const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(userId);
     if (!profile) fail('Create your expert profile before publishing availability.', 400);
     return profile;
   }
 
-  app.post('/api/booking/availability', (req, res) => {
-    const profile = ownProfile(req.user.id);
+  app.post('/api/booking/availability', async (req, res) => {
+    const profile = await ownProfile(req.user.id);
     const input = slotSchema.parse(req.body);
     if (new Date(input.endAt) <= new Date(input.startAt)) return res.status(400).json({ error: 'End time must be after start time.' });
     const id = randomUUID();
-    db.prepare('INSERT INTO availability_slots VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+    await db.prepare('INSERT INTO availability_slots VALUES (?, ?, ?, ?, ?, ?, ?)').run(
       id,
       profile.id,
       input.startAt,
@@ -39,45 +39,45 @@ export function mountBooking(app, store) {
       'open',
       new Date().toISOString(),
     );
-    res.status(201).json(db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(id));
   });
 
-  app.get('/api/booking/availability/mine', (req, res) => {
-    const profile = ownProfile(req.user.id);
-    res.json(db.prepare('SELECT * FROM availability_slots WHERE profile_id = ? ORDER BY start_at').all(profile.id));
+  app.get('/api/booking/availability/mine', async (req, res) => {
+    const profile = await ownProfile(req.user.id);
+    res.json(await db.prepare('SELECT * FROM availability_slots WHERE profile_id = ? ORDER BY start_at').all(profile.id));
   });
 
-  app.delete('/api/booking/availability/:id', (req, res) => {
-    const profile = ownProfile(req.user.id);
-    const slot = db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(req.params.id);
+  app.delete('/api/booking/availability/:id', async (req, res) => {
+    const profile = await ownProfile(req.user.id);
+    const slot = await db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(req.params.id);
     if (!slot || slot.profile_id !== profile.id) return res.status(404).json({ error: 'Slot not found.' });
     if (slot.status === 'booked') return res.status(400).json({ error: 'A booked slot cannot be removed. Cancel the booking first.' });
-    db.prepare('DELETE FROM availability_slots WHERE id = ?').run(req.params.id);
+    await db.prepare('DELETE FROM availability_slots WHERE id = ?').run(req.params.id);
     res.status(204).end();
   });
 
-  app.get('/api/booking/availability/:expertUserId', (req, res) => {
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.params.expertUserId);
+  app.get('/api/booking/availability/:expertUserId', async (req, res) => {
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.params.expertUserId);
     if (!profile) return res.json([]);
     res.json(
-      db
+      await db
         .prepare("SELECT * FROM availability_slots WHERE profile_id = ? AND status = 'open' AND start_at > ? ORDER BY start_at")
         .all(profile.id, new Date().toISOString()),
     );
   });
 
-  app.post('/api/booking/slots/:slotId/book', (req, res) => {
-    const slot = db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(req.params.slotId);
+  app.post('/api/booking/slots/:slotId/book', async (req, res) => {
+    const slot = await db.prepare('SELECT * FROM availability_slots WHERE id = ?').get(req.params.slotId);
     if (!slot) return res.status(404).json({ error: 'Slot not found.' });
     if (slot.status !== 'open') return res.status(400).json({ error: 'This slot is no longer available.' });
-    const expertProfile = db.prepare('SELECT user_id FROM talent_profiles WHERE id = ?').get(slot.profile_id);
+    const expertProfile = await db.prepare('SELECT user_id FROM talent_profiles WHERE id = ?').get(slot.profile_id);
     if (expertProfile.user_id === req.user.id) return res.status(400).json({ error: 'You cannot book your own availability.' });
     const input = bookSchema.parse(req.body ?? {});
     const id = randomUUID();
     const now = new Date().toISOString();
-    transaction(() => {
-      db.prepare("UPDATE availability_slots SET status = 'booked' WHERE id = ?").run(slot.id);
-      db.prepare('INSERT INTO bookings VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      await db.prepare("UPDATE availability_slots SET status = 'booked' WHERE id = ?").run(slot.id);
+      await db.prepare('INSERT INTO bookings VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
         id,
         slot.id,
         req.user.id,
@@ -87,14 +87,14 @@ export function mountBooking(app, store) {
         input.notes,
         now,
       );
-      log(req.workspace.id, req.user.name, 'Booked availability slot', id, slot.start_at);
+      await log(req.workspace.id, req.user.name, 'Booked availability slot', id, slot.start_at);
     });
-    res.status(201).json(db.prepare('SELECT * FROM bookings WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM bookings WHERE id = ?').get(id));
   });
 
-  app.get('/api/booking/mine', (req, res) => {
+  app.get('/api/booking/mine', async (req, res) => {
     res.json(
-      db
+      await db
         .prepare(
           `SELECT b.*, s.start_at, s.end_at, s.format FROM bookings b
            JOIN availability_slots s ON s.id = b.slot_id
@@ -104,16 +104,16 @@ export function mountBooking(app, store) {
     );
   });
 
-  app.patch('/api/booking/:id/cancel', (req, res) => {
-    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  app.patch('/api/booking/:id/cancel', async (req, res) => {
+    const booking = await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
     if (booking.client_user_id !== req.user.id && booking.expert_user_id !== req.user.id)
       return res.status(403).json({ error: 'You are not part of this booking.' });
     if (booking.status !== 'confirmed') return res.status(400).json({ error: 'This booking is not active.' });
-    transaction(() => {
-      db.prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ?").run(booking.id);
-      db.prepare("UPDATE availability_slots SET status = 'open' WHERE id = ?").run(booking.slot_id);
+    await transaction(async () => {
+      await db.prepare("UPDATE bookings SET status = 'cancelled' WHERE id = ?").run(booking.id);
+      await db.prepare("UPDATE availability_slots SET status = 'open' WHERE id = ?").run(booking.slot_id);
     });
-    res.json(db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id));
+    res.json(await db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id));
   });
 }

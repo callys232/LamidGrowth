@@ -14,12 +14,12 @@ const schema = z
   .strict();
 export function mountKnowledge(app, store) {
   const { db, transaction, insert, records, log } = store;
-  function validateObjective(workspace, id) {
+  async function validateObjective(workspace, id) {
     if (
       id &&
-      !db
+      !(await db
         .prepare("SELECT 1 FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective'")
-        .get(id, workspace)
+        .get(id, workspace))
     )
       throw Object.assign(new Error('Connected objective not found.'), { status: 404 });
   }
@@ -31,7 +31,7 @@ export function mountKnowledge(app, store) {
       observedAt: new Date().toISOString(),
     };
   }
-  app.get('/api/knowledge', (req, res) => {
+  app.get('/api/knowledge', async (req, res) => {
     const query = z
       .object({
         q: z.string().trim().max(200).default(''),
@@ -39,27 +39,27 @@ export function mountKnowledge(app, store) {
       })
       .strict()
       .parse(req.query);
-    const matching = records(req.workspace.id, 'knowledge').filter((item) =>
+    const matching = (await records(req.workspace.id, 'knowledge')).filter((item) =>
       `${item.title} ${item.content}`.toLowerCase().includes(query.q.toLowerCase()),
     );
     res.json({ items: matching.slice(query.offset, query.offset + 50), total: matching.length });
   });
-  app.post('/api/knowledge', requirePermission('work:write'), (req, res) => {
+  app.post('/api/knowledge', requirePermission('work:write'), async (req, res) => {
     const input = schema.parse(req.body);
-    const result = transaction(() => {
-      validateObjective(req.workspace.id, input.objectiveId);
-      const item = insert(req.workspace.id, 'knowledge', enrich(input, req.user.id));
-      log(req.workspace.id, req.user.name, 'Knowledge recorded', item.id, input.title);
+    const result = await transaction(async () => {
+      await validateObjective(req.workspace.id, input.objectiveId);
+      const item = await insert(req.workspace.id, 'knowledge', enrich(input, req.user.id));
+      await log(req.workspace.id, req.user.name, 'Knowledge recorded', item.id, input.title);
       return item;
     });
     res.status(201).json(result);
   });
-  app.patch('/api/knowledge/:id', requirePermission('work:write'), (req, res) => {
+  app.patch('/api/knowledge/:id', requirePermission('work:write'), async (req, res) => {
     const { version, ...input } = schema
       .extend({ version: z.number().int().positive() })
       .parse(req.body);
-    const result = transaction(() => {
-      const row = db
+    const result = await transaction(async () => {
+      const row = await db
         .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'knowledge'")
         .get(req.params.id, req.workspace.id);
       if (!row) throw Object.assign(new Error('Knowledge not found.'), { status: 404 });
@@ -68,13 +68,13 @@ export function mountKnowledge(app, store) {
           new Error('This knowledge changed. Reload its latest version before editing.'),
           { status: 409 },
         );
-      validateObjective(req.workspace.id, input.objectiveId);
+      await validateObjective(req.workspace.id, input.objectiveId);
       const updated = enrich(input, req.user.id);
-      db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
+      await db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
         JSON.stringify(updated),
         row.id,
       );
-      log(
+      await log(
         req.workspace.id,
         req.user.name,
         'Knowledge revised',
@@ -85,10 +85,10 @@ export function mountKnowledge(app, store) {
     });
     res.json(result);
   });
-  app.delete('/api/knowledge/:id', requirePermission('work:write'), (req, res) => {
+  app.delete('/api/knowledge/:id', requirePermission('work:write'), async (req, res) => {
     const { version } = z.object({ version: z.number().int().positive() }).strict().parse(req.body);
-    transaction(() => {
-      const row = db
+    await transaction(async () => {
+      const row = await db
         .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'knowledge'")
         .get(req.params.id, req.workspace.id);
       if (!row) throw Object.assign(new Error('Knowledge not found.'), { status: 404 });
@@ -96,12 +96,12 @@ export function mountKnowledge(app, store) {
         throw Object.assign(new Error('This knowledge changed. Reload before deleting.'), {
           status: 409,
         });
-      db.prepare('DELETE FROM records WHERE id = ?').run(row.id);
-      for (const review of records(req.workspace.id, 'ai_review')) {
+      await db.prepare('DELETE FROM records WHERE id = ?').run(row.id);
+      for (const review of await records(req.workspace.id, 'ai_review')) {
         if (review.sources.some((source) => source.id === row.id))
-          db.prepare('DELETE FROM records WHERE id = ?').run(review.id);
+          await db.prepare('DELETE FROM records WHERE id = ?').run(review.id);
       }
-      log(
+      await log(
         req.workspace.id,
         req.user.name,
         'Knowledge deleted',

@@ -1,0 +1,589 @@
+/* Companion's own visual identity — always dark + red, independent of the site's light/dark
+   toggle, whether it's reached as the floating widget or the standalone /os/companion/chat page.
+   Ported from a reference project's floating-assistant design; palette adapted to this app's
+   signature red instead of that reference's blue. */
+.companion-widget,
+.companion-chat {
+  --companion-bg: #0b0c10;
+  --companion-surface: rgba(255, 255, 255, 0.06);
+  --companion-surface-strong: rgba(255, 255, 255, 0.09);
+  --companion-border: rgba(255, 255, 255, 0.08);
+  --companion-border-strong: rgba(255, 255, 255, 0.16);
+  --companion-text: #f2f3f5;
+  --companion-text-muted: #9aa0a6;
+  --companion-text-faint: #6b7280;
+  --companion-gradient: linear-gradient(135deg, #d5232c, #9c161d);
+  --companion-accent: #e0454c;
+  --companion-accent-glow: rgba(193, 33, 41, 0.4);
+  --companion-danger: #f87171;
+}
+
+/* ── Trigger / minimized bubble ─────────────────────────────────────────── */
+.companion-widget-trigger,
+.companion-widget-minimized {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--companion-gradient);
+  color: #fff;
+  box-shadow: 0 4px 24px var(--companion-accent-glow);
+  cursor: pointer;
+}
+.companion-widget-trigger {
+  width: 56px;
+  height: 56px;
+}
+.companion-widget-minimized {
+  width: 48px;
+  height: 48px;
+  box-shadow: 0 4px 18px var(--companion-accent-glow);
+}
+
+/* ── Panel ───────────────────────────────────────────────────────────────── */
+.companion-widget-panel {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100vw - 2rem));
+  max-height: min(82vh, 780px);
+  border: 1px solid var(--companion-border);
+  border-radius: 20px;
+  background: var(--companion-bg);
+  color: var(--companion-text);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+.companion-widget-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--companion-gradient);
+  flex-shrink: 0;
+}
+.companion-widget-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  flex-shrink: 0;
+}
+.companion-widget-heading {
+  flex: 1;
+  min-width: 0;
+}
+.companion-widget-heading > p:first-child {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.companion-widget-subtext {
+  margin: 0.1rem 0 0;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.companion-widget-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+.companion-widget-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.companion-widget-actions button:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.companion-widget-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem;
+}
+.companion-widget-body .companion-chat-roster {
+  display: none;
+}
+
+/* ── Standalone /os/companion/chat page — same surface, not fixed-positioned ─────────────── */
+.companion-chat {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1.35rem 1.5rem;
+  border: 1px solid var(--companion-border);
+  border-radius: 20px;
+  background: var(--companion-bg);
+  color: var(--companion-text);
+}
+.companion-chat header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.3rem;
+  color: var(--companion-text);
+}
+.companion-chat header p {
+  margin: 0;
+  color: var(--companion-text-muted);
+  font-size: 0.9rem;
+}
+
+/* ── Roster disclosure (shown on the standalone page only, see rule above) ───────────────── */
+.companion-chat-roster {
+  margin-block: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--companion-border);
+  border-radius: 0.7rem;
+  background: var(--companion-surface);
+}
+.companion-chat-roster summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--companion-text);
+}
+.companion-chat-roster ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--companion-text-muted);
+}
+.companion-chat-roster li {
+  margin-block: 0.2rem;
+}
+.companion-chat-roster strong {
+  color: var(--companion-text);
+}
+
+/* ── Message list ──────────────────────────────────────────────────────── */
+.companion-chat-turns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+.companion-chat-turn {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.companion-chat-turn-agent {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.companion-chat-turn-user {
+  flex-direction: row-reverse;
+}
+.companion-chat-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--companion-accent-glow);
+  border: 1px solid rgba(193, 33, 41, 0.5);
+  color: var(--companion-accent);
+  margin-bottom: 1px;
+}
+.companion-chat-bubble {
+  max-width: 82%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 1rem;
+}
+.companion-chat-bubble p {
+  margin: 0;
+  line-height: 1.45;
+}
+.companion-chat-turn-agent .companion-chat-bubble {
+  border-bottom-left-radius: 0.25rem;
+  background: var(--companion-surface);
+  border: 1px solid var(--companion-border);
+  color: var(--companion-text);
+}
+.companion-chat-bubble a {
+  color: var(--companion-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.companion-chat-turn-user .companion-chat-bubble a {
+  color: #fff;
+}
+.companion-chat-turn-user .companion-chat-bubble {
+  border-bottom-right-radius: 0.25rem;
+  background: var(--companion-gradient);
+  color: #fff;
+}
+.companion-chat-turn-agent.companion-chat-pending .companion-chat-bubble {
+  padding-block: 0.75rem;
+}
+.companion-chat-time {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.68rem;
+  color: var(--companion-text-faint);
+}
+.companion-chat-turn-user .companion-chat-time {
+  color: rgba(255, 255, 255, 0.65);
+}
+.companion-chat-dots {
+  display: inline-flex;
+  gap: 0.28rem;
+  align-items: center;
+  height: 1rem;
+}
+.companion-chat-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--companion-text-muted);
+  animation: companion-dot-bounce 0.8s infinite;
+}
+.companion-chat-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.companion-chat-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes companion-dot-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .companion-chat-dots span {
+    animation: none;
+  }
+}
+
+.companion-chat-attribution {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.78rem;
+}
+.companion-chat-attribution strong {
+  font-size: 0.85rem;
+}
+.companion-chat-gate {
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--companion-border);
+  color: var(--companion-text-muted);
+}
+.companion-chat-gate-approve,
+.companion-chat-gate-confirm {
+  color: var(--companion-accent);
+  border-color: currentColor;
+}
+.companion-chat-cost {
+  color: var(--companion-text-muted);
+}
+.companion-chat-handoff-note {
+  font-size: 0.8rem;
+  color: var(--companion-text-muted);
+}
+.companion-chat-document-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.companion-chat-download {
+  color: var(--companion-accent);
+}
+.companion-chat-signed {
+  font-size: 0.8rem;
+  color: var(--companion-text-muted);
+}
+.companion-chat-error {
+  padding: 0.6rem 0.85rem;
+  border-radius: 0.5rem;
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--companion-danger);
+}
+
+/* ── Composer ──────────────────────────────────────────────────────────── */
+.companion-chat-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--companion-border);
+}
+.companion-chat-quick-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.companion-chat-quick-pick button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--companion-border-strong);
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--companion-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.companion-chat-quick-pick button:hover {
+  background: var(--companion-surface-strong);
+}
+.companion-chat-quick-pick button.is-active {
+  background: rgba(193, 33, 41, 0.18);
+  border-color: var(--companion-accent);
+  box-shadow: 0 0 14px var(--companion-accent-glow);
+  color: #fff;
+}
+.companion-widget-panel button,
+.companion-chat button,
+.companion-task-panel button {
+  cursor: pointer;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--companion-border-strong);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--companion-text);
+}
+.companion-widget-panel input:not([type='checkbox']),
+.companion-widget-panel textarea,
+.companion-widget-panel select,
+.companion-chat input:not([type='checkbox']),
+.companion-chat textarea,
+.companion-chat select,
+.companion-task-panel textarea {
+  width: 100%;
+  background: var(--companion-surface);
+  color: var(--companion-text);
+  border: 1px solid var(--companion-border-strong);
+  border-radius: 0.6rem;
+  padding: 0.65rem 0.75rem;
+}
+.companion-widget-panel input::placeholder,
+.companion-chat input::placeholder,
+.companion-chat textarea::placeholder {
+  color: var(--companion-text-faint);
+}
+.companion-widget-panel input:focus,
+.companion-widget-panel textarea:focus,
+.companion-widget-panel select:focus,
+.companion-chat input:focus,
+.companion-chat textarea:focus,
+.companion-chat select:focus {
+  outline: none;
+  border-color: var(--companion-accent);
+  box-shadow: 0 0 0 3px var(--companion-accent-glow);
+}
+.companion-chat .checkbox-field,
+.companion-widget-panel .checkbox-field {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--companion-text-muted);
+}
+.companion-chat .button-primary,
+.companion-widget-panel .button-primary {
+  background: var(--companion-gradient);
+}
+.companion-chat .button-primary:hover,
+.companion-widget-panel .button-primary:hover {
+  filter: brightness(1.1);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.companion-widget-composer {
+  flex-direction: row;
+  align-items: center;
+}
+.companion-widget-composer input {
+  flex: 1;
+  width: auto !important;
+}
+.companion-widget-composer button {
+  flex-shrink: 0;
+  padding: 0.65rem 1rem !important;
+  border-radius: 0.6rem !important;
+  background: var(--companion-gradient) !important;
+  border: 0 !important;
+  color: #fff !important;
+}
+.companion-widget-composer button:disabled {
+  opacity: 0.4;
+}
+
+/* ── Task coordinator panel ────────────────────────────────────────────── */
+.companion-task-panel {
+  padding: 1rem;
+  border: 1px solid var(--companion-border);
+  border-radius: 0.9rem;
+  margin-block: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+}
+.companion-task-panel summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--companion-text);
+}
+.companion-task-panel > p {
+  color: var(--companion-text-muted);
+  font-size: 0.85rem;
+}
+.companion-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0.75rem 0;
+}
+.companion-task-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--companion-text-muted);
+}
+.companion-task-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--companion-text-muted);
+}
+.companion-task-card {
+  border-top: 1px solid var(--companion-border);
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  overflow-wrap: anywhere;
+}
+.companion-task-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  color: var(--companion-text);
+}
+.companion-task-status {
+  margin: 0 0 0.6rem;
+  font-size: 0.8rem;
+  color: var(--companion-text-muted);
+  text-transform: capitalize;
+}
+.companion-task-steps {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.companion-task-steps li {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--companion-border);
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+.companion-task-step-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.companion-task-step-points {
+  color: var(--companion-text-muted);
+  font-size: 0.78rem;
+}
+.companion-task-chip {
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--companion-text-muted);
+}
+.companion-task-chip-completed {
+  background: rgba(34, 197, 94, 0.16);
+  color: #4ade80;
+}
+.companion-task-chip-running {
+  background: rgba(193, 33, 41, 0.18);
+  color: var(--companion-accent);
+}
+.companion-task-chip-failed {
+  background: rgba(248, 113, 113, 0.16);
+  color: var(--companion-danger);
+}
+.companion-task-panel article p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--companion-text);
+}
+.companion-widget-panel :focus-visible,
+.companion-chat :focus-visible,
+.companion-task-panel :focus-visible {
+  outline: 3px solid var(--companion-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .companion-widget-trigger {
+    transition: transform 0.18s;
+  }
+  .companion-widget-trigger:hover {
+    transform: translateY(-2px);
+  }
+}
+@media (max-width: 480px) {
+  .companion-chat {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+}

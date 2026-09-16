@@ -4,7 +4,7 @@ import { createApp } from '../src/app/app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 } },
   }));
@@ -71,7 +71,7 @@ test('companion agent evidence records which registry entry authorized the call'
 
 test('deprecating a use case blocks the agent instead of silently proceeding', async () => {
   const cookie = await demo();
-  store.db
+  await store.db
     .prepare("UPDATE model_registry SET status = 'deprecated' WHERE id = 'companion-context-v1'")
     .run();
   const result = await request(
@@ -81,7 +81,7 @@ test('deprecating a use case blocks the agent instead of silently proceeding', a
   );
   assert.equal(result.status, 503);
   // restore for any later tests in this file
-  store.db
+  await store.db
     .prepare("UPDATE model_registry SET status = 'approved' WHERE id = 'companion-context-v1'")
     .run();
 });

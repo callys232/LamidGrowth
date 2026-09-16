@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 // This visits 98 complete module graphs; retain targeted traces in the journey
@@ -38,6 +39,7 @@ test('every documented route renders every original copy paragraph', async ({
   await page.getByLabel('Email address').fill(`copy-coverage-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-copy-coverage-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   await entry.close();
   for (const source of pages) {

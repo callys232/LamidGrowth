@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 test('a learner can create a path, enroll, complete a module, and rate it', async ({ page }) => {
@@ -8,6 +9,7 @@ test('a learner can create a path, enroll, complete a module, and rate it', asyn
   await page.getByLabel('Email address').fill(`learning-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-learning-test-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
 
   await page.getByRole('link', { name: 'Learning', exact: true }).click();

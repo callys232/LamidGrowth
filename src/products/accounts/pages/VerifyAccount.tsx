@@ -7,19 +7,7 @@ export function VerifyAccount() {
   const page = useVerifyAccountPage();
   return (
     <div className="auth-page">
-      <VerifyAccountVerificationSlide
-        done={page.done}
-        message={page.message}
-        busy={page.busy}
-        params={page.params}
-        verify={page.verify}
-        setBusy={page.setBusy}
-        setMessage={page.setMessage}
-        setContinuation={page.setContinuation}
-        email={page.email}
-        setEmail={page.setEmail}
-        continuation={page.continuation}
-      />
+      <VerifyAccountVerificationSlide {...page} />
       <AccountVisualSlide />
     </div>
   );

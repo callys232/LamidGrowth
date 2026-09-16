@@ -13,7 +13,7 @@ const suggestion = (id) => ({
   evidenceIds: [id],
 });
 async function fixture(t, provider) {
-  const { app, store } = createApp({
+  const { app, store } = await createApp({
     filename: ':memory:',
     aiProvider: provider,
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 } },

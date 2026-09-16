@@ -54,6 +54,14 @@ export function PricingBillablesPage() {
                 <StatusPill status={`${tool.points_cost} pt${tool.points_cost === 1 ? '' : 's'}`} />
               </li>
             ))}
+            <li className="activity-feed-row">
+              <span className="activity-feed-title">
+                <strong>{page.billables.deepReview.name}</strong>
+                <br />
+                <small>{page.billables.deepReview.description}</small>
+              </span>
+              <StatusPill status={`${page.billables.deepReview.pointsCost} pts`} />
+            </li>
           </ol>
         )}
       </section>

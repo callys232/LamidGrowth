@@ -1,26 +1,11 @@
-import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
+import { User, Briefcase, Rocket } from 'lucide-react';
+import { EngineDocumentPage } from '../../../../shared/content/engine/EngineDocumentPage';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
-import {
-  ProductExperienceHeroSlide,
-  PersonalSlide1,
-  ProfessionalCreatorSlide2,
-  FounderSmeSlide3,
-  TheContextChangesTheSystemRemainsOneSlide4,
-} from './slides';
 
-/** /product/experience — sections in reading order. */
+/** /product/experience — layout shared with the other 4 engine pages (see EngineDocumentPage). */
 export function ProductExperienceDocumentPage({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentPageLayout
-      page={content}
-      embedded={embedded}
-      hero={<ProductExperienceHeroSlide embedded={embedded} />}
-    >
-      <PersonalSlide1 embedded={embedded} />
-      <ProfessionalCreatorSlide2 embedded={embedded} />
-      <FounderSmeSlide3 embedded={embedded} />
-      <TheContextChangesTheSystemRemainsOneSlide4 embedded={embedded} />
-    </DocumentPageLayout>
+    <EngineDocumentPage content={content} embedded={embedded} icons={[User, Briefcase, Rocket]} />
   );
 }

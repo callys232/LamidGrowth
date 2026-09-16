@@ -1,29 +1,32 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
-import { createApp } from '../src/app/app.mjs';
+import { randomUUID } from 'node:crypto';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
-async function boot(filename, rateLimits) {
-  const { app, store } = createApp({ filename, rateLimits });
+async function boot(schemaName, rateLimits) {
+  const { app, store } = await createApp({ filename: schemaName, rateLimits });
   const server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
   });
   return { app, store, server, base: `http://127.0.0.1:${server.address().port}` };
 }
+// Closes only the HTTP server. Pool teardown is the caller's job via store.dropSchema() (which
+// drops the schema AND ends the pool in one step) or store.db.close() (ends the pool without
+// dropping) — never both on the same instance, since dropSchema() needs its pool still open to
+// run the DROP itself.
 async function stop(instance) {
   await new Promise((resolve) => instance.server.close(resolve));
 }
 
-test('a shared on-disk rate-limit bucket caps the same key across two separate app instances (simulated cluster workers)', async () => {
-  const dir = mkdtempSync(path.join(tmpdir(), 'lamid-ratelimit-'));
-  const dbFile = path.join(dir, 'shared.db');
+test('a shared database rate-limit bucket caps the same key across two separate app instances (simulated cluster workers)', async () => {
+  // Named exception to the ":memory:"-per-test-file pattern: two createApp() instances share one
+  // real schema name, the same topology two cluster worker processes share in production against
+  // one Postgres database (replacing the old "two workers, one SQLite file" simulation).
+  const schemaName = `ratelimit_shared_${randomUUID().replace(/-/g, '_')}`;
+  let workerA, workerB;
   try {
-    // Two independent createApp() instances pointed at the SAME file — this is exactly the
-    // topology two cluster worker processes would share in production.
-    const workerA = await boot(dbFile, { api: { max: 5, windowMs: 60_000 } });
-    const workerB = await boot(dbFile, { api: { max: 5, windowMs: 60_000 } });
+    workerA = await boot(schemaName, { api: { max: 5, windowMs: 60_000 } });
+    workerB = await boot(schemaName, { api: { max: 5, windowMs: 60_000 } });
 
     const results = [];
     for (let i = 0; i < 4; i++) results.push((await fetch(`${workerA.base}/api/health`)).status);
@@ -35,19 +38,25 @@ test('a shared on-disk rate-limit bucket caps the same key across two separate a
     const limited = results.filter((s) => s === 429).length;
     assert.equal(succeeded, 5, `expected exactly 5 successes across both workers, got ${succeeded} (${JSON.stringify(results)})`);
     assert.equal(limited, 3);
-
-    await stop(workerA);
-    await stop(workerB);
   } finally {
-    try { rmSync(dir, { recursive: true, force: true }); } catch {}
+    if (workerA) await stop(workerA);
+    if (workerB) await stop(workerB);
+    // Drop the shared schema exactly once (whichever worker booted); the other worker's pool
+    // still needs its own explicit close since dropSchema() only ends the pool it's called on.
+    if (workerA) {
+      await workerA.store.dropSchema();
+      if (workerB) await workerB.store.db.close();
+    } else if (workerB) {
+      await workerB.store.dropSchema();
+    }
   }
 });
 
 test('per-account spend limiting tracks independent keys — one user hitting their cap does not affect another', async () => {
-  const dir = mkdtempSync(path.join(tmpdir(), 'lamid-ratelimit-keys-'));
-  const dbFile = path.join(dir, 'shared.db');
+  const schemaName = `ratelimit_keys_${randomUUID().replace(/-/g, '_')}`;
+  let instance;
   try {
-    const instance = await boot(dbFile, { spend: { max: 1, windowMs: 60_000 } });
+    instance = await boot(schemaName, { spend: { max: 1, windowMs: 60_000 } });
     async function signup(email) {
       const response = await fetch(`${instance.base}/api/auth/signup`, {
         method: 'POST',
@@ -74,28 +83,35 @@ test('per-account spend limiting tracks independent keys — one user hitting th
     // User B's own bucket is untouched by user A's usage.
     const firstB = await sendMessage(userB);
     assert.equal(firstB.status, 201);
-
-    await stop(instance);
   } finally {
-    try { rmSync(dir, { recursive: true, force: true }); } catch {}
+    if (instance) {
+      await stop(instance);
+      await instance.store.dropSchema();
+    }
   }
 });
 
 test('the window resets after it elapses, and Retry-After is set on a 429', async () => {
-  const dir = mkdtempSync(path.join(tmpdir(), 'lamid-ratelimit-window-'));
-  const dbFile = path.join(dir, 'shared.db');
+  const schemaName = `ratelimit_window_${randomUUID().replace(/-/g, '_')}`;
+  let instance;
   try {
-    const instance = await boot(dbFile, { api: { max: 1, windowMs: 200 } });
+    // windowMs must comfortably exceed real network round-trip latency to Postgres (each request
+    // here is at least one round trip to the database) — a 200ms window, fine against SQLite's
+    // effectively-zero latency, is otherwise indistinguishable from the window itself elapsing
+    // between the first and second request.
+    instance = await boot(schemaName, { api: { max: 1, windowMs: 3000 } });
     const first = await fetch(`${instance.base}/api/health`);
     assert.equal(first.status, 200);
     const second = await fetch(`${instance.base}/api/health`);
     assert.equal(second.status, 429);
     assert.ok(second.headers.get('retry-after'));
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    await new Promise((resolve) => setTimeout(resolve, 3200));
     const third = await fetch(`${instance.base}/api/health`);
     assert.equal(third.status, 200);
-    await stop(instance);
   } finally {
-    try { rmSync(dir, { recursive: true, force: true }); } catch {}
+    if (instance) {
+      await stop(instance);
+      await instance.store.dropSchema();
+    }
   }
 });

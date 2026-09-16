@@ -5,11 +5,11 @@
 // wedding/marriage planning business.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
   }));

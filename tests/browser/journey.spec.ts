@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 test('public experience and workspace complete a connected operating cycle', async ({ page }) => {
@@ -15,6 +16,7 @@ test('public experience and workspace complete a connected operating cycle', asy
   await page.getByLabel('Email address').fill(`journey-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-journey-test-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('What Needs Your Attention?');
   await page.getByRole('button', { name: 'New objective', exact: true }).click();
@@ -82,6 +84,7 @@ test('mobile navigation and onboarding work without horizontal overflow', async 
   await page.getByLabel('Email address').fill(`jordan-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-browser-test-password');
   await page.getByRole('button', { name: 'Create your workspace' }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('What Needs Your Attention?');
   expect(

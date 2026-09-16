@@ -1,9 +1,9 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: {
       api: { max: 1000 },
@@ -215,7 +215,7 @@ test('signup, session, logout, login and data persistence', async () => {
   assert.equal(state.objectives.length, 1);
   assert.equal(state.objectives[0].id, objective.data.id);
   assert.equal(state.user.demo, false);
-  const row = store.db.prepare('SELECT password FROM users WHERE email = ?').get(credentials.email);
+  const row = await store.db.prepare('SELECT password FROM users WHERE email = ?').get(credentials.email);
   assert.notEqual(row.password, credentials.password);
   assert.equal(
     (await request('/auth/login', { email: credentials.email, password: 'wrong-password' })).status,
@@ -263,7 +263,7 @@ test('only an ecosystem administrator can permanently delete an account', async 
   );
   assert.equal((await request('/state', undefined, signed.cookie)).status, 401);
   assert.equal(
-    store.db.prepare('SELECT 1 FROM users WHERE email = ?').get(credentials.email),
+    await store.db.prepare('SELECT 1 FROM users WHERE email = ?').get(credentials.email),
     undefined,
   );
 });
@@ -368,10 +368,10 @@ test('points are charged once for job posts and bids', async () => {
   );
   assert.equal(post.status, 201);
   assert.equal(
-    store.db
+    (await store.db
       .prepare('SELECT points_balance FROM users WHERE email = ?')
-      .get('points-client@example.test').points_balance,
-    90,
+      .get('points-client@example.test')).points_balance,
+    99960,
   );
   const bid = await request(
     `/jobs/${post.data.id}/bids`,
@@ -385,10 +385,10 @@ test('points are charged once for job posts and bids', async () => {
   );
   assert.equal(bid.status, 201);
   assert.equal(
-    store.db
+    (await store.db
       .prepare('SELECT points_balance FROM users WHERE email = ?')
-      .get('points-freelancer@example.test').points_balance,
-    98,
+      .get('points-freelancer@example.test')).points_balance,
+    99980,
   );
 });
 test('job posts support client and freelancer proposal drafts', async () => {
@@ -528,7 +528,7 @@ test('account verification uses expiring single-use tokens', async () => {
     200,
   );
   assert.ok(
-    store.db.prepare('SELECT verified_at FROM users WHERE email = ?').get(credentials.email)
+    (await store.db.prepare('SELECT verified_at FROM users WHERE email = ?').get(credentials.email))
       .verified_at,
   );
   assert.equal(
@@ -536,7 +536,8 @@ test('account verification uses expiring single-use tokens', async () => {
     400,
   );
   const resend = await request('/auth/resend-verification', { email: credentials.email });
-  assert.deepEqual(resend.data, { ok: true });
+  assert.equal(resend.data.ok, true);
+  assert.match(resend.data.challengeId, /^[a-f0-9-]{36}$/);
 });
 test('strict validation rejects invalid dates, unknown fields, and initial completion', async () => {
   const cookie = await demo();
@@ -586,7 +587,7 @@ test('cross-origin mutations are rejected', async () => {
   );
 });
 test('rate limits block bursts and return retry timing', async () => {
-  const limited = createApp({ filename: ':memory:', rateLimits: { api: { max: 2 } } });
+  const limited = await createApp({ filename: ':memory:', rateLimits: { api: { max: 2 } } });
   const limitedServer = await new Promise((resolve) => {
     const listening = limited.app.listen(0, '127.0.0.1', () => resolve(listening));
   });

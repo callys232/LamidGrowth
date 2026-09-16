@@ -1,10 +1,10 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 } },
   }));
@@ -31,6 +31,8 @@ async function request(path, body, cookie, method = 'POST') {
 async function demo() {
   const result = await request('/auth/demo', {});
   assert.equal(result.status, 201);
+  const state = await request('/state', undefined, result.cookie, 'GET');
+  await store.db.prepare('UPDATE users SET points_balance = 100000 WHERE id = ?').run(state.data.user.id);
   return result.cookie;
 }
 
@@ -55,12 +57,15 @@ test('companion agent catalog lists the seeded agents', async () => {
       'estimate-generator',
       'invoice-generator',
       'market-intelligence',
+      'onboarding',
       'performance-analytics',
+      'pricing',
       'proposal-drafter',
       'quote-generator',
       'scope-builder',
       'signal-monitoring',
       'sow-builder',
+      'support',
       'workflow-orchestration',
     ],
   );
@@ -191,13 +196,13 @@ test('a successful agent run debits points and reports the new balance', async (
     cookie,
   );
   assert.equal(result.status, 201);
-  assert.equal(result.data.pointsCharged, 1);
-  assert.equal(result.data.balance, before - 1);
+  assert.equal(result.data.pointsCharged, 65);
+  assert.equal(result.data.balance, before - 65);
 });
 
 test('a failed agent run refunds the points it charged', async () => {
   const cookie = await demo();
-  store.db
+  await store.db
     .prepare("UPDATE model_registry SET status = 'deprecated' WHERE use_case = 'companion.context-curator'")
     .run();
   const before = (await request('/points', undefined, cookie, 'GET')).data.balance;
@@ -209,11 +214,11 @@ test('a failed agent run refunds the points it charged', async () => {
   assert.equal(failed.status, 503);
   const after = (await request('/points', undefined, cookie, 'GET')).data.balance;
   assert.equal(after, before);
-  const refund = store.db
+  const refund = await store.db
     .prepare("SELECT amount FROM points_ledger WHERE reason = 'agent_run_refund' ORDER BY created_at DESC LIMIT 1")
     .get();
-  assert.equal(refund.amount, 1);
-  store.db
+  assert.equal(refund.amount, 65);
+  await store.db
     .prepare("UPDATE model_registry SET status = 'approved' WHERE use_case = 'companion.context-curator'")
     .run();
 });
@@ -221,16 +226,16 @@ test('a failed agent run refunds the points it charged', async () => {
 test('an agent is rejected before it runs if the workspace has too few points', async () => {
   const cookie = await demo();
   const state = (await request('/state', undefined, cookie, 'GET')).data;
-  store.db.prepare('UPDATE users SET points_balance = 0 WHERE id = ?').run(state.user.id);
+  await store.db.prepare('UPDATE users SET points_balance = 0 WHERE id = ?').run(state.user.id);
   const result = await request(
     '/companion/messages',
     { message: 'what is going on right now?' },
     cookie,
   );
   assert.equal(result.status, 402);
-  const runsAfter = store.db
+  const runsAfter = (await store.db
     .prepare('SELECT COUNT(*) AS count FROM agent_runs WHERE principal_id = ?')
-    .get(state.user.id).count;
+    .get(state.user.id)).count;
   assert.equal(runsAfter, 0);
 });
 

@@ -1,5 +1,5 @@
-export function requireApprovedModel(store, useCase) {
-  const row = store.db
+export async function requireApprovedModel(store, useCase) {
+  const row = await store.db
     .prepare(
       "SELECT * FROM model_registry WHERE use_case = ? AND status = 'approved' ORDER BY created_at DESC LIMIT 1",
     )
@@ -12,7 +12,7 @@ export function requireApprovedModel(store, useCase) {
 }
 
 export function mountModelRegistry(app, store) {
-  app.get('/api/models', (_req, res) =>
-    res.json(store.db.prepare('SELECT * FROM model_registry ORDER BY use_case').all()),
+  app.get('/api/models', async (_req, res) =>
+    res.json(await store.db.prepare('SELECT * FROM model_registry ORDER BY use_case').all()),
   );
 }

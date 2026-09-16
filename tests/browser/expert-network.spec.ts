@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 async function signUp(page: import('@playwright/test').Page, name: string, email: string) {
@@ -8,6 +9,7 @@ async function signUp(page: import('@playwright/test').Page, name: string, email
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill('secure-expert-network-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
 }
 

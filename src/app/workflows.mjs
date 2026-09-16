@@ -12,7 +12,9 @@ const tools = {
     writes: false,
     input: emptyInput,
     fields: [],
-    execute: ({ objective }) => ({ objective }),
+    async execute({ objective }) {
+      return { objective };
+    },
   },
   'action.prepare': {
     name: 'Prepare a next action',
@@ -24,10 +26,10 @@ const tools = {
       { name: 'title', required: true, maxLength: 500 },
       { name: 'notes', required: false, maxLength: 5000 },
     ],
-    execute: ({ store, run, objective, principal }, input) => {
+    async execute({ store, run, objective, principal }, input) {
       if (objective.status === 'Complete')
         throw new Error('Reopen the objective before preparing another action.');
-      const action = store.insert(run.workspace_id, 'action', {
+      const action = await store.insert(run.workspace_id, 'action', {
         title: input.title,
         notes: input.notes,
         objectiveId: objective.id,
@@ -36,7 +38,7 @@ const tools = {
         requiresApproval: true,
         dueDate: '',
       });
-      store.log(
+      await store.log(
         run.workspace_id,
         principal.name,
         'Action created',
@@ -53,10 +55,10 @@ const tools = {
     writes: true,
     input: emptyInput,
     fields: [],
-    execute: ({ store, run, objective }) => {
-      const actions = store
-        .records(run.workspace_id, 'action')
-        .filter((action) => action.objectiveId === objective.id);
+    async execute({ store, run, objective }) {
+      const actions = (await store.records(run.workspace_id, 'action')).filter(
+        (action) => action.objectiveId === objective.id,
+      );
       return store.insert(run.workspace_id, 'progress', {
         objectiveId: objective.id,
         objectiveVersion: objective.version,
@@ -77,12 +79,14 @@ const tools = {
     writes: false,
     input: emptyInput,
     fields: [],
-    execute: ({ objective }) => ({
-      successCriteria: objective.success,
-      constraints: objective.constraints,
-      source: { id: objective.id, version: objective.version },
-      method: 'Recorded user inputs; no automated assessment',
-    }),
+    async execute({ objective }) {
+      return {
+        successCriteria: objective.success,
+        constraints: objective.constraints,
+        source: { id: objective.id, version: objective.version },
+        method: 'Recorded user inputs; no automated assessment',
+      };
+    },
   },
   'review.reminder': {
     name: 'Create a review reminder',
@@ -91,13 +95,14 @@ const tools = {
     writes: true,
     input: z.object({ message: title }).strict(),
     fields: [{ name: 'message', required: true, maxLength: 500 }],
-    execute: ({ store, run }, input) =>
-      store.insert(run.workspace_id, 'notification', {
+    async execute({ store, run }, input) {
+      return store.insert(run.workspace_id, 'notification', {
         message: input.message,
         recipientId: run.principal_id,
         runId: run.id,
         readAt: null,
-      }),
+      });
+    },
   },
 };
 export const toolCatalog = Object.entries(tools).map(([id, tool]) => ({
@@ -142,21 +147,37 @@ const decode = (row) => row && { ...row, steps: JSON.parse(row.steps) };
 
 export function createWorkflowRuntime(store, now = () => Date.now()) {
   const { db, transaction, log } = store;
-  const read = (id, workspace) =>
+  const read = async (id, workspace) =>
     decode(
-      db
+      await db
         .prepare('SELECT * FROM workflow_runs WHERE id = ? AND workspace_id = ?')
         .get(id, workspace),
     );
-  function persist(run, reason = '') {
+  // FOR UPDATE variant for the two write paths (command() and advance()) that read-modify-persist
+  // a run — a plain SELECT here would let a user's command() and the scheduler's advance() both
+  // read the same run concurrently and race to persist(), with whichever commits last silently
+  // discarding the other's change (persist()'s UPDATE has no WHERE version = ? guard of its own).
+  // Locking the row here makes a second concurrent transaction touching the same run block until
+  // the first commits, then read the fresh post-commit state instead of stale data.
+  const readForUpdate = async (id, workspace) =>
+    decode(
+      await db
+        .prepare(
+          workspace
+            ? 'SELECT * FROM workflow_runs WHERE id = ? AND workspace_id = ? FOR UPDATE'
+            : 'SELECT * FROM workflow_runs WHERE id = ? FOR UPDATE',
+        )
+        .get(...(workspace ? [id, workspace] : [id])),
+    );
+  async function persist(run, reason = '') {
     run.reason = reason;
     run.version++;
     run.updated_at = new Date(now()).toISOString();
-    db.prepare(
+    await db.prepare(
       'UPDATE workflow_runs SET state = ?, version = ?, steps = ?, updated_at = ?, reason = ? WHERE id = ?',
     ).run(run.state, run.version, JSON.stringify(run.steps), run.updated_at, reason, run.id);
   }
-  function principalFor(run) {
+  async function principalFor(run) {
     return db
       .prepare(
         `SELECT users.id, users.name FROM users JOIN workspace_members ON users.id = workspace_members.user_id
@@ -165,8 +186,8 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       )
       .get(run.principal_id, run.workspace_id);
   }
-  function objectiveFor(run) {
-    const row = db
+  async function objectiveFor(run) {
+    const row = await db
       .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective'")
       .get(run.objective_id, run.workspace_id);
     if (!row) fail('The scoped objective is no longer available.');
@@ -181,7 +202,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         ),
     );
   }
-  function create(workspace, principal, body) {
+  async function create(workspace, principal, body) {
     const input = workflowSchema.parse(body);
     const startAt = input.startAt ? Date.parse(input.startAt) : now();
     const expiresAt = Date.parse(input.expiresAt);
@@ -202,7 +223,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         output: null,
       };
     });
-    return transaction(() => {
+    return transaction(async () => {
       const run = {
         id: randomUUID(),
         workspace_id: workspace,
@@ -218,9 +239,9 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         updated_at: new Date(now()).toISOString(),
         reason: '',
       };
-      if (!principalFor(run)) fail('Only an active workspace owner can authorize a workflow.', 403);
-      objectiveFor(run);
-      db.prepare('INSERT INTO workflow_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      if (!(await principalFor(run))) fail('Only an active workspace owner can authorize a workflow.', 403);
+      await objectiveFor(run);
+      await db.prepare('INSERT INTO workflow_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
         run.id,
         workspace,
         principal,
@@ -235,19 +256,19 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         run.updated_at,
         '',
       );
-      log(workspace, principal, 'Workflow drafted', run.id, run.title);
+      await log(workspace, principal, 'Workflow drafted', run.id, run.title);
       return run;
     });
   }
-  function command(id, workspace, actor, body) {
+  async function command(id, workspace, actor, body) {
     const input = commandSchema.parse(body);
-    return transaction(() => {
-      const run = read(id, workspace);
+    return transaction(async () => {
+      const run = await readForUpdate(id, workspace);
       if (!run) fail('Workflow not found.', 404);
       if (run.version !== input.version)
         fail('This workflow changed. Reload and review its current state.');
       if (terminal.has(run.state)) fail('This workflow has ended.');
-      if (run.principal_id !== actor || !principalFor(run))
+      if (run.principal_id !== actor || !(await principalFor(run)))
         fail('Only the authorizing workspace owner can control this workflow.', 403);
       if (input.command !== 'cancel' && run.expires_at <= now())
         fail('This workflow authorization has expired.');
@@ -266,7 +287,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       } else if (input.command === 'approve' && run.state === 'needs_approval') {
         const step = nextStep(run);
         if (!step) fail('No step is waiting for approval.');
-        const objectiveVersion = objectiveFor(run).version;
+        const objectiveVersion = (await objectiveFor(run)).version;
         if (input.objectiveVersion !== objectiveVersion)
           fail('The objective changed or was not reviewed. Reload its context before approving.');
         step.approval = {
@@ -278,8 +299,8 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         run.state = 'running';
       } else if (input.command === 'cancel') run.state = 'cancelled';
       else fail('This workflow command is not allowed in its current state.');
-      persist(run);
-      log(
+      await persist(run);
+      await log(
         workspace,
         actor,
         `Workflow ${input.command}`,
@@ -289,49 +310,49 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       return run;
     });
   }
-  function advance(id) {
+  async function advance(id) {
     try {
-      transaction(() => {
-        const run = decode(db.prepare('SELECT * FROM workflow_runs WHERE id = ?').get(id));
+      await transaction(async () => {
+        const run = await readForUpdate(id);
         if (!run || terminal.has(run.state) || run.state === 'draft' || run.state === 'failed')
           return;
         if (run.expires_at <= now()) {
           run.state = 'expired';
-          persist(run, 'Authorization expired.');
-          log(run.workspace_id, run.principal_id, 'Workflow expired', run.id, run.reason);
+          await persist(run, 'Authorization expired.');
+          await log(run.workspace_id, run.principal_id, 'Workflow expired', run.id, run.reason);
           return;
         }
         if (run.state !== 'running' || run.start_at > now()) return;
-        const principal = principalFor(run);
+        const principal = await principalFor(run);
         if (!principal) {
           run.state = 'paused';
           for (const step of run.steps) if (step.state !== 'completed') step.approval = null;
-          persist(run, 'Authorizing principal no longer has an active owner role.');
-          log(run.workspace_id, run.principal_id, 'Workflow paused', run.id, run.reason);
+          await persist(run, 'Authorizing principal no longer has an active owner role.');
+          await log(run.workspace_id, run.principal_id, 'Workflow paused', run.id, run.reason);
           return;
         }
         const step = nextStep(run);
         if (!step) {
           run.state = 'completed';
-          persist(run);
-          log(run.workspace_id, principal.name, 'Workflow completed', run.id, run.title);
+          await persist(run);
+          await log(run.workspace_id, principal.name, 'Workflow completed', run.id, run.title);
           return;
         }
         const tool = tools[step.toolId];
         if (!tool || step.toolVersion !== '1.0.0')
           fail('The registered tool version is unavailable.');
-        const objective = objectiveFor(run);
+        const objective = await objectiveFor(run);
         if (
           tool.writes &&
           (!step.approval || step.approval.objectiveVersion !== objective.version)
         ) {
           step.approval = null;
           run.state = 'needs_approval';
-          persist(run, 'Review the exact next step before it changes workspace data.');
-          log(run.workspace_id, principal.name, 'Workflow needs approval', run.id, step.toolId);
+          await persist(run, 'Review the exact next step before it changes workspace data.');
+          await log(run.workspace_id, principal.name, 'Workflow needs approval', run.id, step.toolId);
           return;
         }
-        const output = tool.execute(
+        const output = await tool.execute(
           { store, run, objective, principal },
           tool.input.parse(step.input),
         );
@@ -341,7 +362,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
           objective: { id: objective.id, version: objective.version },
           method: 'deterministic',
         };
-        db.prepare('INSERT INTO tool_invocations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+        await db.prepare('INSERT INTO tool_invocations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
           randomUUID(),
           run.id,
           step.id,
@@ -357,8 +378,8 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         step.output = evidence;
         step.attempts++;
         if (run.steps.every((step) => step.state === 'completed')) run.state = 'completed';
-        persist(run);
-        log(
+        await persist(run);
+        await log(
           run.workspace_id,
           principal.name,
           'Workflow step completed',
@@ -367,8 +388,8 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         );
       });
     } catch (error) {
-      transaction(() => {
-        const run = decode(db.prepare('SELECT * FROM workflow_runs WHERE id = ?').get(id));
+      await transaction(async () => {
+        const run = await readForUpdate(id);
         if (!run || terminal.has(run.state)) return;
         const step = nextStep(run);
         if (step) {
@@ -377,16 +398,16 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
           step.approval = null;
         }
         run.state = 'failed';
-        persist(
+        await persist(
           run,
           error instanceof z.ZodError ? 'Tool input no longer matches its schema.' : error.message,
         );
-        log(run.workspace_id, run.principal_id, 'Workflow failed', run.id, run.reason);
+        await log(run.workspace_id, run.principal_id, 'Workflow failed', run.id, run.reason);
       });
     }
   }
-  function tick() {
-    const candidates = db
+  async function tick() {
+    const candidates = await db
       .prepare(
         `SELECT id FROM workflow_runs
       WHERE (state = 'running' AND start_at <= ?) OR
@@ -394,53 +415,53 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       ORDER BY updated_at, id LIMIT 100`,
       )
       .all(now(), now());
-    for (const run of candidates) advance(run.id);
+    for (const run of candidates) await advance(run.id);
   }
   return {
     create,
     command,
     read,
     tick,
-    list: (workspace) =>
-      db
+    list: async (workspace) =>
+      (await db
         .prepare('SELECT * FROM workflow_runs WHERE workspace_id = ? ORDER BY created_at DESC')
-        .all(workspace)
+        .all(workspace))
         .map(decode),
   };
 }
 
 export function mountWorkflows(app, store, runtime) {
   app.get('/api/tools', (_req, res) => res.json(toolCatalog));
-  app.get('/api/workflows', (req, res) => res.json(runtime.list(req.workspace.id)));
-  app.post('/api/workflows', requirePermission('workspace:manage'), (req, res) =>
-    res.status(201).json(runtime.create(req.workspace.id, req.user.id, req.body)),
+  app.get('/api/workflows', async (req, res) => res.json(await runtime.list(req.workspace.id)));
+  app.post('/api/workflows', requirePermission('workspace:manage'), async (req, res) =>
+    res.status(201).json(await runtime.create(req.workspace.id, req.user.id, req.body)),
   );
-  app.get('/api/workflows/:id', (req, res) => {
-    const run = runtime.read(req.params.id, req.workspace.id);
+  app.get('/api/workflows/:id', async (req, res) => {
+    const run = await runtime.read(req.params.id, req.workspace.id);
     if (!run) return res.status(404).json({ error: 'Workflow not found.' });
     res.json(run);
   });
-  app.patch('/api/workflows/:id', requirePermission('workspace:manage'), (req, res) =>
-    res.json(runtime.command(req.params.id, req.workspace.id, req.user.id, req.body)),
+  app.patch('/api/workflows/:id', requirePermission('workspace:manage'), async (req, res) =>
+    res.json(await runtime.command(req.params.id, req.workspace.id, req.user.id, req.body)),
   );
-  app.get('/api/notifications', (req, res) =>
+  app.get('/api/notifications', async (req, res) =>
     res.json(
-      store
-        .records(req.workspace.id, 'notification')
-        .filter((item) => item.recipientId === req.user.id),
+      (await store.records(req.workspace.id, 'notification')).filter(
+        (item) => item.recipientId === req.user.id,
+      ),
     ),
   );
-  app.patch('/api/notifications/:id', (req, res) => {
+  app.patch('/api/notifications/:id', async (req, res) => {
     z.object({ read: z.literal(true) })
       .strict()
       .parse(req.body);
-    const item = store
-      .records(req.workspace.id, 'notification')
-      .find((item) => item.id === req.params.id && item.recipientId === req.user.id);
+    const item = (await store.records(req.workspace.id, 'notification')).find(
+      (item) => item.id === req.params.id && item.recipientId === req.user.id,
+    );
     if (!item) return res.status(404).json({ error: 'Notification not found.' });
-    store.transaction(() => {
-      const row = store.db.prepare('SELECT data FROM records WHERE id = ?').get(item.id);
-      store.db
+    await store.transaction(async () => {
+      const row = await store.db.prepare('SELECT data FROM records WHERE id = ?').get(item.id);
+      await store.db
         .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
         .run(
           JSON.stringify({ ...JSON.parse(row.data), readAt: new Date().toISOString() }),
@@ -449,5 +470,5 @@ export function mountWorkflows(app, store, runtime) {
     });
     res.json({ ok: true });
   });
-  app.get('/api/progress', (req, res) => res.json(store.records(req.workspace.id, 'progress')));
+  app.get('/api/progress', async (req, res) => res.json(await store.records(req.workspace.id, 'progress')));
 }

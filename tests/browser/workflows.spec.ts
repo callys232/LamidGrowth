@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 test('a scheduled operating cycle requires each write approval and delivers a reminder', async ({
@@ -11,6 +12,7 @@ test('a scheduled operating cycle requires each write approval and delivers a re
   await page.getByLabel('Email address').fill(`workflows-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-workflows-test-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   // A workflow attaches to an open objective, so one must exist before the "Create a workflow"
   // panel appears.

@@ -14,6 +14,7 @@ import { ConciergePage } from './products/concierge/pages/ConciergePage';
 import { TalentDashboardPage } from './products/talent/pages/TalentDashboardPage';
 import { Companion } from './products/companion/pages/CompanionPage';
 import { CompanionChatPage } from './products/companion/pages/CompanionChatPage';
+import { CompanionWidget } from './products/companion/components/CompanionWidget';
 import { ActionsPage } from './products/consistency/pages/ActionsPage';
 import { Governance } from './products/governance/pages/GovernancePage';
 import { Intelligence } from './products/intelligence/pages/IntelligencePage';
@@ -150,6 +151,7 @@ export function App() {
         </Route>
         <Route path="*" element={<ContentPage />} />
       </Routes>
+      <CompanionWidget />
     </>
   );
 }

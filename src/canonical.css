@@ -13,17 +13,16 @@
   font-weight: 600;
   padding: 8px 0;
 }
-.canonical-preview {
-  margin: 24px auto;
-  max-width: 1280px;
-  padding: 16px 24px;
-  background: #eeeae5;
-  color: #0d1a2b;
-  border-left: 3px solid #5a5f66;
-  font-size: 14px;
-}
 .canonical-copy .editorial-section {
-  grid-template-columns: 48px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-height: 0;
+}
+.canonical-copy .section-heading .editorial-number {
+  display: block;
+  margin-bottom: 10px;
 }
 .canonical-copy .editorial-section p {
   max-width: 80ch;
@@ -52,9 +51,6 @@
 }
 @media (max-width: 760px) {
   .canonical-copy .content-hero {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .canonical-copy .editorial-section {
     grid-template-columns: minmax(0, 1fr);
   }
 }

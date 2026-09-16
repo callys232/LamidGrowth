@@ -160,16 +160,23 @@ export function PublicHeader() {
   }, []);
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState('');
+  // A dropdown never opens on a bare hover — only a click arms hover-switching between tabs.
+  // Leaving the nav (or any explicit close) disarms it again, so the next visit needs a click too.
+  const [hoverEnabled, setHoverEnabled] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const header = useRef<HTMLElement>(null);
   const cancel = () => clearTimeout(timer.current);
   const close = () => {
     cancel();
     setActive('');
+    setHoverEnabled(false);
   };
   const leave = () => {
     cancel();
-    timer.current = setTimeout(() => setActive(''), 160);
+    timer.current = setTimeout(() => {
+      setActive('');
+      setHoverEnabled(false);
+    }, 160);
   };
   const navigate = () => {
     close();
@@ -252,6 +259,7 @@ export function PublicHeader() {
                   aria-controls={`panel-${menu.title}`}
                   onPointerEnter={(event) => {
                     if (
+                      hoverEnabled &&
                       event.pointerType === 'mouse' &&
                       window.matchMedia('(min-width: 761px)').matches
                     ) {
@@ -261,7 +269,13 @@ export function PublicHeader() {
                   }}
                   onClick={() => {
                     cancel();
-                    setActive(active === menu.title ? '' : menu.title);
+                    if (active === menu.title) {
+                      setActive('');
+                      setHoverEnabled(false);
+                    } else {
+                      setActive(menu.title);
+                      setHoverEnabled(true);
+                    }
                   }}
                   onKeyDown={(event) => {
                     if (event.key === 'ArrowDown') {

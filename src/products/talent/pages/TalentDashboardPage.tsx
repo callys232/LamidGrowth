@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../../shared/ui/Button';
+import { DatePicker } from '../../../shared/ui/DatePicker';
 import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
 import { WeekCalendar } from '../../../shared/ui/WeekCalendar';
@@ -102,10 +103,10 @@ export function TalentDashboardPage() {
             <input name="issuer" required maxLength={200} placeholder="e.g. CFA Institute" />
           </Field>
           <Field label="Issued">
-            <input name="issuedAt" type="date" />
+            <DatePicker name="issuedAt" />
           </Field>
           <Field label="Expires">
-            <input name="expiresAt" type="date" />
+            <DatePicker name="expiresAt" />
           </Field>
           <Field label="Evidence URL">
             <input name="evidenceUrl" placeholder="Link to certificate, profile, or proof" />

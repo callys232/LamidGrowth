@@ -7,7 +7,7 @@ const rateSchema = z.object({ from: currencyCode, to: currencyCode, rate: z.numb
 export function mountFx(app, store) {
   const { db } = store;
 
-  app.get('/api/fx/convert', (req, res) => {
+  app.get('/api/fx/convert', async (req, res) => {
     const input = z
       .object({
         amount: z.coerce.number().finite(),
@@ -17,7 +17,7 @@ export function mountFx(app, store) {
       .parse(req.query);
     if (input.from === input.to)
       return res.json({ amount: input.amount, from: input.from, to: input.to, converted: input.amount, rate: 1, asOf: null });
-    const row = db.prepare('SELECT * FROM fx_rates WHERE pair = ?').get(`${input.from}_${input.to}`);
+    const row = await db.prepare('SELECT * FROM fx_rates WHERE pair = ?').get(`${input.from}_${input.to}`);
     if (!row)
       return res.status(404).json({ error: `No indicative rate is available for ${input.from} to ${input.to}.` });
     res.json({
@@ -31,11 +31,11 @@ export function mountFx(app, store) {
     });
   });
 
-  app.patch('/api/fx/rates', requirePermission('workspace:manage'), (req, res) => {
+  app.patch('/api/fx/rates', requirePermission('workspace:manage'), async (req, res) => {
     const input = rateSchema.parse(req.body);
     const pair = `${input.from}_${input.to}`;
     const now = new Date().toISOString();
-    db.prepare(
+    await db.prepare(
       'INSERT INTO fx_rates (pair, rate, updated_at) VALUES (?, ?, ?) ON CONFLICT(pair) DO UPDATE SET rate = excluded.rate, updated_at = excluded.updated_at',
     ).run(pair, input.rate, now);
     res.json({ pair, rate: input.rate, updatedAt: now });

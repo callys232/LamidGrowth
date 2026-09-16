@@ -7,11 +7,13 @@ import type { Bid, Job, Proposal } from '../types';
 export function JobDetail({
   job,
   owner,
+  bidCost,
   onClose,
   onSaved,
 }: {
   job: Job;
   owner: boolean;
+  bidCost: number;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -144,7 +146,7 @@ export function JobDetail({
             <input name="timeline" required maxLength={200} />
           </Field>
           <Button type="submit" disabled={busy}>
-            Submit bid · 2 points
+            Submit bid · {bidCost} points
           </Button>
         </form>
       )}

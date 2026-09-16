@@ -26,8 +26,8 @@ export function CommercialOpportunityFiltersSlide({
   return (
     <>
       <p>
-        {balance ?? '…'} development points available. Posting costs {options?.jobPostCost ?? 10};
-        bidding costs {options?.bidCost ?? 2}. Points are an internal usage allowance. Proposals are
+        {balance ?? '…'} development points available. Posting costs {options?.jobPostCost ?? 40};
+        bidding costs {options?.bidCost ?? 20}. Points are an internal usage allowance. Proposals are
         drafts and create no contract or payment.
       </p>
       <div className="view-toolbar">

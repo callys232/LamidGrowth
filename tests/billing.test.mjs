@@ -1,11 +1,11 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base, adminCookie;
 const adminEmail = 'billing-admin@lamidgrowth.test';
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     ecosystemAdminEmails: [adminEmail],
@@ -66,8 +66,8 @@ test('a workspace with no concierge ever assigned has an empty concierge fee his
   assert.equal(statement.status, 200);
   assert.equal(statement.data.lineItems.length, 0);
   assert.equal(statement.data.totalMinor, 0);
-  assert.equal(statement.data.pointsUsage.totalPointsSpent, 1);
-  assert.equal(statement.data.pointsUsage.estimatedCostMinor, 10);
+  assert.equal(statement.data.pointsUsage.totalPointsSpent, 65);
+  assert.equal(statement.data.pointsUsage.estimatedCostMinor, 650);
 });
 
 test('the ecosystem fee is charged once at assignment; the PM fee recurs every 30-day cycle', async () => {
@@ -85,7 +85,7 @@ test('the ecosystem fee is charged once at assignment; the PM fee recurs every 3
   assert.equal(immediateStatement.data.totalMinor, 50000);
 
   const sixtyFiveDaysAgo = Date.now() - 65 * 24 * 60 * 60 * 1000;
-  store.db
+  await store.db
     .prepare("UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'")
     .run(sixtyFiveDaysAgo, ownerState.workspace.id);
 

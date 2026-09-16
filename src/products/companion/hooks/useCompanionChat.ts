@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api } from '../../../api';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
 
@@ -11,9 +11,14 @@ export type AgentManifest = {
   pointsCost: number;
 };
 
+function timestamp() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 export type ChatTurn = {
   role: 'user' | 'agent';
   text: string;
+  at: string;
   agentId?: string;
   runId?: string;
   humanGate?: AgentManifest['humanGate'];
@@ -50,27 +55,88 @@ type CompanionResponse = {
 };
 
 export function useCompanionChat(agents: AgentManifest[]) {
-  const { notify } = useWorkspace();
+  const workspace = useWorkspace();
+  const notify = workspace?.notify ?? (() => {});
   const [turns, setTurns] = useState<ChatTurn[]>([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [agentId, setAgentId] = useState('auto');
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    api<
+      Array<{
+        runId: string;
+        agentId: string;
+        input: { message: string };
+        output: { response?: string; error?: string };
+        status: string;
+      }>
+    >('/companion/history')
+      .then((rows) => {
+        if (active)
+          setTurns(
+            rows.flatMap((row) => [
+              { role: 'user' as const, text: row.input.message, at: timestamp() },
+              {
+                role: 'agent' as const,
+                text: row.output?.response || row.output?.error || `Request ${row.status}`,
+                at: timestamp(),
+                agentId: row.agentId,
+                runId: row.status === 'completed' ? row.runId : undefined,
+              },
+            ]),
+          );
+      })
+      .catch((e) => {
+        if (active) setError((e as Error).message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [workspace?.state.workspace.id]);
+  const pending = useRef<{
+    message: string;
+    consent: boolean;
+    agentId: string;
+    key: string;
+  } | null>(null);
 
   async function send() {
     const message = draft.trim();
-    if (!message || busy) return;
+    if (!message || busy || loading) return;
     setDraft('');
     setError('');
-    setTurns((prev) => [...prev, { role: 'user', text: message }]);
+    setTurns((prev) => [...prev, { role: 'user', text: message, at: timestamp() }]);
     setBusy(true);
     try {
-      const result = await api<CompanionResponse>('/companion/messages', { message });
+      if (
+        !pending.current ||
+        pending.current.message !== message ||
+        pending.current.consent !== consent ||
+        pending.current.agentId !== agentId
+      )
+        pending.current = { message, consent, agentId, key: crypto.randomUUID() };
+      const result = await api<CompanionResponse>(
+        '/companion/messages',
+        { message, consent, agentId, page: window.location.pathname },
+        'POST',
+        pending.current.key,
+      );
+      pending.current = null;
       const manifest = agents.find((agent) => agent.id === result.agentId);
       setTurns((prev) => [
         ...prev,
         {
           role: 'agent',
           text: result.response,
+          at: timestamp(),
           agentId: result.agentId,
           runId: result.runId,
           humanGate: manifest?.humanGate,
@@ -83,8 +149,10 @@ export function useCompanionChat(agents: AgentManifest[]) {
       ]);
       if (manifest?.humanGate && manifest.humanGate !== 'none')
         notify('This agent may propose changes that still require your approval.');
-      if (result.humanHandoffRequested) notify('This also went to a qualified human expert for review.');
+      if (result.humanHandoffRequested)
+        notify('This also went to a qualified human expert for review.');
     } catch (e) {
+      setDraft(message);
       setError((e as Error).message);
     } finally {
       setBusy(false);
@@ -100,5 +168,17 @@ export function useCompanionChat(agents: AgentManifest[]) {
     );
   }
 
-  return { turns, draft, setDraft, busy, error, send, sign };
+  return {
+    turns,
+    draft,
+    setDraft,
+    busy: busy || loading,
+    error,
+    send,
+    sign,
+    consent,
+    setConsent,
+    agentId,
+    setAgentId,
+  };
 }

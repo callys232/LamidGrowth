@@ -4,12 +4,16 @@ import AxeBuilder from '@axe-core/playwright';
 test('mega menus expose options on hover and support keyboard navigation', async ({ page }) => {
   await page.goto('/');
   const product = page.getByRole('button', { name: 'Product', exact: true });
+  // A dropdown never opens on a bare hover — a click arms hover-switching between tabs first.
   await product.hover();
+  await expect(page.getByRole('region', { name: 'Product', exact: true })).toHaveCount(0);
+  await product.click();
   const panel = page.getByRole('region', { name: 'Product', exact: true });
   await expect(panel.getByRole('link')).toHaveCount(6);
   expect((await panel.boundingBox())!.width).toBeGreaterThan(1000);
   await panel.getByRole('link', { name: /^Organizations/ }).hover();
   await expect(product).toHaveAttribute('aria-expanded', 'true');
+  // Now that a tab has been clicked, hovering other tabs switches between them.
   await page.getByRole('button', { name: 'Solutions', exact: true }).hover();
   await expect(
     page.getByRole('region', { name: 'Solutions', exact: true }).getByRole('link'),
@@ -40,7 +44,9 @@ test('mega menus expose options on hover and support keyboard navigation', async
   await expect(panel.getByRole('link', { name: /^Overview/ })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(product).toBeFocused();
-  await product.hover();
+  // Escape disarms hover-switching too, so re-opening here needs another click.
+  await product.click();
+  await expect(page.locator('.mega-panel')).toHaveCount(1);
   await page.mouse.move(5, 850);
   await expect(page.locator('.mega-panel')).toHaveCount(0);
 });

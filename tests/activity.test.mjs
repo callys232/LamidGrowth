@@ -4,7 +4,7 @@ import { createApp } from '../src/app/app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 } },
   }));
@@ -45,6 +45,7 @@ test('activity feed requires authentication', async () => {
 test('activity feed merges jobs, workflows, and agent runs, sorted by recency', async () => {
   const cookie = await demo();
   const state = (await request('/state', undefined, cookie, 'GET')).data;
+  await store.db.prepare('UPDATE users SET points_balance = 1000 WHERE id = ?').run(state.user.id);
   const objective = state.objectives[0];
 
   const job = await request(

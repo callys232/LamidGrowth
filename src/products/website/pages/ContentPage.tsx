@@ -24,7 +24,7 @@ export function ContentPage({ children }: { children?: ReactNode }) {
         {page ? (
           children ? (
             <details className="canonical-copy-disclosure">
-              <summary>Canonical page copy (development reference)</summary>
+              <summary>Getting started</summary>
               <CanonicalCopy path={pathname} embedded />
             </details>
           ) : (

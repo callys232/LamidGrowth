@@ -1,26 +1,15 @@
-import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
+import { Share2, Activity, Landmark } from 'lucide-react';
+import { EngineDocumentPage } from '../../../../shared/content/engine/EngineDocumentPage';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
-import {
-  ProductOrganizationsHeroSlide,
-  SharedContextSlide1,
-  OrganizationalRhythmSlide2,
-  GovernanceSlide3,
-  ScaleTheCapabilityPreserveTheCoherenceSlide4,
-} from './slides';
 
-/** /product/organizations — sections in reading order. */
+/** /product/organizations — layout shared with the other 4 engine pages (see EngineDocumentPage). */
 export function ProductOrganizationsDocumentPage({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentPageLayout
-      page={content}
+    <EngineDocumentPage
+      content={content}
       embedded={embedded}
-      hero={<ProductOrganizationsHeroSlide embedded={embedded} />}
-    >
-      <SharedContextSlide1 embedded={embedded} />
-      <OrganizationalRhythmSlide2 embedded={embedded} />
-      <GovernanceSlide3 embedded={embedded} />
-      <ScaleTheCapabilityPreserveTheCoherenceSlide4 embedded={embedded} />
-    </DocumentPageLayout>
+      icons={[Share2, Activity, Landmark]}
+    />
   );
 }

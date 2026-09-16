@@ -21,7 +21,6 @@ import {
   Sun,
   TrendingUp,
   Users,
-  Wallet,
   Wand2,
   X,
 } from 'lucide-react';
@@ -38,9 +37,9 @@ import {
 import { api, ApiError, setWorkspaceScope } from '../../../api';
 import { pageTheme } from '../../../pageThemes';
 import { CanonicalCopy } from '../../../shared/content/CanonicalCopy';
-import { contexts } from '../../../shared/lib/contexts';
 import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
+import { DatePicker } from '../../../shared/ui/DatePicker';
 import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
 import { Loading } from '../../../shared/ui/Loading';
@@ -70,7 +69,6 @@ const navigation = [
   ['Knowledge', '/os/knowledge', Layers3],
   ['Concierge', '/os/concierge', ShieldCheck],
   ['Talent', '/os/talent', Users],
-  ['Pricing', '/os/pricing', Wallet],
   ['Guided Scoping', '/os/scoping/new', Wand2],
   ['Learning', '/os/learning', GraduationCap],
 ] as const;
@@ -380,11 +378,11 @@ export function WorkspaceShell() {
             </p>
           )}
           <Outlet key={state.workspace.id} context={ctx} />
-          {/* Collapsed by default — this is the canonical spec copy for the current route, kept
-              for traceability against the copy master, not something a user should scroll past
-              every visit. Expand only on demand. */}
+          {/* Collapsed by default — reference copy for the current route, kept for traceability
+              against the copy master, not something a user should scroll past every visit.
+              Expand only on demand. */}
           <details className="canonical-copy-disclosure">
-            <summary>Canonical page copy (development reference)</summary>
+            <summary>Getting started</summary>
             <CanonicalCopy path={location.pathname} embedded />
           </details>
         </main>
@@ -420,6 +418,7 @@ export function WorkspaceShell() {
           state={state}
           objectiveId={objectiveId}
           onClose={() => setModal(null)}
+          onCreateObjective={() => setModal('objective')}
           onSaved={async () => {
             await refresh();
             setModal(null);
@@ -515,12 +514,11 @@ function ObjectiveForm({
           />
         </Field>
         <div className="form-grid">
-          <Field label="Context">
-            <select name="context" defaultValue={context}>
-              {contexts.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
+          <Field label="Context" hint="Set at signup and fixed from then on.">
+            <div className="field-static">
+              {context}
+              <input type="hidden" name="context" value={context} />
+            </div>
           </Field>
           <Field label="Priority">
             <select name="priority" defaultValue="Medium">
@@ -545,7 +543,7 @@ function ObjectiveForm({
           />
         </Field>
         <Field label="Target date (optional)">
-          <input type="date" name="targetDate" />
+          <DatePicker name="targetDate" />
         </Field>
         {error && (
           <p className="form-error" role="alert">
@@ -570,11 +568,13 @@ function ActionForm({
   objectiveId,
   onSaved,
   onClose,
+  onCreateObjective,
 }: {
   state: WorkspaceState;
   objectiveId: string;
   onSaved: () => Promise<void>;
   onClose: () => void;
+  onCreateObjective: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -599,7 +599,15 @@ function ActionForm({
   return (
     <Modal title="Make the next step clear." onClose={onClose}>
       {state.objectives.length === 0 ? (
-        <Empty title="Start with an objective">
+        <Empty
+          title="Start with an objective"
+          action={
+            <Button onClick={onCreateObjective}>
+              Create objective
+              <Plus size={16} />
+            </Button>
+          }
+        >
           Create an objective first so every action has a purpose.
         </Empty>
       ) : (
@@ -622,7 +630,7 @@ function ActionForm({
             </select>
           </Field>
           <Field label="Due date (optional)">
-            <input name="dueDate" type="date" />
+            <DatePicker name="dueDate" />
           </Field>
           <Field label="Notes and acceptance criteria">
             <textarea

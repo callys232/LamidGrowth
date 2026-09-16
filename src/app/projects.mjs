@@ -50,28 +50,28 @@ const fail = (message, status) => {
 export function mountProjects(app, store, deps) {
   const { db, transaction, log } = store;
 
-  function projectFor(id) {
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+  async function projectFor(id) {
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
     if (!project) fail('Project not found.', 404);
     return project;
   }
-  function requireParty(project, userId) {
-    const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(project.job_id);
+  async function requireParty(project, userId) {
+    const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(project.job_id);
     const isClient = job && job.client_user_id === userId;
     const isFreelancer = project.freelancer_user_id === userId;
     if (!isClient && !isFreelancer)
       fail('You are not a party to this project.', 403);
     return { job, isClient, isFreelancer };
   }
-  function milestoneFor(id) {
-    const milestone = db.prepare('SELECT * FROM milestones WHERE id = ?').get(id);
+  async function milestoneFor(id) {
+    const milestone = await db.prepare('SELECT * FROM milestones WHERE id = ?').get(id);
     if (!milestone) fail('Milestone not found.', 404);
     return milestone;
   }
 
-  app.get('/api/projects', (req, res) => {
+  app.get('/api/projects', async (req, res) => {
     res.json(
-      db
+      await db
         .prepare(
           `SELECT projects.* FROM projects JOIN job_posts ON job_posts.id = projects.job_id
            WHERE projects.workspace_id = ? AND (job_posts.client_user_id = ? OR projects.freelancer_user_id = ?)
@@ -81,46 +81,48 @@ export function mountProjects(app, store, deps) {
     );
   });
 
-  app.get('/api/projects/:id', (req, res) => {
-    const project = projectFor(req.params.id);
-    requireParty(project, req.user.id);
-    const milestones = db
-      .prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY created_at')
-      .all(project.id)
-      .map((milestone) => ({
-        ...milestone,
-        deliverables: db
+  app.get('/api/projects/:id', async (req, res) => {
+    const project = await projectFor(req.params.id);
+    await requireParty(project, req.user.id);
+    const milestoneRows = await db.prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY created_at').all(project.id);
+    const milestones = await Promise.all(
+      milestoneRows.map(async (milestone) => {
+        const deliverableRows = await db
           .prepare('SELECT * FROM deliverables WHERE milestone_id = ? ORDER BY created_at')
-          .all(milestone.id)
-          .map((deliverable) => ({
+          .all(milestone.id);
+        const deliverables = await Promise.all(
+          deliverableRows.map(async (deliverable) => ({
             ...deliverable,
-            criteria: db
+            criteria: await db
               .prepare('SELECT * FROM acceptance_criteria WHERE deliverable_id = ? ORDER BY created_at')
               .all(deliverable.id),
           })),
-        submissions: db
+        );
+        const submissions = await db
           .prepare('SELECT * FROM submissions WHERE milestone_id = ? ORDER BY created_at DESC')
-          .all(milestone.id),
-      }));
+          .all(milestone.id);
+        return { ...milestone, deliverables, submissions };
+      }),
+    );
     const assignedTeam = project.assigned_team_id
       ? {
-          ...db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(project.assigned_team_id),
-          members: db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(project.assigned_team_id),
+          ...(await db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(project.assigned_team_id)),
+          members: await db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(project.assigned_team_id),
         }
       : null;
     res.json({ ...project, milestones, assignedTeam });
   });
 
-  app.post('/api/projects', (req, res) => {
+  app.post('/api/projects', async (req, res) => {
     const input = projectSchema.parse(req.body);
-    const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(input.jobId);
+    const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(input.jobId);
     if (!job) return res.status(404).json({ error: 'Job post not found.' });
     if (job.client_user_id !== req.user.id)
       return res.status(403).json({ error: 'Only the job owner can create a project for it.' });
-    const bid = db
+    const bid = await db
       .prepare('SELECT 1 FROM bids WHERE job_id = ? AND freelancer_user_id = ?')
       .get(job.id, input.freelancerUserId);
-    const acceptedInvitation = db
+    const acceptedInvitation = await db
       .prepare(
         "SELECT 1 FROM job_invitations WHERE job_id = ? AND freelancer_user_id = ? AND status = 'accepted'",
       )
@@ -130,50 +132,50 @@ export function mountProjects(app, store, deps) {
         .status(400)
         .json({ error: 'That user has no bid or accepted invitation on this job and cannot be assigned as the freelancer.' });
     const id = randomUUID();
-    transaction(() => {
-      db.prepare(
+    await transaction(async () => {
+      await db.prepare(
         'INSERT INTO projects (id, workspace_id, job_id, title, status, created_at, freelancer_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
       ).run(id, job.workspace_id, job.id, input.title, 'active', new Date().toISOString(), input.freelancerUserId);
-      log(job.workspace_id, req.user.name, 'Project created', id, input.title);
+      await log(job.workspace_id, req.user.name, 'Project created', id, input.title);
     });
-    res.status(201).json(projectFor(id));
+    res.status(201).json(await projectFor(id));
   });
 
   // Assigns a whole expert team — led by the freelancer already engaged on this project — as a
   // unit, rather than only ever being able to add specialists one at a time.
-  app.patch('/api/projects/:id/team', (req, res) => {
-    const project = projectFor(req.params.id);
-    const { isClient } = requireParty(project, req.user.id);
+  app.patch('/api/projects/:id/team', async (req, res) => {
+    const project = await projectFor(req.params.id);
+    const { isClient } = await requireParty(project, req.user.id);
     if (!isClient) return res.status(403).json({ error: 'Only the project owner can assign an expert team.' });
     const input = assignTeamSchema.parse(req.body);
     if (input.teamId) {
-      const team = db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(input.teamId);
+      const team = await db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(input.teamId);
       if (!team) return res.status(404).json({ error: 'Expert team not found.' });
       if (team.lead_user_id !== project.freelancer_user_id)
         return res.status(400).json({ error: 'Only a team led by the expert already engaged on this project can be assigned.' });
     }
-    transaction(() => {
-      db.prepare('UPDATE projects SET assigned_team_id = ? WHERE id = ?').run(input.teamId, project.id);
-      log(req.workspace.id, req.user.name, 'Expert team assigned to project', project.id, input.teamId || 'none');
+    await transaction(async () => {
+      await db.prepare('UPDATE projects SET assigned_team_id = ? WHERE id = ?').run(input.teamId, project.id);
+      await log(req.workspace.id, req.user.name, 'Expert team assigned to project', project.id, input.teamId || 'none');
     });
-    const updated = projectFor(project.id);
+    const updated = await projectFor(project.id);
     const assignedTeam = updated.assigned_team_id
       ? {
-          ...db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(updated.assigned_team_id),
-          members: db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(updated.assigned_team_id),
+          ...(await db.prepare('SELECT * FROM expert_teams WHERE id = ?').get(updated.assigned_team_id)),
+          members: await db.prepare('SELECT * FROM expert_team_members WHERE team_id = ?').all(updated.assigned_team_id),
         }
       : null;
     res.json({ ...updated, assignedTeam });
   });
 
-  app.post('/api/projects/:id/milestones', (req, res) => {
-    const project = projectFor(req.params.id);
-    const { isClient } = requireParty(project, req.user.id);
+  app.post('/api/projects/:id/milestones', async (req, res) => {
+    const project = await projectFor(req.params.id);
+    const { isClient } = await requireParty(project, req.user.id);
     if (!isClient) return res.status(403).json({ error: 'Only the project owner can add milestones.' });
     const input = milestoneSchema.parse(req.body);
     const id = randomUUID();
-    transaction(() => {
-      db.prepare('INSERT INTO milestones VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      await db.prepare('INSERT INTO milestones VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
         id,
         project.id,
         input.title,
@@ -184,20 +186,20 @@ export function mountProjects(app, store, deps) {
         'planned',
         new Date().toISOString(),
       );
-      log(project.workspace_id, req.user.name, 'Milestone created', id, input.title);
+      await log(project.workspace_id, req.user.name, 'Milestone created', id, input.title);
     });
-    res.status(201).json(milestoneFor(id));
+    res.status(201).json(await milestoneFor(id));
   });
 
-  app.post('/api/milestones/:id/deliverables', (req, res) => {
-    const milestone = milestoneFor(req.params.id);
-    const project = projectFor(milestone.project_id);
-    const { isClient } = requireParty(project, req.user.id);
+  app.post('/api/milestones/:id/deliverables', async (req, res) => {
+    const milestone = await milestoneFor(req.params.id);
+    const project = await projectFor(milestone.project_id);
+    const { isClient } = await requireParty(project, req.user.id);
     if (!isClient) return res.status(403).json({ error: 'Only the project owner can define deliverables.' });
     const input = deliverableSchema.parse(req.body);
     const deliverableId = randomUUID();
-    transaction(() => {
-      db.prepare('INSERT INTO deliverables VALUES (?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      await db.prepare('INSERT INTO deliverables VALUES (?, ?, ?, ?, ?, ?)').run(
         deliverableId,
         milestone.id,
         input.title,
@@ -206,7 +208,7 @@ export function mountProjects(app, store, deps) {
         new Date().toISOString(),
       );
       for (const criterion of input.criteria) {
-        db.prepare('INSERT INTO acceptance_criteria VALUES (?, ?, ?, ?, ?)').run(
+        await db.prepare('INSERT INTO acceptance_criteria VALUES (?, ?, ?, ?, ?)').run(
           randomUUID(),
           deliverableId,
           criterion,
@@ -214,24 +216,26 @@ export function mountProjects(app, store, deps) {
           new Date().toISOString(),
         );
       }
-      log(project.workspace_id, req.user.name, 'Deliverable defined', deliverableId, input.title);
+      await log(project.workspace_id, req.user.name, 'Deliverable defined', deliverableId, input.title);
     });
     res.status(201).json({
-      ...db.prepare('SELECT * FROM deliverables WHERE id = ?').get(deliverableId),
-      criteria: db.prepare('SELECT * FROM acceptance_criteria WHERE deliverable_id = ?').all(deliverableId),
+      ...(await db.prepare('SELECT * FROM deliverables WHERE id = ?').get(deliverableId)),
+      criteria: await db.prepare('SELECT * FROM acceptance_criteria WHERE deliverable_id = ?').all(deliverableId),
     });
   });
 
-  app.post('/api/milestones/:id/submissions', (req, res) => {
-    const milestone = milestoneFor(req.params.id);
-    const project = projectFor(milestone.project_id);
-    const { isFreelancer } = requireParty(project, req.user.id);
+  app.post('/api/milestones/:id/submissions', async (req, res) => {
+    const milestone = await milestoneFor(req.params.id);
+    const project = await projectFor(milestone.project_id);
+    const { isFreelancer } = await requireParty(project, req.user.id);
     if (!isFreelancer)
       return res.status(403).json({ error: 'Only the assigned freelancer can submit this milestone.' });
     const input = submissionSchema.parse(req.body);
     const submissionId = randomUUID();
-    transaction(() => {
-      db.prepare('INSERT INTO submissions VALUES (?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      const current = await db.prepare('SELECT status FROM milestones WHERE id = ? FOR UPDATE').get(milestone.id);
+      if (['approved', 'disputed'].includes(current.status)) fail('This milestone has a final decision. Resolve it before submitting new work.', 409);
+      await db.prepare('INSERT INTO submissions VALUES (?, ?, ?, ?, ?)').run(
         submissionId,
         milestone.id,
         req.user.id,
@@ -239,7 +243,7 @@ export function mountProjects(app, store, deps) {
         new Date().toISOString(),
       );
       for (const asset of input.assets) {
-        db.prepare('INSERT INTO submission_assets VALUES (?, ?, ?, ?, ?)').run(
+        await db.prepare('INSERT INTO submission_assets VALUES (?, ?, ?, ?, ?)').run(
           randomUUID(),
           submissionId,
           asset.url,
@@ -247,27 +251,30 @@ export function mountProjects(app, store, deps) {
           new Date().toISOString(),
         );
       }
-      db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run('submitted', milestone.id);
-      log(project.workspace_id, req.user.name, 'Milestone submitted', submissionId, milestone.title);
+      await db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run('submitted', milestone.id);
+      await log(project.workspace_id, req.user.name, 'Milestone submitted', submissionId, milestone.title);
     });
-    res.status(201).json(db.prepare('SELECT * FROM submissions WHERE id = ?').get(submissionId));
+    res.status(201).json(await db.prepare('SELECT * FROM submissions WHERE id = ?').get(submissionId));
   });
 
   app.post('/api/submissions/:id/verify', async (req, res, next) => {
     try {
-      const submission = db.prepare('SELECT * FROM submissions WHERE id = ?').get(req.params.id);
+      const submission = await db.prepare('SELECT * FROM submissions WHERE id = ?').get(req.params.id);
       if (!submission) return res.status(404).json({ error: 'Submission not found.' });
-      const milestone = milestoneFor(submission.milestone_id);
-      const project = projectFor(milestone.project_id);
-      requireParty(project, req.user.id);
+      const milestone = await milestoneFor(submission.milestone_id);
+      const project = await projectFor(milestone.project_id);
+      await requireParty(project, req.user.id);
 
-      const deliverables = db
+      const deliverables = await db
         .prepare('SELECT * FROM deliverables WHERE milestone_id = ?')
         .all(milestone.id);
-      const criteria = deliverables.flatMap((deliverable) =>
-        db.prepare('SELECT * FROM acceptance_criteria WHERE deliverable_id = ?').all(deliverable.id),
+      const criteriaByDeliverable = await Promise.all(
+        deliverables.map((deliverable) =>
+          db.prepare('SELECT * FROM acceptance_criteria WHERE deliverable_id = ?').all(deliverable.id),
+        ),
       );
-      const assets = db
+      const criteria = criteriaByDeliverable.flat();
+      const assets = await db
         .prepare('SELECT * FROM submission_assets WHERE submission_id = ?')
         .all(submission.id);
       const submissionWords = wordSet(
@@ -294,7 +301,7 @@ export function mountProjects(app, store, deps) {
           continue;
         }
         aiCalls++;
-        const model = requireApprovedModel(store, 'companion.deliverable-verification');
+        const model = await requireApprovedModel(store, 'companion.deliverable-verification');
         const review = await deps.aiProvider.review(
           {
             question: `Does the submission satisfy this acceptance criterion? Criterion: "${criterion.criterion}". If the submission does not contain enough information to answer, say so plainly rather than guessing.`,
@@ -311,8 +318,12 @@ export function mountProjects(app, store, deps) {
       }
 
       const verificationId = randomUUID();
-      transaction(() => {
-        db.prepare('INSERT INTO verification_cases VALUES (?, ?, ?, ?, ?, ?)').run(
+      await transaction(async () => {
+        const current = await db.prepare('SELECT status FROM milestones WHERE id = ? FOR UPDATE').get(milestone.id);
+        const latest = await db.prepare('SELECT id FROM submissions WHERE milestone_id = ? ORDER BY created_at DESC, id DESC LIMIT 1').get(milestone.id);
+        const decided = await db.prepare("SELECT 1 FROM verification_cases WHERE submission_id = ? AND status LIKE 'decided_%'").get(submission.id);
+        if (['approved', 'disputed'].includes(current.status) || latest?.id !== submission.id || decided) fail('This submission is no longer available for verification. Review the latest work.', 409);
+        await db.prepare('INSERT INTO verification_cases VALUES (?, ?, ?, ?, ?, ?)').run(
           verificationId,
           submission.id,
           'completed',
@@ -321,7 +332,7 @@ export function mountProjects(app, store, deps) {
           new Date().toISOString(),
         );
         for (const result of results) {
-          db.prepare('INSERT INTO criterion_results VALUES (?, ?, ?, ?, ?, ?)').run(
+          await db.prepare('INSERT INTO criterion_results VALUES (?, ?, ?, ?, ?, ?)').run(
             randomUUID(),
             verificationId,
             result.criterionId,
@@ -329,16 +340,16 @@ export function mountProjects(app, store, deps) {
             result.rationale,
             new Date().toISOString(),
           );
-          db.prepare('UPDATE acceptance_criteria SET status = ? WHERE id = ?').run(
+          await db.prepare('UPDATE acceptance_criteria SET status = ? WHERE id = ?').run(
             result.result,
             result.criterionId,
           );
         }
-        db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run('in_review', milestone.id);
-        log(project.workspace_id, req.user.name, 'Deliverable verification completed', verificationId, milestone.title);
+        await db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run('in_review', milestone.id);
+        await log(project.workspace_id, req.user.name, 'Deliverable verification completed', verificationId, milestone.title);
       });
       res.status(201).json({
-        ...db.prepare('SELECT * FROM verification_cases WHERE id = ?').get(verificationId),
+        ...(await db.prepare('SELECT * FROM verification_cases WHERE id = ?').get(verificationId)),
         results,
       });
     } catch (error) {
@@ -346,13 +357,13 @@ export function mountProjects(app, store, deps) {
     }
   });
 
-  app.post('/api/verification-cases/:id/decisions', (req, res) => {
-    const verificationCase = db.prepare('SELECT * FROM verification_cases WHERE id = ?').get(req.params.id);
+  app.post('/api/verification-cases/:id/decisions', async (req, res) => {
+    const verificationCase = await db.prepare('SELECT * FROM verification_cases WHERE id = ?').get(req.params.id);
     if (!verificationCase) return res.status(404).json({ error: 'Verification case not found.' });
-    const submission = db.prepare('SELECT * FROM submissions WHERE id = ?').get(verificationCase.submission_id);
-    const milestone = milestoneFor(submission.milestone_id);
-    const project = projectFor(milestone.project_id);
-    const { isClient } = requireParty(project, req.user.id);
+    const submission = await db.prepare('SELECT * FROM submissions WHERE id = ?').get(verificationCase.submission_id);
+    const milestone = await milestoneFor(submission.milestone_id);
+    const project = await projectFor(milestone.project_id);
+    const { isClient } = await requireParty(project, req.user.id);
     if (!isClient)
       return res.status(403).json({ error: 'Only the project owner can approve, request revision, or dispute a milestone.' });
     const input = decisionSchema.parse(req.body);
@@ -363,8 +374,15 @@ export function mountProjects(app, store, deps) {
         : input.decision === 'dispute'
           ? 'disputed'
           : 'submitted';
-    transaction(() => {
-      db.prepare('INSERT INTO approvals VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      const current = await db.prepare('SELECT status FROM milestones WHERE id = ? FOR UPDATE').get(milestone.id);
+      const reviewed = await db.prepare('SELECT status FROM verification_cases WHERE id = ? FOR UPDATE').get(verificationCase.id);
+      const latest = await db.prepare('SELECT v.id FROM verification_cases v JOIN submissions s ON s.id = v.submission_id WHERE s.milestone_id = ? ORDER BY v.created_at DESC, v.id DESC LIMIT 1').get(milestone.id);
+      const latestSubmission = await db.prepare('SELECT id FROM submissions WHERE milestone_id = ? ORDER BY created_at DESC, id DESC LIMIT 1').get(milestone.id);
+      if (current.status !== 'in_review' || reviewed?.status !== 'completed' || latest?.id !== verificationCase.id || latestSubmission?.id !== submission.id)
+        fail('This review has already been decided or replaced. Refresh the milestone before continuing.', 409);
+      await db.prepare('UPDATE verification_cases SET status = ? WHERE id = ?').run(`decided_${input.decision}`, verificationCase.id);
+      await db.prepare('INSERT INTO approvals VALUES (?, ?, ?, ?, ?, ?, ?)').run(
         id,
         'milestone',
         milestone.id,
@@ -374,7 +392,7 @@ export function mountProjects(app, store, deps) {
         new Date().toISOString(),
       );
       if (input.decision === 'dispute')
-        db.prepare('INSERT INTO disputes VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+        await db.prepare('INSERT INTO disputes VALUES (?, ?, ?, ?, ?, ?, ?)').run(
           randomUUID(),
           'milestone',
           milestone.id,
@@ -383,9 +401,9 @@ export function mountProjects(app, store, deps) {
           'open',
           new Date().toISOString(),
         );
-      db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run(nextStatus, milestone.id);
-      log(project.workspace_id, req.user.name, `Milestone ${input.decision}`, milestone.id, input.reason);
+      await db.prepare('UPDATE milestones SET status = ? WHERE id = ?').run(nextStatus, milestone.id);
+      await log(project.workspace_id, req.user.name, `Milestone ${input.decision}`, milestone.id, input.reason);
     });
-    res.status(201).json(milestoneFor(milestone.id));
+    res.status(201).json(await milestoneFor(milestone.id));
   });
 }

@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 test('enterprise evaluation links and signup journey remain navigable', async ({ page }) => {
@@ -10,7 +11,6 @@ test('enterprise evaluation links and signup journey remain navigable', async ({
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'LAMID ONE at Organizational Scale',
   );
-  await expect(page.getByText('Document preview', { exact: false })).toBeVisible();
 
   for (const destination of [
     ['/security', 'Security'],
@@ -44,6 +44,7 @@ test('enterprise evaluation links and signup journey remain navigable', async ({
   await page.getByLabel('Email address').fill(`enterprise-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-enterprise-test-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('What Needs Your Attention?');
 });

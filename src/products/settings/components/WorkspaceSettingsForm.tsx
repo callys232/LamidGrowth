@@ -1,4 +1,3 @@
-import { contexts } from '../../../shared/lib/contexts';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import type { useSettingsPage } from '../hooks/useSettingsPage';
@@ -24,12 +23,8 @@ export function WorkspaceSettingsForm({
               maxLength={100}
             />
           </Field>
-          <Field label="Starting context">
-            <select name="context" defaultValue={state.workspace.context} disabled={!canManage}>
-              {contexts.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
+          <Field label="Starting context" hint="Set at signup and fixed from then on.">
+            <div className="field-static">{state.workspace.context}</div>
           </Field>
           {error && (
             <p role="alert" className="form-error">

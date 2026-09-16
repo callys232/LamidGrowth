@@ -1,10 +1,10 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
   }));
@@ -109,14 +109,16 @@ test('two clients cannot both approve the same milestone twice (double-decision 
 
   // Both requests are processed (no crash), and the final milestone state is exactly one of the two outcomes —
   // never a corrupted mix, and never two approval records where only one decision should have stood.
-  assert.ok([first.status, second.status].every((s) => s === 201));
+  assert.deepEqual([first.status, second.status].sort(), [201, 409]);
   const finalMilestone = await request(`/projects/${project.data.id}`, undefined, client, 'GET');
   const status = finalMilestone.data.milestones[0].status;
   assert.ok(['approved', 'disputed'].includes(status));
-  const approvalRows = store.db
+  const approvalRows = (await store.db
     .prepare("SELECT COUNT(*) AS count FROM approvals WHERE subject_id = ?")
-    .get(milestone.data.id).count;
-  assert.equal(approvalRows, 2, 'both decisions are recorded as an audit trail even though only the last write wins');
+    .get(milestone.data.id)).count;
+  assert.equal(approvalRows, 1, 'only the winning decision is recorded');
+  const disputes = await store.db.prepare("SELECT COUNT(*) AS count FROM disputes WHERE subject_id = ? AND status = 'open'").get(milestone.data.id);
+  assert.equal(Number(disputes.count), status === 'disputed' ? 1 : 0);
 });
 
 test('five concurrent bids on the same job are all accepted without corrupting job state', async () => {
@@ -148,7 +150,7 @@ test('five concurrent bids on the same job are all accepted without corrupting j
     ),
   );
   assert.ok(results.every((r) => r.status === 201));
-  const bidCount = store.db.prepare('SELECT COUNT(*) AS count FROM bids WHERE job_id = ?').get(job.data.id).count;
+  const bidCount = (await store.db.prepare('SELECT COUNT(*) AS count FROM bids WHERE job_id = ?').get(job.data.id)).count;
   assert.equal(bidCount, 5);
 });
 
@@ -215,20 +217,31 @@ test('tampering with the session cookie is rejected, not treated as a valid sess
 test('a session for a disabled account is rejected on the next request', async () => {
   const client = await signup('Disable Me');
   const state = (await request('/state', undefined, client, 'GET')).data;
-  store.db.prepare('UPDATE users SET disabled_at = ? WHERE id = ?').run(Date.now(), state.user.id);
+  await store.db.prepare('UPDATE users SET disabled_at = ? WHERE id = ?').run(Date.now(), state.user.id);
   const attempt = await request('/state', undefined, client, 'GET');
   assert.equal(attempt.status, 403);
 });
 
 test('ten concurrent Companion messages from the same user never over-deduct points below zero', async () => {
   const client = await signup('Points Race Client');
+  const before = (await request('/points', undefined, client, 'GET')).data.balance;
   const results = await Promise.all(
     Array.from({ length: 10 }, () => request('/companion/messages', { message: 'what changed recently' }, client)),
   );
   assert.ok(results.every((r) => r.status === 201));
   const balances = results.map((r) => r.data.balance);
   assert.ok(balances.every((b) => b >= 0), 'no balance ever went negative');
-  // Each run costs 1 point; under true atomicity, ten concurrent debits from the same
-  // starting balance produce ten distinct balances with no duplicate (lost update) and no gap.
-  assert.equal(new Set(balances).size, 10, `expected 10 distinct balances (no lost update), got ${JSON.stringify(balances)}`);
+  // The atomic conditional UPDATE (WHERE points_balance >= ?) is what actually prevents a lost
+  // update — Postgres's row-level locking serializes concurrent debits on the same row regardless
+  // of how the ten HTTP requests interleave. What is NOT guaranteed under real network latency
+  // (unlike SQLite's synchronous, single-writer model) is that each response's own balance-read
+  // lands at a distinct point in that interleaving — near-simultaneous reads can legitimately
+  // observe the same already-fully-debited value. So the real invariant to check is the total:
+  // exactly ten charges landed, for the exact same per-run cost, and nothing was double-charged
+  // or dropped.
+  const costs = new Set(results.map((r) => r.data.pointsCharged));
+  assert.equal(costs.size, 1, `expected one consistent per-run cost, got ${JSON.stringify([...costs])}`);
+  const [cost] = costs;
+  const after = Math.min(...balances);
+  assert.equal(after, before - 10 * cost, `expected exactly 10 charges of ${cost} with no lost or duplicate update`);
 });

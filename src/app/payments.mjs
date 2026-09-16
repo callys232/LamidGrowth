@@ -108,18 +108,18 @@ export function mountPayments(app, store, deps) {
   const { db, transaction, log } = store;
   const providerFor = (name) => deps.paymentProvider(name);
 
-  function projectFor(id) {
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
+  async function projectFor(id) {
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
     if (!project) fail('Project not found.', 404);
     return project;
   }
-  function milestoneFor(id) {
-    const milestone = db.prepare('SELECT * FROM milestones WHERE id = ?').get(id);
+  async function milestoneFor(id) {
+    const milestone = await db.prepare('SELECT * FROM milestones WHERE id = ?').get(id);
     if (!milestone) fail('Milestone not found.', 404);
     return milestone;
   }
-  function requireParty(project, userId) {
-    const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(project.job_id);
+  async function requireParty(project, userId) {
+    const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(project.job_id);
     const isClient = job && job.client_user_id === userId;
     const isFreelancer = project.freelancer_user_id === userId;
     if (!isClient && !isFreelancer) fail('You are not a party to this project.', 403);
@@ -140,8 +140,8 @@ export function mountPayments(app, store, deps) {
         recipientCode = created.recipientCode;
       }
       const id = randomUUID();
-      transaction(() => {
-        db.prepare('INSERT INTO payment_accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
+      await transaction(async () => {
+        await db.prepare('INSERT INTO payment_accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
           id,
           req.user.id,
           input.provider,
@@ -151,7 +151,7 @@ export function mountPayments(app, store, deps) {
           recipientCode,
           new Date().toISOString(),
         );
-        log(
+        await log(
           req.workspace.id,
           req.user.name,
           'Payment account registered',
@@ -159,7 +159,7 @@ export function mountPayments(app, store, deps) {
           `${input.provider}${recipientCode ? '' : ' (provider not configured; payouts pending activation)'}`,
         );
       });
-      const account = db.prepare('SELECT * FROM payment_accounts WHERE id = ?').get(id);
+      const account = await db.prepare('SELECT * FROM payment_accounts WHERE id = ?').get(id);
       res.status(201).json({
         ...account,
         message: recipientCode
@@ -171,12 +171,12 @@ export function mountPayments(app, store, deps) {
     }
   });
 
-  app.get('/api/milestones/:id/transfers', (req, res) => {
-    const milestone = milestoneFor(req.params.id);
-    const project = projectFor(milestone.project_id);
-    requireParty(project, req.user.id);
+  app.get('/api/milestones/:id/transfers', async (req, res) => {
+    const milestone = await milestoneFor(req.params.id);
+    const project = await projectFor(milestone.project_id);
+    await requireParty(project, req.user.id);
     res.json(
-      db
+      await db
         .prepare('SELECT * FROM payment_transfers WHERE milestone_id = ? ORDER BY created_at DESC')
         .all(milestone.id),
     );
@@ -184,12 +184,12 @@ export function mountPayments(app, store, deps) {
 
   app.post('/api/milestones/:id/fund', async (req, res, next) => {
     try {
-      const milestone = milestoneFor(req.params.id);
-      const project = projectFor(milestone.project_id);
-      const { isClient } = requireParty(project, req.user.id);
+      const milestone = await milestoneFor(req.params.id);
+      const project = await projectFor(milestone.project_id);
+      const { isClient } = await requireParty(project, req.user.id);
       if (!isClient)
         return res.status(403).json({ error: 'Only the project owner can fund this milestone.' });
-      const existing = db
+      const existing = await db
         .prepare(
           "SELECT 1 FROM milestone_fundings WHERE milestone_id = ? AND status IN ('pending', 'held')",
         )
@@ -210,8 +210,8 @@ export function mountPayments(app, store, deps) {
         email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
         reference,
       });
-      transaction(() => {
-        db.prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      await transaction(async () => {
+        await db.prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
           fundingId,
           milestone.id,
           project.workspace_id,
@@ -225,7 +225,7 @@ export function mountPayments(app, store, deps) {
           null,
           null,
         );
-        log(project.workspace_id, req.user.name, 'Milestone funding initiated', fundingId, milestone.title);
+        await log(project.workspace_id, req.user.name, 'Milestone funding initiated', fundingId, milestone.title);
       });
       res.status(201).json({ authorizationUrl: init.authorizationUrl, reference, amountMinor, currency: milestone.currency });
     } catch (error) {
@@ -233,11 +233,11 @@ export function mountPayments(app, store, deps) {
     }
   });
 
-  app.get('/api/milestones/:id/funding', (req, res) => {
-    const milestone = milestoneFor(req.params.id);
-    const project = projectFor(milestone.project_id);
-    requireParty(project, req.user.id);
-    const funding = db
+  app.get('/api/milestones/:id/funding', async (req, res) => {
+    const milestone = await milestoneFor(req.params.id);
+    const project = await projectFor(milestone.project_id);
+    await requireParty(project, req.user.id);
+    const funding = await db
       .prepare('SELECT * FROM milestone_fundings WHERE milestone_id = ? ORDER BY created_at DESC')
       .get(milestone.id);
     res.json(funding || null);
@@ -245,39 +245,44 @@ export function mountPayments(app, store, deps) {
 
   app.post('/api/milestones/:id/refund', async (req, res, next) => {
     try {
-      const milestone = milestoneFor(req.params.id);
-      const project = projectFor(milestone.project_id);
-      const { isClient } = requireParty(project, req.user.id);
+      const milestone = await milestoneFor(req.params.id);
+      const project = await projectFor(milestone.project_id);
+      const { isClient } = await requireParty(project, req.user.id);
       if (!isClient)
         return res.status(403).json({ error: 'Only the project owner can request a refund.' });
       if (milestone.status !== 'disputed')
         return res.status(400).json({
           error: `A refund can only be requested for a disputed milestone (current status: ${milestone.status}).`,
         });
-      const funding = db
-        .prepare("SELECT * FROM milestone_fundings WHERE milestone_id = ? AND status = 'held'")
-        .get(milestone.id);
-      if (!funding)
-        return res.status(400).json({ error: 'This milestone has no funds held in escrow to refund.' });
       const provider = providerFor('paystack');
       if (!provider)
         return res.status(503).json({
           error: 'The paystack payment provider is not configured on this server. No refund has been made.',
         });
+      // Atomically claim the funding for refunding (held -> refunding) before calling the
+      // provider — a plain SELECT-then-UPDATE would let two concurrent refund requests both see
+      // status = 'held', both call the provider, and both issue a real refund. Only the request
+      // whose UPDATE actually flips the row proceeds; a losing concurrent request affects no rows
+      // and is rejected here instead of ever reaching provider.refundTransaction().
+      const funding = await db
+        .prepare("UPDATE milestone_fundings SET status = 'refunding' WHERE milestone_id = ? AND status = 'held' RETURNING *")
+        .get(milestone.id);
+      if (!funding)
+        return res.status(400).json({ error: 'This milestone has no funds held in escrow to refund.' });
 
       try {
         await provider.refundTransaction({ reference: funding.provider_reference, amountMinor: funding.amount_minor });
-        transaction(() => {
-          db.prepare("UPDATE milestone_fundings SET status = 'refund_pending' WHERE id = ?").run(funding.id);
-          log(project.workspace_id, req.user.name, 'Milestone refund requested', funding.id, milestone.title);
+        await transaction(async () => {
+          await db.prepare("UPDATE milestone_fundings SET status = 'refund_pending' WHERE id = ?").run(funding.id);
+          await log(project.workspace_id, req.user.name, 'Milestone refund requested', funding.id, milestone.title);
         });
       } catch (error) {
-        transaction(() => {
-          db.prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?").run(funding.id);
+        await transaction(async () => {
+          await db.prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?").run(funding.id);
         });
         return res.status(502).json({ error: 'The payment provider could not process this refund.' });
       }
-      res.status(201).json(db.prepare('SELECT * FROM milestone_fundings WHERE id = ?').get(funding.id));
+      res.status(201).json(await db.prepare('SELECT * FROM milestone_fundings WHERE id = ?').get(funding.id));
     } catch (error) {
       next(error);
     }
@@ -286,22 +291,22 @@ export function mountPayments(app, store, deps) {
   app.post('/api/milestones/:id/release', async (req, res, next) => {
     try {
       const input = releaseSchema.parse(req.body);
-      const milestone = milestoneFor(req.params.id);
-      const project = projectFor(milestone.project_id);
-      const { isClient } = requireParty(project, req.user.id);
+      const milestone = await milestoneFor(req.params.id);
+      const project = await projectFor(milestone.project_id);
+      const { isClient } = await requireParty(project, req.user.id);
       if (!isClient)
         return res.status(403).json({ error: 'Only the project owner can release milestone payment.' });
       if (milestone.status !== 'approved')
         return res
           .status(400)
           .json({ error: `Milestone "${milestone.title}" is not yet approved (current status: ${milestone.status}).` });
-      const funding = db
+      const funding = await db
         .prepare("SELECT * FROM milestone_fundings WHERE milestone_id = ? AND status = 'held'")
         .get(milestone.id);
       if (!funding)
         return res.status(400).json({ error: 'This milestone has no funds held in escrow to release.' });
 
-      const account = db
+      const account = await db
         .prepare(
           'SELECT * FROM payment_accounts WHERE user_id = ? AND provider = ? AND recipient_code IS NOT NULL',
         )
@@ -316,10 +321,21 @@ export function mountPayments(app, store, deps) {
           error: 'The freelancer has no active payout account registered for this provider.',
         });
 
+      // Atomically claim the milestone for release before ever calling the payout provider.
+      // Nothing previously stopped two concurrent /release requests from both passing the checks
+      // above (milestones.status stays 'approved' until the webhook eventually confirms the
+      // transfer) and both paying the freelancer. A losing concurrent request's UPDATE affects no
+      // rows and is rejected here instead of ever reaching provider.initiateTransfer().
+      const claimed = await db
+        .prepare("UPDATE milestones SET status = 'releasing' WHERE id = ? AND status = 'approved' RETURNING id")
+        .get(milestone.id);
+      if (!claimed)
+        return res.status(409).json({ error: 'This milestone payment is already being processed.' });
+
       const transferId = randomUUID();
       const reference = `LMD-${transferId.slice(0, 8)}`;
-      transaction(() => {
-        db.prepare('INSERT INTO payment_transfers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      await transaction(async () => {
+        await db.prepare('INSERT INTO payment_transfers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
           transferId,
           project.workspace_id,
           milestone.id,
@@ -343,21 +359,24 @@ export function mountPayments(app, store, deps) {
           reference,
           reason: `Milestone payment: ${milestone.title}`,
         });
-        transaction(() => {
-          db.prepare(
+        await transaction(async () => {
+          await db.prepare(
             "UPDATE payment_transfers SET status = 'processing', provider_reference = ?, updated_at = ? WHERE id = ?",
           ).run(result.providerReference, new Date().toISOString(), transferId);
-          log(project.workspace_id, req.user.name, 'Milestone payment initiated', transferId, milestone.title);
+          await log(project.workspace_id, req.user.name, 'Milestone payment initiated', transferId, milestone.title);
         });
       } catch (error) {
-        transaction(() => {
-          db.prepare(
+        await transaction(async () => {
+          await db.prepare(
             "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
           ).run(error.message, new Date().toISOString(), transferId);
+          // Release the claim so a genuine retry is possible — the provider call itself failed,
+          // nothing was paid, so this milestone should not be stuck in 'releasing' forever.
+          await db.prepare("UPDATE milestones SET status = 'approved' WHERE id = ? AND status = 'releasing'").run(milestone.id);
         });
         return res.status(502).json({ error: 'The payment provider could not initiate this transfer.' });
       }
-      res.status(201).json(db.prepare('SELECT * FROM payment_transfers WHERE id = ?').get(transferId));
+      res.status(201).json(await db.prepare('SELECT * FROM payment_transfers WHERE id = ?').get(transferId));
     } catch (error) {
       next(error);
     }
@@ -375,7 +394,7 @@ export function mountPointsPurchase(app, store, deps) {
       let currency = 'USD';
       let bundleId = null;
       if (input.bundleId) {
-        const bundle = db.prepare("SELECT * FROM bundles WHERE id = ? AND status = 'active'").get(input.bundleId);
+        const bundle = await db.prepare("SELECT * FROM bundles WHERE id = ? AND status = 'active'").get(input.bundleId);
         if (!bundle) return res.status(404).json({ error: 'This bundle is not available for purchase.' });
         points = bundle.points_included;
         amountMinor = bundle.price_minor;
@@ -393,8 +412,8 @@ export function mountPointsPurchase(app, store, deps) {
         email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
         reference,
       });
-      transaction(() => {
-        db.prepare('INSERT INTO points_purchases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
+      await transaction(async () => {
+        await db.prepare('INSERT INTO points_purchases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
           purchaseId,
           req.user.id,
           req.workspace.id,
@@ -407,7 +426,7 @@ export function mountPointsPurchase(app, store, deps) {
           new Date().toISOString(),
           bundleId,
         );
-        log(req.workspace.id, req.user.name, 'Points purchase initiated', purchaseId, bundleId ? `bundle ${bundleId}` : `${points} points`);
+        await log(req.workspace.id, req.user.name, 'Points purchase initiated', purchaseId, bundleId ? `bundle ${bundleId}` : `${points} points`);
       });
       res.status(201).json({ authorizationUrl: init.authorizationUrl, reference, points, amountMinor });
     } catch (error) {
@@ -415,9 +434,9 @@ export function mountPointsPurchase(app, store, deps) {
     }
   });
 
-  app.get('/api/points/purchases', (req, res) => {
+  app.get('/api/points/purchases', async (req, res) => {
     res.json(
-      db
+      await db
         .prepare('SELECT * FROM points_purchases WHERE user_id = ? ORDER BY created_at DESC')
         .all(req.user.id),
     );
@@ -426,7 +445,7 @@ export function mountPointsPurchase(app, store, deps) {
 
 export function mountPaystackWebhook(app, store, deps) {
   const { db, transaction } = store;
-  app.post('/api/webhooks/paystack', (req, res) => {
+  app.post('/api/webhooks/paystack', async (req, res) => {
     const provider = deps.paymentProvider('paystack');
     if (!provider) return res.status(503).json({ error: 'Paystack is not configured.' });
     const signature = req.headers['x-paystack-signature'];
@@ -441,51 +460,51 @@ export function mountPaystackWebhook(app, store, deps) {
     // event type, or a genuinely new event on the same reference would be mistaken for a replay.
     const dedupeKey = `${event.event}:${eventId}`;
 
-    const already = db
-      .prepare('SELECT 1 FROM payment_webhook_events WHERE provider = ? AND provider_event_id = ?')
-      .get('paystack', dedupeKey);
-    if (already) return res.status(200).json({ ok: true, deduplicated: true });
-
-    transaction(() => {
-      db.prepare('INSERT INTO payment_webhook_events VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        'paystack',
-        event.event,
-        dedupeKey,
-        JSON.stringify(event),
-        new Date().toISOString(),
-        new Date().toISOString(),
-      );
-      const transfer = db
+    const deduplicated = await transaction(async () => {
+      // The claim is the atomic INSERT itself (ON CONFLICT DO NOTHING on the table's own
+      // UNIQUE(provider, provider_event_id)), not a preceding SELECT — payment providers
+      // routinely redeliver webhooks, including near-simultaneously; a plain SELECT-then-INSERT
+      // would let two truly-simultaneous deliveries both pass the check, and the loser's INSERT
+      // would throw a raw unique_violation instead of the intended `{ deduplicated: true }` reply.
+      // Kept inside the same transaction as the processing below (not committed separately): if
+      // processing fails partway through, the whole transaction rolls back including this claim,
+      // so a genuine retry from the provider is reprocessed rather than wrongly deduplicated.
+      const claimed = await db
+        .prepare(
+          'INSERT INTO payment_webhook_events VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_event_id) DO NOTHING RETURNING *',
+        )
+        .get(randomUUID(), 'paystack', event.event, dedupeKey, JSON.stringify(event), new Date().toISOString(), new Date().toISOString());
+      if (!claimed) return true;
+      const transfer = await db
         .prepare('SELECT * FROM payment_transfers WHERE provider_reference = ?')
         .get(eventId);
       if (transfer) {
         if (event.event === 'transfer.success') {
-          db.prepare(
+          await db.prepare(
             "UPDATE payment_transfers SET status = 'succeeded', updated_at = ? WHERE id = ?",
           ).run(new Date().toISOString(), transfer.id);
-          db.prepare("UPDATE milestones SET status = 'paid' WHERE id = ?").run(transfer.milestone_id);
-          db.prepare("UPDATE milestone_fundings SET status = 'released', released_at = ? WHERE milestone_id = ? AND status = 'held'").run(
+          await db.prepare("UPDATE milestones SET status = 'paid' WHERE id = ?").run(transfer.milestone_id);
+          await db.prepare("UPDATE milestone_fundings SET status = 'released', released_at = ? WHERE milestone_id = ? AND status = 'held'").run(
             new Date().toISOString(),
             transfer.milestone_id,
           );
         } else if (event.event === 'transfer.failed') {
-          db.prepare(
+          await db.prepare(
             "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
           ).run('Reported failed by provider webhook.', new Date().toISOString(), transfer.id);
         }
       }
       if (event.event === 'charge.success') {
-        const purchase = db
+        const purchase = await db
           .prepare("SELECT * FROM points_purchases WHERE provider_reference = ? AND status = 'pending'")
           .get(eventId);
         if (purchase) {
-          db.prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?").run(purchase.id);
-          db.prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?').run(
+          await db.prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?").run(purchase.id);
+          await db.prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?').run(
             purchase.points,
             purchase.user_id,
           );
-          db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+          await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
             randomUUID(),
             purchase.user_id,
             purchase.workspace_id,
@@ -495,28 +514,29 @@ export function mountPaystackWebhook(app, store, deps) {
             Date.now(),
           );
         }
-        const funding = db
+        const funding = await db
           .prepare("SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'pending'")
           .get(eventId);
         if (funding) {
-          db.prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?").run(
+          await db.prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?").run(
             new Date().toISOString(),
             funding.id,
           );
         }
       }
       if (event.event === 'refund.processed' || event.event === 'refund.failed') {
-        const funding = db
+        const funding = await db
           .prepare("SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'refund_pending'")
           .get(eventId);
         if (funding) {
           const status = event.event === 'refund.processed' ? 'refunded' : 'refund_failed';
-          db.prepare(
+          await db.prepare(
             "UPDATE milestone_fundings SET status = ?, refunded_at = ? WHERE id = ?",
           ).run(status, event.event === 'refund.processed' ? new Date().toISOString() : null, funding.id);
         }
       }
+      return false;
     });
-    res.status(200).json({ ok: true });
+    res.status(200).json({ ok: true, ...(deduplicated ? { deduplicated: true } : {}) });
   });
 }

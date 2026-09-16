@@ -10,7 +10,12 @@ export type Billable = {
   human_gate: string;
   points_cost: number;
 };
-export type Billables = { pointsUnitPriceMinor: number; currency: string; tools: Billable[] };
+export type Billables = {
+  pointsUnitPriceMinor: number;
+  currency: string;
+  tools: Billable[];
+  deepReview: { name: string; description: string; pointsCost: number };
+};
 export type Bundle = {
   id: string;
   name: string;

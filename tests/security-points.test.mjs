@@ -1,11 +1,11 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
 before(async () => {
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: {
       api: { max: 1000 },
@@ -80,15 +80,15 @@ test('concurrent requests cannot drive the points balance negative (race-conditi
   const cookie = await signup('Race Attacker', 'race-attacker@example.test');
   const state = await request('/state', undefined, cookie, 'GET');
   assert.equal(state.status, 200);
-  // Force the balance down to exactly enough for 2 job posts (10 points each).
-  store.db.prepare('UPDATE users SET points_balance = 20 WHERE id = ?').run(state.data.user.id);
+  // Force the balance down to exactly enough for 2 job posts (40 points each).
+  await store.db.prepare('UPDATE users SET points_balance = 80 WHERE id = ?').run(state.data.user.id);
 
   const attempts = await Promise.all(
     Array.from({ length: 5 }, () => request('/jobs', jobBody({ title: `Race job ${randomUUID()}` }), cookie)),
   );
   const succeeded = attempts.filter((r) => r.status === 201).length;
   const rejected = attempts.filter((r) => r.status === 402).length;
-  assert.equal(succeeded, 2, 'exactly 2 of 5 concurrent job posts should succeed with 20 points at 10 each');
+  assert.equal(succeeded, 2, 'exactly 2 of 5 concurrent job posts should succeed with 80 points at 40 each');
   assert.equal(rejected, 3);
 
   const finalBalance = (await request('/points', undefined, cookie, 'GET')).data.balance;
@@ -117,7 +117,7 @@ test('idempotency key replays the cached result instead of double-charging, and 
   assert.equal(newKeyResult.status, 201);
   assert.notEqual(newKeyResult.data.id, first.data.id, 'a new key must be treated as a genuinely new operation');
   const balanceAfterNewKey = (await request('/points', undefined, cookie, 'GET')).data.balance;
-  assert.equal(balanceAfterNewKey, balanceAfterFirst - 10, 'a new idempotency key legitimately charges again');
+  assert.equal(balanceAfterNewKey, balanceAfterFirst - 40, 'a new idempotency key legitimately charges again');
 });
 
 test('the companion agent endpoint replays cached results under the same idempotency key', async () => {
@@ -172,7 +172,7 @@ test('cross-tenant workspace tampering is rejected before any charge occurs', as
 });
 
 test('the dedicated spend rate limiter enforces a per-account ceiling on points-spending routes', async () => {
-  const { app: limitedApp, store: limitedStore } = createApp({
+  const { app: limitedApp, store: limitedStore } = await createApp({
     filename: ':memory:',
     rateLimits: {
       api: { max: 1000 },

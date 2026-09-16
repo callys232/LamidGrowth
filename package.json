@@ -10,15 +10,15 @@
     "dev": "node --watch-path=server --watch-path=src/app --watch-path=vite.config.ts server/index.mjs",
     "build": "tsc -b && vite build",
     "start": "node server/index.mjs --production",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test --test-concurrency=3 tests/*.test.mjs",
     "test:e2e": "playwright test",
     "check": "npm run build && npm test",
+    "prune-test-schemas": "node scripts/prune-test-schemas.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "content:generate": "node scripts/generate-content.mjs",
     "docs:products": "node scripts/update-product-index.mjs",
-    "content:catalog": "node scripts/sync-page-catalog.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts",
-    "backup": "node scripts/backup.mjs"
+    "content:catalog": "node scripts/sync-page-catalog.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.0",
@@ -27,6 +27,7 @@
     "lucide-react": "^0.468.0",
     "motion": "13.2.0",
     "pdfkit": "^0.20.2",
+    "pg": "^8.23.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",

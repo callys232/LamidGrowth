@@ -1,3 +1,4 @@
+import { verifySignup } from './auth-helpers';
 import { test, expect } from '@playwright/test';
 
 test('consulting project uses the implemented workspace tools end to end', async ({ page }) => {
@@ -8,6 +9,7 @@ test('consulting project uses the implemented workspace tools end to end', async
   await page.getByLabel('Email address').fill(`consulting-${Date.now()}@example.test`);
   await page.getByLabel('Password', { exact: true }).fill('secure-consulting-project-password');
   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
+  await verifySignup(page);
   await expect(page).toHaveURL('/os');
 
   await page.getByRole('button', { name: 'New objective', exact: true }).click();

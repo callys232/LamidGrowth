@@ -69,8 +69,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   const { db, transaction, log } = store;
   const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
 
-  function profileFor(userId) {
-    const row = db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(userId);
+  async function profileFor(userId) {
+    const row = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(userId);
     return row
       ? {
           ...row,
@@ -83,17 +83,17 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       : null;
   }
 
-  function credentialsFor(profileId) {
+  async function credentialsFor(profileId) {
     return db.prepare('SELECT * FROM expert_credentials WHERE profile_id = ? ORDER BY created_at DESC').all(profileId);
   }
 
-  app.post('/api/talent/profile', (req, res) => {
+  app.post('/api/talent/profile', async (req, res) => {
     const input = profileSchema.parse(req.body);
-    const existing = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    const existing = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     const now = new Date().toISOString();
-    transaction(() => {
+    await transaction(async () => {
       if (existing) {
-        db.prepare(
+        await db.prepare(
           `UPDATE talent_profiles SET headline = ?, skills = ?, experience_years = ?, availability = ?,
            hourly_rate = ?, currency = ?, location = ?, languages = ?, portfolio_url = ?,
            domains = ?, functions = ?, industries = ?, jurisdiction = ?, updated_at = ?
@@ -116,7 +116,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           req.user.id,
         );
       } else {
-        db.prepare(
+        await db.prepare(
           `INSERT INTO talent_profiles
            (id, user_id, headline, skills, experience_years, availability, hourly_rate, currency, created_at, updated_at, location, languages, portfolio_url, vetting_status, domains, functions, industries, jurisdiction)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?, ?)`,
@@ -140,54 +140,52 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           input.jurisdiction ?? null,
         );
       }
-      log(req.workspace.id, req.user.name, 'Talent profile saved', req.user.id, input.headline);
+      await log(req.workspace.id, req.user.name, 'Talent profile saved', req.user.id, input.headline);
     });
-    res.json(profileFor(req.user.id));
+    res.json(await profileFor(req.user.id));
   });
 
-  app.get('/api/talent/profile/mine', (req, res) => {
-    res.json(profileFor(req.user.id));
+  app.get('/api/talent/profile/mine', async (req, res) => {
+    res.json(await profileFor(req.user.id));
   });
 
-  app.post('/api/talent/profile/vetting', (req, res) => {
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+  app.post('/api/talent/profile/vetting', async (req, res) => {
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     if (!profile) return res.status(400).json({ error: 'Create your talent profile before requesting vetting.' });
-    db.prepare("UPDATE talent_profiles SET vetting_status = 'pending' WHERE user_id = ?").run(req.user.id);
-    res.json(profileFor(req.user.id));
+    await db.prepare("UPDATE talent_profiles SET vetting_status = 'pending' WHERE user_id = ?").run(req.user.id);
+    res.json(await profileFor(req.user.id));
   });
 
-  app.get('/api/admin/talent/vetting', (req, res) => {
+  app.get('/api/admin/talent/vetting', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can review vetting requests.' });
-    res.json(
-      db
-        .prepare(
-          `SELECT talent_profiles.*, users.name, users.email FROM talent_profiles
-           JOIN users ON users.id = talent_profiles.user_id WHERE vetting_status = 'pending'`,
-        )
-        .all()
-        .map((row) => ({ ...row, skills: JSON.parse(row.skills), languages: JSON.parse(row.languages) })),
-    );
+    const rows = await db
+      .prepare(
+        `SELECT talent_profiles.*, users.name, users.email FROM talent_profiles
+         JOIN users ON users.id = talent_profiles.user_id WHERE vetting_status = 'pending'`,
+      )
+      .all();
+    res.json(rows.map((row) => ({ ...row, skills: JSON.parse(row.skills), languages: JSON.parse(row.languages) })));
   });
 
-  app.patch('/api/admin/talent/vetting/:userId', (req, res) => {
+  app.patch('/api/admin/talent/vetting/:userId', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can decide vetting requests.' });
     const input = vettingDecisionSchema.parse(req.body);
-    const profile = db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.params.userId);
+    const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.params.userId);
     if (!profile) return res.status(404).json({ error: 'Talent profile not found.' });
-    db.prepare(
+    await db.prepare(
       'UPDATE talent_profiles SET vetting_status = ?, vetted_at = ?, vetted_by = ? WHERE user_id = ?',
     ).run(input.decision, new Date().toISOString(), req.user.id, req.params.userId);
-    res.json(profileFor(req.params.userId));
+    res.json(await profileFor(req.params.userId));
   });
 
-  app.post('/api/talent/credentials', (req, res) => {
+  app.post('/api/talent/credentials', async (req, res) => {
     const input = credentialSchema.parse(req.body);
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     if (!profile) return res.status(400).json({ error: 'Create your talent profile before adding a credential.' });
     const id = randomUUID();
     const now = new Date().toISOString();
-    transaction(() => {
-      db.prepare(
+    await transaction(async () => {
+      await db.prepare(
         `INSERT INTO expert_credentials
          (id, profile_id, type, title, issuer, issued_at, expires_at, evidence_url, verification_status, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
@@ -202,20 +200,20 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         input.evidenceUrl ?? null,
         now,
       );
-      log(req.workspace.id, req.user.name, 'Credential submitted', id, input.title);
+      await log(req.workspace.id, req.user.name, 'Credential submitted', id, input.title);
     });
-    res.status(201).json(credentialsFor(profile.id));
+    res.status(201).json(await credentialsFor(profile.id));
   });
 
-  app.get('/api/talent/credentials/mine', (req, res) => {
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
-    res.json(profile ? credentialsFor(profile.id) : []);
+  app.get('/api/talent/credentials/mine', async (req, res) => {
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    res.json(profile ? await credentialsFor(profile.id) : []);
   });
 
-  app.get('/api/admin/talent/credentials', (req, res) => {
+  app.get('/api/admin/talent/credentials', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can review credentials.' });
     res.json(
-      db
+      await db
         .prepare(
           `SELECT expert_credentials.*, users.name, users.email FROM expert_credentials
            JOIN talent_profiles ON talent_profiles.id = expert_credentials.profile_id
@@ -226,43 +224,43 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     );
   });
 
-  app.patch('/api/admin/talent/credentials/:id', (req, res) => {
+  app.patch('/api/admin/talent/credentials/:id', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can decide credentials.' });
     const input = credentialDecisionSchema.parse(req.body);
-    const credential = db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id);
+    const credential = await db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id);
     if (!credential) return res.status(404).json({ error: 'Credential not found.' });
-    db.prepare(
+    await db.prepare(
       'UPDATE expert_credentials SET verification_status = ?, verified_at = ?, verified_by = ? WHERE id = ?',
     ).run(input.decision, new Date().toISOString(), req.user.id, req.params.id);
-    res.json(db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id));
+    res.json(await db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id));
   });
 
-  app.post('/api/talent/conflicts', (req, res) => {
+  app.post('/api/talent/conflicts', async (req, res) => {
     const input = conflictDisclosureSchema.parse(req.body);
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     if (!profile) return res.status(400).json({ error: 'Create your talent profile before disclosing a conflict.' });
     const id = randomUUID();
     const now = new Date().toISOString();
-    transaction(() => {
-      db.prepare(
+    await transaction(async () => {
+      await db.prepare(
         "INSERT INTO conflict_disclosures (id, profile_id, description, status, created_at) VALUES (?, ?, ?, 'disclosed', ?)",
       ).run(id, profile.id, input.description, now);
-      log(req.workspace.id, req.user.name, 'Conflict of interest disclosed', id, input.description);
+      await log(req.workspace.id, req.user.name, 'Conflict of interest disclosed', id, input.description);
     });
-    res.status(201).json(db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(id));
+    res.status(201).json(await db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(id));
   });
 
-  app.get('/api/talent/conflicts/mine', (req, res) => {
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+  app.get('/api/talent/conflicts/mine', async (req, res) => {
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     res.json(
-      profile ? db.prepare('SELECT * FROM conflict_disclosures WHERE profile_id = ? ORDER BY created_at DESC').all(profile.id) : [],
+      profile ? await db.prepare('SELECT * FROM conflict_disclosures WHERE profile_id = ? ORDER BY created_at DESC').all(profile.id) : [],
     );
   });
 
-  app.get('/api/admin/talent/conflicts', (req, res) => {
+  app.get('/api/admin/talent/conflicts', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can review conflict disclosures.' });
     res.json(
-      db
+      await db
         .prepare(
           `SELECT conflict_disclosures.*, users.name, users.email FROM conflict_disclosures
            JOIN talent_profiles ON talent_profiles.id = conflict_disclosures.profile_id
@@ -273,44 +271,39 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     );
   });
 
-  app.patch('/api/admin/talent/conflicts/:id', (req, res) => {
+  app.patch('/api/admin/talent/conflicts/:id', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can decide conflict disclosures.' });
     const input = conflictDecisionSchema.parse(req.body);
-    const disclosure = db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id);
+    const disclosure = await db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id);
     if (!disclosure) return res.status(404).json({ error: 'Conflict disclosure not found.' });
-    db.prepare(
+    await db.prepare(
       'UPDATE conflict_disclosures SET status = ?, reviewed_at = ?, reviewed_by = ? WHERE id = ?',
     ).run(input.decision, new Date().toISOString(), req.user.id, req.params.id);
-    res.json(db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id));
+    res.json(await db.prepare('SELECT * FROM conflict_disclosures WHERE id = ?').get(req.params.id));
   });
 
-  app.get('/api/talent/experts', (req, res) => {
+  app.get('/api/talent/experts', async (req, res) => {
     const skillQuery = String(req.query.skill || '').trim();
     const maxRate = req.query.maxRate ? Number(req.query.maxRate) : null;
     const domainFilter = req.query.domain ? String(req.query.domain) : null;
     const functionFilter = req.query.function ? String(req.query.function) : null;
     const industryFilter = req.query.industry ? String(req.query.industry) : null;
     const queryWords = wordSet(skillQuery);
-    const rows = db.prepare('SELECT * FROM talent_profiles').all();
-    const verifiedCredentialCounts = new Map(
-      db
-        .prepare(
-          "SELECT profile_id, COUNT(*) AS count FROM expert_credentials WHERE verification_status = 'verified' GROUP BY profile_id",
-        )
-        .all()
-        .map((row) => [row.profile_id, row.count]),
-    );
+    const rows = await db.prepare('SELECT * FROM talent_profiles').all();
+    const credentialRows = await db
+      .prepare(
+        "SELECT profile_id, COUNT(*) AS count FROM expert_credentials WHERE verification_status = 'verified' GROUP BY profile_id",
+      )
+      .all();
+    const verifiedCredentialCounts = new Map(credentialRows.map((row) => [row.profile_id, row.count]));
     // A restricted conflict disclosure removes an expert from matching outright — this is the
     // enforcement point for the governance gap, not just a badge shown on their profile.
-    const restrictedProfileIds = new Set(
-      db.prepare("SELECT DISTINCT profile_id FROM conflict_disclosures WHERE status = 'restricted'").all().map((r) => r.profile_id),
-    );
-    const reputationByUserId = new Map(
-      db
-        .prepare('SELECT reviewee_user_id, COALESCE(AVG(rating), 0) AS average FROM reviews GROUP BY reviewee_user_id')
-        .all()
-        .map((row) => [row.reviewee_user_id, row.average]),
-    );
+    const restrictedRows = await db.prepare("SELECT DISTINCT profile_id FROM conflict_disclosures WHERE status = 'restricted'").all();
+    const restrictedProfileIds = new Set(restrictedRows.map((r) => r.profile_id));
+    const reputationRows = await db
+      .prepare('SELECT reviewee_user_id, COALESCE(AVG(rating), 0) AS average FROM reviews GROUP BY reviewee_user_id')
+      .all();
+    const reputationByUserId = new Map(reputationRows.map((row) => [row.reviewee_user_id, row.average]));
     const results = rows
       .filter((row) => !restrictedProfileIds.has(row.id))
       .filter((row) => !domainFilter || JSON.parse(row.domains).includes(domainFilter))
@@ -352,7 +345,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     res.json(bank.map(({ question, options }) => ({ question, options })));
   });
 
-  app.post('/api/talent/assessments', (req, res) => {
+  app.post('/api/talent/assessments', async (req, res) => {
     const input = assessmentSchema.parse(req.body);
     const bank = QUIZ_BANK[input.skill];
     if (!bank) return res.status(404).json({ error: `No assessment is available for "${input.skill}" yet.` });
@@ -360,11 +353,11 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       return res.status(400).json({ error: `This assessment has ${bank.length} questions.` });
     const correct = bank.filter((q, i) => q.correctIndex === input.answers[i]).length;
     const score = Math.round((correct / bank.length) * 100);
-    const profile = db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
     if (!profile) return res.status(400).json({ error: 'Create your talent profile before taking an assessment.' });
     const id = randomUUID();
-    transaction(() => {
-      db.prepare('INSERT INTO talent_assessments VALUES (?, ?, ?, ?, ?, ?)').run(
+    await transaction(async () => {
+      await db.prepare('INSERT INTO talent_assessments VALUES (?, ?, ?, ?, ?, ?)').run(
         id,
         profile.id,
         input.skill,
@@ -372,7 +365,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         'quiz',
         new Date().toISOString(),
       );
-      log(req.workspace.id, req.user.name, 'Skills assessment completed', id, `${input.skill}: ${score}%`);
+      await log(req.workspace.id, req.user.name, 'Skills assessment completed', id, `${input.skill}: ${score}%`);
     });
     res.status(201).json({
       id,
@@ -386,13 +379,13 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   // Freelancer-portfolio comparison for a specific project: ranks EVERY talent profile
   // (not just people who already bid) against the job's own requirements, so a client can
   // see who best matches the project before anyone has even applied.
-  app.get('/api/jobs/:id/candidate-matches', (req, res) => {
-    const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
+  app.get('/api/jobs/:id/candidate-matches', async (req, res) => {
+    const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
     if (!job) return res.status(404).json({ error: 'Job not found.' });
     if (job.client_user_id !== req.user.id)
       return res.status(403).json({ error: 'Only the job owner can compare candidates for this project.' });
     const jobWords = wordSet(`${job.title} ${job.category} ${job.description} ${job.deliverables}`);
-    const rows = db.prepare('SELECT * FROM talent_profiles').all();
+    const rows = await db.prepare('SELECT * FROM talent_profiles').all();
     const results = rows
       .map((row) => {
         const skills = JSON.parse(row.skills);
@@ -419,11 +412,11 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
 
   // The inverse: for the current freelancer, rank every open job by fit to their own
   // profile, so they can prioritize which projects to bid on rather than browsing blind.
-  app.get('/api/talent/job-matches', (req, res) => {
-    const profile = profileFor(req.user.id);
+  app.get('/api/talent/job-matches', async (req, res) => {
+    const profile = await profileFor(req.user.id);
     if (!profile) return res.status(400).json({ error: 'Create your talent profile to get job matches.' });
     const profileWords = wordSet(`${profile.headline} ${profile.skills.join(' ')}`);
-    const jobs = db.prepare("SELECT * FROM job_posts WHERE status = 'open'").all();
+    const jobs = await db.prepare("SELECT * FROM job_posts WHERE status = 'open'").all();
     const results = jobs
       .map((job) => {
         const jobWords = wordSet(`${job.title} ${job.category} ${job.description} ${job.deliverables}`);
@@ -448,43 +441,46 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     res.json(results);
   });
 
-  app.get('/api/jobs/:id/screening', (req, res, next) => {
+  app.get('/api/jobs/:id/screening', async (req, res, next) => {
     try {
-      const job = db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
+      const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
       if (!job) return res.status(404).json({ error: 'Job not found.' });
       if (job.client_user_id !== req.user.id)
         return res.status(403).json({ error: 'Only the job owner can view candidate screening.' });
-      const bids = db.prepare('SELECT * FROM bids WHERE job_id = ?').all(job.id);
-      const results = bids.map((bid) => {
-        const bidScore = scoreBid(job, bid);
-        const profile = profileFor(bid.freelancer_user_id);
-        const assessments = profile
-          ? db.prepare('SELECT score FROM talent_assessments WHERE profile_id = ?').all(profile.id)
-          : [];
-        const assessmentAvg =
-          assessments.length === 0
-            ? 0
-            : Math.round(assessments.reduce((sum, a) => sum + a.score, 0) / assessments.length);
-        const vettingBonus = profile?.vetting_status === 'verified' ? 10 : 0;
-        const completedMilestones = db
-          .prepare(
-            "SELECT COUNT(*) AS count FROM milestones JOIN projects ON projects.id = milestones.project_id WHERE projects.freelancer_user_id = ? AND milestones.status IN ('approved', 'paid')",
-          )
-          .get(bid.freelancer_user_id).count;
-        const trackRecordBonus = Math.min(20, completedMilestones * 5);
-        const blendedTotal = Math.round(
-          bidScore.total * 0.5 + assessmentAvg * 0.2 + vettingBonus + trackRecordBonus,
-        );
-        return {
-          bidId: bid.id,
-          freelancerUserId: bid.freelancer_user_id,
-          bidScore,
-          assessmentAvg,
-          vettingStatus: profile?.vetting_status || 'unverified',
-          completedMilestones,
-          blendedTotal,
-        };
-      });
+      const bids = await db.prepare('SELECT * FROM bids WHERE job_id = ?').all(job.id);
+      const results = await Promise.all(
+        bids.map(async (bid) => {
+          const bidScore = scoreBid(job, bid);
+          const profile = await profileFor(bid.freelancer_user_id);
+          const assessments = profile
+            ? await db.prepare('SELECT score FROM talent_assessments WHERE profile_id = ?').all(profile.id)
+            : [];
+          const assessmentAvg =
+            assessments.length === 0
+              ? 0
+              : Math.round(assessments.reduce((sum, a) => sum + a.score, 0) / assessments.length);
+          const vettingBonus = profile?.vetting_status === 'verified' ? 10 : 0;
+          const completedMilestonesRow = await db
+            .prepare(
+              "SELECT COUNT(*) AS count FROM milestones JOIN projects ON projects.id = milestones.project_id WHERE projects.freelancer_user_id = ? AND milestones.status IN ('approved', 'paid')",
+            )
+            .get(bid.freelancer_user_id);
+          const completedMilestones = completedMilestonesRow.count;
+          const trackRecordBonus = Math.min(20, completedMilestones * 5);
+          const blendedTotal = Math.round(
+            bidScore.total * 0.5 + assessmentAvg * 0.2 + vettingBonus + trackRecordBonus,
+          );
+          return {
+            bidId: bid.id,
+            freelancerUserId: bid.freelancer_user_id,
+            bidScore,
+            assessmentAvg,
+            vettingStatus: profile?.vetting_status || 'unverified',
+            completedMilestones,
+            blendedTotal,
+          };
+        }),
+      );
       results.sort((a, b) => b.blendedTotal - a.blendedTotal);
       res.json(results);
     } catch (error) {

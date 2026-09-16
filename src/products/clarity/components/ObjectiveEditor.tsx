@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { api, ApiError } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
+import { DatePicker } from '../../../shared/ui/DatePicker';
 import { Field } from '../../../shared/ui/Field';
 import { Modal } from '../../../shared/ui/Modal';
 import type { Objective } from '../../../types';
@@ -70,7 +71,7 @@ export function ObjectiveEditor({
           </Field>
         </div>
         <Field label="Target date">
-          <input name="targetDate" type="date" defaultValue={draft.targetDate} />
+          <DatePicker name="targetDate" defaultValue={draft.targetDate} />
         </Field>
         {error && (
           <p role="alert" className="form-error">

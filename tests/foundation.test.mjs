@@ -1,12 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { createApp } from '../src/app/app.mjs';
+import { randomUUID } from 'node:crypto';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 async function fixture(t, options = {}) {
-  const { app, store } = createApp({
+  const { app, store } = await createApp({
     filename: ':memory:',
     ecosystemAdminEmails: ['admin@example.test'],
     rateLimits: { api: { max: 10000 }, auth: { max: 10000 }, mutation: { max: 10000 } },
@@ -132,7 +130,7 @@ test('member permissions and suspension stay inside the selected enterprise', as
   );
   await request(`/admin/members/${member.user.id}`, { status: 'disabled' }, one.cookie, 'PATCH');
   assert.equal(
-    store.db.prepare('SELECT disabled_at FROM users WHERE id = ?').get(member.user.id).disabled_at,
+    (await store.db.prepare('SELECT disabled_at FROM users WHERE id = ?').get(member.user.id)).disabled_at,
     null,
   );
   assert.equal(
@@ -223,7 +221,7 @@ test('charges replay atomically and exports include all workspace domains and au
     bidder.cookie,
   );
   for (let i = 0; i < 220; i++)
-    store.log(owner.workspace.id, 'Owner', 'Historical event', null, String(i));
+    await store.log(owner.workspace.id, 'Owner', 'Historical event', null, String(i));
   const exported = (await request('/export', undefined, owner.cookie)).data;
   assert.equal(exported.jobs.length, 1);
   assert.equal(exported.bids.length, 1);
@@ -234,13 +232,21 @@ test('charges replay atomically and exports include all workspace domains and au
   assert.equal(exported.workspaces, undefined);
   assert.equal(exported.user, undefined);
   assert.equal(
-    store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(owner.user.id)
+    (await store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(owner.user.id))
       .points_balance,
-    90,
+    99960,
   );
-  store.db.exec(
-    "CREATE TRIGGER fail_job_audit BEFORE INSERT ON audit WHEN NEW.action = 'Job post created' BEGIN SELECT RAISE(ABORT, 'audit unavailable'); END",
-  );
+  await store.db.exec(`
+    CREATE OR REPLACE FUNCTION fail_job_audit() RETURNS trigger AS $$
+    BEGIN
+      IF NEW.action = 'Job post created' THEN
+        RAISE EXCEPTION 'audit unavailable';
+      END IF;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+    CREATE TRIGGER fail_job_audit BEFORE INSERT ON audit FOR EACH ROW EXECUTE FUNCTION fail_job_audit();
+  `);
   assert.equal(
     (
       await request('/jobs', jobInput, owner.cookie, 'POST', {
@@ -250,11 +256,11 @@ test('charges replay atomically and exports include all workspace domains and au
     500,
   );
   assert.equal(
-    store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(owner.user.id)
+    (await store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(owner.user.id))
       .points_balance,
-    90,
+    99960,
   );
-  assert.equal(store.db.prepare('SELECT COUNT(*) AS count FROM job_posts').get().count, 1);
+  assert.equal((await store.db.prepare('SELECT COUNT(*) AS count FROM job_posts').get()).count, 1);
 });
 
 test('populated account deletion preserves other accounts and their point ledger', async (t) => {
@@ -283,16 +289,17 @@ test('populated account deletion preserves other accounts and their point ledger
     bidder.workspace.id,
   );
   assert.equal(
-    store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(bidder.user.id)
+    (await store.db.prepare('SELECT points_balance FROM users WHERE id = ?').get(bidder.user.id))
       .points_balance,
-    98,
+    99980,
   );
   assert.equal(
-    store.db.prepare('SELECT workspace_id FROM points_ledger WHERE user_id = ?').get(bidder.user.id)
+    (await store.db.prepare('SELECT workspace_id FROM points_ledger WHERE user_id = ?').get(bidder.user.id))
       .workspace_id,
     null,
   );
-  assert.deepEqual(store.db.prepare('PRAGMA foreign_key_check').all(), []);
+  // Postgres enforces referential integrity synchronously (unlike SQLite's optional PRAGMA
+  // foreign_key_check), so there is no equivalent post-hoc orphan check to run here.
   // Deleting a freelancer also detaches bids from a surviving client's proposal.
   const another = await signup('another@example.test');
   const job2 = await request('/jobs', jobInput, admin.cookie);
@@ -314,41 +321,42 @@ test('populated account deletion preserves other accounts and their point ledger
     200,
   );
   assert.equal(
-    store.db.prepare('SELECT bid_id FROM proposals WHERE job_id = ?').get(job2.data.id).bid_id,
+    (await store.db.prepare('SELECT bid_id FROM proposals WHERE job_id = ?').get(job2.data.id)).bid_id,
     null,
   );
-  assert.deepEqual(store.db.prepare('PRAGMA foreign_key_check').all(), []);
 });
 
 test('enterprise capacity survives restart and descriptive context never changes tier', async () => {
-  const directory = mkdtempSync(join(tmpdir(), 'lamid-migration-'));
-  const filename = join(directory, 'test.db');
+  // Named exception to the ":memory:"-per-test-file pattern: a real (sanitized) schema name is
+  // reused across three separate openStore() calls to prove data persists across a reconnect,
+  // the same way a production restart reconnects to the same `public` schema.
+  const schemaName = `foundation_restart_${randomUUID().replace(/-/g, '_')}`;
+  let instance;
   try {
-    let instance = createApp({ filename });
-    instance.store.db
+    instance = await createApp({ filename: schemaName });
+    await instance.store.db
       .prepare('INSERT INTO users (id, name, created_at) VALUES (?, ?, ?)')
       .run('u', 'Owner', new Date().toISOString());
-    instance.store.db
+    await instance.store.db
       .prepare('INSERT INTO workspaces VALUES (?, ?, ?, ?, ?, ?)')
       .run('w', 'u', 'Enterprise', 'Enterprise', 'enterprise', 50);
-    instance.store.db.close();
-    instance = createApp({ filename });
+    await instance.store.db.close();
+    instance = await createApp({ filename: schemaName });
     assert.equal(
-      instance.store.db.prepare('SELECT member_limit FROM workspaces').get().member_limit,
+      (await instance.store.db.prepare('SELECT member_limit FROM workspaces').get()).member_limit,
       50,
     );
-    instance.store.db.prepare("UPDATE workspaces SET context = 'Professional'").run();
-    instance.store.db.close();
-    instance = createApp({ filename });
-    assert.equal(instance.store.db.prepare('SELECT tier FROM workspaces').get().tier, 'enterprise');
+    await instance.store.db.prepare("UPDATE workspaces SET context = 'Professional'").run();
+    await instance.store.db.close();
+    instance = await createApp({ filename: schemaName });
+    assert.equal((await instance.store.db.prepare('SELECT tier FROM workspaces').get()).tier, 'enterprise');
     assert.equal(
-      instance.store.db.prepare('SELECT COUNT(*) AS count FROM migrations WHERE version = 3').get()
+      (await instance.store.db.prepare('SELECT COUNT(*) AS count FROM migrations WHERE version = 1').get())
         .count,
       1,
     );
-    instance.store.db.close();
   } finally {
-    rmSync(directory, { recursive: true, force: true });
+    if (instance) await instance.store.dropSchema();
   }
 });
 

@@ -5,6 +5,7 @@ export interface Policy {
   version: number;
   provider: string | null;
   model: string | null;
+  reviewCost: number;
   accountEligible: boolean;
 }
 export interface Review {

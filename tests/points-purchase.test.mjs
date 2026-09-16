@@ -1,7 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
-import { createApp } from '../src/app/app.mjs';
+import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 import { paystackProvider } from '../src/app/payments.mjs';
 
 const PAYSTACK_SECRET = 'sk_test_points_fixture';
@@ -23,7 +23,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
     name === 'paystack' && configured
       ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl: fetchImpl || fetch })
       : null;
-  ({ app, store } = createApp({
+  ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     paymentProvider,
@@ -99,8 +99,8 @@ test('a mocked Paystack checkout, confirmed by webhook, credits exactly the righ
 
   const purchases = await request('/points/purchases', undefined, client, 'GET');
   assert.equal(purchases.data[0].status, 'completed');
-  const balanceRow = store.db.prepare('SELECT points_balance FROM users WHERE email = ?').get('points-client@example.test');
-  assert.equal(balanceRow.points_balance, 150); // 100 starting grant + 50 purchased
+  const balanceRow = await store.db.prepare('SELECT points_balance FROM users WHERE email = ?').get('points-client@example.test');
+  assert.equal(balanceRow.points_balance, 100050); // 100000 test-fixture grant + 50 purchased
 
   // Replaying the identical webhook event does not double-credit.
   const replay = await fetch(`${base}/api/webhooks/paystack`, {

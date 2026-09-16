@@ -28,10 +28,10 @@ function summarize(rows) {
 export function mountEstimator(app, store) {
   const { db } = store;
 
-  app.post('/api/jobs/estimate', (req, res, next) => {
+  app.post('/api/jobs/estimate', async (req, res, next) => {
     try {
       const input = estimateSchema.parse(req.body);
-      const categoryRows = db
+      const categoryRows = await db
         .prepare('SELECT budget_min, budget_max, tags FROM job_posts WHERE category = ?')
         .all(input.category);
 
