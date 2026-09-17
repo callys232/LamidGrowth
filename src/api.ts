@@ -10,15 +10,19 @@ let workspaceScope: string | undefined;
 export function setWorkspaceScope(id: string) {
   workspaceScope = id;
 }
+// Empty (default) means the API is same-origin — built into this same server, as today. Set to
+// the backend's origin (e.g. https://api.lamidgrowth.com, no trailing slash) only when the
+// frontend is deployed separately from the backend (e.g. Vercel + a standalone API host).
+const apiBase = import.meta.env.VITE_API_BASE_URL || '';
 export async function api<T>(
   path: string,
   body?: unknown,
   method = 'POST',
   idempotencyKey?: string,
 ): Promise<T> {
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(`${apiBase}/api${path}`, {
     method: body === undefined ? 'GET' : method,
-    credentials: 'same-origin',
+    credentials: apiBase ? 'include' : 'same-origin',
     headers:
       body === undefined
         ? {}

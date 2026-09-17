@@ -136,6 +136,7 @@ export async function createApp({
   mailProvider,
   securityKey,
   publicOrigin,
+  allowedOrigins = [],
   welcomeIpVelocityLimit = 3,
   rateLimits = {},
   aiProvider = openAIProvider(),
@@ -195,7 +196,10 @@ export async function createApp({
     res.setHeader('X-DNS-Prefetch-Control', 'off');
     res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    // A split frontend/backend deployment needs the frontend's origin to be able to read API
+    // responses at all — CORP applies independently of the CORS allow-origin check below, so
+    // 'same-origin' would silently block every request even from an explicitly trusted origin.
+    res.setHeader('Cross-Origin-Resource-Policy', allowedOrigins.length ? 'cross-origin' : 'same-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     if (production)
       res.setHeader(
@@ -204,10 +208,26 @@ export async function createApp({
       );
     if (production) res.setHeader('Strict-Transport-Security', 'max-age=31536000');
     if (req.path.startsWith('/api')) res.setHeader('Cache-Control', 'no-store');
+    // A trusted cross-origin frontend (e.g. a Vercel-hosted UI calling a separately hosted API)
+    // is the one deliberate exception to the same-site rule below — Access-Control-Allow-Origin
+    // is only ever a single explicit origin from the allowlist, never '*', since credentials are
+    // involved.
+    const trustedOrigin = req.headers.origin && allowedOrigins.includes(req.headers.origin);
+    if (trustedOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Vary', 'Origin');
+    }
+    if (req.method === 'OPTIONS' && trustedOrigin) {
+      res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      return res.status(204).end();
+    }
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
       if (
-        req.headers['sec-fetch-site'] === 'cross-site' ||
-        (req.headers.origin && req.headers.origin !== `${req.protocol}://${req.get('host')}`)
+        !trustedOrigin &&
+        (req.headers['sec-fetch-site'] === 'cross-site' ||
+          (req.headers.origin && req.headers.origin !== `${req.protocol}://${req.get('host')}`))
       )
         return res.status(403).json({ error: 'This request came from a different site.' });
       if (!req.is('application/json'))
@@ -241,7 +261,10 @@ export async function createApp({
     ).run(digest(token), userId, Date.now() + 86400000 * 7, workspaceId);
     res.cookie('lamid_session', token, {
       httpOnly: true,
-      sameSite: 'lax',
+      // 'None' is required for the cookie to be sent on cross-site requests (a split
+      // Vercel-frontend / separately-hosted-API deployment) — safe only alongside secure:true
+      // (already tied to `production`), which browsers require for SameSite=None.
+      sameSite: production ? 'none' : 'lax',
       secure: production,
       maxAge: 86400000 * 7,
       path: '/',

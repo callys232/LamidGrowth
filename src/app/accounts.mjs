@@ -137,7 +137,7 @@ export async function mountAccounts(app, store, { production, session, contexts,
       throw error;
     }
     await session(res, user, workspace);
-    res.cookie('lamid_device', req.deviceCookie, { httpOnly: true, secure: production, sameSite: 'lax', path: '/', maxAge: 365 * 86400000 });
+    res.cookie('lamid_device', req.deviceCookie, { httpOnly: true, secure: production, sameSite: production ? 'none' : 'lax', path: '/', maxAge: 365 * 86400000 });
     res.status(201).json({ ok: true, verificationRequired: true, ...challenge });
   });
   app.post('/api/auth/resend-verification', async (req, res) => {

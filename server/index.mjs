@@ -54,9 +54,17 @@ async function startServer() {
   // No `filename` passed: Postgres has no file-path concept, so this always targets the
   // database's default 'public' schema (see openStore in server/store.mjs) — the equivalent of
   // the old DATABASE_PATH-based single real SQLite file.
+  // Only set when the frontend is hosted separately (e.g. Vercel) from this API server —
+  // comma-separated exact origins (scheme + host, no trailing slash), never '*' since the API
+  // relies on credentialed (cookie-based) requests.
+  const allowedOrigins = (process.env.FRONTEND_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
   const { app, store, runtime, agentRuntime, mail } = await createApp({
     production,
     poolMax,
+    allowedOrigins,
   });
   const frontend = await mountFrontend(app, { production });
   const port = Number(process.env.PORT || 3000);
