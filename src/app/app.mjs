@@ -220,7 +220,9 @@ export async function createApp({
     }
     if (req.method === 'OPTIONS' && trustedOrigin) {
       res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      // Must list every non-simple header src/api.ts sends, or the browser blocks the actual
+      // request at the preflight stage before it ever reaches this server.
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Workspace-Id, Idempotency-Key');
       return res.status(204).end();
     }
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {

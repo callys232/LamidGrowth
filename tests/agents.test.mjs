@@ -370,24 +370,27 @@ test('the proposal drafter grounds its draft in the real job and rejects unrelat
   assert.equal(asStranger.status, 403);
 });
 
-test('the 8 new commercial document tools route correctly and ask for a job before drafting', async () => {
+test('the 8 new commercial document tools reject a missing job/proposal before charging, without completing', async () => {
   const cookie = await demo();
+  const before = await request('/state', undefined, cookie, 'GET');
+  const balanceBefore = before.data.user.points_balance;
   const cases = [
-    ['can you help with the scope for this?', 'scope-builder'],
-    ['draft a statement of work', 'sow-builder'],
-    ['write a client brief', 'brief-builder'],
-    ['list the deliverables', 'deliverable-builder'],
-    ['what should the acceptance criteria be?', 'acceptance-builder'],
-    ['generate a quote', 'quote-generator'],
-    ['give me an estimate', 'estimate-generator'],
-    ['I need a change order', 'change-order'],
+    'can you help with the scope for this?',
+    'draft a statement of work',
+    'write a client brief',
+    'list the deliverables',
+    'what should the acceptance criteria be?',
+    'generate a quote',
+    'give me an estimate',
+    'I need a change order',
   ];
-  for (const [message, expectedAgentId] of cases) {
+  for (const message of cases) {
     const result = await request('/companion/messages', { message }, cookie);
-    assert.equal(result.status, 201, message);
-    assert.equal(result.data.agentId, expectedAgentId, message);
-    assert.ok(typeof result.data.response === 'string' && result.data.response.length > 0, message);
+    assert.equal(result.status, 422, message);
+    assert.ok(typeof result.data.error === 'string' && result.data.error.length > 0, message);
   }
+  const after = await request('/state', undefined, cookie, 'GET');
+  assert.equal(after.data.user.points_balance, balanceBefore);
 });
 
 test('the scope builder grounds its draft in the real job and rejects unrelated users', async () => {

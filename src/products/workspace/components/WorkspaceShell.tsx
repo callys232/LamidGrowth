@@ -87,8 +87,7 @@ export function WorkspaceShell() {
     const sequence = ++refreshSequence.current;
     try {
       const next = await api<WorkspaceState>('/state');
-      if (sequence !== refreshSequence.current)
-        throw new Error('A newer workspace request replaced this one.');
+      if (sequence !== refreshSequence.current) return;
       if (displayedWorkspace.current && displayedWorkspace.current !== next.workspace.id) {
         setModal(null);
         setQuery('');
@@ -98,7 +97,7 @@ export function WorkspaceShell() {
       setState(next);
       setError('');
     } catch (e) {
-      if (sequence !== refreshSequence.current) throw e;
+      if (sequence !== refreshSequence.current) return;
       if (e instanceof ApiError && e.status === 401) navigate('/login', { replace: true });
       else setError((e as Error).message);
       throw e;
@@ -406,9 +405,9 @@ export function WorkspaceShell() {
           context={state.workspace.context}
           onClose={() => setModal(null)}
           onSaved={async () => {
-            await refresh();
             setModal(null);
             setToast('Your objective is ready. Define the next step.');
+            await refresh().catch(() => {});
           }}
         />
       )}
@@ -419,9 +418,9 @@ export function WorkspaceShell() {
           onClose={() => setModal(null)}
           onCreateObjective={() => setModal('objective')}
           onSaved={async () => {
-            await refresh();
             setModal(null);
             setToast('Next action added.');
+            await refresh().catch(() => {});
           }}
         />
       )}

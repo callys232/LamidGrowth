@@ -102,9 +102,15 @@ export function chooseAgent(message, { previousAgent, page = '', context = '' } 
   return 'context-curator';
 }
 
+// Every specialist named here must work from the free-text message alone: this plan drives
+// companionTasks.mjs's automatic multi-step run, which never has a jobId/proposalId/milestoneId
+// to give a specialist — those marketplace-document builders (brief-builder, scope-builder, etc.)
+// are only reachable by chatting directly from a job/proposal page, where the client supplies the
+// ID explicitly. Picking one of them here would always bounce with "which job?" after already
+// charging points for it.
 export function planSpecialists(message) {
   if (/proposal|project|deliverable/i.test(message))
-    return ['brief-builder', 'scope-builder', 'acceptance-builder'];
+    return ['context-curator', 'capability-mapper', 'performance-analytics'];
   if (/grow|market|business/i.test(message))
     return ['diagnostic-intelligence', 'market-intelligence', 'capability-mapper'];
   return ['context-curator', 'diagnostic-intelligence', 'capability-mapper'];

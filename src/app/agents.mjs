@@ -622,6 +622,11 @@ export function createAgentRuntime(store, deps) {
     if (priorResult) return priorResult;
     try {
       const result = await agent.execute({ store, principal, workspace }, input, { ...deps, aiProvider: scopedProvider(store, deps.aiProvider, workspace.id, principal.id, input.consent) });
+      // evidence: null is this codebase's signal for "no work was done" — every agent that bounces
+      // back a request for a missing prerequisite (job/proposal/milestone ID) uses this exact
+      // shape instead of doing anything billable. Routing it through the same catch below refunds
+      // the charge and marks the run failed, rather than charging for a request for information.
+      if (result.evidence === null) throw Object.assign(new Error(result.response), { status: 422 });
       const response = await transaction(async () => {
         if ((await db.prepare('SELECT status FROM agent_runs WHERE id = ? FOR UPDATE').get(runId))?.status !== 'running') throw Object.assign(new Error('This run was interrupted. Its result cannot be accepted.'), { status: 409 });
         await db.prepare('UPDATE agent_runs SET output = ?, status = ?, completed_at = ? WHERE id = ?').run(
