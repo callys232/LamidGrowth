@@ -25,7 +25,7 @@ tool. Required/relevant keys:
 | `DATABASE_URL` | Postgres connection string (Supabase) |
 | `ACCOUNT_SECURITY_KEY` | 32 random bytes, hex-encoded (64 hex chars) |
 | `PUBLIC_ORIGIN` | This API's own public HTTPS origin: `https://api.lamidconsulting.com` |
-| `FRONTEND_ORIGINS` | The Vercel frontend's origin(s), comma-separated, e.g. `https://YOURAPP.vercel.app,https://lamidconsulting.com` — enables the cross-origin allowlist (see `src/app/app.mjs`) |
+| `FRONTEND_ORIGINS` | The Vercel frontend's origin(s), comma-separated: `https://lamidconsultingcom.vercel.app,https://lamidconsulting.com` — enables the cross-origin allowlist (see `src/app/app.mjs`) |
 | `PAYSTACK_SECRET_KEY` | Live secret key |
 | `RESEND_API_KEY` | or `SENDGRID_API_KEY` |
 | `MAIL_FROM` | Sender address |
