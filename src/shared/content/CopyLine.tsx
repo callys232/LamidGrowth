@@ -10,10 +10,17 @@ export function CopyLine({ text, paragraph }: { text: string; paragraph: number 
           .map((raw, i) => {
             const label = raw.trim();
             const to = destinations[label];
+            const external = to && /^(mailto:|https?:)/.test(to);
             return to ? (
-              <Link className="button button-primary" key={i} to={to}>
-                {label}
-              </Link>
+              external ? (
+                <a className="button button-primary" key={i} href={to}>
+                  {label}
+                </a>
+              ) : (
+                <Link className="button button-primary" key={i} to={to}>
+                  {label}
+                </Link>
+              )
             ) : (
               <span className="canonical-cta-label" key={i}>
                 {label}

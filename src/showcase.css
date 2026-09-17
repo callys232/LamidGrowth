@@ -115,7 +115,11 @@
   order: 2;
 }
 .content-page .showcase-copy .showcase-feature .section-heading {
-  align-self: center;
+  /* Top-aligned, not centered: a short heading next to a much taller content card (a long
+     bullet list, say) used to float alone in the middle of empty space — this keeps it anchored
+     to the top instead, which reads as intentional regardless of how tall the card ends up. */
+  align-self: start;
+  padding-top: 36px;
 }
 .content-page .showcase-copy .showcase-closing {
   grid-column: 1 / -1;

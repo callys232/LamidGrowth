@@ -63,6 +63,7 @@ export const destinations: Record<string, string> = {
   'Continue to Consistency': '/os/consistency',
   'Enter LAMID ONE': '/os',
   'Continue to LAMID ONE': '/os',
+  'Send Inquiry': 'mailto:hp@lamidconsulting.com',
   'Find Expertise': '/start',
   'Become an Expert': '/start',
   'Start an Expert Match': '/start',
