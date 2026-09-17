@@ -67,7 +67,6 @@ const navigation = [
   ['Rhythm', '/os/rhythm', CalendarDays],
   ['Commercial', '/os/commercial', GitBranch],
   ['Knowledge', '/os/knowledge', Layers3],
-  ['Concierge', '/os/concierge', ShieldCheck],
   ['Talent', '/os/talent', Users],
   ['Guided Scoping', '/os/scoping/new', Wand2],
   ['Learning', '/os/learning', GraduationCap],

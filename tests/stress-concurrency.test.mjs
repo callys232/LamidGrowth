@@ -15,7 +15,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.dropSchema();
 });
 async function request(path, body, cookie, method = 'POST', rawBody) {
   const response = await fetch(`${base}/api${path}`, {

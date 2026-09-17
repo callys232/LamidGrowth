@@ -3,6 +3,7 @@ import { api } from '../../../api';
 
 type Task = {
   id: string;
+  cursor?: string;
   version: number;
   message: string;
   status: string;
@@ -21,8 +22,25 @@ export function CompanionTasks() {
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  async function refresh() {
-    setTasks(await api<Task[]>('/companion/tasks'));
+  const [hasMore, setHasMore] = useState(false);
+  async function refresh(before?: string) {
+    const rows = await api<Task[]>(
+      `/companion/tasks?limit=25${before ? `&before=${encodeURIComponent(before)}` : ''}`,
+    );
+    setTasks((previous) => (before ? [...previous, ...rows] : rows));
+    setHasMore(rows.length === 25);
+  }
+  async function cancel(task: Task) {
+    setBusy(true);
+    setError('');
+    try {
+      await api(`/companion/tasks/${task.id}/cancel`, { version: task.version });
+      await refresh();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
   }
   useEffect(() => {
     refresh().catch((e) => setError(e.message));
@@ -98,14 +116,19 @@ export function CompanionTasks() {
                 </li>
               ))}
             </ol>
-            {next && (
+            {next && task.status !== 'cancelled' && (
               <button disabled={busy} onClick={() => void act(task)}>
                 {next.status === 'running'
                   ? 'Refresh or resume step'
                   : `Approve ${next.name} · ${next.points} points`}
               </button>
             )}
-            {next?.status === 'failed' && (
+            {['awaiting_approval', 'failed'].includes(task.status) && (
+              <button disabled={busy} onClick={() => void cancel(task)}>
+                Cancel remaining steps
+              </button>
+            )}
+            {task.status === 'failed' && (
               <p>Approving again starts a new attempt. Earlier completed steps remain saved.</p>
             )}
             {!next && (
@@ -119,6 +142,23 @@ export function CompanionTasks() {
           </article>
         );
       })}
+      {hasMore && (
+        <button
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await refresh(tasks.at(-1)?.cursor);
+            } catch (e) {
+              setError((e as Error).message);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          Load older tasks
+        </button>
+      )}
     </details>
   );
 }

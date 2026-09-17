@@ -55,4 +55,7 @@ test('specialist selection persists history and a coordinated plan survives relo
   await expect(
     page.getByRole('heading', { name: 'Improve my personal goal planning' }),
   ).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel remaining steps' }).click();
+  await expect(page.locator('.companion-task-status')).toContainText('cancelled');
+  await expect(page.getByRole('button', { name: /^Approve / })).toHaveCount(0);
 });

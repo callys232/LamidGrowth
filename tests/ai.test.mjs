@@ -12,6 +12,58 @@ const suggestion = (id) => ({
   ],
   evidenceIds: [id],
 });
+
+test(
+  'Deep Review and Companion share the final workspace and global quota slots',
+  { timeout: 300000 },
+  async (t) => {
+    let calls = 0;
+    const f = await fixture(t, {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        calls++;
+        return {
+          review: { summary: 'Grounded result', evidenceIds: [], assumptions: [], suggestions: [] },
+        };
+      },
+    });
+    const previous = process.env.AI_GLOBAL_DAILY_LIMIT;
+    t.after(() => {
+      if (previous === undefined) delete process.env.AI_GLOBAL_DAILY_LIMIT;
+      else process.env.AI_GLOBAL_DAILY_LIMIT = previous;
+    });
+    for (const [index, globalLimit, workspaceLimit] of [
+      [0, 100, 1],
+      [1, 1, 10],
+    ]) {
+      process.env.AI_GLOBAL_DAILY_LIMIT = String(globalLimit);
+      await f.store.db.prepare('DELETE FROM ai_usage').run();
+      assert.equal(
+        (
+          await f.call(
+            '/ai/settings',
+            { enabled: true, dailyLimit: workspaceLimit, version: index },
+            f.cookie,
+            'PATCH',
+          )
+        ).status,
+        200,
+      );
+      const beforeCalls = calls;
+      const results = await Promise.all([
+        f.call('/ai/reviews', f.request(), f.cookie),
+        f.call('/companion/messages', { message: 'Help review my goal', consent: true }, f.cookie),
+      ]);
+      assert.deepEqual(results.map((r) => r.status).sort(), [201, 429], JSON.stringify(results));
+      assert.equal(calls - beforeCalls, 1);
+      assert.equal(
+        Number((await f.store.db.prepare('SELECT COUNT(*) AS n FROM ai_usage').get()).n),
+        1,
+      );
+    }
+  },
+);
 async function fixture(t, provider) {
   const { app, store } = await createApp({
     filename: ':memory:',
@@ -22,7 +74,7 @@ async function fixture(t, provider) {
   await new Promise((resolve) => server.once('listening', resolve));
   t.after(async () => {
     await new Promise((resolve) => server.close(resolve));
-    store.db.close();
+    await store.dropSchema();
   });
   async function call(path, body, cookie, method = 'POST') {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/api${path}`, {
@@ -52,6 +104,7 @@ async function fixture(t, provider) {
       cookie,
     )
   ).data;
+  await store.db.prepare('UPDATE users SET points_balance = 1000 WHERE id = ?').run(state.user.id);
   const request = () => ({
     objectiveId: objective.id,
     objectiveVersion: 1,

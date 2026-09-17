@@ -2280,6 +2280,33 @@ small {
 .week-calendar-event-confirmed strong {
   color: var(--signature-red, #c12129);
 }
+.pricing-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pricing-tabs button {
+  padding: 10px 4px;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pricing-tabs button + button {
+  margin-left: 14px;
+}
+.pricing-tabs button:hover {
+  color: var(--ink);
+}
+.pricing-tabs button.is-active {
+  color: var(--signature-red, #c12129);
+  border-bottom-color: var(--signature-red, #c12129);
+}
 .date-picker {
   position: relative;
 }

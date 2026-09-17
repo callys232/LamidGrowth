@@ -33,6 +33,7 @@ export function usePricingPage() {
   const [billables, setBillables] = useState<Billables | null>(null);
   const [bundles, setBundles] = useState<Bundle[]>([]);
   const [adminBundles, setAdminBundles] = useState<Bundle[]>([]);
+  const [isEcosystemAdmin, setIsEcosystemAdmin] = useState(false);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -54,9 +55,11 @@ export function usePricingPage() {
   async function loadAdminBundles() {
     try {
       setAdminBundles(await api<Bundle[]>('/admin/bundles', undefined, 'GET'));
+      setIsEcosystemAdmin(true);
     } catch {
-      // Non-admins get a 403 here — silently leave the admin list empty rather than error-banner
-      // a section most visitors aren't meant to use.
+      // Non-admins get a 403 here — silently leave the admin list empty and keep the
+      // bundle-builder UI hidden, rather than error-banner or show a form only admins can submit.
+      setIsEcosystemAdmin(false);
     }
   }
   useEffect(() => {
@@ -154,6 +157,7 @@ export function usePricingPage() {
     billables,
     bundles,
     adminBundles,
+    isEcosystemAdmin,
     selectedAgentIds,
     busy,
     error,

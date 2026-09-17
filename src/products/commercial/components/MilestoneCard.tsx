@@ -9,7 +9,9 @@ const commonCurrencies = ['USD', 'EUR', 'GBP', 'NGN', 'CAD', 'AUD'];
 
 function CurrencyConverter({ amount, currency }: { amount: number; currency: string }) {
   const [target, setTarget] = useState('');
-  const [result, setResult] = useState<{ converted: number; asOf: string | null } | 'unavailable' | null>(null);
+  const [result, setResult] = useState<
+    { converted: number; asOf: string | null } | 'unavailable' | null
+  >(null);
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginLeft: 8 }}>
       <select
@@ -33,11 +35,13 @@ function CurrencyConverter({ amount, currency }: { amount: number; currency: str
         style={{ fontSize: 9 }}
       >
         <option value="">view in…</option>
-        {commonCurrencies.filter((c) => c !== currency).map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
+        {commonCurrencies
+          .filter((c) => c !== currency)
+          .map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
       </select>
       {result && (
         <small>
@@ -52,6 +56,7 @@ function CurrencyConverter({ amount, currency }: { amount: number; currency: str
 
 const criterionIcon = {
   pending: CircleDashed,
+  insufficient_evidence: CircleDashed,
   satisfied: CheckCircle2,
   not_satisfied: XCircle,
 };
@@ -76,8 +81,12 @@ export function MilestoneCard({
   busy: boolean;
   onAddDeliverable: (title: string, description: string, criteria: string[]) => void;
   onSubmit: (notes: string) => void;
-  onVerify: (submissionId: string) => Promise<VerificationCase | null>;
-  onDecide: (verificationCaseId: string, decision: 'approve' | 'request_revision' | 'dispute', reason: string) => void;
+  onVerify: (submissionId: string, consent?: boolean) => Promise<VerificationCase | null>;
+  onDecide: (
+    verificationCaseId: string,
+    decision: 'approve' | 'request_revision' | 'dispute',
+    reason: string,
+  ) => void;
   onFund?: (milestoneId: string) => void;
   onLoadFunding?: (milestoneId: string) => Promise<MilestoneFunding | null>;
   onRelease?: (milestoneId: string) => void;
@@ -86,6 +95,7 @@ export function MilestoneCard({
   const [deliverableTitle, setDeliverableTitle] = useState('');
   const [criteriaText, setCriteriaText] = useState('');
   const [submissionNotes, setSubmissionNotes] = useState('');
+  const [verificationConsent, setVerificationConsent] = useState(false);
   const [lastVerification, setLastVerification] = useState<VerificationCase | null>(null);
   const [funding, setFunding] = useState<MilestoneFunding | null>(null);
 
@@ -96,7 +106,10 @@ export function MilestoneCard({
   const latestSubmission = milestone.submissions[0];
 
   return (
-    <li className="activity-feed-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 10 }}>
+    <li
+      className="activity-feed-row"
+      style={{ flexDirection: 'column', alignItems: 'stretch', gap: 10 }}
+    >
       <div className="activity-feed-row" style={{ padding: 0, border: 0 }}>
         <span className="activity-feed-title">
           <strong>{milestone.title}</strong>
@@ -118,7 +131,13 @@ export function MilestoneCard({
               return (
                 <li
                   key={criterion.id}
-                  style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 9, padding: '4px 0' }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: 9,
+                    padding: '4px 0',
+                  }}
                 >
                   <Icon size={13} />
                   {criterion.criterion}
@@ -138,16 +157,22 @@ export function MilestoneCard({
               Fund milestone
             </Button>
           )}
-          {isClient && onRelease && milestone.status === 'approved' && funding?.status === 'held' && (
-            <Button disabled={busy} onClick={() => onRelease(milestone.id)}>
-              Release payment
-            </Button>
-          )}
-          {isClient && onRefund && milestone.status === 'disputed' && funding?.status === 'held' && (
-            <Button variant="ghost" disabled={busy} onClick={() => onRefund(milestone.id)}>
-              Request refund
-            </Button>
-          )}
+          {isClient &&
+            onRelease &&
+            milestone.status === 'approved' &&
+            funding?.status === 'held' && (
+              <Button disabled={busy} onClick={() => onRelease(milestone.id)}>
+                Release payment
+              </Button>
+            )}
+          {isClient &&
+            onRefund &&
+            milestone.status === 'disputed' &&
+            funding?.status === 'held' && (
+              <Button variant="ghost" disabled={busy} onClick={() => onRefund(milestone.id)}>
+                Request refund
+              </Button>
+            )}
         </div>
       )}
 
@@ -170,7 +195,10 @@ export function MilestoneCard({
               onAddDeliverable(
                 deliverableTitle,
                 '',
-                criteriaText.split(',').map((c) => c.trim()).filter(Boolean),
+                criteriaText
+                  .split(',')
+                  .map((c) => c.trim())
+                  .filter(Boolean),
               );
               setDeliverableTitle('');
               setCriteriaText('');
@@ -202,10 +230,25 @@ export function MilestoneCard({
 
       {milestone.status === 'submitted' && latestSubmission && (
         <div style={{ paddingLeft: 38 }}>
+          <label>
+            <input
+              type="checkbox"
+              checked={verificationConsent}
+              onChange={(e) => setVerificationConsent(e.target.checked)}
+            />
+            Allow external AI to review the submission notes and asset references under workspace AI
+            limits.
+          </label>
+          <p>
+            Preliminary review only. Linked files are not inspected; review the deliverables before
+            approving.
+          </p>
           <Button
             variant="secondary"
             disabled={busy}
-            onClick={async () => setLastVerification(await onVerify(latestSubmission.id))}
+            onClick={async () =>
+              setLastVerification(await onVerify(latestSubmission.id, verificationConsent))
+            }
           >
             Run verification
           </Button>
@@ -215,13 +258,22 @@ export function MilestoneCard({
       {lastVerification && (
         <div style={{ paddingLeft: 38, fontSize: 9 }}>
           <em>
-            Verification ({lastVerification.method}):{' '}
+            Preliminary review:{' '}
             {lastVerification.results.filter((r) => r.result === 'satisfied').length}/
             {lastVerification.results.length} criteria satisfied.
           </em>
-          {isClient && (
+          <ul>
+            {lastVerification.results.map((result) => (
+              <li key={result.criterionId}>
+                <strong>{result.result.replaceAll('_', ' ')}</strong>: {result.rationale}
+              </li>
+            ))}
+          </ul>
+          {isClient && milestone.status === 'in_review' && (
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <Button onClick={() => onDecide(lastVerification.id, 'approve', 'Looks good.')}>Approve</Button>
+              <Button onClick={() => onDecide(lastVerification.id, 'approve', 'Looks good.')}>
+                Approve
+              </Button>
               <Button
                 variant="secondary"
                 onClick={() => onDecide(lastVerification.id, 'request_revision', 'Please revise.')}
@@ -230,7 +282,9 @@ export function MilestoneCard({
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => onDecide(lastVerification.id, 'dispute', 'This does not match what was agreed.')}
+                onClick={() =>
+                  onDecide(lastVerification.id, 'dispute', 'This does not match what was agreed.')
+                }
               >
                 Dispute
               </Button>

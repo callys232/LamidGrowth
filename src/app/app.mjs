@@ -1,4 +1,5 @@
 import express from 'express';
+import { createReadinessCheck } from './readiness.mjs';
 import { mountAccounts } from './accounts.mjs';
 import { mountPublicCompanion } from './companionTasks.mjs';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
@@ -247,6 +248,11 @@ export async function createApp({
     });
   };
   app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+  const checkReadiness = createReadinessCheck(store);
+  app.get('/api/ready', async (_req, res) => {
+    const ready = await checkReadiness();
+    res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'unavailable' });
+  });
   const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit });
   mountPublicCompanion(app);
   app.use('/api', async (req, res, next) => {
@@ -329,12 +335,15 @@ export async function createApp({
   });
   app.get('/api/admin/operations', async (req, res) => {
     if (!ecosystemAdminEmails.includes(req.user.email)) return res.status(403).json({ error: 'Ecosystem administrator access required.' });
-    const [mail, scheduler, agents] = await Promise.all([
+    const [mail, scheduler, agents, duplicateRefunds, balanceMismatches, stuckRuns] = await Promise.all([
       db.prepare('SELECT status, COUNT(*) AS count FROM mail_outbox GROUP BY status').all(),
       db.prepare('SELECT name, expires_at AS "expiresAt" FROM service_leases').all(),
       db.prepare('SELECT status, COUNT(*) AS count FROM agent_runs GROUP BY status').all(),
+      db.prepare("SELECT reference_id, reason, COUNT(*) AS count, SUM(amount) AS points FROM points_ledger WHERE reason IN ('agent_run_refund', 'ai_review_refund') GROUP BY reference_id, reason HAVING COUNT(*) > 1 LIMIT 50").all(),
+      db.prepare('SELECT u.id AS user_id, u.points_balance, COALESCE(SUM(l.amount), 0) AS ledger_balance FROM users u LEFT JOIN points_ledger l ON l.user_id = u.id WHERE u.demo = 0 GROUP BY u.id HAVING u.points_balance <> COALESCE(SUM(l.amount), 0) OR u.points_balance < 0 LIMIT 50').all(),
+      db.prepare("SELECT id, workspace_id, created_at FROM agent_runs WHERE status = 'running' AND created_at < ? ORDER BY created_at LIMIT 50").all(new Date(Date.now() - 120000).toISOString()),
     ]);
-    res.json({ mail, scheduler, agents });
+    res.json({ mail, scheduler, agents, ledger: { duplicateRefunds, balanceMismatches, requiresReview: duplicateRefunds.length > 0 || balanceMismatches.length > 0 }, stuckRuns });
   });
   app.get('/api/workspaces', async (req, res) => {
     res.json(

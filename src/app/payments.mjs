@@ -404,11 +404,28 @@ export function mountPointsPurchase(app, store, deps) {
       const provider = deps.paymentProvider('paystack');
       if (!provider)
         return res.status(503).json({ error: 'Paystack is not configured on this server. No purchase has been made.' });
+      // Points/bundles are priced in USD internally (POINTS_UNIT_PRICE_MINOR, bundle.currency),
+      // but this merchant's Paystack account only settles in NGN — convert only the amount sent
+      // to Paystack, using the same fx_rates table /api/fx/convert reads. The stored purchase
+      // row and points ledger stay in the canonical USD amount; the webhook reconciles by
+      // `reference` and credits `purchase.points` (currency-independent), not by amount, so this
+      // conversion can't desync them.
+      let paystackAmountMinor = amountMinor;
+      let paystackCurrency = currency;
+      if (currency !== 'NGN') {
+        const fxRow = await db.prepare('SELECT * FROM fx_rates WHERE pair = ?').get(`${currency}_NGN`);
+        if (!fxRow)
+          return res
+            .status(503)
+            .json({ error: `No ${currency} to NGN exchange rate is configured. No purchase has been made.` });
+        paystackAmountMinor = Math.round(amountMinor * fxRow.rate);
+        paystackCurrency = 'NGN';
+      }
       const purchaseId = randomUUID();
       const reference = `LMD-PTS-${purchaseId.slice(0, 8)}`;
       const init = await provider.initializeTransaction({
-        amountMinor,
-        currency,
+        amountMinor: paystackAmountMinor,
+        currency: paystackCurrency,
         email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
         reference,
       });

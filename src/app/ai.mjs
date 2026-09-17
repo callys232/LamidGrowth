@@ -265,8 +265,7 @@ export function mountAI(app, store, provider) {
           );
         return { previous };
       }
-      const day = new Date().toISOString().slice(0, 10);
-      await lockAIQuota(store, req.workspace.id);
+      const day = await lockAIQuota(store, req.workspace.id);
       const globalLimit = Math.min(
         1000,
         Math.max(1, Number.parseInt(process.env.AI_GLOBAL_DAILY_LIMIT || '100', 10) || 100),
@@ -274,7 +273,7 @@ export function mountAI(app, store, provider) {
       if (
         (await db
           .prepare('SELECT COUNT(*) AS count FROM ai_usage WHERE created_at >= ?')
-          .get(Date.parse(day))).count >= globalLimit
+          .get(day)).count >= globalLimit
       )
         throw Object.assign(new Error('The server has reached its daily AI request limit.'), {
           status: 429,
@@ -284,7 +283,7 @@ export function mountAI(app, store, provider) {
           .prepare(
             'SELECT COUNT(*) AS count FROM ai_usage WHERE workspace_id = ? AND created_at >= ?',
           )
-          .get(req.workspace.id, Date.parse(day))).count >= currentPolicy.dailyLimit
+          .get(req.workspace.id, day)).count >= currentPolicy.dailyLimit
       )
         throw Object.assign(new Error('This workspace has reached its daily AI request limit.'), {
           status: 429,

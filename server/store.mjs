@@ -759,7 +759,7 @@ INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
 INSERT INTO fx_rates (pair, rate, updated_at) VALUES
   ('USD_EUR', 0.92, now()::text), ('EUR_USD', 1.09, now()::text),
   ('USD_GBP', 0.79, now()::text), ('GBP_USD', 1.27, now()::text),
-  ('USD_NGN', 1550, now()::text), ('NGN_USD', 0.000645, now()::text),
+  ('USD_NGN', 1450, now()::text), ('NGN_USD', 0.000690, now()::text),
   ('USD_CAD', 1.36, now()::text), ('CAD_USD', 0.735, now()::text),
   ('USD_AUD', 1.51, now()::text), ('AUD_USD', 0.662, now()::text);
 `;
@@ -795,7 +795,7 @@ export async function openStore(filename, { poolMax } = {}) {
     );
   const connectionString = isTestContext ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-  const bootstrap = new pg.Pool({ connectionString, ssl: sslConfig, max: 1 });
+  const bootstrap = new pg.Pool({ connectionString, ssl: sslConfig, max: 1, connectionTimeoutMillis: 15000, statement_timeout: 30000, lock_timeout: 10000 });
   // node-postgres emits 'error' on the POOL (not the individual client) when an idle pooled
   // connection is severed — a network blip, Supabase recycling a connection, anything that
   // doesn't happen while the client is actively mid-query. With no listener, Node's default
@@ -813,8 +813,9 @@ export async function openStore(filename, { poolMax } = {}) {
     // one hitting pg_namespace's own unique index. That failure means the schema now exists —
     // exactly the desired end state — so it's safe to swallow specifically this error.
     if (error.code !== '23505') throw error;
+  } finally {
+    await bootstrap.end();
   }
-  await bootstrap.end();
 
   const resolvedPoolMax = disposable ? 3 : poolMax || Number(process.env.PG_POOL_MAX) || 10;
   const pool = new pg.Pool({

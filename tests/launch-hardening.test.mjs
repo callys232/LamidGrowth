@@ -4,6 +4,22 @@ import { createApp } from '../src/app/app.mjs';
 import { acquireServiceLease, validateProductionConfig } from '../src/app/operations.mjs';
 import { randomUUID } from 'node:crypto';
 
+async function waitForProvider(started, request) {
+  let timer;
+  const deadline = Date.now() + 60000;
+  try {
+    await Promise.race([
+      new Promise((resolve, reject) => {
+        timer = setInterval(() => {
+          if (started()) resolve();
+          else if (Date.now() >= deadline) reject(new Error('Mock provider did not start within 60 seconds.'));
+        }, 10);
+      }),
+      request.then(result => { throw new Error(`Request ended before mock provider started: ${result.status}`); }),
+    ]);
+  } finally { clearInterval(timer); }
+}
+
 async function fixture(t, options = {}) {
   const messages = [];
   const instance = await createApp({ filename: ':memory:', production: true, securityKey: 'ab'.repeat(32), publicOrigin: 'https://lamid.example',
@@ -11,7 +27,7 @@ async function fixture(t, options = {}) {
     rateLimits: { api: { max: 10000 }, auth: { max: 10000 }, mutation: { max: 10000 }, spend: { max: 10000 } }, ...options });
   const server = instance.app.listen(0, '127.0.0.1');
   await new Promise(resolve => server.once('listening', resolve));
-  t.after(async () => { await new Promise(resolve => server.close(resolve)); instance.store.db.close(); });
+  t.after(async () => { await new Promise(resolve => server.close(resolve)); await instance.store.dropSchema(); });
   async function call(path, body, cookie, method, headers = {}) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/api${path}`, { method: method || (body === undefined ? 'GET' : 'POST'),
       headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}), ...headers }, body: body === undefined ? undefined : JSON.stringify(body) });
@@ -94,7 +110,7 @@ test('Companion enforces verification, workspace opt-in and consent, with one pr
   assert.equal((await f.call('/companion/messages', { message: 'Help me' }, a.cookie)).status, 403);
   const body = { message: 'Help me', consent: true }, headers = { 'Idempotency-Key': 'concurrent-launch-test' };
   const first = f.call('/companion/messages', body, a.cookie, 'POST', headers);
-  while (!release) await new Promise(resolve => setTimeout(resolve, 5));
+  await waitForProvider(() => release, first);
   const second = await f.call('/companion/messages', body, a.cookie, 'POST', headers);
   assert.equal(second.status, 409); assert.equal(calls, 1);
   release(); const result = await first; assert.equal(result.status, 201);
@@ -106,12 +122,18 @@ test('revocation during a provider request rejects the late result and refunds o
   let release;
   const f = await fixture(t, { aiProvider: { name: 'test', model: 'test', async review() { await new Promise(r => { release = r; }); return { review: { summary: 'late', evidenceIds: [] } }; } } });
   const a = await f.signup(); await f.verify(a);
+  // Purchased-like fixture funding is separate from the 100-point signup incentive.
+  await f.store.transaction(async () => {
+    const user = await f.store.db.prepare('SELECT id FROM users WHERE email = ?').get(a.email);
+    await f.store.db.prepare('UPDATE users SET points_balance = points_balance + 100 WHERE id = ?').run(user.id);
+    await f.store.db.prepare("INSERT INTO points_ledger VALUES (?, ?, NULL, 100, 'test_fixture_funding', NULL, ?)").run(randomUUID(), user.id, Date.now());
+  });
   await f.call('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, a.cookie, 'PATCH');
   const result = f.call('/companion/messages', { message: 'Help me', consent: true }, a.cookie);
-  while (!release) await new Promise(resolve => setTimeout(resolve, 5));
+  await waitForProvider(() => release, result);
   await f.call('/ai/settings', { enabled: false, dailyLimit: 10, version: 1 }, a.cookie, 'PATCH');
   release(); assert.equal((await result).status, 403);
-  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 100);
+  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 200);
 });
 
 test('scheduler lease transfers to a replacement owner and stale agent charges refund once', async t => {

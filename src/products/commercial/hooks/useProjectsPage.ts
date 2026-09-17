@@ -4,7 +4,7 @@ import { api } from '../../../api';
 export type AcceptanceCriterion = {
   id: string;
   criterion: string;
-  status: 'pending' | 'satisfied' | 'not_satisfied';
+  status: 'pending' | 'satisfied' | 'not_satisfied' | 'insufficient_evidence';
 };
 export type Deliverable = {
   id: string;
@@ -31,8 +31,20 @@ export type Milestone = {
   deliverables: Deliverable[];
   submissions: Submission[];
 };
-export type AssignedTeamMember = { id: string; team_id: string; user_id: string; role: string; access_scope: string };
-export type AssignedTeam = { id: string; name: string; lead_user_id: string; description: string; members: AssignedTeamMember[] };
+export type AssignedTeamMember = {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  access_scope: string;
+};
+export type AssignedTeam = {
+  id: string;
+  name: string;
+  lead_user_id: string;
+  description: string;
+  members: AssignedTeamMember[];
+};
 export type Project = {
   id: string;
   workspace_id: string;
@@ -46,7 +58,7 @@ export type Project = {
 };
 export type CriterionResult = {
   criterionId: string;
-  result: 'satisfied' | 'not_satisfied';
+  result: 'satisfied' | 'not_satisfied' | 'insufficient_evidence';
   rationale: string;
 };
 export type MilestoneFunding = {
@@ -67,7 +79,7 @@ export type VerificationCase = {
   id: string;
   submission_id: string;
   method: string;
-  confidence: number;
+  confidence: number | null;
   results: CriterionResult[];
 };
 
@@ -130,7 +142,12 @@ export function useProjectDetail(projectId: string) {
     void refresh();
   }, [refresh]);
 
-  async function addMilestone(input: { title: string; description: string; amount: number; currency: string }) {
+  async function addMilestone(input: {
+    title: string;
+    description: string;
+    amount: number;
+    currency: string;
+  }) {
     setBusy(true);
     try {
       await api(`/projects/${projectId}/milestones`, input);
@@ -142,7 +159,10 @@ export function useProjectDetail(projectId: string) {
     }
   }
 
-  async function addDeliverable(milestoneId: string, input: { title: string; description: string; criteria: string[] }) {
+  async function addDeliverable(
+    milestoneId: string,
+    input: { title: string; description: string; criteria: string[] },
+  ) {
     setBusy(true);
     try {
       await api(`/milestones/${milestoneId}/deliverables`, input);
@@ -166,10 +186,12 @@ export function useProjectDetail(projectId: string) {
     }
   }
 
-  async function verifySubmission(submissionId: string) {
+  async function verifySubmission(submissionId: string, consent = false) {
     setBusy(true);
     try {
-      const result = await api<VerificationCase>(`/submissions/${submissionId}/verify`, {});
+      const result = await api<VerificationCase>(`/submissions/${submissionId}/verify`, {
+        consent,
+      });
       await refresh();
       return result;
     } catch (e) {
@@ -210,7 +232,11 @@ export function useProjectDetail(projectId: string) {
 
   async function loadFunding(milestoneId: string) {
     try {
-      return await api<MilestoneFunding | null>(`/milestones/${milestoneId}/funding`, undefined, 'GET');
+      return await api<MilestoneFunding | null>(
+        `/milestones/${milestoneId}/funding`,
+        undefined,
+        'GET',
+      );
     } catch (e) {
       setError((e as Error).message);
       return null;

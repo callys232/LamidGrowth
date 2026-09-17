@@ -3,10 +3,34 @@ import assert from 'node:assert/strict';
 import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
+let providerCalls = 0;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review() {
+        providerCalls++;
+        return {
+          review: {
+            summary: JSON.stringify({
+              verdict: 'not_satisfied',
+              rationale: 'The provided evidence does not satisfy the criterion.',
+            }),
+            evidenceIds: [],
+            assumptions: [],
+            suggestions: [],
+          },
+        };
+      },
+    },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -15,7 +39,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.dropSchema();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -109,18 +133,60 @@ test('the full milestone lifecycle: project, milestone, deliverable, submission,
 
   const submission = await request(
     `/milestones/${milestone.data.id}/submissions`,
-    { notes: 'Implemented export to CSV and login with email and password as requested.', assets: [] },
+    {
+      notes: 'Implemented export to CSV and login with email and password as requested.',
+      assets: [],
+    },
     freelancer,
   );
   assert.equal(submission.status, 201);
   const afterSubmission = await request(`/projects/${project.data.id}`, undefined, client, 'GET');
   assert.equal(afterSubmission.data.milestones[0].status, 'submitted');
 
+  assert.equal(
+    (await request(`/submissions/${submission.data.id}/verify`, { consent: true }, client)).status,
+    403,
+  );
+  assert.equal(providerCalls, 0);
+  const clientState = (await request('/state', undefined, client)).data;
+  await store.db
+    .prepare('UPDATE users SET verified_at = ? WHERE id = ?')
+    .run(Date.now(), clientState.user.id);
+  assert.equal(
+    (await request(`/submissions/${submission.data.id}/verify`, { consent: true }, client)).status,
+    403,
+  );
+  assert.equal(
+    (await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, client, 'PATCH'))
+      .status,
+    200,
+  );
+  const aiReview = await request(
+    `/submissions/${submission.data.id}/verify`,
+    { consent: true },
+    client,
+  );
+  assert.equal(aiReview.status, 201, JSON.stringify(aiReview.data));
+  assert.ok(aiReview.data.results.every((r) => r.result === 'not_satisfied'));
+  assert.equal(providerCalls, 2);
+  assert.equal(
+    (await request('/ai/settings', { enabled: true, dailyLimit: 1, version: 1 }, client, 'PATCH'))
+      .status,
+    200,
+  );
+  assert.equal(
+    (await request(`/submissions/${submission.data.id}/verify`, { consent: true }, client)).status,
+    429,
+  );
+  assert.equal(providerCalls, 2);
+
   const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
   assert.equal(verification.status, 201);
   assert.equal(verification.data.method, 'deterministic');
+  assert.equal(verification.data.confidence, null);
   assert.equal(verification.data.results.length, 2);
-  assert.ok(verification.data.results.every((r) => r.result === 'satisfied'));
+  assert.ok(verification.data.results.every((r) => r.result === 'insufficient_evidence'));
+  assert.equal(providerCalls, 2, 'No-consent review must not call external AI even when enabled');
 
   // Verification alone must never approve the milestone.
   const afterVerification = await request(`/projects/${project.data.id}`, undefined, client, 'GET');

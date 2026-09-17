@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { hashPassword, verifyPassword, seedWorkspace } from '../../server/store.mjs';
 import { createMailOutbox, defaultMailer } from './mail.mjs';
 import { createRateLimiter } from './ratelimit.mjs';
+import { welcomeRewardPoints } from './rewards.mjs';
 
 const emailSchema = z.string().trim().email().max(254).transform(s => s.toLowerCase());
 const passwordSchema = z.string().min(12).max(128);
@@ -95,12 +96,12 @@ export async function mountAccounts(app, store, { production, session, contexts,
       .get(userId, signals.email_hash, signals.device_hash, signals.ip_hash, status, duplicate ? 'Device already claimed' : count >= welcomeIpVelocityLimit ? 'Shared network velocity review' : 'Verified first claim', Date.now());
     if (!inserted) return { status: (await db.prepare('SELECT status FROM welcome_claims WHERE user_id = ?').get(userId)).status, points: 0 };
     if (status === 'granted') await credit(userId);
-    return { status, points: status === 'granted' ? 100 : 0 };
+    return { status, points: status === 'granted' ? welcomeRewardPoints : 0 };
   }
   async function credit(userId) {
     const workspace = await db.prepare('SELECT id FROM workspaces WHERE user_id = ?').get(userId);
-    await db.prepare('UPDATE users SET points_balance = points_balance + 100 WHERE id = ?').run(userId);
-    await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, 100, ?, ?, ?)').run(randomUUID(), userId, workspace?.id || null, 'welcome_bonus', userId, Date.now());
+    await db.prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?').run(welcomeRewardPoints, userId);
+    await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(randomUUID(), userId, workspace?.id || null, welcomeRewardPoints, 'welcome_bonus', userId, Date.now());
   }
   async function finish(token, purpose) {
     // The claim itself is the atomic UPDATE (guarded by used_at IS NULL, RETURNING the row only

@@ -2,6 +2,43 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { chooseAgent, planSpecialists } from '../src/app/companionRouting.mjs';
 
+test('routing covers common needs and preserves follow-up context', () => {
+  const examples = [
+    ['I cannot sign in', 'support'],
+    ['How much do points cost?', 'pricing'],
+    ['Help me create an account', 'onboarding'],
+    ['Draft an invoice', 'invoice-generator'],
+    ['Write a statement of work', 'sow-builder'],
+    ['Review my skills gaps', 'capability-mapper'],
+    ['Track our KPI performance', 'performance-analytics'],
+    ['Research customer demand', 'market-intelligence'],
+    ['Assess the business risks', 'diagnostic-intelligence'],
+    ['Help me with my goal', 'context-curator'],
+  ];
+  for (const [message, expected] of examples) assert.equal(chooseAgent(message), expected, message);
+  assert.equal(
+    chooseAgent('Tell me more', { previousAgent: 'market-intelligence' }),
+    'market-intelligence',
+  );
+  assert.equal(
+    chooseAgent('Continue', { previousAgent: 'workflow-orchestration' }),
+    'context-curator',
+  );
+  assert.equal(chooseAgent('Help me', { page: '/os/learning' }), 'capability-mapper');
+});
+
+test('task plans are bounded and have no repeated specialist', () => {
+  for (const message of [
+    'Prepare a project proposal',
+    'Grow my business',
+    'Improve personal planning',
+  ]) {
+    const plan = planSpecialists(message);
+    assert.equal(plan.length, 3);
+    assert.equal(new Set(plan).size, plan.length);
+  }
+});
+
 test('specific document requests are not captured by generic action verbs', () => {
   assert.equal(chooseAgent('start a proposal'), 'proposal-drafter');
   assert.equal(chooseAgent('write a statement of work'), 'sow-builder');

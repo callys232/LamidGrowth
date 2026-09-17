@@ -15,7 +15,7 @@ test(
     await new Promise((resolve) => server.once('listening', resolve));
     t.after(async () => {
       await new Promise((resolve) => server.close(resolve));
-      await instance.store.db.close();
+      await instance.store.dropSchema();
     });
     const base = `http://127.0.0.1:${server.address().port}/api`;
     async function call(path, body, cookie) {
