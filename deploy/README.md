@@ -24,8 +24,8 @@ tool. Required/relevant keys:
 |---|---|
 | `DATABASE_URL` | Postgres connection string (Supabase) |
 | `ACCOUNT_SECURITY_KEY` | 32 random bytes, hex-encoded (64 hex chars) |
-| `PUBLIC_ORIGIN` | This API's own public HTTPS origin, e.g. `https://api.YOURDOMAIN.com` |
-| `FRONTEND_ORIGINS` | The Vercel frontend's origin(s), comma-separated, e.g. `https://YOURAPP.vercel.app,https://YOURDOMAIN.com` — enables the cross-origin allowlist (see `src/app/app.mjs`) |
+| `PUBLIC_ORIGIN` | This API's own public HTTPS origin: `https://api.lamidconsulting.com` |
+| `FRONTEND_ORIGINS` | The Vercel frontend's origin(s), comma-separated, e.g. `https://YOURAPP.vercel.app,https://lamidconsulting.com` — enables the cross-origin allowlist (see `src/app/app.mjs`) |
 | `PAYSTACK_SECRET_KEY` | Live secret key |
 | `RESEND_API_KEY` | or `SENDGRID_API_KEY` |
 | `MAIL_FROM` | Sender address |
@@ -55,13 +55,12 @@ Then, as root, wire up nginx + SSL:
 
 ```
 cp ~lamid/app/deploy/nginx-api.conf /etc/nginx/conf.d/api.conf
-# edit /etc/nginx/conf.d/api.conf: replace api.YOURDOMAIN.com with the real subdomain
 nginx -t && systemctl reload nginx
-certbot --nginx -d api.YOURDOMAIN.com
+certbot --nginx -d api.lamidconsulting.com
 ```
 
-Point DNS: add an A record for `api.YOURDOMAIN.com` -> this VPS's IP address, before running
-certbot (it validates ownership over HTTP).
+Point DNS: add an A record for `api.lamidconsulting.com` -> this VPS's IP address, before
+running certbot (it validates ownership over HTTP).
 
 Enable PM2 on boot:
 
@@ -83,7 +82,7 @@ cd app
 
 Set these in the Vercel project's environment variables, then redeploy:
 
-- `VITE_API_BASE_URL` = `https://api.YOURDOMAIN.com` (no trailing slash)
+- `VITE_API_BASE_URL` = `https://api.lamidconsulting.com` (no trailing slash)
 
 That's the only frontend change needed — `src/api.ts` already switches to
 `credentials: 'include'` automatically whenever this is set.
@@ -91,7 +90,7 @@ That's the only frontend change needed — `src/api.ts` already switches to
 ## Verifying it's live
 
 ```
-curl https://api.YOURDOMAIN.com/api/health
+curl https://api.lamidconsulting.com/api/health
 ```
 
 Should return `{"status":"ok"}`. Then load the Vercel frontend and confirm sign-in/purchases

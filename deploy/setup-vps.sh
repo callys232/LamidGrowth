@@ -55,9 +55,8 @@ cat <<'EOF'
 
 Then, back as root, point nginx at it:
   cp app/deploy/nginx-api.conf /etc/nginx/conf.d/api.conf
-  # edit /etc/nginx/conf.d/api.conf: replace api.YOURDOMAIN.com with your real subdomain
   nginx -t && systemctl reload nginx
-  certbot --nginx -d api.YOURDOMAIN.com
+  certbot --nginx -d api.lamidconsulting.com
 
 And enable PM2 on boot (as root, using the exact command pm2 startup prints for the lamid user):
   su - lamid -c 'pm2 startup' | tail -1   # copy the printed sudo ... command and run it as root
