@@ -95,3 +95,17 @@ curl https://api.lamidconsulting.com/api/health
 
 Should return `{"status":"ok"}`. Then load the Vercel frontend and confirm sign-in/purchases
 work end to end (check the browser network tab for any CORS or cookie errors on first try).
+
+## Reviewing errors
+
+The API writes structured error records to stderr and to `data/logs/errors-YYYY-MM-DD.jsonl`
+(UTC dates). This includes HTTP responses with status 400 or higher, unexpected exceptions,
+background worker errors, failed mail deliveries, browser crashes, and worker exits. API responses include an
+`X-Request-Id` header; unexpected server failures also include `requestId` in the JSON body.
+Use it to find the matching log entry. Request bodies, cookies, and query strings are not logged.
+
+From the app directory, run `npm run errors:daily` for today or
+`npm run errors:daily -- 2026-09-18` for a specific UTC date. The report shows counts and the
+last 20 entries. Use `pm2 logs lamid-api --lines 100` for live output. Set `ERROR_LOG_DIR` to
+an absolute path to store files elsewhere; ensure the `lamid` user can write there. Retain or
+rotate old files according to your operations policy.

@@ -1,6 +1,7 @@
 import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
+import { logHandledError } from './errorLog.mjs';
 
 export function paystackProvider({
   secretKey = process.env.PAYSTACK_SECRET_KEY,
@@ -277,6 +278,7 @@ export function mountPayments(app, store, deps) {
           await log(project.workspace_id, req.user.name, 'Milestone refund requested', funding.id, milestone.title);
         });
       } catch (error) {
+        logHandledError(req, res, 'payment_refund_error', error);
         await transaction(async () => {
           await db.prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?").run(funding.id);
         });
@@ -366,6 +368,7 @@ export function mountPayments(app, store, deps) {
           await log(project.workspace_id, req.user.name, 'Milestone payment initiated', transferId, milestone.title);
         });
       } catch (error) {
+        logHandledError(req, res, 'payment_transfer_error', error);
         await transaction(async () => {
           await db.prepare(
             "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",

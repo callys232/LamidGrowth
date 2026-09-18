@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { requirePermission } from './policy.mjs';
+import { logHandledError } from './errorLog.mjs';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const ECOSYSTEM_FEE_MINOR = Math.max(
@@ -143,6 +144,7 @@ export function mountBilling(app, store, { paymentProvider, ecosystemAdminEmails
         });
         res.status(201).json({ ok: true, paidMinor: totalMinor, providerReference: result.providerReference, lineItemIds: unpaid.map((i) => i.id) });
       } catch (error) {
+        logHandledError(req, res, 'concierge_payout_error', error);
         res.status(502).json({ error: 'The payment provider could not initiate this transfer. No fees have been marked paid.' });
       }
     } catch (error) {
