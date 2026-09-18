@@ -27,13 +27,23 @@ export function SettingsWorkspaceSettingsSlide({
           <WorkspaceDataExport state={state} />
           <section className="settings-note">
             <ShieldCheck size={20} />
-            <p>
-              Workspace owners manage access and review decisions. Enterprise workspaces can add
-              existing accounts.
-              <Link to="/os/settings/members"> Manage people and access</Link>
-              <Link to="/os/settings/notifications"> Review reminders</Link>
-              <Link to="/os/settings/ai"> AI and context controls</Link>
-            </p>
+            <div>
+              <p>
+                Workspace owners manage access and review decisions. Enterprise workspaces can add
+                existing accounts.
+              </p>
+              <ul className="settings-note-links">
+                <li>
+                  <Link to="/os/settings/members">Manage people and access</Link>
+                </li>
+                <li>
+                  <Link to="/os/settings/notifications">Review reminders</Link>
+                </li>
+                <li>
+                  <Link to="/os/settings/ai">AI and context controls</Link>
+                </li>
+              </ul>
+            </div>
           </section>
         </div>
       </div>

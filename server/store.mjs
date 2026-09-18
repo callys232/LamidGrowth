@@ -1136,6 +1136,17 @@ export async function openStore(filename, { poolMax } = {}) {
       ('f06', 'Financial Governance', 'Finance', 'A1', 'none', '[]', $1, 35),
       ('f07', 'CFO Transformation', 'Finance', 'A1', 'none', '[]', $1, 35)
       ON CONFLICT (id) DO NOTHING`, [new Date().toISOString()]);
+    // Real entitlement gating (see src/app/entitlements.mjs): a workspace's access to a paid
+    // tool comes from either enterprise tier or an actually-purchased bundle, not just points.
+    // `source` records which bundle purchase granted the row (composite PK lets more than one
+    // bundle grant the same tool, and makes re-granting the same bundle idempotent).
+    await client.query(`CREATE TABLE IF NOT EXISTS workspace_agent_entitlements (
+      workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      agent_id TEXT NOT NULL REFERENCES agent_manifests(id),
+      source TEXT NOT NULL,
+      granted_at TEXT NOT NULL,
+      PRIMARY KEY (workspace_id, agent_id, source)
+    )`);
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');

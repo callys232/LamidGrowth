@@ -18,12 +18,24 @@ export async function createFundedTestApp(options = {}) {
         // rejection if the funding write itself ever fails.
     res.json = (body) => {
       const send = async () => {
-        if (req.path === '/api/auth/signup' && res.statusCode === 201) {
-          const user = await instance.store.db.prepare('SELECT id FROM users WHERE email = ?').get(req.body.email.trim().toLowerCase());
+        // /auth/signup and /auth/demo both return 201 on account creation. Domain/behavior tests
+        // fund AND enterprise-tier the new workspace here so they keep testing what they're meant
+        // to test — tool behavior — rather than incidentally tripping the real entitlement gate
+        // (src/app/entitlements.mjs) added after this fixture was written. A dedicated test
+        // explicitly downgrades tier back to 'individual' to exercise that gate for real.
+        if ((req.path === '/api/auth/signup' || req.path === '/api/auth/demo') && res.statusCode === 201) {
+          const email = req.path === '/api/auth/signup' ? req.body.email.trim().toLowerCase() : null;
+          const user = email
+            ? await instance.store.db.prepare('SELECT id FROM users WHERE email = ?').get(email)
+            : await instance.store.db.prepare('SELECT id FROM users WHERE demo = 1 ORDER BY created_at DESC LIMIT 1').get();
+          const membership = await instance.store.db
+            .prepare("SELECT workspace_id FROM workspace_members WHERE user_id = ? AND role = 'owner' ORDER BY created_at DESC LIMIT 1")
+            .get(user.id);
           await instance.store.transaction(async () => {
             await instance.store.db.prepare('UPDATE users SET points_balance = 100000 WHERE id = ?').run(user.id);
             await instance.store.db.prepare("INSERT INTO points_ledger VALUES (?, ?, NULL, 100000, 'test_fixture_funding', NULL, ?)").run(randomUUID(), user.id, Date.now());
             await instance.store.db.prepare("INSERT INTO welcome_claims VALUES (?, ?, NULL, NULL, 'legacy', 'Explicitly funded domain-test fixture', ?)").run(user.id, `test:${user.id}`, Date.now());
+            if (membership) await instance.store.db.prepare("UPDATE workspaces SET tier = 'enterprise' WHERE id = ?").run(membership.workspace_id);
           });
         }
         return json(body);

@@ -3401,6 +3401,29 @@ small {
 }
 .settings-note p {
   font-size: 10px;
+  margin: 0 0 8px;
+}
+/* The three links below (members/notifications/ai) render inside this reset-anchor design
+   system (`a { color: inherit; text-decoration: none; }`), so without this they were
+   indistinguishable from the surrounding prose — visible in the DOM and clickable, but with no
+   affordance that they were links at all. */
+.settings-note-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.settings-note-links a {
+  color: var(--signature-red, #c12129);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.settings-note-links a:hover,
+.settings-note-links a:focus-visible {
+  text-decoration-thickness: 2px;
 }
 .empty-state {
   padding: 45px 25px;

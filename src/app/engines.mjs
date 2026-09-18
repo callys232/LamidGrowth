@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
+import { hasToolAccess } from './entitlements.mjs';
 import { getModuleConfig, MODULE_REGISTRY, buildFallbackConfig, ENGINE_CODES } from './engineRegistry.mjs';
 import { computeAssessment, assessmentToPrompt } from './engineIntelligence/assessment.mjs';
 import { computeDecisionQuality, decisionQualityToPrompt, DQ_QUESTIONS, REQUIREMENTS } from './engineIntelligence/decisionQuality.mjs';
@@ -393,9 +394,12 @@ function manifestSummary(code) {
   };
 }
 
-export function mountEngines(app, store) {
-  const { db, transaction, log } = store;
-
+/** Catalog reads only — id/purpose/dimensions/points-cost, no workspace or user data anywhere in
+ * this response. Mounted before the session gate (like mountPublicPricing) so both the signed-in
+ * /os/engines page and the public marketing pages (e.g. /product/intelligence) can show the real
+ * 248-tool catalog to a logged-out visitor. Running an engine still requires a session — see
+ * mountEngines below. */
+export function mountPublicEngines(app) {
   app.get('/api/engines', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const list = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
@@ -423,6 +427,10 @@ export function mountEngines(app, store) {
       ...(kind === 'decision-quality' ? { decisionQuality: { requirements: REQUIREMENTS, questions: DQ_QUESTIONS } } : {}),
     });
   });
+}
+
+export function mountEngines(app, store) {
+  const { db, transaction, log } = store;
 
   app.post('/api/engines/:code/run', requirePermission('work:write'), async (req, res) => {
     const ref = parseEngineCode(req.params.code);
@@ -430,6 +438,10 @@ export function mountEngines(app, store) {
     const manifestId = ref.code.toLowerCase();
     const manifest = await db.prepare('SELECT id, points_cost FROM agent_manifests WHERE id = ?').get(manifestId);
     if (!manifest) return res.status(404).json({ error: 'This engine is not yet available.' });
+    // Real entitlement gate — enterprise tier, a free tool, or an actually-purchased bundle. See
+    // src/app/entitlements.mjs. Checked before compute/charge, same pattern as agents.mjs's send().
+    if (!(await hasToolAccess(store, req.workspace, manifestId)))
+      return res.status(403).json({ error: "This engine isn't included in your plan. Purchase a bundle that includes it, or upgrade to Enterprise." });
     const { input } = runInput.parse(req.body ?? {});
 
     const points = manifest.points_cost || 0;

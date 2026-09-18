@@ -7,6 +7,7 @@ import { refundInTransaction } from './reliability.mjs';
 import { scopedProvider } from './aiPolicy.mjs';
 import { chooseAgent, guidance } from './companionRouting.mjs';
 import { mountCompanionTasks } from './companionTasks.mjs';
+import { hasToolAccess } from './entitlements.mjs';
 
 const messageInput = z
   .object({
@@ -626,6 +627,10 @@ export function createAgentRuntime(store, deps) {
     const membership = await db.prepare("SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ? AND status = 'active'").get(workspace.id, principal.id);
     if (!membership || !permissionsFor(membership.role).includes(permissionForBand[agent.band] || 'workspace:manage'))
       throw Object.assign(new Error('Your workspace role does not allow this specialist.'), { status: 403 });
+    // Real entitlement gate — enterprise tier, a free tool, or an actually-purchased bundle. See
+    // src/app/entitlements.mjs. Checked before any charge, same as the role-permission check above.
+    if (!(await hasToolAccess(store, workspace, agentId)))
+      throw Object.assign(new Error("This specialist isn't included in your plan. Purchase a bundle that includes it, or upgrade to Enterprise."), { status: 403 });
     const points = agent.points || 0;
     const runId = randomUUID();
     const createdAt = new Date().toISOString();

@@ -44,7 +44,11 @@ export const destinations: Record<string, string> = {
   'Read Our AI Principles': '/responsible-ai',
   'View Data Controls': '/os/settings/privacy',
   'Explore Enterprise Platform & Deployment': '/enterprise',
-  'View Pricing': '/pricing',
+  // Both uses of this label live on the pricing page's own content (hero + closing CTA), so
+  // without the anchor this was a same-route Link to the page you're already on — previously a
+  // silent no-op (RouteEffects only reset scroll on pathname change). Points at the live
+  // billables section (`id="billables"` in BillablesSection.tsx) instead.
+  'View Pricing': '/pricing#billables',
   'Request a Conversation': '/enterprise/contact',
   'Explore Resources': '/resources',
   'Browse Insights': '/insights',

@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { DocumentPageLayout } from '../DocumentPageLayout';
 import { DocumentHeroSlide } from '../slides/DocumentHeroSlide';
 import { DocumentSectionSlide } from '../slides/DocumentSectionSlide';
@@ -12,12 +13,16 @@ import './engine.css';
  * driven entirely by each page's own content.json, not 5 separate bespoke page trees. `icons` is
  * presentation only (no content); every section but the last becomes a tool card, whatever that
  * count is. Embedded rendering (the collapsed "Full page copy" reference) falls back to the
- * generic document template, same as every other bespoke page this session. */
+ * generic document template, same as every other bespoke page this session. `extraSection` is an
+ * opt-in live component (not canonical copy) a specific page can pass in — rendered between the
+ * tools grid and the closing band, omitted entirely in embedded mode, same pattern as
+ * BillablesSection on the pricing page. */
 export function EngineDocumentPage({
   content,
   icons,
   embedded = false,
-}: DocumentPageProps & { content: DocumentPage; icons: LucideIcon[] }) {
+  extraSection,
+}: DocumentPageProps & { content: DocumentPage; icons: LucideIcon[]; extraSection?: ReactNode }) {
   if (embedded)
     return (
       <DocumentPageLayout
@@ -71,6 +76,7 @@ export function EngineDocumentPage({
           </ul>
         </div>
       </section>
+      {extraSection}
       <section className="engine-closing">
         <div className="engine-container">
           <h2 data-source-paragraph={closingTitle.sourceParagraph}>{closingTitle.text}</h2>

@@ -34,8 +34,14 @@ async function demo() {
   return result.cookie;
 }
 
-test('the engine catalog is unreachable without a session', async () => {
-  assert.equal((await request('/engines', undefined, undefined, 'GET')).status, 401);
+test('the engine catalog is public — readable without a session, same as billables', async () => {
+  const result = await request('/engines', undefined, undefined, 'GET');
+  assert.equal(result.status, 200);
+  assert.equal(result.data.count, 248);
+});
+
+test('running an engine still requires a session even though the catalog is public', async () => {
+  assert.equal((await request('/engines/f01/run', { input: {} })).status, 401);
 });
 
 test('the engine catalog lists all 248 ported diagnostic tools', async () => {

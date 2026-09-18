@@ -25,7 +25,7 @@ import { mountConcierge } from './concierge.mjs';
 import { mountBilling } from './billing.mjs';
 import { mountFinance } from './finance.mjs';
 import { mountPeople } from './people.mjs';
-import { mountEngines } from './engines.mjs';
+import { mountEngines, mountPublicEngines } from './engines.mjs';
 import { mountPricing, mountPublicPricing } from './pricing.mjs';
 import { mountReputation } from './reputation.mjs';
 import { mountScoping } from './scoping.mjs';
@@ -284,6 +284,7 @@ export async function createApp({
   const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
+  mountPublicEngines(app);
   app.use('/api', async (req, res, next) => {
     const token = (req.headers.cookie || '')
       .split(';')

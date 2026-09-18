@@ -1,6 +1,7 @@
 import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
+import { grantBundleEntitlements } from './entitlements.mjs';
 
 export function paystackProvider({
   secretKey = process.env.PAYSTACK_SECRET_KEY,
@@ -530,6 +531,9 @@ export function mountPaystackWebhook(app, store, deps) {
             purchase.id,
             Date.now(),
           );
+          // Only a CONFIRMED purchase grants real tool access — never at initiation, since an
+          // unpaid/pending purchase must not unlock anything. See src/app/entitlements.mjs.
+          if (purchase.bundle_id) await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
         }
         const funding = await db
           .prepare("SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'pending'")

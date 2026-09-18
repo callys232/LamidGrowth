@@ -36,9 +36,16 @@ import { WorkspaceShell } from './products/workspace/components/WorkspaceShell';
 import { Dashboard } from './products/workspace/pages/DashboardPage';
 import { PlannedModule } from './products/workspace/pages/PlannedModulePage';
 function RouteEffects() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // A hash target (e.g. a CTA linking to a section on the current page) scrolls to that
+    // element instead of always forcing the scroll back to the top — previously this effect
+    // only kept `pathname` as a dependency and always called scrollTo(0, 0), so a hash link
+    // to a section further down the SAME page was a silent no-op (no pathname change to
+    // re-trigger the effect) and a hash link to a DIFFERENT page would still jump to its top.
+    const target = hash && document.getElementById(hash.slice(1));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else window.scrollTo(0, 0);
     const page = pages.find((p) => p.route === pathname);
     document.title = page?.seo_title || 'LAMID ONE';
     let robots = document.querySelector('meta[name="robots"]');
@@ -55,7 +62,7 @@ function RouteEffects() {
         page?.meta_description ||
           'A connected space for your context, decisions, and next chapter.',
       );
-  }, [pathname]);
+  }, [pathname, hash]);
   return null;
 }
 export function App() {
