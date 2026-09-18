@@ -6,7 +6,16 @@ import { api } from '../../../api';
 import { CompanionChatPage } from '../pages/CompanionChatPage';
 import './companionWidget.css';
 
-type GuideTopic = 'onboarding' | 'support' | 'pricing';
+type GuideTopic =
+  | 'onboarding'
+  | 'support'
+  | 'pricing'
+  | 'opportunities'
+  | 'clarity'
+  | 'capability'
+  | 'consistency'
+  | 'companion'
+  | 'workflows';
 type GuideReply = { topic: GuideTopic; name: string; response: string; href: string };
 type Turn = { role: 'user' | 'agent'; text: string; href?: string; at: string };
 

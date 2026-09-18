@@ -16,6 +16,59 @@ const GUIDANCE_RULES = [
     keywords: ['price', 'pricing', 'cost', 'plan', 'points', 'subscription', 'billing', 'tier', 'discount'],
   },
   {
+    topic: 'opportunities',
+    // Both sides of the marketplace: a client posting work, and a freelancer looking for it —
+    // "post a project"/"find work" are specific enough to score on their own (phrase match, +2);
+    // the bare keywords below are worth only +1 each so a single generic word (e.g. "hire" in an
+    // unrelated sentence) can't cross GUIDANCE_MIN_SCORE alone.
+    phrases: [
+      'post a project',
+      'post a job',
+      'i want to post',
+      'post some work',
+      'hire a freelancer',
+      'find a freelancer',
+      'looking for work',
+      'find work',
+      'browse jobs',
+      'bid on a job',
+    ],
+    keywords: ['freelancer', 'freelancers', 'hire', 'bid', 'proposal', 'client', 'milestone'],
+  },
+  {
+    // "See what matters, what's changing, what's in the way" — from how-it-works/clarity's own
+    // description. Grounded in the app's real engine name and its actual marketing language, not
+    // invented phrasing.
+    topic: 'clarity',
+    phrases: ['set a goal', 'set an objective', 'define my objective', 'need clarity', 'need more clarity'],
+    keywords: ['clarity', 'objective', 'objectives'],
+  },
+  {
+    // "Determines whether you can act on it effectively" — how-it-works/capability.
+    topic: 'capability',
+    phrases: ['skill gap', 'skills gap', 'close a gap', 'learning path', 'build a skill'],
+    keywords: ['capability', 'skills', 'skill'],
+  },
+  {
+    // "Connects understanding and capability to sustained action" — how-it-works/consistency.
+    topic: 'consistency',
+    phrases: ['stay consistent', 'build a habit', 'track my actions', 'stay on track'],
+    keywords: ['consistency', 'habit', 'habits'],
+  },
+  {
+    // The flagship AI product — product/companion.
+    topic: 'companion',
+    phrases: ['talk to the companion', 'chat with the ai', 'ai assistant', 'use the companion', 'ai chatbot', 'talk to an ai'],
+    keywords: ['companion', 'chatbot'],
+  },
+  {
+    // "Connect decisions to action... structured workflows when the work requires more
+    // coordination" — product/workflows.
+    topic: 'workflows',
+    phrases: ['set up a workflow', 'workflow automation', 'automate this'],
+    keywords: ['workflow', 'workflows', 'automation', 'automate'],
+  },
+  {
     topic: 'onboarding',
     phrases: ['how do i start', 'how do i sign up', 'get started', 'create an account', 'where do i begin'],
     keywords: ['signup', 'sign up', 'account', 'start', 'begin', 'onboard', 'onboarding', 'new here'],
@@ -58,6 +111,42 @@ export const guidance = {
     response:
       'Review current plans and points on the pricing page. Specialist costs are shown before you run them. Guidance here is free; a coordinated task charges separately for each completed specialist step.',
     href: '/pricing',
+  },
+  opportunities: {
+    name: 'Opportunities Guide',
+    response:
+      'To post a project, create a free account, then open Opportunities in your workspace and select "Post a job" — describe the work and freelancers can submit proposals to bid on it. Looking for work instead? The same Opportunities page lists open jobs you can bid on. Already have an account? Just sign in and head to Opportunities.',
+    href: '/signup',
+  },
+  clarity: {
+    name: 'Clarity Guide',
+    response:
+      'Clarity is for understanding your situation before deciding what to do — what matters, what’s changing, and what’s in the way. Create a free account, then open Clarity in your workspace to set an objective and see it broken down clearly.',
+    href: '/signup',
+  },
+  capability: {
+    name: 'Capability Guide',
+    response:
+      'Capability is about whether you can act effectively once you know what matters — it surfaces skill gaps and the learning path to close them. Create a free account, then open Capability in your workspace to see where you stand.',
+    href: '/signup',
+  },
+  consistency: {
+    name: 'Consistency Guide',
+    response:
+      'Consistency connects understanding and capability to sustained action — it tracks the actions you’ve committed to and keeps your progress moving. Create a free account, then open Consistency in your workspace to log your first action.',
+    href: '/signup',
+  },
+  companion: {
+    name: 'Companion Guide',
+    response:
+      'The LAMID ONE Companion is the AI layer that turns your objective and evolving context into clearer understanding, stronger decisions, and practical action — you’re talking to a lightweight version of it right now. Create a free account to open the full Companion in your workspace.',
+    href: '/signup',
+  },
+  workflows: {
+    name: 'Workflows Guide',
+    response:
+      'Workflows connect decisions to action — from one clear next step to a structured, multi-step workflow when the work needs more coordination. Create a free account, then open Workflows in your workspace to set one up.',
+    href: '/signup',
   },
 };
 

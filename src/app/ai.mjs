@@ -108,6 +108,11 @@ export function openAIProvider({
 export function anthropicProvider({
   apiKey = process.env.ANTHROPIC_API_KEY,
   model = process.env.ANTHROPIC_MODEL,
+  // Only needed for a key created without a default workspace binding — the Anthropic API then
+  // rejects every request (400 invalid_request_error) unless this header names which console
+  // workspace to bill/scope the call to. A key scoped to one workspace at creation doesn't need
+  // this at all; harmless to send even then; see Anthropic's docs, "Workspace-scoped API keys".
+  workspaceId = process.env.ANTHROPIC_WORKSPACE_ID,
   fetchImpl = fetch,
   timeoutMs = 45000,
 } = {}) {
@@ -122,6 +127,7 @@ export function anthropicProvider({
           'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
           'content-type': 'application/json',
+          ...(workspaceId ? { 'anthropic-workspace-id': workspaceId } : {}),
         },
         signal: signal
           ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)])
