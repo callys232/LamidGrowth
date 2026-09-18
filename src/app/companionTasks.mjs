@@ -24,6 +24,10 @@ export function mountPublicCompanion(app) {
 
 export function mountCompanionTasks(app, store, runtime, spendLimiter) {
   const { db } = store;
+  app.get('/api/companion/task-options', async (req, res) => {
+    const user = await db.prepare('SELECT points_balance FROM users WHERE id = ?').get(req.user.id);
+    res.json({ balance: user.points_balance, aiAvailable: runtime.aiAvailable });
+  });
   async function read(req) {
     const row = await db
       .prepare(
@@ -77,11 +81,13 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
     res.json(await read(req));
   });
   app.post('/api/companion/tasks', requirePermission('work:write'), async (req, res) => {
-    const { message } = z
-      .object({ message: z.string().trim().min(5).max(1200) })
+    const { message, mode, jobId } = z
+      .object({ message: z.string().trim().min(5).max(1200), mode: z.enum(['starter', 'specialists']).default('starter'), jobId: z.string().uuid().optional() })
       .strict()
       .parse(req.body);
-    const steps = planSpecialists(message).map((agentId) => ({
+    const selected = mode === 'starter' ? ['starter-planner'] : planSpecialists(message);
+    for (const agentId of selected) await runtime.validatePrerequisites(req.workspace, req.user, agentId, { jobId });
+    const steps = selected.map((agentId) => ({
       agentId,
       name: runtime.agentFor(agentId).name,
       points: runtime.agentFor(agentId).points,
@@ -90,6 +96,8 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
     }));
     const task = await store.insert(req.workspace.id, 'companion_task', {
       ownerId: req.user.id,
+      mode,
+      jobId,
       message,
       status: 'awaiting_approval',
       steps,
@@ -116,6 +124,7 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
       const index = task.steps.findIndex((step) => step.status !== 'completed');
       if (index < 0) return res.json(task);
       const step = task.steps[index];
+      if (step.status !== 'running') await runtime.validatePrerequisites(req.workspace, req.user, step.agentId, { jobId: task.jobId });
       if (runtime.agentFor(step.agentId).points !== step.points)
         return res.status(409).json({
           error: 'This specialist price changed. Preview a new task before approving it.',
@@ -154,6 +163,7 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
                 2000,
               ),
             agentId: step.agentId,
+            ...(task.jobId ? { jobId: task.jobId } : {}),
             consent,
           },
           `task_${task.id}_${index}_${step.attempt}`,

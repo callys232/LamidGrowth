@@ -7,6 +7,27 @@ before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 } },
+    // Without this, every specialist costing more than 5 points is correctly rejected before it
+    // runs (validatePrerequisites in agents.mjs blocks paid AI work when no provider is
+    // configured) — these tests exercise specialist behavior itself, so they need AI configured
+    // the way production would have it, same as the stub pattern in tests/projects.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        const source = (context.sources || [])[0];
+        return {
+          review: {
+            summary: source
+              ? `AI summary for ${source.kind} "${source.data.title || source.id}": ${context.question}`
+              : `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -65,6 +86,7 @@ test('companion agent catalog lists the seeded agents', async () => {
       'scope-builder',
       'signal-monitoring',
       'sow-builder',
+      'starter-planner',
       'support',
       'workflow-orchestration',
     ],
@@ -73,7 +95,7 @@ test('companion agent catalog lists the seeded agents', async () => {
 });
 
 test('a signal, capability, analytics, or market question routes to its specialist agent', async () => {
-  const cookie = await demo();
+  const cookie = await enableAI(await signup('Routing Signals', 'routing-signals@example.test'));
   const cases = [
     ['what signals or notifications changed recently?', 'signal-monitoring'],
     ['what capability gaps do we have?', 'capability-mapper'],
@@ -81,25 +103,25 @@ test('a signal, capability, analytics, or market question routes to its speciali
     ['what does the market and our competitors look like?', 'market-intelligence'],
   ];
   for (const [message, expectedAgentId] of cases) {
-    const result = await request('/companion/messages', { message }, cookie);
+    const result = await request('/companion/messages', { message, consent: true }, cookie);
     assert.equal(result.status, 201, message);
     assert.equal(result.data.agentId, expectedAgentId, message);
   }
 });
 
 test('a generic question routes to the read-only context curator agent', async () => {
-  const cookie = await demo();
-  const result = await request('/companion/messages', { message: 'What is going on right now?' }, cookie);
+  const cookie = await enableAI(await signup('Routing Generic', 'routing-generic@example.test'));
+  const result = await request('/companion/messages', { message: 'What is going on right now?', consent: true }, cookie);
   assert.equal(result.status, 201);
   assert.equal(result.data.agentId, 'context-curator');
   assert.ok(typeof result.data.response === 'string' && result.data.response.length > 0);
 });
 
 test('a diagnostic-style question routes to the diagnostic intelligence agent', async () => {
-  const cookie = await demo();
+  const cookie = await enableAI(await signup('Routing Diagnostic', 'routing-diagnostic@example.test'));
   const result = await request(
     '/companion/messages',
-    { message: 'Can you run a health check and assess our current risk?' },
+    { message: 'Can you run a health check and assess our current risk?', consent: true },
     cookie,
   );
   assert.equal(result.status, 201);
@@ -168,11 +190,19 @@ test('a workspace member cannot use the mutating workflow-orchestration agent', 
     (await request('/workspace/switch', { workspaceId: ownerState.workspace.id }, member.cookie)).status,
     200,
   );
+  // Enabling the workspace's AI policy requires workspace:manage, which only the owner has; the
+  // member still needs their own account verified separately (enableAI would try to PATCH
+  // settings with a cookie that lacks permission for it).
+  await enableAI(owner.cookie);
+  const memberState = (await request('/state', undefined, member.cookie, 'GET')).data;
+  await store.db
+    .prepare('UPDATE users SET verified_at = ? WHERE id = ?')
+    .run(Date.now(), memberState.user.id);
 
   // A read-only, observation-only message still works for a plain member (work:write is enough).
   const readOnly = await request(
     '/companion/messages',
-    { message: 'what is going on right now?' },
+    { message: 'what is going on right now?', consent: true },
     member.cookie,
   );
   assert.equal(readOnly.status, 201);
@@ -188,11 +218,11 @@ test('a workspace member cannot use the mutating workflow-orchestration agent', 
 });
 
 test('a successful agent run debits points and reports the new balance', async () => {
-  const cookie = await demo();
+  const cookie = await enableAI(await signup('Routing Balance', 'routing-balance@example.test'));
   const before = (await request('/points', undefined, cookie, 'GET')).data.balance;
   const result = await request(
     '/companion/messages',
-    { message: 'what is going on right now?' },
+    { message: 'what is going on right now?', consent: true },
     cookie,
   );
   assert.equal(result.status, 201);
@@ -248,6 +278,30 @@ async function signup(name, email) {
   });
   assert.equal(result.status, 201);
   return result.cookie;
+}
+
+// External AI is deliberately blocked for demo accounts and unverified users (authorizeExternalAI
+// in aiPolicy.mjs), and a workspace must explicitly opt in via PATCH /api/ai/settings before any
+// AI-backed specialist can run — same real endpoint a real user's workspace settings page uses,
+// not a database shortcut, so this exercises the actual authorization path.
+async function enableAI(cookie) {
+  const state = (await request('/state', undefined, cookie, 'GET')).data;
+  await store.db
+    .prepare('UPDATE users SET verified_at = ? WHERE id = ?')
+    .run(Date.now(), state.user.id);
+  const settings = (await request('/ai/settings', undefined, cookie, 'GET')).data;
+  assert.equal(
+    (
+      await request(
+        '/ai/settings',
+        { enabled: true, dailyLimit: 100, version: settings.version },
+        cookie,
+        'PATCH',
+      )
+    ).status,
+    200,
+  );
+  return cookie;
 }
 
 test('the consultant matcher ranks bids and is only visible to the job owner', async () => {
@@ -317,7 +371,7 @@ test('the consultant matcher ranks bids and is only visible to the job owner', a
 });
 
 test('the proposal drafter grounds its draft in the real job and rejects unrelated users', async () => {
-  const client = await signup('Draft Client', 'draft-client@example.test');
+  const client = await enableAI(await signup('Draft Client', 'draft-client@example.test'));
   const bidder = await signup('Draft Bidder', 'draft-bidder@example.test');
   const stranger = await signup('Draft Stranger', 'draft-stranger@example.test');
 
@@ -355,7 +409,7 @@ test('the proposal drafter grounds its draft in the real job and rejects unrelat
 
   const asClient = await request(
     '/companion/messages',
-    { message: 'draft a proposal for this job', jobId: job.data.id },
+    { message: 'draft a proposal for this job', jobId: job.data.id, consent: true },
     client,
   );
   assert.equal(asClient.status, 201);
@@ -394,7 +448,7 @@ test('the 8 new commercial document tools reject a missing job/proposal before c
 });
 
 test('the scope builder grounds its draft in the real job and rejects unrelated users', async () => {
-  const client = await signup('Scope Client', 'scope-client@example.test');
+  const client = await enableAI(await signup('Scope Client', 'scope-client@example.test'));
   const bidder = await signup('Scope Bidder', 'scope-bidder@example.test');
   const stranger = await signup('Scope Stranger', 'scope-stranger@example.test');
 
@@ -432,7 +486,7 @@ test('the scope builder grounds its draft in the real job and rejects unrelated 
 
   const asClient = await request(
     '/companion/messages',
-    { message: 'draft the scope of work', jobId: job.data.id },
+    { message: 'draft the scope of work', jobId: job.data.id, consent: true },
     client,
   );
   assert.equal(asClient.status, 201);
@@ -488,7 +542,7 @@ test('quote and estimate generators compute from the real budget range without c
 
 test('the change order generator grounds in the real proposal and rejects unrelated users', async () => {
   const client = await signup('Order Client', 'order-client@example.test');
-  const bidder = await signup('Order Bidder', 'order-bidder@example.test');
+  const bidder = await enableAI(await signup('Order Bidder', 'order-bidder@example.test'));
   const stranger = await signup('Order Stranger', 'order-stranger@example.test');
 
   const job = await request(
@@ -535,7 +589,7 @@ test('the change order generator grounds in the real proposal and rejects unrela
 
   const asBidder = await request(
     '/companion/messages',
-    { message: 'we need a change order to add an extra chart', proposalId: proposal.data.id },
+    { message: 'we need a change order to add an extra chart', proposalId: proposal.data.id, consent: true },
     bidder,
   );
   assert.equal(asBidder.status, 201);

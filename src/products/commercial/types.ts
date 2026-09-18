@@ -17,6 +17,7 @@ export interface Bid {
   proposed_amount: number;
   currency: string;
   timeline: string;
+  freelancer_user_id: string;
 }
 export interface Proposal {
   id: string;
@@ -26,6 +27,7 @@ export interface Proposal {
   amount: number;
   currency: string;
   status: string;
+  author_user_id: string;
 }
 export interface Options {
   categories: string[];

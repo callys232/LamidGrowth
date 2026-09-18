@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 const port = Number(process.env.E2E_PORT || 3107);
 export default defineConfig({
   testDir: './tests/browser',
-  // This exploratory study uses its own isolated server and provider configuration.
-  testIgnore: 'regional-usability.spec.ts',
+  // These exploratory studies use their own isolated server and provider configuration.
+  testIgnore: ['regional-usability.spec.ts', 'paid-path-demo.spec.ts', 'deep-coverage.spec.ts'],
   fullyParallel: false,
   workers: 1,
   reporter: 'list',

@@ -865,6 +865,7 @@ export async function openStore(filename, { poolMax } = {}) {
     CREATE INDEX IF NOT EXISTS agent_history_owner ON agent_runs(workspace_id, principal_id, created_at);
     CREATE INDEX IF NOT EXISTS companion_task_owner ON records(workspace_id, (data::jsonb->>'ownerId'), seq) WHERE kind = 'companion_task';`);
     await client.query(`INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+      ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),
       ('onboarding', 'Onboarding Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('support', 'Support Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('pricing', 'Pricing Guide', 'Shared', 'A1', 'none', '[]', $1, 0)

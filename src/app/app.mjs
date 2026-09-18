@@ -8,7 +8,7 @@ import { openStore, verifyPassword } from '../../server/store.mjs';
 import { permissionsFor, requirePermission } from './policy.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
-import { mountAI, openAIProvider } from './ai.mjs';
+import { mountAI, defaultAiProvider } from './ai.mjs';
 import { createAgentRuntime, mountAgents, agentManifests } from './agents.mjs';
 import { mountModelRegistry } from './models.mjs';
 import { mountProjects } from './projects.mjs';
@@ -139,7 +139,7 @@ export async function createApp({
   allowedOrigins = [],
   welcomeIpVelocityLimit = 3,
   rateLimits = {},
-  aiProvider = openAIProvider(),
+  aiProvider = defaultAiProvider(),
   paymentProvider = (name) =>
     name === 'paystack' ? paystackProvider() : name === 'crypto_usdt' ? cryptoUsdtProvider() : null,
   ecosystemAdminEmails = (process.env.ECOSYSTEM_ADMIN_EMAILS || '')

@@ -1,0 +1,24 @@
+{
+  "city": "Lagos",
+  "locale": "en-NG",
+  "timezoneId": "Africa/Lagos",
+  "viewport": "360x800",
+  "role": "Founder",
+  "goal": "Plan my first client project",
+  "simulated": true,
+  "stage": "specialist plan",
+  "completed": [
+    "homepage",
+    "signup and development OTP",
+    "goal creation"
+  ],
+  "homeOverflow": false,
+  "documentLanguage": "en",
+  "accessibility": [],
+  "welcomeBalance": 100,
+  "plan": "Plan my first client project\n\nAwaiting Approval · Estimated Total 0 Points\n\nStarter Plan\nPending\n0 points\nApprove Starter Plan · 0 pointsCancel remaining steps",
+  "failure": "\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('.companion-task-card').filter({ hasText: 'Plan my first client project' }).locator('.companion-task-chip').first()\nExpected: \u001b[32m\"completed\"\u001b[39m\nReceived: \u001b[31m\"running\"\u001b[39m\nTimeout:  45000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" locator('.companion-task-card').filter({ hasText: 'Plan my first client project' }).locator('.companion-task-chip').first() with timeout 45000ms\u001b[22m\n\u001b[2m  - waiting for locator('.companion-task-card').filter({ hasText: 'Plan my first client project' }).locator('.companion-task-chip').first()\u001b[22m\n\u001b[2m    45 × locator resolved to <span class=\"companion-task-chip companion-task-chip-pending\">pending</span>\u001b[22m\n\u001b[2m       - unexpected value \"pending\"\u001b[22m\n\u001b[2m    47 × locator resolved to <span class=\"companion-task-chip companion-task-chip-running\">running</span>\u001b[22m\n\u001b[2m       - unexpected value \"running\"\u001b[22m\n",
+  "elapsedSeconds": 174,
+  "browserErrors": [],
+  "url": "http://127.0.0.1:3129/os/companion/chat"
+}

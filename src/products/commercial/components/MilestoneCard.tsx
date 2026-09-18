@@ -98,12 +98,37 @@ export function MilestoneCard({
   const [verificationConsent, setVerificationConsent] = useState(false);
   const [lastVerification, setLastVerification] = useState<VerificationCase | null>(null);
   const [funding, setFunding] = useState<MilestoneFunding | null>(null);
+  const [invoice, setInvoice] = useState<{ runId: string; response: string } | null>(null);
+  const [invoicing, setInvoicing] = useState(false);
+  const [invoiceError, setInvoiceError] = useState('');
 
   useEffect(() => {
     if (onLoadFunding) void onLoadFunding(milestone.id).then(setFunding);
   }, [milestone.id, milestone.status, onLoadFunding]);
 
   const latestSubmission = milestone.submissions[0];
+  // Prefer this browser's own just-completed verify() result (so approving feels instant,
+  // no refetch needed); fall back to the server-supplied pending case otherwise — this is what
+  // makes Approve/Request revision/Dispute reachable after a reload, a later visit, or from the
+  // other party's own session, instead of only right after running verification.
+  const verification = lastVerification ?? milestone.pendingVerification;
+
+  async function generateInvoice() {
+    setInvoicing(true);
+    setInvoiceError('');
+    try {
+      const result = await api<{ runId: string; response: string }>('/companion/messages', {
+        message: `Generate an invoice for the approved milestone "${milestone.title}".`,
+        agentId: 'invoice-generator',
+        milestoneId: milestone.id,
+      });
+      setInvoice(result);
+    } catch (error) {
+      setInvoiceError((error as Error).message);
+    } finally {
+      setInvoicing(false);
+    }
+  }
 
   return (
     <li
@@ -255,15 +280,15 @@ export function MilestoneCard({
         </div>
       )}
 
-      {lastVerification && (
+      {verification && (
         <div style={{ paddingLeft: 38, fontSize: 9 }}>
           <em>
             Preliminary review:{' '}
-            {lastVerification.results.filter((r) => r.result === 'satisfied').length}/
-            {lastVerification.results.length} criteria satisfied.
+            {verification.results.filter((r) => r.result === 'satisfied').length}/
+            {verification.results.length} criteria satisfied.
           </em>
           <ul>
-            {lastVerification.results.map((result) => (
+            {verification.results.map((result) => (
               <li key={result.criterionId}>
                 <strong>{result.result.replaceAll('_', ' ')}</strong>: {result.rationale}
               </li>
@@ -271,24 +296,51 @@ export function MilestoneCard({
           </ul>
           {isClient && milestone.status === 'in_review' && (
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <Button onClick={() => onDecide(lastVerification.id, 'approve', 'Looks good.')}>
+              <Button onClick={() => onDecide(verification.id, 'approve', 'Looks good.')}>
                 Approve
               </Button>
               <Button
                 variant="secondary"
-                onClick={() => onDecide(lastVerification.id, 'request_revision', 'Please revise.')}
+                onClick={() => onDecide(verification.id, 'request_revision', 'Please revise.')}
               >
                 Request revision
               </Button>
               <Button
                 variant="ghost"
                 onClick={() =>
-                  onDecide(lastVerification.id, 'dispute', 'This does not match what was agreed.')
+                  onDecide(verification.id, 'dispute', 'This does not match what was agreed.')
                 }
               >
                 Dispute
               </Button>
             </div>
+          )}
+        </div>
+      )}
+
+      {isFreelancer && milestone.status === 'approved' && (
+        <div style={{ paddingLeft: 38 }}>
+          {!invoice ? (
+            <Button variant="secondary" disabled={invoicing} onClick={() => void generateInvoice()}>
+              {invoicing ? 'Generating…' : 'Generate invoice'}
+            </Button>
+          ) : (
+            <div className="job-pricing-result">
+              <p>{invoice.response}</p>
+              <a
+                className="button button-secondary"
+                href={`/api/agent-runs/${invoice.runId}/pdf`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Download invoice PDF
+              </a>
+            </div>
+          )}
+          {invoiceError && (
+            <p role="alert" className="form-error">
+              {invoiceError}
+            </p>
           )}
         </div>
       )}

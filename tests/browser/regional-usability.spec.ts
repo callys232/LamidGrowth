@@ -25,7 +25,7 @@ for (const [city, locale, timezoneId, width, height, role, goal] of profiles) {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     const start = Date.now();
-    const out = `artifacts/usability-10/${city.replaceAll(' ', '-')}`;
+    const out = `artifacts/usability-10-retest/${city.replaceAll(' ', '-')}`;
     mkdirSync(out, { recursive: true });
     try {
       await page.goto('/');
@@ -73,10 +73,14 @@ for (const [city, locale, timezoneId, width, height, role, goal] of profiles) {
       await expect(card.locator('.companion-task-chip').first()).toHaveText('completed', { timeout: 45000 });
       result.firstResult = await card.innerText();
       result.remainingBalance = (await (await context.request.get('http://127.0.0.1:3129/api/points')).json()).balance;
-      completed.push('first specialist step');
-      await card.getByRole('button', { name: /^Approve / }).click();
-      await expect(page.getByRole('alert').last()).toBeVisible();
-      result.secondStepMessage = await page.getByRole('alert').last().innerText();
+      expect(result.remainingBalance).toBe(500);
+      await expect(card).toContainText('Your free worksheet is ready.');
+      await expect(card.getByRole('button', { name: /^Approve / })).toHaveCount(0);
+      completed.push('free starter worksheet without charge');
+      await page.reload();
+      await page.getByText('Coordinate a task across specialists', { exact: true }).click();
+      await expect(card).toContainText('Your free worksheet is ready.');
+      completed.push('saved worksheet survives reload');
       result.workspaceOverflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
       result.stage = 'completed evaluation';
       await page.screenshot({ path: `${out}/workspace.png`, fullPage: false });

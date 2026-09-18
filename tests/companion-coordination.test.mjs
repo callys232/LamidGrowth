@@ -64,13 +64,21 @@ test(
     );
     assert.equal((await call('/companion/history', undefined, owner)).data.length, 1);
     assert.equal((await call('/companion/history', undefined, stranger)).data.length, 0);
+    const initialBalance = (await call('/points', undefined, owner)).data.balance;
+    const missingJob = await call('/companion/messages', { message: 'Build my client brief', agentId: 'brief-builder' }, owner);
+    assert.equal(missingJob.status, 422);
+    const offline = await call('/companion/messages', { message: 'Review my context', agentId: 'context-curator' }, owner);
+    assert.equal(offline.status, 503);
+    assert.equal((await call('/points', undefined, owner)).data.balance, initialBalance);
+    assert.equal((await call('/companion/history', undefined, owner)).data.length, 1);
     const preview = await call(
       '/companion/tasks',
       { message: 'Improve my personal goal planning' },
       owner,
     );
     assert.equal(preview.status, 201);
-    assert.equal(preview.data.steps.length, 3);
+    assert.equal(preview.data.steps.length, 1);
+    assert.equal(preview.data.estimatedPoints, 0);
     assert.equal(preview.data.status, 'awaiting_approval');
     assert.equal(
       (
@@ -90,7 +98,7 @@ test(
     assert.deepEqual(raced.map((r) => r.status).sort(), [200, 409]);
     let task = (await call('/companion/tasks', undefined, owner)).data[0];
     assert.equal(task.steps[0].status, 'completed');
-    for (let i = 1; i < 3; i++) {
+    for (let i = 1; i < task.steps.length; i++) {
       const result = await call(
         `/companion/tasks/${task.id}/next`,
         { version: task.version, consent: false },
@@ -101,6 +109,7 @@ test(
       assert.equal(task.steps[i].status, 'completed', JSON.stringify(task));
     }
     assert.equal(task.status, 'completed');
+    assert.equal((await call('/points', undefined, owner)).data.balance, initialBalance);
     const before = (await call('/companion/history', undefined, owner)).data.length;
     await call(
       `/companion/tasks/${task.id}/next`,

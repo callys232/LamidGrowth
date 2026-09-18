@@ -103,7 +103,26 @@ export function mountProjects(app, store, deps) {
         const submissions = await db
           .prepare('SELECT * FROM submissions WHERE milestone_id = ? ORDER BY created_at DESC')
           .all(milestone.id);
-        return { ...milestone, deliverables, submissions };
+        // A verified-but-not-yet-decided case only used to be visible via the one-shot response
+        // of the /verify call itself — reload the page, revisit later, or have the other party
+        // open it, and the Approve/Request revision/Dispute buttons vanished with no way back,
+        // permanently stranding the milestone (and its escrow) in 'in_review'. Surfacing the
+        // pending case here means the UI can render those decisions from server state instead.
+        let pendingVerification = null;
+        if (milestone.status === 'in_review' && submissions[0]) {
+          const verificationCase = await db
+            .prepare(
+              "SELECT * FROM verification_cases WHERE submission_id = ? AND status NOT LIKE 'decided_%' ORDER BY created_at DESC LIMIT 1",
+            )
+            .get(submissions[0].id);
+          if (verificationCase) {
+            const results = await db
+              .prepare('SELECT criterion_id AS "criterionId", result, rationale FROM criterion_results WHERE verification_case_id = ?')
+              .all(verificationCase.id);
+            pendingVerification = { ...verificationCase, results };
+          }
+        }
+        return { ...milestone, deliverables, submissions, pendingVerification };
       }),
     );
     const assignedTeam = project.assigned_team_id

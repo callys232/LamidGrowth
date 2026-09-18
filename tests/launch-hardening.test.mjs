@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app/app.mjs';
 import { acquireServiceLease, validateProductionConfig } from '../src/app/operations.mjs';
+import { welcomeRewardPoints } from '../src/app/rewards.mjs';
 import { randomUUID } from 'node:crypto';
 
 async function waitForProvider(started, request) {
@@ -45,7 +46,7 @@ async function fixture(t, options = {}) {
   return { ...instance, messages, call, signup, verify };
 }
 
-test('production signup issues no secrets, grants exactly 100 once after OTP, and retains login without OTP', async t => {
+test('production signup issues no secrets, grants exactly the welcome reward once after OTP, and retains login without OTP', async t => {
   const f = await fixture(t), a = await f.signup();
   assert.equal(a.data.verificationToken, undefined);
   assert.equal(a.data.developmentCode, undefined);
@@ -53,7 +54,7 @@ test('production signup issues no secrets, grants exactly 100 once after OTP, an
   assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 0);
   const outcomes = await Promise.all([f.verify(a), f.verify(a)]);
   assert.deepEqual(outcomes.map(r => r.status).sort(), [200, 400]);
-  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 100);
+  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, welcomeRewardPoints);
   assert.equal((await f.store.db.prepare("SELECT COUNT(*) AS n FROM points_ledger WHERE reason = 'welcome_bonus'").get()).n, 1);
   assert.equal((await f.call('/auth/login', { email: a.email, password: 'launch-test-password-123' })).data.verificationRequired, false);
   assert.equal((await f.call('/auth/demo', {})).status, 403);
@@ -65,7 +66,7 @@ test('same signed device gets no second reward; shared-network velocity waits fo
   const same = await f.signup(first.cookie);
   assert.equal((await f.verify(same)).data.welcomeReward.status, 'ineligible');
   assert.equal((await f.call('/points', undefined, same.cookie)).data.balance, 0);
-  for (let i = 0; i < 2; i++) assert.equal((await f.verify(await f.signup())).data.welcomeReward.points, 100);
+  for (let i = 0; i < 2; i++) assert.equal((await f.verify(await f.signup())).data.welcomeReward.points, welcomeRewardPoints);
   assert.equal((await f.verify(await f.signup())).data.welcomeReward.status, 'review');
 });
 
@@ -146,7 +147,7 @@ test('scheduler lease transfers to a replacement owner and stale agent charges r
   await f.store.db.prepare('UPDATE users SET points_balance = points_balance - 1 WHERE id = ?').run(state.user.id);
   await f.store.db.prepare("INSERT INTO points_ledger VALUES (?, ?, ?, -1, 'agent_run', ?, ?)").run(randomUUID(), state.user.id, state.workspace.id, runId, Date.now());
   assert.equal(await f.agentRuntime.reconcile(), 1); assert.equal(await f.agentRuntime.reconcile(), 0);
-  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 100);
+  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, welcomeRewardPoints);
 });
 
 test('production startup requires secure deploy configuration', () => {

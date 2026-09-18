@@ -120,6 +120,167 @@ textarea::placeholder {
   color: var(--ink);
   font-size: 13px;
 }
+.job-changeorder-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+.job-changeorder-form .field {
+  flex: 1;
+}
+.job-pricing-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0;
+}
+.job-pricing-result {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 12px 14px;
+  background: var(--surface-alt);
+  font-size: 13px;
+  white-space: pre-line;
+}
+.specialist-document-kind {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.specialist-document-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Document tools (Scope of Work, Statement of Work, Client Brief): a formal document card. */
+.specialist-document-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  background: var(--surface-alt);
+  margin: 12px 0;
+}
+.specialist-document-heading {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0 0 12px;
+}
+.specialist-document-fields {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.specialist-document-field {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.specialist-document-field dt {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.specialist-document-field dd {
+  margin: 0;
+}
+
+/* Checklist tools (Deliverable Builder, Acceptance Criteria Builder): a real checkbox list. */
+.specialist-checklist-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  background: var(--surface-alt);
+  margin: 12px 0;
+}
+.specialist-checklist-card .specialist-document-heading {
+  font-size: 18px;
+}
+.specialist-checklist-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.specialist-checklist-items li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+}
+.specialist-checklist-items svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--signature-red);
+}
+
+/* Change Order: a before/after comparison, not a standalone document. */
+.specialist-changeorder-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  background: var(--surface-alt);
+  margin: 12px 0;
+}
+.specialist-changeorder-columns {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+}
+.specialist-changeorder-before,
+.specialist-changeorder-after {
+  font-size: 13px;
+}
+.specialist-changeorder-before h5,
+.specialist-changeorder-after h5 {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 6px;
+}
+.specialist-changeorder-before {
+  opacity: 0.75;
+}
+.specialist-changeorder-after {
+  border-left: 2px solid var(--signature-red);
+  padding-left: 14px;
+}
+.specialist-changeorder-amount {
+  font-weight: 600;
+}
+.specialist-changeorder-arrow {
+  color: var(--text-muted);
+}
+@media (max-width: 640px) {
+  .specialist-changeorder-columns {
+    grid-template-columns: 1fr;
+  }
+  .specialist-changeorder-arrow {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+  .specialist-changeorder-after {
+    border-left: none;
+    border-top: 2px solid var(--signature-red);
+    padding-left: 0;
+    padding-top: 10px;
+  }
+}
 input[type='checkbox'] {
   width: 17px;
   height: 17px;

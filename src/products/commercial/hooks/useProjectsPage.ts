@@ -30,6 +30,10 @@ export type Milestone = {
   status: string;
   deliverables: Deliverable[];
   submissions: Submission[];
+  // A verified-but-undecided case for this milestone's latest submission, if one exists — lets
+  // Approve/Request revision/Dispute render from server state on a fresh page load, not only
+  // right after this browser's own verify() call.
+  pendingVerification: VerificationCase | null;
 };
 export type AssignedTeamMember = {
   id: string;

@@ -131,6 +131,13 @@ const noJobIdResponse = (thing) => ({
 });
 
 const agents = {
+  'starter-planner': {
+    name: 'Starter Plan', engine: 'Guidance', band: 'A1', points: 0, humanGate: 'none', input: messageInput,
+    async execute(ctx, input) {
+      const objective = input.message.split('\nPrevious specialist findings')[0];
+      return { response: `Your starter worksheet\nOutcome: ${objective}\n\n1. Define the result: write one observable deliverable and how you will check it.\n2. First action: spend 20 minutes listing what you already have and the first missing input.\n3. Make a small draft of the deliverable; ask one intended user or collaborator what is missing.\n4. Review this week: record what changed, what blocked progress, and your next action.\n\nThis is a free planning worksheet, not an AI assessment or completed client deliverable. Edit it in Guided Planning to add your success measure and next action.`, toolCalls: [], evidence: { method: 'guided-worksheet' } };
+    },
+  },
   ...Object.fromEntries(Object.entries(guidance).map(([id, guide]) => [id, {
     name: guide.name, engine: 'Guidance', band: 'A1', points: 0, humanGate: 'none', input: messageInput,
     async execute(ctx) {
@@ -549,6 +556,33 @@ export function createAgentRuntime(store, deps) {
     if (!agent) throw Object.assign(new Error('Unknown agent.'), { status: 404 });
     return agent;
   }
+  async function validatePrerequisites(workspace, principal, agentId, input) {
+    const reject = message => { throw Object.assign(new Error(message), { status: 422 }); };
+    if (['proposal-drafter', 'scope-builder', 'sow-builder', 'brief-builder', 'deliverable-builder', 'acceptance-builder', 'quote-generator', 'estimate-generator'].includes(agentId)) {
+      if (!input.jobId) reject('Select a job before running this specialist. No points have been charged.');
+      await loadAuthorizedJob({ store, workspace, principal }, input.jobId);
+    }
+    if (agentId === 'change-order') {
+      if (!input.proposalId) reject('Select a proposal before requesting a change order. No points have been charged.');
+      await loadAuthorizedProposal({ store, workspace, principal }, input.proposalId);
+    }
+    if (agentId === 'invoice-generator') {
+      if (!input.milestoneId) reject('Select a milestone before generating an invoice. No points have been charged.');
+      // Deliberately not rejecting here on an unapproved milestone's status — execute() itself
+      // already handles that gracefully (a real, charged, evidence-bearing "not yet approved"
+      // response), which is the tested, intended behavior. Only authorization is checked here.
+      await loadAuthorizedMilestone({ store, workspace, principal }, input.milestoneId);
+    }
+    // invoice/quote/estimate generators are deterministic (computed from recorded job/milestone
+    // data, never call deps.aiProvider) and must stay available even when no AI provider is
+    // configured — only agents that actually invoke AI need to be gated on its availability.
+    if (
+      agentFor(agentId).points > 5 &&
+      !['invoice-generator', 'quote-generator', 'estimate-generator'].includes(agentId) &&
+      !deps.aiProvider
+    )
+      throw Object.assign(new Error('AI specialists are temporarily unavailable. Use the free starter plan; no points have been charged.'), { status: 503 });
+  }
   async function send(workspace, principal, body, idempotencyKey) {
     const input = messageInput.parse(body);
     const previous = await db.prepare('SELECT agent_id FROM agent_runs WHERE workspace_id = ? AND principal_id = ? ORDER BY created_at DESC LIMIT 1').get(workspace.id, principal.id);
@@ -591,6 +625,7 @@ export function createAgentRuntime(store, deps) {
         return JSON.parse(prior.response);
       }
     }
+      await validatePrerequisites(workspace, principal, agentId, input);
       if (points > 0) {
         const charged = await db
           .prepare('UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?')
@@ -622,11 +657,6 @@ export function createAgentRuntime(store, deps) {
     if (priorResult) return priorResult;
     try {
       const result = await agent.execute({ store, principal, workspace }, input, { ...deps, aiProvider: scopedProvider(store, deps.aiProvider, workspace.id, principal.id, input.consent) });
-      // evidence: null is this codebase's signal for "no work was done" — every agent that bounces
-      // back a request for a missing prerequisite (job/proposal/milestone ID) uses this exact
-      // shape instead of doing anything billable. Routing it through the same catch below refunds
-      // the charge and marks the run failed, rather than charging for a request for information.
-      if (result.evidence === null) throw Object.assign(new Error(result.response), { status: 422 });
       const response = await transaction(async () => {
         if ((await db.prepare('SELECT status FROM agent_runs WHERE id = ? FOR UPDATE').get(runId))?.status !== 'running') throw Object.assign(new Error('This run was interrupted. Its result cannot be accepted.'), { status: 409 });
         await db.prepare('UPDATE agent_runs SET output = ?, status = ?, completed_at = ? WHERE id = ?').run(
@@ -702,7 +732,7 @@ export function createAgentRuntime(store, deps) {
       return stale.length;
     });
   }
-  return { send, route, agentFor, agents: agentManifests, reconcile };
+  return { send, route, agentFor, agents: agentManifests, reconcile, validatePrerequisites, aiAvailable: Boolean(deps.aiProvider) };
 }
 
 export function mountAgents(app, store, runtime, { spendLimiter = (_req, _res, next) => next() } = {}) {
