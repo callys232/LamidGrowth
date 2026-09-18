@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../../../api';
 
+export function formatMinor(amountMinor: number, currency: string) {
+  const amount = amountMinor / 100;
+  return `${currency === 'USD' ? '$' : currency + ' '}${amount % 1 === 0 ? amount : amount.toFixed(2)}`;
+}
+
 export type Billable = {
   id: string;
   name: string;
