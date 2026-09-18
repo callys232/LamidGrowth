@@ -280,6 +280,7 @@ export async function createApp({
   });
   const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit });
   mountPublicCompanion(app);
+  mountPublicPricing(app, store);
   app.use('/api', async (req, res, next) => {
     const token = (req.headers.cookie || '')
       .split(';')
