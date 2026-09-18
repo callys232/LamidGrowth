@@ -251,6 +251,41 @@ const agents = {
       return { response, toolCalls: [], evidence };
     },
   },
+  'opportunity-signals': {
+    name: 'Opportunity Signals Engine',
+    engine: 'Growth',
+    band: 'A1',
+    points: 65,
+    humanGate: 'none',
+    input: messageInput,
+    async execute(ctx, input, deps) {
+      const { response, evidence } = await reviewSources(
+        ctx,
+        deps,
+        'companion.opportunity-signals',
+        `Identify emerging opportunities worth pursuing next, weighed against current readiness, relevant to: ${input.message}`,
+        ['knowledge', 'progress'],
+      );
+      return { response, toolCalls: [], evidence };
+    },
+  },
+  'experiment-builder': {
+    name: 'Experiment Builder',
+    engine: 'Growth',
+    band: 'A1',
+    points: 65,
+    humanGate: 'none',
+    input: messageInput,
+    async execute(ctx, input, deps) {
+      const { response, evidence } = await reviewSources(
+        ctx,
+        deps,
+        'companion.experiment-builder',
+        `Design a testable experiment — hypothesis, what to measure, and how to evaluate the result — relevant to: ${input.message}`,
+      );
+      return { response, toolCalls: [], evidence };
+    },
+  },
   'proposal-drafter': {
     name: 'Proposal Drafter',
     engine: 'Capability',

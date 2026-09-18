@@ -176,6 +176,10 @@ export function chooseAgent(message, { previousAgent, page = '', context = '' } 
     ['performance-analytics', /\bkpi|performance|metrics|analytics/],
     ['market-intelligence', /market|campaign|customer|competitor/],
     ['diagnostic-intelligence', /health|diagnos|risk|assess/],
+    // Specific compound phrases only — a bare "opportunity" mention keeps routing through the
+    // existing grow/business-context fallback to market-intelligence below, unchanged.
+    ['opportunity-signals', /opportunity signals?|emerging opportunit|new opportunit/],
+    ['experiment-builder', /\bexperiment|hypothesis|a\/b test/],
   ];
   for (const [id, pattern] of rules) if (pattern.test(text)) return id;
   if (

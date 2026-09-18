@@ -1,0 +1,22 @@
+.row-list-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.row-list-item {
+  position: relative;
+}
+.row-list-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.row-list-remove {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  color: var(--danger, #b3261e);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}

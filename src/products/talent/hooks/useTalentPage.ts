@@ -121,6 +121,7 @@ export function useTalentPage() {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [viewingAvailability, setViewingAvailability] = useState<{ userId: string; slots: AvailabilitySlot[] } | null>(null);
   const [teams, setTeams] = useState<ExpertTeam[]>([]);
   const [reviewQueue, setReviewQueue] = useState<ReviewQueueEntry[]>([]);
   const [handoffInbox, setHandoffInbox] = useState<HandoffItem[]>([]);
@@ -363,6 +364,38 @@ export function useTalentPage() {
     }
   }
 
+  // Reuses /api/booking/availability/:expertUserId and /api/booking/slots/:slotId/book —
+  // both already existed and were fully tested, just never had a UI caller: matching (Expert
+  // Finder above) already worked, this closes the other half of "matching + booking".
+  async function viewExpertAvailability(userId: string) {
+    if (viewingAvailability?.userId === userId) {
+      setViewingAvailability(null);
+      return;
+    }
+    setError('');
+    try {
+      const slots = await api<AvailabilitySlot[]>(`/booking/availability/${userId}`, undefined, 'GET');
+      setViewingAvailability({ userId, slots });
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  }
+
+  async function bookSlot(slotId: string, notes: string) {
+    setBusy(true);
+    setError('');
+    try {
+      await api(`/booking/slots/${slotId}/book`, { notes });
+      if (viewingAvailability) await viewExpertAvailability(viewingAvailability.userId);
+      await loadBookings();
+      notify('Session booked.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function loadBookings() {
     try {
       setBookings(await api<Booking[]>('/booking/mine', undefined, 'GET'));
@@ -513,6 +546,9 @@ export function useTalentPage() {
     credentials,
     availability,
     bookings,
+    viewingAvailability,
+    viewExpertAvailability,
+    bookSlot,
     teams,
     reviewQueue,
     handoffInbox,

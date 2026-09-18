@@ -11,6 +11,9 @@ import { Commercial } from './products/commercial/pages/CommercialPage';
 import { ProjectDetailPage } from './products/commercial/pages/ProjectDetailPage';
 import { ProjectsListPage } from './products/commercial/pages/ProjectsListPage';
 import { ConciergePage } from './products/concierge/pages/ConciergePage';
+import { FinancePage } from './products/finance/pages/FinancePage';
+import { EnginesPage } from './products/engines/pages/EnginesPage';
+import { PeoplePage } from './products/people/pages/PeoplePage';
 import { TalentDashboardPage } from './products/talent/pages/TalentDashboardPage';
 import { Companion } from './products/companion/pages/CompanionPage';
 import { CompanionChatPage } from './products/companion/pages/CompanionChatPage';
@@ -141,6 +144,9 @@ export function App() {
           <Route path="commercial/projects/:id" element={<ProjectDetailPage />} />
           <Route path="concierge" element={<ConciergePage />} />
           <Route path="talent" element={<TalentDashboardPage />} />
+          <Route path="finance" element={<FinancePage />} />
+          <Route path="engines" element={<EnginesPage />} />
+          <Route path="people" element={<PeoplePage />} />
           <Route path="pricing" element={<PricingBillablesPage />} />
           <Route path="scoping/new" element={<ScopingWizardPage />} />
           <Route path="learning" element={<LearningPage />} />

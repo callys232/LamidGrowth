@@ -70,15 +70,25 @@ test('companion agent catalog lists the seeded agents', async () => {
     [
       'acceptance-builder',
       'brief-builder',
+      // Every guidance topic in companionRouting.mjs (companionTasks widget guidance) is
+      // automatically exposed as a free (0-point) authenticated agent too — see agents.mjs's
+      // `...Object.fromEntries(Object.entries(guidance).map(...))` spread.
+      'capability',
       'capability-mapper',
       'change-order',
+      'clarity',
+      'companion',
+      'consistency',
       'context-curator',
       'deliverable-builder',
       'diagnostic-intelligence',
       'estimate-generator',
+      'experiment-builder',
       'invoice-generator',
       'market-intelligence',
       'onboarding',
+      'opportunities',
+      'opportunity-signals',
       'performance-analytics',
       'pricing',
       'proposal-drafter',
@@ -89,6 +99,7 @@ test('companion agent catalog lists the seeded agents', async () => {
       'starter-planner',
       'support',
       'workflow-orchestration',
+      'workflows',
     ],
   );
   assert.ok(result.data.every((agent) => typeof agent.pointsCost === 'number'));

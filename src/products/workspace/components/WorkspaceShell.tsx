@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Command,
   Compass,
+  Cpu,
   GitBranch,
   GraduationCap,
   Layers3,
@@ -13,6 +14,7 @@ import {
   ListTodo,
   LogOut,
   Menu,
+  Network,
   Plus,
   Search,
   Settings2,
@@ -21,6 +23,7 @@ import {
   Sun,
   TrendingUp,
   Users,
+  Wallet,
   Wand2,
   X,
 } from 'lucide-react';
@@ -68,6 +71,9 @@ const navigation = [
   ['Commercial', '/os/commercial', GitBranch],
   ['Knowledge', '/os/knowledge', Layers3],
   ['Talent', '/os/talent', Users],
+  ['Finance', '/os/finance', Wallet],
+  ['People', '/os/people', Network],
+  ['Engines', '/os/engines', Cpu],
   ['Guided Scoping', '/os/scoping/new', Wand2],
   ['Learning', '/os/learning', GraduationCap],
 ] as const;

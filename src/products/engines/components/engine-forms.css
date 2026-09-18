@@ -1,0 +1,84 @@
+.engine-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.engine-form-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+.engine-form-row legend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 4px;
+}
+.engine-form-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.engine-form-row input[type='text'],
+.engine-form-row input[type='number'],
+.engine-form-row select,
+.engine-form textarea {
+  font: inherit;
+  color: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.engine-form-row-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.engine-form-row-inline label {
+  min-width: 140px;
+}
+.engine-form-value {
+  font-size: 12px;
+  align-self: flex-start;
+}
+.engine-form-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+.engine-form-unit {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.engine-form-series {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+.engine-form-series label {
+  font-size: 11px;
+}
+.engine-form-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.engine-form-grid th,
+.engine-form-grid td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+}
+.engine-form-grid input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}

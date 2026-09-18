@@ -456,6 +456,34 @@ export function TalentDashboardPage() {
                 >
                   Invite
                 </Button>
+                <Button variant="secondary" disabled={page.busy} onClick={() => void page.viewExpertAvailability(result.userId)}>
+                  {page.viewingAvailability?.userId === result.userId ? 'Hide availability' : 'View availability'}
+                </Button>
+                {page.viewingAvailability?.userId === result.userId && (
+                  <div style={{ flexBasis: '100%', marginTop: 8 }}>
+                    {page.viewingAvailability.slots.length === 0 ? (
+                      <Empty title="No open slots">This expert hasn't published availability yet.</Empty>
+                    ) : (
+                      <ol className="activity-feed-list">
+                        {page.viewingAvailability.slots.map((slot) => (
+                          <li key={slot.id} className="activity-feed-row">
+                            <span className="activity-feed-title">
+                              <strong>{new Date(slot.start_at).toLocaleString()}</strong>
+                              <br />
+                              <small>
+                                {new Date(slot.start_at).toLocaleTimeString()} – {new Date(slot.end_at).toLocaleTimeString()} ·{' '}
+                                {slot.format.replace(/_/g, ' ')}
+                              </small>
+                            </span>
+                            <Button disabled={page.busy} onClick={() => void page.bookSlot(slot.id, '')}>
+                              Book
+                            </Button>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ol>
