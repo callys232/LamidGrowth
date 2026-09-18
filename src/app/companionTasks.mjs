@@ -13,7 +13,9 @@ export function mountPublicCompanion(app) {
     const input = z
       .object({
         message: z.string().trim().min(1).max(500),
-        previousTopic: z.enum(['onboarding', 'support', 'pricing']).nullish(),
+        previousTopic: z
+          .enum(['onboarding', 'support', 'pricing', 'opportunities', 'clarity', 'capability', 'consistency', 'companion', 'workflows'])
+          .nullish(),
       })
       .strict()
       .parse(req.body);
