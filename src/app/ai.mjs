@@ -3,6 +3,7 @@ import { authorizeExternalAI } from './aiPolicy.mjs';
 import { lockAIQuota, refundInTransaction } from './reliability.mjs';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
+import { logHandledError } from './errorLog.mjs';
 
 // The deep AI Review "engine" — a thorough, evidence-grounded objective review — is priced
 // above the lighter Companion tools in agents.mjs, which route through scopedProvider instead.
@@ -494,6 +495,7 @@ export function mountAI(app, store, provider) {
       });
       res.status(201).json(saved);
     } catch (error) {
+      logHandledError(req, res, 'ai_review_error', error);
       await transaction(async () => {
         const current = await db.prepare('SELECT data FROM records WHERE id = ? FOR UPDATE').get(item.id);
         if (!current || JSON.parse(current.data).status !== 'pending') return;

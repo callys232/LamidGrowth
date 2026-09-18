@@ -41,6 +41,7 @@ import { mountMessaging } from './messaging.mjs';
 import { mountEstimator } from './estimator.mjs';
 import { JOB_CATEGORIES, PROJECT_TYPES } from './jobTaxonomy.mjs';
 import { wordSet, scoreBid } from './text.mjs';
+import { errorDetails } from './errorLog.mjs';
 
 const text = z.string().trim().min(1).max(500);
 const longText = z.string().trim().max(5000).default('');
@@ -133,6 +134,7 @@ const jobPostCost = 40;
 const bidCost = 20;
 
 export async function createApp({
+  errorLogger = (event, fields) => console.error(JSON.stringify({ timestamp: new Date().toISOString(), event, ...fields })),
   filename,
   poolMax,
   production = false,
@@ -155,6 +157,23 @@ export async function createApp({
   ),
 } = {}) {
   const app = express();
+  app.locals.errorLogger = errorLogger;
+  app.use((req, res, next) => {
+    const requestId = randomUUID();
+    req.requestId = requestId;
+    res.setHeader('X-Request-Id', requestId);
+    res.on('finish', () => {
+      if (res.statusCode < 400 || res.locals.errorLogged) return;
+      errorLogger('http_response_error', {
+        requestId,
+        method: req.method,
+        path: req.path,
+        status: res.statusCode,
+        ...(req.user?.id ? { userId: req.user.id } : {}),
+      });
+    });
+    next();
+  });
   const store = await openStore(filename, { poolMax });
   const { db, transaction, log, insert, records } = store;
   const runtime = createWorkflowRuntime(store);
@@ -219,6 +238,7 @@ export async function createApp({
     if (trustedOrigin) {
       res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Expose-Headers', 'X-Request-Id');
       res.setHeader('Vary', 'Origin');
     }
     if (req.method === 'OPTIONS' && trustedOrigin) {
@@ -276,12 +296,17 @@ export async function createApp({
     });
   };
   app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+  app.post('/api/client-errors', (req, res) => {
+    const input = z.object({ type: z.enum(['render', 'error', 'rejection']), name: z.string().max(100), message: z.string().max(500) }).strict().parse(req.body);
+    errorLogger('client_error', { requestId: req.requestId, type: input.type, name: input.name, message: input.message });
+    res.status(204).end();
+  });
   const checkReadiness = createReadinessCheck(store);
   app.get('/api/ready', async (_req, res) => {
     const ready = await checkReadiness();
     res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'unavailable' });
   });
-  const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit });
+  const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit, errorLogger });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
   mountPublicEngines(app);
@@ -1313,7 +1338,8 @@ export async function createApp({
   mountMessaging(app, store);
   mountEstimator(app, store);
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint not found.' }));
-  app.use((error, _req, res, _next) => {
+  app.use((error, req, res, _next) => {
+    if (res.headersSent) return _next(error);
     if (error instanceof z.ZodError)
       return res.status(400).json({
         error: error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; '),
@@ -1322,9 +1348,18 @@ export async function createApp({
       return res.status(400).json({ error: 'Invalid JSON.' });
     if (error.type === 'entity.too.large')
       return res.status(413).json({ error: 'Request is too large.' });
-    if (error.status) return res.status(error.status).json({ error: error.message });
-    console.error(error);
-    res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    const status = Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 ? error.status : 500;
+    if (status < 500) return res.status(status).json({ error: error.message });
+    errorLogger('http_error', {
+      requestId: req.requestId,
+      method: req.method,
+      path: req.path,
+      status,
+      ...(req.user?.id ? { userId: req.user.id } : {}),
+      error: errorDetails(error),
+    });
+    res.locals.errorLogged = true;
+    res.status(status).json({ error: status === 500 ? 'Something went wrong. Please try again.' : error.message, requestId: req.requestId });
   });
   return { app, store, runtime, agentRuntime, mail: accounts.mail };
 }

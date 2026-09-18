@@ -16,9 +16,21 @@ import { mountFrontend } from '../src/app/frontend.mjs';
 import { pruneRateLimitBuckets } from '../src/app/ratelimit.mjs';
 import { acquireServiceLease, validateProductionConfig } from '../src/app/operations.mjs';
 import { randomUUID } from 'node:crypto';
+import { createErrorLogger, errorDetails } from '../src/app/errorLog.mjs';
+
+const errorLogger = createErrorLogger();
+for (const event of ['uncaughtException', 'unhandledRejection']) {
+  process.on(event, (error) => {
+    errorLogger(event, { error: errorDetails(error) });
+    process.exit(1);
+  });
+}
 
 const production = process.argv.includes('--production');
-if (production) validateProductionConfig();
+if (production) {
+  try { validateProductionConfig(); }
+  catch (error) { errorLogger('startup_error', { error: errorDetails(error) }); process.exit(1); }
+}
 const clusterEnabled = process.env.CLUSTER === 'true' || (production && process.env.CLUSTER !== 'false');
 const workerCount = Math.max(
   1,
@@ -37,7 +49,7 @@ if (clusterEnabled && cluster.isPrimary && workerCount > 1) {
   for (let i = 0; i < workerCount; i++) cluster.fork();
   cluster.on('exit', (worker, code, signal) => {
     if (shuttingDown) return;
-    console.error(`Worker ${worker.process.pid} exited (${signal || code}); restarting.`);
+    errorLogger('worker_exit', { workerPid: worker.process.pid, code, signal });
     cluster.fork();
   });
   for (const signal of ['SIGINT', 'SIGTERM'])
@@ -47,7 +59,8 @@ if (clusterEnabled && cluster.isPrimary && workerCount > 1) {
       process.exit(0);
     });
 } else {
-  await startServer();
+  try { await startServer(); }
+  catch (error) { errorLogger('startup_error', { error: errorDetails(error) }); process.exit(1); }
 }
 
 async function startServer() {
@@ -62,6 +75,7 @@ async function startServer() {
     .map((origin) => origin.trim())
     .filter(Boolean);
   const { app, store, runtime, agentRuntime, mail } = await createApp({
+    errorLogger,
     production,
     poolMax,
     allowedOrigins,
@@ -89,14 +103,14 @@ async function startServer() {
         await runtime.tick();
         await agentRuntime.reconcile();
       } catch (error) {
-        console.error('Workflow worker failed:', error);
+        errorLogger('workflow_worker_error', { error: errorDetails(error) });
       }
     })().finally(() => { ticking = null; });
   }, 1000);
   worker?.unref();
   let delivering = null;
   const mailWorker = setInterval(() => {
-    if (!delivering) delivering = mail.tick().catch(() => console.error('Mail queue processing failed.')).finally(() => { delivering = null; });
+    if (!delivering) delivering = mail.tick().catch((error) => errorLogger('mail_queue_error', { error: errorDetails(error) })).finally(() => { delivering = null; });
   }, 1000);
   mailWorker.unref();
 
@@ -106,7 +120,7 @@ async function startServer() {
     try {
       await pruneRateLimitBuckets(store);
     } catch (error) {
-      console.error('Rate limit bucket sweep failed:', error);
+      errorLogger('rate_limit_sweep_error', { error: errorDetails(error) });
     }
   }, 60_000);
   sweep.unref();

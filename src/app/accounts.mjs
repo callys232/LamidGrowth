@@ -17,7 +17,7 @@ const normalizeIdentity = email => {
   return `${local}@${domain}`;
 };
 
-export async function mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider = defaultMailer(), securityKey = process.env.ACCOUNT_SECURITY_KEY, publicOrigin = process.env.PUBLIC_ORIGIN || 'http://localhost:3000', welcomeIpVelocityLimit = 3 }) {
+export async function mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider = defaultMailer(), securityKey = process.env.ACCOUNT_SECURITY_KEY, publicOrigin = process.env.PUBLIC_ORIGIN || 'http://localhost:3000', welcomeIpVelocityLimit = 3, errorLogger }) {
   const { db, transaction, log } = store;
   if (securityKey && !/^[a-f0-9]{64}$/i.test(securityKey)) throw new Error('ACCOUNT_SECURITY_KEY must be 32 random bytes encoded as 64 hex characters.');
   if (production && !securityKey) throw new Error('ACCOUNT_SECURITY_KEY is required in production.');
@@ -27,7 +27,7 @@ export async function mountAccounts(app, store, { production, session, contexts,
   }
   const key = Buffer.from(securityKey, 'hex');
   const sign = s => createHmac('sha256', key).update(s).digest('hex');
-  const mail = createMailOutbox(store, mailProvider, key);
+  const mail = createMailOutbox(store, mailProvider, key, errorLogger);
   const origin = new URL(publicOrigin);
   if (production && (origin.protocol !== 'https:' || origin.username || origin.password)) throw new Error('PUBLIC_ORIGIN must be an HTTPS origin in production.');
   // Preserve established accounts and balances; never give them a second signup reward.

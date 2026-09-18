@@ -1,4 +1,5 @@
 import { randomBytes, createCipheriv, createDecipheriv } from 'node:crypto';
+import { errorDetails } from './errorLog.mjs';
 
 export function resendMailer({ apiKey = process.env.RESEND_API_KEY, from = process.env.MAIL_FROM, fetcher = fetch } = {}) {
   if (!apiKey || !from) return null;
@@ -37,7 +38,7 @@ export function defaultMailer() {
   return resendMailer() || sendgridMailer();
 }
 
-export function createMailOutbox(store, provider, key) {
+export function createMailOutbox(store, provider, key, errorLogger = (event, fields) => console.error(JSON.stringify({ event, ...fields }))) {
   const { db, transaction } = store;
   const encrypt = (message) => {
     const iv = randomBytes(12);
@@ -77,10 +78,10 @@ export function createMailOutbox(store, provider, key) {
         try {
           await provider.send(decrypt(row.payload), row.id);
           await db.prepare("UPDATE mail_outbox SET status = 'sent', payload = '', lease_until = NULL WHERE id = ?").run(row.id);
-        } catch {
+        } catch (error) {
           const failed = row.attempts + 1 >= 5;
           await db.prepare('UPDATE mail_outbox SET status = ?, next_at = ?, lease_until = NULL, payload = CASE WHEN ?::boolean THEN ? ELSE payload END WHERE id = ?').run(failed ? 'failed' : 'pending', Date.now() + 15000 * 2 ** row.attempts, failed, '', row.id);
-          console.error(JSON.stringify({ event: 'mail_delivery_retry', messageId: row.id, attempt: row.attempts + 1, failed }));
+          errorLogger('mail_delivery_retry', { messageId: row.id, attempt: row.attempts + 1, failed, error: errorDetails(error) });
         }
       }
     },

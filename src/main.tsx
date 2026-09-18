@@ -11,6 +11,7 @@ import { App } from './App';
 import { applyTheme, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
+import { reportClientError } from './errorReporting';
 import './styles.css';
 import './readability.css';
 import './design-system.css';
@@ -28,6 +29,9 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
   static getDerivedStateFromError() {
     return { failed: true };
   }
+  componentDidCatch(error: Error) {
+    reportClientError('render', error);
+  }
   render() {
     return this.state.failed ? (
       <main className="error-page">
@@ -43,6 +47,8 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
   }
 }
 applyTheme(getStoredTheme());
+window.addEventListener('error', (event) => reportClientError('error', event.error || event.message));
+window.addEventListener('unhandledrejection', (event) => reportClientError('rejection', event.reason));
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>

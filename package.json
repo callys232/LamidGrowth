@@ -10,6 +10,7 @@
     "dev": "node --watch-path=server --watch-path=src/app --watch-path=vite.config.ts server/index.mjs",
     "build": "tsc -b && vite build",
     "start": "node server/index.mjs --production",
+    "errors:daily": "node scripts/error-report.mjs",
     "test": "node --test --test-concurrency=3 tests/*.test.mjs",
     "test:e2e": "playwright test",
     "check": "npm run build && npm test",
