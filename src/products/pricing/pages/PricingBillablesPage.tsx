@@ -5,6 +5,7 @@ import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { usePricingPage } from '../hooks/usePricingPage';
+import { clearPendingBundle, readPendingBundle } from '../pendingBundle';
 
 function formatMinor(amountMinor: number, currency: string) {
   return `${(amountMinor / 100).toFixed(2)} ${currency}`;
@@ -12,11 +13,20 @@ function formatMinor(amountMinor: number, currency: string) {
 
 /** /os/pricing — kept to the one thing every member needs here: buying points, plus browsing
  * published bundles. The tool/engine price list and bundle-authoring tools (ecosystem-admin
- * only) live under the "Create a Bundle" tab instead of being shown to every visitor by default. */
+ * only) live under the "Create a Bundle" tab instead of being shown to every visitor by default.
+ * `pendingBundle` closes the loop for someone who built a custom bundle on the public /pricing
+ * page before they had an account: it prefills the points amount here and is cleared once shown,
+ * whether or not they actually buy — it's a one-time handoff, not something to keep re-surfacing. */
 export function PricingBillablesPage() {
   const page = usePricingPage();
-  const [customPoints, setCustomPoints] = useState(100);
+  const [pendingBundle, setPendingBundle] = useState(readPendingBundle);
+  const [customPoints, setCustomPoints] = useState(() => pendingBundle?.totalPoints ?? 100);
   const [tab, setTab] = useState<'points' | 'bundle'>('points');
+
+  function dismissPendingBundle() {
+    clearPendingBundle();
+    setPendingBundle(null);
+  }
 
   return (
     <section className="panel">
@@ -58,6 +68,19 @@ export function PricingBillablesPage() {
 
       {tab === 'points' && (
         <>
+          {pendingBundle && (
+            <section className="panel settings-card">
+              <h3>Your custom bundle</h3>
+              <p>
+                From the bundle you built before signing in: {pendingBundle.toolNames.join(', ')}
+                {pendingBundle.extraPoints > 0 && <> plus {pendingBundle.extraPoints} extra points</>}. We've filled
+                in the total below — {pendingBundle.totalPoints} points.
+              </p>
+              <Button variant="ghost" onClick={dismissPendingBundle}>
+                Dismiss
+              </Button>
+            </section>
+          )}
           <section className="panel settings-card">
             <h3>Buy points</h3>
             <p>
@@ -80,7 +103,13 @@ export function PricingBillablesPage() {
                   onChange={(e) => setCustomPoints(Number(e.target.value))}
                 />
               </Field>
-              <Button disabled={page.busy || customPoints < 1} onClick={() => void page.purchasePoints(customPoints)}>
+              <Button
+                disabled={page.busy || customPoints < 1}
+                onClick={() => {
+                  if (pendingBundle) clearPendingBundle();
+                  void page.purchasePoints(customPoints);
+                }}
+              >
                 Buy {customPoints} points
               </Button>
             </div>
