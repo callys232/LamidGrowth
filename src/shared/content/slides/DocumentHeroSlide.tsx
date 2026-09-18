@@ -11,7 +11,14 @@ export function DocumentHeroSlide({
     <section className="content-hero section-wrap">
       <div>
         <div className="eyebrow">{page.name}</div>
-        <Title data-source-paragraph={page.hero.paragraphs[0].sourceParagraph}>{page.title}</Title>
+        <Title data-source-paragraph={page.hero.paragraphs[0].sourceParagraph}>
+          {page.title.split('\n').map((line, i, lines) => (
+            <span key={i}>
+              {line}
+              {i < lines.length - 1 && <br />}
+            </span>
+          ))}
+        </Title>
         {page.hero.paragraphs.slice(1).map((p) => (
           <CopyLine key={p.sourceParagraph} text={p.text} paragraph={p.sourceParagraph} />
         ))}

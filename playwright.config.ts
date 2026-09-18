@@ -3,7 +3,7 @@ const port = Number(process.env.E2E_PORT || 3107);
 export default defineConfig({
   testDir: './tests/browser',
   // These exploratory studies use their own isolated server and provider configuration.
-  testIgnore: ['regional-usability.spec.ts', 'paid-path-demo.spec.ts', 'deep-coverage.spec.ts'],
+  testIgnore: ['regional-usability.spec.ts', 'paid-path-demo.spec.ts', 'deep-coverage.spec.ts', 'human-pace.spec.ts', 'click-everything.spec.ts'],
   fullyParallel: false,
   workers: 1,
   reporter: 'list',

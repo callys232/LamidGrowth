@@ -23,7 +23,7 @@ import { mountDocuments } from './documents.mjs';
 import { mountFx } from './fx.mjs';
 import { mountConcierge } from './concierge.mjs';
 import { mountBilling } from './billing.mjs';
-import { mountPricing } from './pricing.mjs';
+import { mountPricing, mountPublicPricing } from './pricing.mjs';
 import { mountReputation } from './reputation.mjs';
 import { mountScoping } from './scoping.mjs';
 import { mountBooking } from './booking.mjs';

@@ -13,7 +13,6 @@
   "title": "Workspace Settings",
   "description": "Manage the workspace name, type, context, defaults, ownership, and permitted settings.",
   "hero": {
-    "label": "PRIMARY MESSAGE",
     "title": "Workspace Settings",
     "paragraphs": [
       {

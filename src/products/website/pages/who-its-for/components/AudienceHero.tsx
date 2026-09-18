@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Briefcase, Palette, User, type LucideIcon } from 'lucide-react';
 import { CopyLine } from '../../../../../shared/content/CopyLine';
-import content from '../content.json';
+import type { DocumentPage } from '../../../../../shared/content/types';
+import rawContent from '../content.json';
+
+const content = rawContent as DocumentPage;
 
 // Keyed by each section's real label, not its array position — a reordered or inserted section
 // in content.json still resolves to the right icon/route instead of silently shifting. A label
@@ -24,7 +27,7 @@ export function AudienceHero() {
   return (
     <section className="audience-hero">
       <div className="audience-container">
-        <span className="audience-eyebrow">{content.hero.label}</span>
+        {content.hero.label && <span className="audience-eyebrow">{content.hero.label}</span>}
         <h1 data-source-paragraph={title.sourceParagraph}>{title.text}</h1>
         <p className="audience-hero-description" data-source-paragraph={description.sourceParagraph}>
           {description.text}

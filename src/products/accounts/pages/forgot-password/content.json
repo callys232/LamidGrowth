@@ -13,7 +13,6 @@
   "title": "Recover Access",
   "description": "Enter the email associated with your account. We will send recovery instructions when the account is eligible.",
   "hero": {
-    "label": "PRIMARY MESSAGE",
     "title": "Recover Access",
     "paragraphs": [
       {

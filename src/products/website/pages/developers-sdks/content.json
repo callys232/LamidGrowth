@@ -13,7 +13,6 @@
   "title": "Build With LAMID ONE Capabilities.",
   "description": "Use supported SDKs to work with documented platform interfaces without rebuilding core protocol, authorization, and event handling.",
   "hero": {
-    "label": "PRIMARY MESSAGE",
     "title": "Build With LAMID ONE Capabilities.",
     "paragraphs": [
       {

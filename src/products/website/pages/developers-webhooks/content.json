@@ -13,7 +13,6 @@
   "title": "Keep Context Current Through Meaningful Events.",
   "description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems without requiring the user to be present.",
   "hero": {
-    "label": "PRIMARY MESSAGE",
     "title": "Keep Context Current Through Meaningful Events.",
     "paragraphs": [
       {

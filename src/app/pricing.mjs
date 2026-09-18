@@ -32,9 +32,11 @@ async function bundleWithItems(db, bundleId) {
   return { ...bundle, items };
 }
 
-export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
-  const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+// Pure read-only reference data — the same public price list any visitor can see on a real
+// pricing page, before ever signing up. Mounted ahead of the session gate in app.mjs
+// deliberately, so it works for anonymous visitors, not just signed-in users.
+export function mountPublicPricing(app, store) {
+  const { db } = store;
 
   // Every registered tool/engine is a billable — this is the same agent_manifests registry
   // the companion runs against, so the price list can never drift from what's actually callable.
@@ -66,6 +68,11 @@ export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
     const bundles = await db.prepare("SELECT * FROM bundles WHERE status = 'active' ORDER BY price_minor").all();
     res.json(await Promise.all(bundles.map((bundle) => bundleWithItems(db, bundle.id))));
   });
+}
+
+export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
+  const { db, transaction, log } = store;
+  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
 
   app.get('/api/admin/bundles', async (req, res) => {
     if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can manage bundles.' });

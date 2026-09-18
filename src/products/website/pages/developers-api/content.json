@@ -13,7 +13,6 @@
   "title": "Build Against Stable Interfaces.",
   "description": "Use documented APIs with clear authentication, schemas, permissions, errors, and versioning.",
   "hero": {
-    "label": "PRIMARY MESSAGE",
     "title": "Build Against Stable Interfaces.",
     "paragraphs": [
       {
