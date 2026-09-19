@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
-import { hasToolAccess } from './entitlements.mjs';
+import { hasToolAccess, accessibleEngineCodes } from './entitlements.mjs';
 import { getModuleConfig, MODULE_REGISTRY, buildFallbackConfig, ENGINE_CODES } from './engineRegistry.mjs';
 import { computeAssessment, assessmentToPrompt } from './engineIntelligence/assessment.mjs';
 import { computeDecisionQuality, decisionQualityToPrompt, DQ_QUESTIONS, REQUIREMENTS } from './engineIntelligence/decisionQuality.mjs';
@@ -395,15 +395,32 @@ function manifestSummary(code) {
 }
 
 /** Catalog reads only — id/purpose/dimensions/points-cost, no workspace or user data anywhere in
- * this response. Mounted before the session gate (like mountPublicPricing) so both the signed-in
- * /os/engines page and the public marketing pages (e.g. /product/intelligence) can show the real
- * 248-tool catalog to a logged-out visitor. Running an engine still requires a session — see
- * mountEngines below. */
+ * this response. Mounted before the session gate (like mountPublicPricing) so the public
+ * marketing pages (e.g. /product/intelligence) can show the real, full 248-tool catalog to a
+ * logged-out visitor — "a user only learns of all the tools from the public-facing pages." The
+ * in-app /os/engines catalog is a separate, authenticated, per-workspace-filtered route — see
+ * mountEngines below — so a signed-in workspace only ever sees what its context/tier/bundles
+ * actually grant, never the full unfiltered list.
+ *
+ * `POST /api/engines/:code/demo-run` is the one exception to "running requires a session": it's
+ * the same real compute as the authenticated /run route, but with no charge, no persistence, and
+ * no entitlement check — used only by the public /demo page ("Explore the workspace" used to drop
+ * an anonymous visitor straight into a real /os session; it now sends them here instead, so a
+ * visitor can see one genuine, correctly-computed result before ever creating an account). It's
+ * still covered by this app's global per-IP rate limits (mounted before this in app.mjs). */
 export function mountPublicEngines(app) {
-  app.get('/api/engines', async (req, res) => {
+  app.get('/api/engines/catalog', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const list = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
     res.json({ engines: filter ? list.filter((m) => m.homeEngine === filter) : list, count: list.length });
+  });
+
+  app.post('/api/engines/:code/demo-run', async (req, res) => {
+    const ref = parseEngineCode(req.params.code);
+    if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
+    const { input } = runInput.parse(req.body ?? {});
+    const result = runEngine(ref, input);
+    res.json({ result, demo: true });
   });
 
   app.get('/api/engines/:code', async (req, res) => {
@@ -431,6 +448,16 @@ export function mountPublicEngines(app) {
 
 export function mountEngines(app, store) {
   const { db, transaction, log } = store;
+
+  // Authenticated and per-workspace filtered — see accessibleEngineCodes in entitlements.mjs.
+  // Distinct from the public /api/engines/catalog route (mountPublicEngines above), which always
+  // returns the full 248-tool list for marketing/education purposes.
+  app.get('/api/engines', async (req, res) => {
+    const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
+    const accessible = await accessibleEngineCodes(store, req.workspace);
+    const list = ENGINE_CODES.filter((code) => accessible.has(code)).map(manifestSummary).filter(Boolean);
+    res.json({ engines: filter ? list.filter((m) => m.homeEngine === filter) : list, count: list.length });
+  });
 
   app.post('/api/engines/:code/run', requirePermission('work:write'), async (req, res) => {
     const ref = parseEngineCode(req.params.code);

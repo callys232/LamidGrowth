@@ -19,7 +19,6 @@ export function CommercialJobDialogsSlide({
       {creating && options && (
         <JobForm
           options={options}
-          demo={state.user.demo}
           onClose={() => setCreating(false)}
           onSaved={() => {
             setCreating(false);

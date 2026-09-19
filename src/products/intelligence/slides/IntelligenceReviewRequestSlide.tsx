@@ -26,7 +26,7 @@ export function IntelligenceReviewRequestSlide({
   return (
     <>
       {!settings && policy?.enabled && policy.accountEligible && state.objectives.length > 0 && (
-        <section className="panel settings-card">
+        <section className="panel settings-card" id="request-review">
           <h2>Choose exactly what to share</h2>
           <form onSubmit={review}>
             <Field label="Objective to review">

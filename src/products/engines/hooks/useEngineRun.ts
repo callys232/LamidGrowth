@@ -52,11 +52,13 @@ export type EngineResult = {
   warnings: string[];
 };
 
-export type EngineRunResponse = { runId: string; pointsCharged: number; balance: number; result: EngineResult };
+export type EngineRunResponse = { runId?: string; pointsCharged?: number; balance?: number; result: EngineResult };
 
-/** Loads one engine's manifest (for form rendering) and exposes a run() call that submits
- * structured input to POST /engines/:code/run — see server: src/app/engines.mjs. */
-export function useEngineRun(code: string | null) {
+/** Loads one engine's manifest (for form rendering) and exposes a run() call.
+ * `demo=false` (default) — authenticated, charges points, persists a run: POST /engines/:code/run.
+ * `demo=true` — public, no session/charge/persistence, same real compute: POST
+ * /engines/:code/demo-run, used only by the public /demo page. See server: src/app/engines.mjs. */
+export function useEngineRun(code: string | null, demo = false) {
   const [manifest, setManifest] = useState<EngineDetail | null>(null);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<EngineRunResponse | null>(null);
@@ -78,7 +80,7 @@ export function useEngineRun(code: string | null) {
       setRunning(true);
       setError('');
       try {
-        const response = await api<EngineRunResponse>(`/engines/${code}/run`, { input }, 'POST');
+        const response = await api<EngineRunResponse>(`/engines/${code}/${demo ? 'demo-run' : 'run'}`, { input }, 'POST');
         setResult(response);
         return response;
       } catch (e) {
@@ -88,7 +90,7 @@ export function useEngineRun(code: string | null) {
         setRunning(false);
       }
     },
-    [code],
+    [code, demo],
   );
 
   return { manifest, running, result, error, run };

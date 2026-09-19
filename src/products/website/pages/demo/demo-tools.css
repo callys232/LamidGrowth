@@ -1,0 +1,47 @@
+.demo-tools-page {
+  background: var(--surface);
+  min-height: 100vh;
+  padding: 60px 0 90px;
+}
+.demo-tools-container {
+  width: min(1100px, calc(100% - 48px));
+  margin-inline: auto;
+}
+.demo-tools-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 40px;
+}
+.demo-tools-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--signature-red, #c12129);
+  margin-bottom: 12px;
+}
+.demo-tools-head h1 {
+  font-family: var(--font-editorial);
+  font-size: clamp(28px, 4vw, 42px);
+  margin: 0 0 14px;
+}
+.demo-tools-head p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+.demo-tools-cta {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.demo-tools-cta p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}

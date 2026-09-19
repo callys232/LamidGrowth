@@ -121,5 +121,21 @@ export function useWorkflowsPage() {
       mutating.current = false;
     }
   }
-  return { error, canManage, state, create, busy, runs, command };
+  async function remove(run: Run) {
+    setBusy(true);
+    mutating.current = true;
+    ++requests.current;
+    setError('');
+    try {
+      await api(`/workflows/${run.id}`, {}, 'DELETE');
+      await load();
+      notify('Workflow deleted.');
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+      mutating.current = false;
+    }
+  }
+  return { error, canManage, state, create, busy, runs, command, remove };
 }

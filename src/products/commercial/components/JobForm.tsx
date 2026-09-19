@@ -11,12 +11,10 @@ type EstimateResponse =
 
 export function JobForm({
   options,
-  demo,
   onClose,
   onSaved,
 }: {
   options: Options;
-  demo: boolean;
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -78,12 +76,6 @@ export function JobForm({
   }
   return (
     <Modal title="Post a scoped job" onClose={onClose}>
-      <p>
-        {demo
-          ? 'This post stays in your sample workspace.'
-          : 'This post will be visible to signed-in accounts in open opportunities.'}{' '}
-        Posting uses {options.jobPostCost} points.
-      </p>
       <form
         onSubmit={save}
         onChange={() => {

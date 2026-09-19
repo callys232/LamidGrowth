@@ -5,15 +5,25 @@ import './engine-result.css';
  * and — for the 6 archetypes with a numeric `summary` object — the raw computed figures as a
  * plain key/value list. No bespoke chart per kind yet; the real numbers are always shown, just
  * not always visualised. */
-export function EngineResultView({ pointsCharged, balance, result }: { pointsCharged: number; balance: number; result: EngineResult }) {
+export function EngineResultView({
+  pointsCharged,
+  balance,
+  result,
+}: {
+  pointsCharged?: number;
+  balance?: number;
+  result: EngineResult;
+}) {
   const flatFields = isPlainObject(result.summary) ? primitiveEntries(result.summary as Record<string, unknown>) : [];
 
   return (
     <div className="engine-result">
-      <div className="engine-result-meta">
-        <span>{pointsCharged} points charged</span>
-        <span>Balance: {balance}</span>
-      </div>
+      {pointsCharged !== undefined && balance !== undefined && (
+        <div className="engine-result-meta">
+          <span>{pointsCharged} points charged</span>
+          <span>Balance: {balance}</span>
+        </div>
+      )}
 
       {result.warnings.length > 0 && (
         <ul className="engine-result-warnings">

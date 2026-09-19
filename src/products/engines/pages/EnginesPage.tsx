@@ -127,7 +127,9 @@ function EngineDetailPanel({ engine, run }: { engine: EngineSummary; run: Return
   );
 }
 
-function EngineForm({
+/** Exported for reuse by the public /demo page (see products/website/pages/demo/DemoToolsPage.tsx)
+ * — same 14-kind form-selection logic for both the authenticated and no-signup-required paths. */
+export function EngineForm({
   manifest,
   submitting,
   onSubmit,

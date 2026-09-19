@@ -165,8 +165,10 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
   assert.doesNotMatch(agentRun.data.error, /isn't included in your plan/);
 
   // A different paid tool NOT in the bundle stays blocked — the grant is scoped to bundle_items,
-  // not a blanket unlock.
-  const other = await request('/engines/s01/run', { input: { rows: [{ label: 'Identity Clarity', rating: 3 }] } }, buyerCookie);
+  // not a blanket unlock. a02 (Capability, Team-rank) is used here rather than a Clarity engine
+  // like s01 — Clarity's Individual-rank default means every workspace can see/run it regardless
+  // of bundles, by design (see engineRegistry.mjs's CONTEXT_RANK), so it wouldn't prove anything.
+  const other = await request('/engines/a02/run', { input: {} }, buyerCookie);
   assert.equal(other.status, 403);
 
   const row = await store.db
@@ -176,6 +178,13 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
 
 test('an enterprise-tier workspace can run any paid tool without any bundle', async () => {
   const cookie = await signup('Enterprise Default'); // funded-app.mjs already enterprise-tiers new signups
-  const engineRun = await request('/engines/s01/run', { input: { rows: [{ label: 'Identity Clarity', rating: 4 }] } }, cookie);
+  // a02 is Capability (Team-rank) — well above the signup context's Founder-rank default, so
+  // this specifically proves the enterprise-tier bypass, not just a low-rank engine like Clarity
+  // that every context can already reach.
+  const engineRun = await request(
+    '/engines/a02/run',
+    { input: { roles: [{ role: 'Engineer', headcount: 3, capability: 3, attritionRisk: 2, successors: 1, critical: true }] } },
+    cookie,
+  );
   assert.equal(engineRun.status, 200);
 });

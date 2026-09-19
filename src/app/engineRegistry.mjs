@@ -2167,4 +2167,45 @@ for (const cfg of Object.values(MODULE_REGISTRY)) {
   else cfg.home_engine = 'Shared';
 }
 
+// LamidGrowth-specific addition: which signup context (see the `contexts` zod enum in
+// src/app/app.mjs) must a workspace have reached before an engine is even visible to it —
+// cumulative, so a higher context sees everything a lower one does (checked in
+// src/app/entitlements.mjs's hasToolAccess, alongside the existing enterprise-tier/bundle gate).
+// Base rank comes from home_engine (a reasoned default, not derived from any source document —
+// flagged as a judgment call); a keyword check on the engine's own name then escalates any
+// module whose name explicitly claims a broader scope (e.g. "Enterprise-Wide", "Department",
+// "Multi-Team") than its home_engine's default would imply, so a Clarity module named
+// "Enterprise-Wide Decision Map" doesn't stay Individual-visible just because most Clarity
+// modules are.
+export const CONTEXT_RANK = Object.freeze({
+  Individual: 0,
+  Creator: 1,
+  Professional: 2,
+  Founder: 3,
+  SME: 4,
+  Team: 5,
+  Institution: 6,
+  Enterprise: 7,
+});
+const BASE_RANK_BY_HOME_ENGINE = {
+  Clarity: CONTEXT_RANK.Individual,
+  Consistency: CONTEXT_RANK.Professional,
+  Growth: CONTEXT_RANK.Founder,
+  Finance: CONTEXT_RANK.SME,
+  Capability: CONTEXT_RANK.Team,
+  Shared: CONTEXT_RANK.Institution,
+};
+const ESCALATION_KEYWORDS = [
+  [/enterprise|etos\b/i, CONTEXT_RANK.Enterprise],
+  [/\b(department|business unit|multi-team|cross-team|organi[sz]ation-wide|organi[sz]ational)\b/i, CONTEXT_RANK.Institution],
+  [/\bteam\b/i, CONTEXT_RANK.Team],
+];
+for (const cfg of Object.values(MODULE_REGISTRY)) {
+  let rank = BASE_RANK_BY_HOME_ENGINE[cfg.home_engine] ?? CONTEXT_RANK.Individual;
+  for (const [pattern, escalatedRank] of ESCALATION_KEYWORDS) {
+    if (escalatedRank > rank && pattern.test(cfg.engineName)) rank = escalatedRank;
+  }
+  cfg.minContextRank = rank;
+}
+
 export const ENGINE_CODES = Object.keys(MODULE_REGISTRY);

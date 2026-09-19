@@ -19,7 +19,7 @@ export function Step1ChooseYourContextSlide1({ embedded = false }: DocumentPageP
   );
 }
 
-/** 4. Review Progress */
+/** 2. Review Progress */
 export function Step4ReviewProgressSlide2({ embedded = false }: DocumentPageProps) {
   return (
     <DocumentSectionSlide

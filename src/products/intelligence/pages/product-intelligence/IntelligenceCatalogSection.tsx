@@ -11,7 +11,7 @@ const HOME_ENGINES = ['Clarity', 'Capability', 'Consistency', 'Growth', 'Finance
  * marketing copy — same "use the real thing, don't restate it" rule as BillablesSection on the
  * pricing page. */
 export function IntelligenceCatalogSection() {
-  const { catalog, error } = useEngineCatalog();
+  const { catalog, error } = useEngineCatalog('/engines/catalog');
 
   const grouped = useMemo(() => {
     if (!catalog) return [];

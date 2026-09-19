@@ -236,3 +236,26 @@ test('unfinished authorized work survives reopening the database without repeati
     await (reopened || f.store).dropSchema();
   }
 });
+
+test('a workflow can only be deleted once it has actually finished, and only by its own authorizing owner', async () => {
+  const f = await setup();
+  try {
+    const run = await f.runtime.create(f.workspace, f.user, f.spec([write]));
+    await assert.rejects(() => f.runtime.remove(run.id, f.workspace, f.user), /completed, cancelled or expired/);
+    await f.command(run, 'start');
+    await f.runtime.tick();
+    await f.command(run, 'approve');
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).state, 'completed');
+    await assert.rejects(
+      () => f.runtime.remove(run.id, f.workspace, randomUUID()),
+      /authorizing/,
+    );
+    assert.ok(await f.read(run));
+    await f.runtime.remove(run.id, f.workspace, f.user);
+    assert.equal(await f.read(run), undefined);
+    await assert.rejects(() => f.runtime.remove(run.id, f.workspace, f.user), /not found/i);
+  } finally {
+    await f.store.dropSchema();
+  }
+});

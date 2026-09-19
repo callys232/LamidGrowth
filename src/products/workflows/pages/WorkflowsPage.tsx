@@ -22,6 +22,7 @@ export function Workflows() {
         canManage={page.canManage}
         busy={page.busy}
         command={page.command}
+        remove={page.remove}
       />
     </>
   );

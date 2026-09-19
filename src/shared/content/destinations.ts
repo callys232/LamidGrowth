@@ -14,7 +14,9 @@ export const destinations: Record<string, string> = {
   'View SDKs': '/developers/sdks',
   'Read Webhook Docs': '/developers/webhooks',
   'Search Help': '/help',
-  'Start the Guide': '/help/getting-started',
+  // Both uses of this label live on /help/getting-started's own content (hero + closing CTA) —
+  // same self-referential no-op as 'View Pricing' above. Anchors at the guide's first real step.
+  'Start the Guide': '/help/getting-started#section-832',
   'Browse Account Help': '/help/account',
   'Contact Security': '/contact',
   'Contact Accessibility': '/contact',
@@ -41,7 +43,10 @@ export const destinations: Record<string, string> = {
   Security: '/security',
   'Privacy & Data': '/trust/privacy',
   Governance: '/trust/governance',
-  'Read Our AI Principles': '/responsible-ai',
+  // Both uses of this label live on /responsible-ai's own content (hero + closing CTA) — same
+  // self-referential no-op as the 'View Pricing' case above. Anchors at the page's first real
+  // section (DocumentSectionSlide's own id="section-<sourceParagraph>" convention).
+  'Read Our AI Principles': '/responsible-ai#section-553',
   'View Data Controls': '/os/settings/privacy',
   'Explore Enterprise Platform & Deployment': '/enterprise',
   // Both uses of this label live on the pricing page's own content (hero + closing CTA), so

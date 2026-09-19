@@ -82,19 +82,23 @@ const menus: {
     description:
       'Bring the right human expertise into the work — discover, match, verify and engage.',
     groups: [
+      // /experts consolidates what were once 5 separate pages into one, banded by topic (see
+      // ExpertPhaseBand.tsx / expertGroupSlug) — these all used to point at the bare /experts
+      // URL, a repetitive no-op since every entry landed on the same top-of-page. Each now jumps
+      // to its own band.
       {
         title: 'Expert support',
         entries: [
-          ['Expert Network', 'Discover specialist support.', '/experts'],
-          ['Expert Matching', 'Find expertise relevant to your context.', '/experts'],
-          ['Verified Expertise', 'Review evidence of specialist capability.', '/experts'],
+          ['Expert Network', 'Discover specialist support.', '/experts#finding-engaging-expertise'],
+          ['Expert Matching', 'Find expertise relevant to your context.', '/experts#expert-matching'],
+          ['Verified Expertise', 'Review evidence of specialist capability.', '/experts#verification'],
         ],
       },
       {
         title: 'Capability & participation',
         entries: [
-          ['Talent & Capability', 'Connect people and capability needs.', '/experts'],
-          ['Become an Expert', 'Contribute your professional expertise.', '/experts'],
+          ['Talent & Capability', 'Connect people and capability needs.', '/experts#capability-strategy'],
+          ['Become an Expert', 'Contribute your professional expertise.', '/experts#become-an-expert'],
         ],
       },
     ],

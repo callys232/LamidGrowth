@@ -310,6 +310,21 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       return run;
     });
   }
+  // Only a workflow that has actually finished can be deleted — 'failed' isn't in `terminal`
+  // because it's still retryable (see command()'s 'retry' branch), so a failed run must be
+  // cancelled first, same as the UI's own cancel-button condition. This keeps a workspace from
+  // ever losing track of a still-live or still-recoverable authorization by deleting it.
+  async function remove(id, workspace, actor) {
+    return transaction(async () => {
+      const run = await readForUpdate(id, workspace);
+      if (!run) fail('Workflow not found.', 404);
+      if (!terminal.has(run.state))
+        fail('Only a completed, cancelled or expired workflow can be deleted. Cancel it first.');
+      if (run.principal_id !== actor) fail('Only the authorizing workspace owner can delete this workflow.', 403);
+      await db.prepare('DELETE FROM workflow_runs WHERE id = ?').run(id);
+      await log(workspace, actor, 'Workflow deleted', id, run.title);
+    });
+  }
   async function advance(id) {
     try {
       await transaction(async () => {
@@ -421,6 +436,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
     create,
     command,
     read,
+    remove,
     tick,
     list: async (workspace) =>
       (await db
@@ -444,6 +460,10 @@ export function mountWorkflows(app, store, runtime) {
   app.patch('/api/workflows/:id', requirePermission('workspace:manage'), async (req, res) =>
     res.json(await runtime.command(req.params.id, req.workspace.id, req.user.id, req.body)),
   );
+  app.delete('/api/workflows/:id', requirePermission('workspace:manage'), async (req, res) => {
+    await runtime.remove(req.params.id, req.workspace.id, req.user.id);
+    res.json({ ok: true });
+  });
   app.get('/api/notifications', async (req, res) =>
     res.json(
       (await store.records(req.workspace.id, 'notification')).filter(

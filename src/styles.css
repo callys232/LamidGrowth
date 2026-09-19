@@ -1873,7 +1873,11 @@ small {
 }
 .focus-panel {
   background: #344152;
-  color: var(--surface-alt);
+  /* Fixed, not theme-reactive — this panel's background is always dark (design-system.css pins
+     it to var(--midnight) for every theme, same as .sidebar), so its text needs the same "always
+     light" treatment .sidebar itself uses (#b9b6b1), not a token like --surface-alt that flips to
+     a dark value in dark mode and goes invisible against an already-dark background. */
+  color: #b9b6b1;
   position: relative;
   overflow: hidden;
   border-radius: 9px;
@@ -1972,6 +1976,18 @@ small {
   padding: 26px 26px 23px;
   display: flex;
   flex-direction: column;
+  transition:
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.judgment-panel:hover {
+  border-color: var(--text-muted);
+  box-shadow: 0 14px 28px rgb(13 26 43 / 0.09);
+}
+.judgment-panel:hover .judgment-icon {
+  border-color: var(--text-muted);
+  color: inherit;
+  transform: scale(1.08);
 }
 .judgment-panel > div {
   display: flex;
@@ -1983,9 +1999,13 @@ small {
   place-items: center;
   width: 31px;
   height: 31px;
-  border: 1px solid #d8cfc4;
+  border: 1px solid var(--border);
   border-radius: 50%;
   color: var(--text-muted);
+  transition:
+    transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.18s,
+    color 0.18s;
 }
 .judgment-panel .tag {
   font-size: 6px;
@@ -2020,10 +2040,22 @@ small {
   margin: 21px 0 32px;
 }
 .stat-card {
-  background: #fbfaf7;
+  background: var(--paper);
   border: 1px solid var(--border);
   border-radius: 7px;
   padding: 19px 19px 17px;
+  transition:
+    transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--text-muted);
+  box-shadow: 0 10px 24px rgb(13 26 43 / 0.08);
+}
+.stat-card:active {
+  transform: translateY(-1px) scale(0.99);
 }
 .stat-card > div {
   display: flex;
@@ -2083,9 +2115,18 @@ small {
 }
 .objective-card {
   border: 1px solid var(--border);
-  background: #fbfaf7;
+  background: var(--paper);
   border-radius: 8px;
   padding: 20px 22px;
+  transition:
+    transform 0.18s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.objective-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--text-muted);
+  box-shadow: 0 14px 28px rgb(13 26 43 / 0.09);
 }
 .objective-card-top {
   display: flex;
@@ -2192,9 +2233,16 @@ small {
   gap: 12px;
   padding: 17px 21px;
   border-bottom: 1px solid var(--border);
+  transition:
+    background 0.15s,
+    padding-left 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .action-row:hover {
   background: var(--surface-alt);
+  padding-left: 25px;
+}
+.action-row:active {
+  background: var(--border);
 }
 .action-row:last-child {
   border-bottom: 0;
@@ -2202,11 +2250,16 @@ small {
 .action-check {
   width: 17px;
   height: 17px;
-  border: 1px solid #d8cfc4;
+  border: 1px solid var(--border);
   border-radius: 50%;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  transition: transform 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.action-row:hover .action-check {
+  transform: scale(1.12);
+  border-color: var(--text-muted);
 }
 .action-check > span {
   width: 7px;
@@ -2254,6 +2307,13 @@ small {
   gap: 12px;
   padding: 15px 21px;
   border-bottom: 1px solid var(--border);
+  transition:
+    background 0.15s,
+    padding-left 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.activity-feed-row:hover {
+  background: var(--surface-alt);
+  padding-left: 25px;
 }
 .activity-feed-row:last-child {
   border-bottom: 0;
@@ -2716,16 +2776,32 @@ small {
   background: var(--surface-alt);
   padding: 25px 24px;
   position: relative;
+  transition:
+    box-shadow 0.18s,
+    border-color 0.18s;
+}
+.rhythm-nudge:hover {
+  border-color: var(--text-muted);
+  box-shadow: 0 14px 28px rgb(13 26 43 / 0.09);
+}
+.rhythm-nudge:hover .rhythm-nudge-icon {
+  border-color: var(--text-muted);
+  color: inherit;
+  transform: scale(1.08) rotate(-4deg);
 }
 .rhythm-nudge-icon {
   width: 40px;
   height: 40px;
   display: grid;
   place-items: center;
-  border: 1px solid #d8cfc4;
+  border: 1px solid var(--border);
   border-radius: 9px;
   margin-bottom: 21px;
   color: var(--text-muted);
+  transition:
+    transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.18s,
+    color 0.18s;
 }
 .rhythm-nudge .eyebrow {
   font-size: 6px;
@@ -3761,6 +3837,23 @@ small {
   padding: 45px;
   background: var(--surface);
   min-height: 230px;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+}
+/* Most "Getting started" reference cards (the embedded canonical-copy panel at the bottom of
+ * every /os/* page) are pure static text — but a few describe a real, reachable feature, and get
+ * wrapped in this on a per-page basis (see e.g. OsGovernanceDocumentPage.tsx,
+ * OsPeopleDocumentPage.tsx) so they're not big boxes that look clickable and do nothing.
+ * `display: contents` keeps the wrapping <a> from altering the existing card layout at all. */
+.section-reference-link {
+  display: contents;
+  cursor: pointer;
+}
+.section-reference-link:hover .editorial-section,
+.section-reference-link:focus-visible .editorial-section {
+  border-color: var(--text-muted);
+  box-shadow: 0 14px 28px rgb(13 26 43 / 0.09);
 }
 .editorial-number {
   font-size: 10px;

@@ -10,7 +10,8 @@ export function WorkflowsWorkflowRunsSlide({
   canManage,
   busy,
   command,
-}: Pick<ReturnType<typeof useWorkflowsPage>, 'runs' | 'state' | 'canManage' | 'busy' | 'command'>) {
+  remove,
+}: Pick<ReturnType<typeof useWorkflowsPage>, 'runs' | 'state' | 'canManage' | 'busy' | 'command' | 'remove'>) {
   return (
     <>
       {!runs.length && (
@@ -97,6 +98,17 @@ export function WorkflowsWorkflowRunsSlide({
                   onClick={() => void command(run, 'cancel')}
                 >
                   Cancel workflow
+                </Button>
+              )}
+              {['completed', 'cancelled', 'expired'].includes(run.state) && (
+                <Button
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => {
+                    if (window.confirm('Delete this workflow? This cannot be undone.')) void remove(run);
+                  }}
+                >
+                  Delete workflow
                 </Button>
               )}
             </div>

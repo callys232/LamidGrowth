@@ -1,29 +1,16 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../../../api';
-import { Button } from '../../../shared/ui/Button';
+import { Link } from 'react-router-dom';
 
+/** Used to call POST /auth/demo and drop the visitor straight into a real /os session with no
+ * account at all — a visitor "exploring the workspace" was getting real (if sample) dashboard
+ * access. Now points at /demo instead: a public page with no session that runs real tools
+ * (POST /engines/:code/demo-run — no charge, no persistence) so a visitor sees one genuine result
+ * before ever having an account, rather than a full fake workspace. */
 export function DemoAccessSlide() {
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
-  async function demo() {
-    setBusy(true);
-    try {
-      await api('/auth/demo', {});
-      navigate('/os');
-    } catch (error) {
-      setError((error as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  }
   return (
     <section className="section-wrap canonical-controls">
-      <Button onClick={demo} disabled={busy}>
+      <Link className="button button-primary" to="/demo">
         Explore the workspace
-      </Button>
-      {error && <p role="alert">{error}</p>}
+      </Link>
     </section>
   );
 }

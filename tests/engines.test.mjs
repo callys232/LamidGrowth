@@ -34,17 +34,21 @@ async function demo() {
   return result.cookie;
 }
 
-test('the engine catalog is public — readable without a session, same as billables', async () => {
-  const result = await request('/engines', undefined, undefined, 'GET');
+test('the full 248-tool catalog is public at /engines/catalog — the public-facing pages are where a user learns of everything', async () => {
+  const result = await request('/engines/catalog', undefined, undefined, 'GET');
   assert.equal(result.status, 200);
   assert.equal(result.data.count, 248);
 });
 
-test('running an engine still requires a session even though the catalog is public', async () => {
+test('the in-app engine catalog requires a session', async () => {
+  assert.equal((await request('/engines', undefined, undefined, 'GET')).status, 401);
+});
+
+test('running an engine still requires a session even though the public catalog does not', async () => {
   assert.equal((await request('/engines/f01/run', { input: {} })).status, 401);
 });
 
-test('the engine catalog lists all 248 ported diagnostic tools', async () => {
+test('an enterprise-tier workspace (the funded-test default) sees the full 248-tool catalog in-app', async () => {
   const cookie = await demo();
   const result = await request('/engines', undefined, cookie, 'GET');
   assert.equal(result.status, 200);
@@ -52,6 +56,32 @@ test('the engine catalog lists all 248 ported diagnostic tools', async () => {
   assert.ok(result.data.engines.every((e) => typeof e.pointsCost === 'number' && e.pointsCost > 0));
   assert.ok(result.data.engines.some((e) => e.code === 'F01' && e.homeEngine === 'Finance'));
   assert.ok(result.data.engines.some((e) => e.code === 'Q44' && e.kind === 'decision-quality'));
+});
+
+test("a workspace's in-app catalog is filtered to its signup context, cumulative by rank, and always includes what it's bought a bundle for", async () => {
+  const cookie = await demo();
+  const state = await request('/state', undefined, cookie, 'GET');
+  const workspaceId = state.data.workspace.id;
+
+  await store.db.prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?").run(workspaceId);
+  const individualView = await request('/engines', undefined, cookie, 'GET');
+  assert.ok(individualView.data.count > 0);
+  assert.ok(individualView.data.count < 248);
+  // Clarity (S,Q) is the Individual-rank default; Finance (SME-rank) should not appear yet.
+  assert.ok(individualView.data.engines.every((e) => e.homeEngine !== 'Finance'));
+
+  await store.db.prepare("UPDATE workspaces SET context = 'Founder' WHERE id = ?").run(workspaceId);
+  const founderView = await request('/engines', undefined, cookie, 'GET');
+  assert.ok(founderView.data.count > individualView.data.count);
+  assert.ok(founderView.data.engines.some((e) => e.homeEngine === 'Growth'));
+  assert.ok(founderView.data.engines.every((e) => e.homeEngine !== 'Finance'));
+
+  // Buying access to a Finance engine surfaces it in the catalog even though Founder < SME.
+  await store.db
+    .prepare("INSERT INTO workspace_agent_entitlements VALUES (?, 'f01', 'bundle:test', ?)")
+    .run(workspaceId, new Date().toISOString());
+  const withBundle = await request('/engines', undefined, cookie, 'GET');
+  assert.ok(withBundle.data.engines.some((e) => e.code === 'F01'));
 });
 
 test('a financial-kind run returns arithmetically correct figures and appears on the public billables page', async () => {

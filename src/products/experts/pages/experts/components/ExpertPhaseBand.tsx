@@ -5,6 +5,17 @@ type Section = (typeof content.sections)[number];
 
 export type ExpertGroup = { name: string; sections: Section[] };
 
+/** Used as the band's anchor id so the site nav's 5 "Experts" entries (which all used to point at
+ * the bare /experts URL — a repetitive no-op, since this page consolidates what were once 5
+ * separate pages) can each jump to their real section instead. See PublicHeader.tsx. */
+export function expertGroupSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/&/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 /** Splits the page's flat section list into its real groups — every section that carries a
  * `group` field opens a new phase; the rest belong to whichever phase is currently open. Order
  * and membership come entirely from content.json. */
@@ -46,7 +57,7 @@ export function ExpertPhaseBand({
   const [intro, ...rest] = group.sections;
   const [introTitle, ...introBody] = intro.paragraphs;
   return (
-    <section className={`expert-phase expert-phase-${tone}`}>
+    <section id={expertGroupSlug(group.name)} className={`expert-phase expert-phase-${tone}`}>
       <div className="expert-container">
         <div className="expert-phase-intro">
           <span className="expert-phase-index" aria-hidden="true">

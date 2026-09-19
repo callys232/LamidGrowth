@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import pages from './content/catalog';
 import { AuthPage } from './products/accounts/pages/AuthPage';
+import { DemoToolsPage } from './products/website/pages/demo/DemoToolsPage';
 import { PasswordRecovery } from './products/accounts/pages/PasswordRecovery';
 import { ResetPassword } from './products/accounts/pages/ResetPassword';
 import { VerifyAccount } from './products/accounts/pages/VerifyAccount';
@@ -93,6 +94,14 @@ export function App() {
           element={
             <ContentPage>
               <AuthPage key="login" login />
+            </ContentPage>
+          }
+        />
+        <Route
+          path="/demo"
+          element={
+            <ContentPage>
+              <DemoToolsPage />
             </ContentPage>
           }
         />

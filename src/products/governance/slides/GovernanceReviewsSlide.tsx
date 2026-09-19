@@ -7,7 +7,7 @@ export function GovernanceReviewsSlide({
 }: Pick<ReturnType<typeof useGovernancePage>, 'pending'>) {
   return (
     <>
-      <section className="dashboard-section">
+      <section className="dashboard-section" id="pending-approvals">
         <div className="panel-heading">
           <div>
             <h2>Ready for your judgment</h2>

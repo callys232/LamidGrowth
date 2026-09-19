@@ -123,14 +123,14 @@ em,
 .judgment-panel,
 .review-callout,
 .preview-review {
-  background: #eeeae5;
-  border-color: var(--sandstone);
+  background: var(--surface-alt);
+  border-color: var(--border);
 }
 .workspace-layout .judgment-panel p,
 .workspace-layout .judgment-panel .tag,
 .workspace-layout .judgment-panel > a,
 .workspace-layout .review-callout {
-  color: var(--graphite);
+  color: var(--text-muted);
 }
 .cycle-card.sage,
 .cycle-card.sand,

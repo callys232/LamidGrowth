@@ -20,10 +20,7 @@ export function VerifyAccountVerificationSlide(page: ReturnType<typeof useVerify
           </Link>
         ) : (
           <>
-            <p>
-              Enter the six-digit code from your email. It expires in 10 minutes. Eligible
-              first-time accounts receive 100 welcome points after verification.
-            </p>
+            <p>Enter the six-digit code from your email.</p>
             {page.params.get('token') ? (
               <Button disabled={page.busy} onClick={() => void page.verify()}>
                 Verify account
