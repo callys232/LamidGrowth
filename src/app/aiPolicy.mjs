@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { lockAIQuota } from './reliability.mjs';
+import { scopeAIPayload } from './aiRules.mjs';
 
 const deny = (message) => {
   throw Object.assign(new Error(message), { status: 403 });
@@ -53,19 +54,31 @@ export async function reserveAIUsage(store, workspaceId, principalId) {
 }
 
 /** Wrap every Companion provider call, including document agents, with the same policy. */
-export function scopedProvider(store, provider, workspaceId, principalId, consent) {
+export function scopedProvider(
+  store,
+  provider,
+  workspaceId,
+  principalId,
+  consent,
+  feature = 'specialists',
+) {
   if (!provider) return null;
   return {
     ...provider,
     async review(payload) {
       if (consent !== true)
         deny('Confirm consent to share the relevant workspace context with external AI.');
+      const policy = await authorizeExternalAI(store, workspaceId, principalId);
+      payload = scopeAIPayload(policy, payload, feature);
       if (Buffer.byteLength(JSON.stringify(payload)) > 60000)
         throw Object.assign(new Error('Select less context for this request.'), { status: 413 });
       const usage = await store.transaction(() => reserveAIUsage(store, workspaceId, principalId));
       const controller = new AbortController();
       let timer;
       try {
+        const beforeSend = await authorizeExternalAI(store, workspaceId, principalId);
+        if (beforeSend.version !== policy.version)
+          deny('Your AI rules changed before the request was sent.');
         const result = await Promise.race([
           provider.review(payload, { signal: controller.signal }),
           new Promise((_, reject) => {
@@ -75,7 +88,11 @@ export function scopedProvider(store, provider, workspaceId, principalId, consen
             }, 45000);
           }),
         ]);
-        await authorizeExternalAI(store, workspaceId, principalId);
+        const latest = await authorizeExternalAI(store, workspaceId, principalId);
+        if (latest.version !== policy.version)
+          deny(
+            'Your AI rules changed while this response was being prepared. Request it again under the current rules.',
+          );
         const ids = new Set(payload.sources.map((source) => source.id));
         if ((result.review.evidenceIds || []).some((id) => !ids.has(id)))
           throw new Error('AI returned evidence outside the selected context.');

@@ -69,11 +69,33 @@ export function useIntelligencePage({ settings = false }: { settings?: boolean }
           enabled: form.get('enabled') === 'on',
           dailyLimit: Number(form.get('dailyLimit')),
           version: policy.version,
+          rules: {
+            ...Object.fromEntries(
+              [
+                'pathways',
+                'reviews',
+                'specialists',
+                'documents',
+                'deliverableReviews',
+                'workflowCommands',
+                'humanHandoffs',
+              ].map((key) => [key, form.get(key) === 'on']),
+            ),
+            allowedSources: form.getAll('allowedSources'),
+            maxPointsPerRequest: Number(form.get('maxPointsPerRequest')),
+            instructions: form.get('instructions'),
+            changes: Object.fromEntries(
+              ['action.prepare', 'progress.snapshot', 'review.reminder'].map((key) => [
+                key,
+                form.get(key),
+              ]),
+            ),
+          },
         },
         'PATCH',
       );
       await load();
-      notify('AI review settings saved.');
+      notify('Your AI rules are saved and enforced.');
     } catch (error) {
       setError((error as Error).message);
       await load().catch(() => {});

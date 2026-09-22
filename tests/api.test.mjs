@@ -634,6 +634,62 @@ test('guided plans save an objective and first action together', async () => {
   assert.equal(state.objectives.length, before.objectives.length + 1);
   assert.equal(state.actions.length, before.actions.length + 1);
 });
+test('goal pathways preview without writes and save selected steps exactly once', async () => {
+  const cookie = await demo();
+  const before = (await request('/state', undefined, cookie)).data;
+  const objective = { title: 'Grow a small business', context: 'Founder', priority: 'Medium', success: 'Three customers', constraints: 'One afternoon per week' };
+  assert.equal((await request('/plans/preview', { objective })).status, 401);
+  const preview = await request('/plans/preview', { objective }, cookie);
+  assert.equal(preview.status, 200);
+  assert.equal(preview.data.steps.length, 5);
+  const afterPreview = (await request('/state', undefined, cookie)).data;
+  assert.equal(afterPreview.objectives.length, before.objectives.length);
+  assert.equal(afterPreview.actions.length, before.actions.length);
+  for (const pathway of [[{ title: '   ' }], Array(11).fill({ title: 'Too many' }), [{ title: 'Valid', notes: 'x'.repeat(5001) }]]) {
+    assert.equal((await request('/plans', { objective, pathway }, cookie)).status, 400);
+  }
+  const input = { objective, pathway: [preview.data.steps[0], { title: 'Interview two customers', notes: 'Ask about their current workaround.' }] };
+  const headers = { 'Idempotency-Key': 'pathway-save-retry' };
+  const saved = await request('/plans', input, cookie, 'POST', headers);
+  assert.equal(saved.status, 201);
+  const replay = await request('/plans', input, cookie, 'POST', headers);
+  assert.deepEqual(replay.data, saved.data);
+  assert.equal(saved.data.actions.length, 2);
+  assert.deepEqual(saved.data.actions.map(action => action.pathwayOrder), [1, 2]);
+  assert.ok(saved.data.actions.every(action => action.objectiveId === saved.data.objective.id && action.status === 'Planned'));
+  const persisted = (await request('/state', undefined, cookie)).data;
+  assert.equal(persisted.objectives.length, before.objectives.length + 1);
+  assert.equal(persisted.actions.length, before.actions.length + 2);
+  const foreign = (await request('/state', undefined, await demo())).data;
+  assert.ok(!foreign.actions.some(action => action.objectiveId === saved.data.objective.id));
+  const action = saved.data.actions[0];
+  const started = await request(`/actions/${action.id}`, { version: action.version, status: 'In progress' }, cookie, 'PATCH');
+  assert.equal(started.status, 200);
+  const completed = await request(`/actions/${action.id}`, { version: started.data.version, status: 'Done' }, cookie, 'PATCH');
+  assert.equal(completed.status, 200);
+  assert.equal(completed.data.pathwayOrder, 1);
+});
+
+test('goal deletion requires confirmation, isolates workspaces and removes linked actions', async () => {
+  const cookie = await demo();
+  const other = await demo();
+  const saved = await request('/plans', { objective: { title: 'Delete this goal', context: 'Individual', priority: 'Medium' }, pathway: [{ title: 'Linked action' }] }, cookie);
+  const path = `/objectives/${saved.data.objective.id}`;
+  assert.equal((await request(path, { version: 1, confirm: true }, other, 'DELETE')).status, 404);
+  assert.equal((await request(path, { version: 1 }, cookie, 'DELETE')).status, 400);
+  assert.equal((await request(path, { version: 2, confirm: true }, cookie, 'DELETE')).status, 409);
+  const workflow = await request('/workflows', { title: 'Unfinished goal work', objectiveId: saved.data.objective.id, expiresAt: new Date(Date.now() + 86400000).toISOString(), steps: [{ id: 'inspect', toolId: 'context.snapshot' }] }, cookie);
+  assert.equal(workflow.status, 201);
+  assert.equal((await request(path, { version: 1, confirm: true }, cookie, 'DELETE')).status, 409);
+  assert.equal((await request(`/workflows/${workflow.data.id}`, { version: workflow.data.version, command: 'cancel' }, cookie, 'PATCH')).status, 200);
+  assert.equal((await request(path, { version: 1, confirm: true }, cookie, 'DELETE')).status, 200);
+  const state = (await request('/state', undefined, cookie)).data;
+  assert.ok(!state.objectives.some(goal => goal.id === saved.data.objective.id));
+  assert.ok(!state.actions.some(action => action.objectiveId === saved.data.objective.id));
+  assert.equal((await request(`/actions/${saved.data.actions[0].id}`, { version: 1, status: 'In progress' }, cookie, 'PATCH')).status, 404);
+  assert.equal((await request('/actions', { title: 'Cannot revive', objectiveId: saved.data.objective.id, owner: 'Owner' }, cookie)).status, 404);
+});
+
 test('objective revisions are isolated, versioned, and cannot conceal unfinished actions', async () => {
   const cookie = await demo();
   const other = await demo();

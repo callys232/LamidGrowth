@@ -12,6 +12,7 @@ export function CompanionContextStep({
   setSuccess,
   constraints,
   setConstraints,
+  prepareReview,
 }: Pick<
   ReturnType<typeof useCompanionPage>,
   | 'step'
@@ -23,6 +24,7 @@ export function CompanionContextStep({
   | 'setSuccess'
   | 'constraints'
   | 'setConstraints'
+  | 'prepareReview'
 >) {
   return (
     <>
@@ -39,7 +41,7 @@ export function CompanionContextStep({
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setStep(2);
+              void prepareReview();
             }}
           >
             <Field label="The situation">
@@ -74,7 +76,7 @@ export function CompanionContextStep({
                 <ArrowLeft size={15} /> Back
               </Button>
               <Button type="submit">
-                Choose the next step <ArrowRight size={16} />
+                Explore a pathway <ArrowRight size={16} />
               </Button>
             </div>
           </form>

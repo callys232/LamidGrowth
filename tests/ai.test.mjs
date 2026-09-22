@@ -13,6 +13,38 @@ const suggestion = (id) => ({
   evidenceIds: [id],
 });
 
+test('AI goal pathways follow human data and feature rules without creating work', async (t) => {
+  let received;
+  let calls = 0;
+  const f = await fixture(t, { name: 'test', model: 'test', async review(payload) {
+    calls++; received = payload;
+    return { review: suggestion('draft-goal') };
+  } });
+  const rules = { allowedSources: ['objective'], instructions: 'Use short, low-cost experiments.' };
+  assert.equal((await f.call('/ai/settings', { enabled: true, dailyLimit: 10, version: 0, rules }, f.cookie, 'PATCH')).status, 200);
+  const objective = { title: 'Learn research skills', description: 'Starting from scratch', success: 'Finish one study', constraints: 'Two hours a week', context: 'Professional', priority: 'Medium' };
+  const input = { objective, mode: 'ai', consent: true, rulesVersion: 1 };
+  assert.equal((await f.call('/plans/preview', { ...input, consent: false }, f.cookie)).status, 403);
+  assert.equal(calls, 0);
+  const before = (await f.call('/state', undefined, f.cookie)).data;
+  const result = await f.call('/plans/preview', input, f.cookie);
+  assert.equal(result.status, 200, JSON.stringify(result.data));
+  assert.equal(result.data.source, 'ai');
+  assert.equal(result.data.steps[0].title, 'Validate the requirement');
+  assert.equal(received.sources.length, 1);
+  assert.deepEqual(received.sources[0].data.constraints, objective.constraints);
+  assert.equal(received.planningPreferences, rules.instructions);
+  const after = (await f.call('/state', undefined, f.cookie)).data;
+  assert.equal(after.objectives.length, before.objectives.length);
+  assert.equal(after.actions.length, before.actions.length);
+  assert.equal((await f.call('/ai/settings', { enabled: true, dailyLimit: 10, version: 1, rules: { ...rules, pathways: false } }, f.cookie, 'PATCH')).status, 200);
+  assert.equal((await f.call('/plans/preview', { ...input, rulesVersion: 2 }, f.cookie)).status, 403);
+  assert.equal(calls, 1);
+  assert.equal((await f.call('/ai/settings', { enabled: true, dailyLimit: 10, version: 2, rules: { allowedSources: [] } }, f.cookie, 'PATCH')).status, 200);
+  assert.equal((await f.call('/plans/preview', { ...input, rulesVersion: 3 }, f.cookie)).status, 403);
+  assert.equal(calls, 1);
+});
+
 test(
   'Deep Review and Companion share the final workspace and global quota slots',
   { timeout: 300000 },

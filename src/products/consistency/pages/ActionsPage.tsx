@@ -15,6 +15,9 @@ export function ActionsPage(props: { today?: boolean; workflows?: boolean }) {
         newAction={page.newAction}
       />
       <ActionsFiltersSlide
+        objectiveId={page.objectiveId}
+        setObjectiveId={page.setObjectiveId}
+        state={page.state}
         filter={page.filter}
         setFilter={page.setFilter}
         statuses={page.statuses}

@@ -76,6 +76,7 @@ const navigation = [
   ['Engines', '/os/engines', Cpu],
   ['Guided Scoping', '/os/scoping/new', Wand2],
   ['Learning', '/os/learning', GraduationCap],
+  ['AI Settings', '/os/settings/ai', Settings2],
 ] as const;
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);
@@ -290,7 +291,7 @@ export function WorkspaceShell() {
               Your work. Your judgment.<small>You decide what happens next.</small>
             </span>
           </div>
-          <NavLink to="/os/settings" className="sidebar-link">
+          <NavLink to="/os/settings" end className="sidebar-link">
             <Settings2 size={18} />
             Settings
           </NavLink>

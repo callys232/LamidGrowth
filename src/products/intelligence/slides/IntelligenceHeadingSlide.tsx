@@ -8,7 +8,7 @@ export function IntelligenceHeadingSlide({
     <>
       <PageHeading
         eyebrow={settings ? 'AI & CONTEXT CONTROLS' : 'INTELLIGENCE'}
-        title={settings ? 'Control external AI reviews' : 'Review an objective with AI'}
+        title={settings ? 'Set the rules for your AI' : 'Review an objective with AI'}
         description="Choose the context to share and keep decisions in your hands."
       />
     </>

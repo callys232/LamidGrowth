@@ -8,7 +8,7 @@ import { openStore, verifyPassword } from '../../server/store.mjs';
 import { permissionsFor, requirePermission } from './policy.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
-import { mountAI, defaultAiProvider } from './ai.mjs';
+import { mountAI, defaultAiProvider, reviewSchema as aiReviewSchema } from './ai.mjs';
 import { createAgentRuntime, mountAgents, agentManifests } from './agents.mjs';
 import { mountModelRegistry } from './models.mjs';
 import { mountProjects } from './projects.mjs';
@@ -42,6 +42,9 @@ import { mountEstimator } from './estimator.mjs';
 import { JOB_CATEGORIES, PROJECT_TYPES } from './jobTaxonomy.mjs';
 import { wordSet, scoreBid } from './text.mjs';
 import { errorDetails } from './errorLog.mjs';
+import { suggestGoalPathway } from './goalPathways.mjs';
+import { scopedProvider } from './aiPolicy.mjs';
+import { readAIRules, enforceFeature } from './aiRules.mjs';
 
 const text = z.string().trim().min(1).max(500);
 const longText = z.string().trim().max(5000).default('');
@@ -1131,14 +1134,41 @@ export async function createApp({
     });
     res.status(201).json(result);
   });
+  app.post('/api/plans/preview', async (req, res) => {
+    const input = z.object({
+      objective: objectiveSchema,
+      mode: z.enum(['template', 'ai']).default('template'),
+      consent: z.boolean().default(false),
+      rulesVersion: z.number().int().nonnegative().optional(),
+    }).strict().parse(req.body);
+    if (input.mode === 'template') return res.json(suggestGoalPathway(input.objective));
+    const policy = await readAIRules(store, req.workspace.id);
+    enforceFeature(policy, 'pathways');
+    if (input.rulesVersion !== policy.version) return res.status(409).json({ error: 'Your AI rules changed. Reload before requesting suggestions.' });
+    const provider = scopedProvider(store, aiProvider, req.workspace.id, req.user.id, input.consent, 'pathways');
+    if (!provider) return res.status(503).json({ error: 'AI is not configured. The free template remains available.' });
+    const result = await provider.review({
+      question: 'Help clarify this goal and propose an ordered, feasible pathway of up to five concrete actions. Respect the stated constraints and success measure. Identify missing information as assumptions or questions; do not invent resources, dates, or results. Follow the user planningPreferences when drafting suggestions. Return advice only.',
+      sources: [{ id: 'draft-goal', version: 1, kind: 'objective', data: input.objective }],
+    });
+    const review = aiReviewSchema.parse(result.review);
+    if (!review.suggestions.length) return res.status(422).json({ error: 'AI did not suggest any steps. Refine the goal or use the template.' });
+    await log(req.workspace.id, req.user.name, 'AI pathway suggested', req.workspace.id, `Rules version ${policy.version}; consent recorded; no goal or actions changed.`);
+    res.json({ source: 'ai', approach: review.summary, assumptions: review.assumptions, rulesVersion: policy.version,
+      steps: review.suggestions.map(item => ({ title: item.title, notes: item.rationale })) });
+  });
   app.post('/api/plans', async (req, res) => {
     const input = z
-      .object({ objective: objectiveSchema, nextAction: z.string().trim().max(500).default('') })
+      .object({
+        objective: objectiveSchema,
+        nextAction: z.string().trim().max(500).default(''),
+        pathway: z.array(z.object({ title: text, notes: longText }).strict()).max(10).default([]),
+      })
       .strict()
       .parse(req.body);
     if (input.objective.status === 'Complete')
       return res.status(400).json({ error: 'New plans cannot start complete.' });
-    const result = await transaction(async () => {
+    const result = await replayable(req, 'create-plan', input, async () => {
       const objective = await insert(req.workspace.id, 'objective', input.objective);
       await log(
         req.workspace.id,
@@ -1147,22 +1177,47 @@ export async function createApp({
         objective.id,
         input.objective.title,
       );
-      const action = input.nextAction
-        ? await insert(req.workspace.id, 'action', {
-            title: input.nextAction,
-            objectiveId: objective.id,
-            status: 'Planned',
-            owner: req.user.name,
-            requiresApproval: false,
-            dueDate: '',
-            notes: '',
-          })
-        : null;
-      if (action)
-        await log(req.workspace.id, req.user.name, 'Action created', action.id, input.nextAction);
-      return { objective, action };
+      const steps = [
+        ...(input.nextAction ? [{ title: input.nextAction, notes: '' }] : []),
+        ...input.pathway,
+      ];
+      const actions = [];
+      for (const [index, step] of steps.entries()) {
+        const action = await insert(req.workspace.id, 'action', {
+          title: step.title,
+          objectiveId: objective.id,
+          status: 'Planned',
+          owner: req.user.name,
+          requiresApproval: false,
+          dueDate: '',
+          notes: step.notes,
+          pathwayOrder: index + 1,
+        });
+        actions.push(action);
+        await log(req.workspace.id, req.user.name, 'Action created', action.id, step.title);
+      }
+      return { objective, action: actions[0] || null, actions };
     });
     res.status(201).json(result);
+  });
+  app.delete('/api/objectives/:id', requirePermission('work:write'), async (req, res) => {
+    const input = z.object({ version: z.number().int().positive(), confirm: z.literal(true) }).strict().parse(req.body);
+    await transaction(async () => {
+      // Match the workflow worker's lock order before hiding its scoped objective.
+      const runs = await db.prepare('SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ? FOR UPDATE').all(req.params.id, req.workspace.id);
+      if (runs.some(run => !['completed', 'cancelled', 'expired'].includes(run.state)))
+        throw Object.assign(new Error('Cancel unfinished workflows for this goal before deleting it.'), { status: 409 });
+      const row = await db.prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE").get(req.params.id, req.workspace.id);
+      if (!row) throw Object.assign(new Error('Goal not found.'), { status: 404 });
+      const concurrentRuns = await db.prepare('SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ?').all(row.id, req.workspace.id);
+      if (concurrentRuns.some(run => !['completed', 'cancelled', 'expired'].includes(run.state)))
+        throw Object.assign(new Error('Cancel unfinished workflows for this goal before deleting it.'), { status: 409 });
+      if (row.version !== input.version) throw Object.assign(new Error('This goal changed. Reload and review it before deleting.'), { status: 409 });
+      await db.prepare("UPDATE records SET kind = 'deleted_action', version = version + 1 WHERE workspace_id = ? AND kind = 'action' AND data::jsonb ->> 'objectiveId' = ?").run(req.workspace.id, row.id);
+      await db.prepare("UPDATE records SET kind = 'deleted_objective', version = version + 1 WHERE id = ?").run(row.id);
+      await log(req.workspace.id, req.user.name, 'Goal deleted', row.id, 'Goal and linked actions removed from active views; history retained.');
+    });
+    res.json({ ok: true });
   });
   app.patch('/api/objectives/:id', async (req, res) => {
     const { version, ...changes } = objectiveSchema
@@ -1214,7 +1269,7 @@ export async function createApp({
     const result = await transaction(async () => {
       const objective = await db
         .prepare(
-          "SELECT data FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective'",
+          "SELECT data FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE",
         )
         .get(input.objectiveId, req.workspace.id);
       if (!objective) throw Object.assign(new Error('Objective not found.'), { status: 404 });

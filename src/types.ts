@@ -22,6 +22,7 @@ export interface Objective {
   createdAt: string;
 }
 export interface Action {
+  pathwayOrder?: number;
   id: string;
   title: string;
   objectiveId: string;

@@ -8,6 +8,7 @@ import { scopedProvider } from './aiPolicy.mjs';
 import { chooseAgent, guidance } from './companionRouting.mjs';
 import { mountCompanionTasks } from './companionTasks.mjs';
 import { hasToolAccess } from './entitlements.mjs';
+import { readAIRules, enforceFeature } from './aiRules.mjs';
 
 const messageInput = z
   .object({
@@ -565,7 +566,7 @@ const agents = {
           .get(run.objective_id, ctx.workspace.id);
         if (objectiveRow) body.objectiveVersion = objectiveRow.version;
       }
-      const updated = await workflowRuntime.command(workflowId, ctx.workspace.id, ctx.principal.id, body);
+      const updated = await workflowRuntime.command(workflowId, ctx.workspace.id, ctx.principal.id, body, { fromCompanion: true });
       return {
         response: `Workflow "${updated.title}" is now ${updated.state}.`,
         toolCalls: [{ toolId: 'workflow.command', input: body }],
@@ -624,6 +625,9 @@ export function createAgentRuntime(store, deps) {
     const previous = await db.prepare('SELECT agent_id FROM agent_runs WHERE workspace_id = ? AND principal_id = ? ORDER BY created_at DESC LIMIT 1').get(workspace.id, principal.id);
     const agentId = input.agentId && input.agentId !== 'auto' ? input.agentId : route(input.message, { previousAgent: previous?.agent_id, page: input.page, context: workspace.context });
     const agent = agentFor(agentId);
+    const feature = agentId === 'workflow-orchestration' ? 'workflowCommands'
+      : ['proposal-drafter', 'scope-builder', 'sow-builder', 'brief-builder', 'deliverable-builder', 'acceptance-builder', 'change-order'].includes(agentId) ? 'documents' : 'specialists';
+    if (agent.points > 0) enforceFeature(await readAIRules(store, workspace.id), feature, agent.points);
     const membership = await db.prepare("SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ? AND status = 'active'").get(workspace.id, principal.id);
     if (!membership || !permissionsFor(membership.role).includes(permissionForBand[agent.band] || 'workspace:manage'))
       throw Object.assign(new Error('Your workspace role does not allow this specialist.'), { status: 403 });
@@ -696,7 +700,7 @@ export function createAgentRuntime(store, deps) {
     });
     if (priorResult) return priorResult;
     try {
-      const result = await agent.execute({ store, principal, workspace }, input, { ...deps, aiProvider: scopedProvider(store, deps.aiProvider, workspace.id, principal.id, input.consent) });
+      const result = await agent.execute({ store, principal, workspace }, input, { ...deps, aiProvider: scopedProvider(store, deps.aiProvider, workspace.id, principal.id, input.consent, feature) });
       const response = await transaction(async () => {
         if ((await db.prepare('SELECT status FROM agent_runs WHERE id = ? FOR UPDATE').get(runId))?.status !== 'running') throw Object.assign(new Error('This run was interrupted. Its result cannot be accepted.'), { status: 409 });
         await db.prepare('UPDATE agent_runs SET output = ?, status = ?, completed_at = ? WHERE id = ?').run(
@@ -711,7 +715,7 @@ export function createAgentRuntime(store, deps) {
       // The agent still answers — this only additionally raises a handoff so a qualified human
       // can pick up what the agent should not decide alone. Keyword-based, same list the scoping
       // risk-band classifier uses, so "needs a licensed human" reads the same way everywhere.
-      if (REGULATED_KEYWORDS.some((word) => input.message.toLowerCase().includes(word))) {
+      if ((await readAIRules(store, workspace.id)).rules.humanHandoffs && REGULATED_KEYWORDS.some((word) => input.message.toLowerCase().includes(word))) {
         const handoffId = randomUUID();
         await db.prepare('INSERT INTO handoffs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
           handoffId,

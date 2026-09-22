@@ -7,6 +7,7 @@ import { Field } from '../../../shared/ui/Field';
 import { Modal } from '../../../shared/ui/Modal';
 import type { Objective } from '../../../types';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
+import { DeleteGoalButton } from './DeleteGoalButton';
 export function ObjectiveEditor({
   objective,
   onClose,
@@ -99,6 +100,7 @@ export function ObjectiveEditor({
           </Button>
         </div>
       </form>
+      <DeleteGoalButton objective={objective} onDeleted={onClose} />
     </Modal>
   );
 }

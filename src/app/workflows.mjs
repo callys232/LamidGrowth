@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
+import { readAIRules, enforceFeature } from './aiRules.mjs';
 
 const emptyInput = z.object({}).strict();
 const title = z.string().trim().min(1).max(500);
@@ -188,7 +189,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
   }
   async function objectiveFor(run) {
     const row = await db
-      .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective'")
+      .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE")
       .get(run.objective_id, run.workspace_id);
     if (!row) fail('The scoped objective is no longer available.');
     return { ...JSON.parse(row.data), id: row.id, version: row.version };
@@ -260,7 +261,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       return run;
     });
   }
-  async function command(id, workspace, actor, body) {
+  async function command(id, workspace, actor, body, { fromCompanion = false } = {}) {
     const input = commandSchema.parse(body);
     return transaction(async () => {
       const run = await readForUpdate(id, workspace);
@@ -291,6 +292,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         if (input.objectiveVersion !== objectiveVersion)
           fail('The objective changed or was not reviewed. Reload its context before approving.');
         step.approval = {
+          policyVersion: (await readAIRules(store, workspace)).version,
           actor,
           at: new Date(now()).toISOString(),
           reviewedVersion: run.version,
@@ -299,6 +301,10 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         run.state = 'running';
       } else if (input.command === 'cancel') run.state = 'cancelled';
       else fail('This workflow command is not allowed in its current state.');
+      if (fromCompanion) {
+        await db.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get(`ai-policy:${workspace}`);
+        enforceFeature(await readAIRules(store, workspace), 'workflowCommands', 5);
+      }
       await persist(run);
       await log(
         workspace,
@@ -357,9 +363,20 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         if (!tool || step.toolVersion !== '1.0.0')
           fail('The registered tool version is unavailable.');
         const objective = await objectiveFor(run);
+        await db.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get(`ai-policy:${run.workspace_id}`);
+        const policy = await readAIRules(store, run.workspace_id);
+        const changeMode = policy.rules.changes[step.toolId] || 'block';
+        if (tool.writes && changeMode === 'block') {
+          run.state = 'paused';
+          step.approval = null;
+          await persist(run, 'Your AI rules block this change. Review AI Settings before resuming.');
+          await log(run.workspace_id, principal.name, 'Workflow blocked by AI rules', run.id, step.toolId);
+          return;
+        }
         if (
           tool.writes &&
-          (!step.approval || step.approval.objectiveVersion !== objective.version)
+          changeMode !== 'allow' &&
+          (!step.approval || step.approval.objectiveVersion !== objective.version || (step.approval.policyVersion || 0) !== policy.version)
         ) {
           step.approval = null;
           run.state = 'needs_approval';

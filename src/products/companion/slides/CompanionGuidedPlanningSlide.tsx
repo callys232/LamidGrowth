@@ -22,6 +22,18 @@ export function CompanionGuidedPlanningSlide({
   error,
   busy,
   save,
+  pathway,
+  setPathway,
+  approach,
+  previewing,
+  prepareReview,
+  savedId,
+  reset,
+  aiPolicy,
+  consent,
+  setConsent,
+  source,
+  assumptions,
 }: Pick<
   ReturnType<typeof useCompanionPage>,
   | 'step'
@@ -39,6 +51,18 @@ export function CompanionGuidedPlanningSlide({
   | 'error'
   | 'busy'
   | 'save'
+  | 'pathway'
+  | 'setPathway'
+  | 'approach'
+  | 'previewing'
+  | 'prepareReview'
+  | 'savedId'
+  | 'reset'
+  | 'aiPolicy'
+  | 'consent'
+  | 'setConsent'
+  | 'source'
+  | 'assumptions'
 >) {
   return (
     <>
@@ -62,6 +86,7 @@ export function CompanionGuidedPlanningSlide({
               setTitle={setTitle}
             />
             <CompanionContextStep
+              prepareReview={prepareReview}
               step={step}
               title={title}
               setStep={setStep}
@@ -73,6 +98,16 @@ export function CompanionGuidedPlanningSlide({
               setConstraints={setConstraints}
             />
             <CompanionPlanReviewStep
+              aiPolicy={aiPolicy}
+              consent={consent}
+              setConsent={setConsent}
+              source={source}
+              assumptions={assumptions}
+              pathway={pathway}
+              setPathway={setPathway}
+              approach={approach}
+              previewing={previewing}
+              prepareReview={prepareReview}
               step={step}
               title={title}
               context={context}
@@ -85,7 +120,7 @@ export function CompanionGuidedPlanningSlide({
               busy={busy}
               save={save}
             />
-            <CompanionCompletionStep step={step} />
+            <CompanionCompletionStep step={step} savedId={savedId} error={error} reset={reset} />
           </div>
         </section>
         <CompanionContextPanel step={step} />

@@ -35,8 +35,8 @@ export function CompanionContextPanel({ step }: Pick<ReturnType<typeof useCompan
           <ShieldCheck size={20} />
           <strong>Your judgment comes first.</strong>
           <p>
-            Nothing is saved until you choose. No external systems are contacted and no work runs in
-            the background.
+            Nothing is saved until you choose. External AI runs only when you request it and consent,
+            within your AI rules. Suggestions do not execute work.
           </p>
         </div>
       </aside>

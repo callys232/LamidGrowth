@@ -303,7 +303,7 @@ export function mountProjects(app, store, deps) {
         `${submission.notes} ${assets.map((asset) => `${asset.url} ${asset.kind}`).join(' ')}`,
       );
 
-      const provider = consent ? scopedProvider(store, deps.aiProvider, project.workspace_id, req.user.id, consent) : null;
+      const provider = consent ? scopedProvider(store, deps.aiProvider, project.workspace_id, req.user.id, consent, 'deliverableReviews') : null;
       const results = [];
       let aiCalls = 0;
       for (const criterion of criteria) {

@@ -1,9 +1,13 @@
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { useCompanionPage } from '../hooks/useCompanionPage';
+import { Button } from '../../../shared/ui/Button';
 export function CompanionCompletionStep({
   step,
-}: Pick<ReturnType<typeof useCompanionPage>, 'step'>) {
+  savedId,
+  error,
+  reset,
+}: Pick<ReturnType<typeof useCompanionPage>, 'step' | 'savedId' | 'error' | 'reset'>) {
   return (
     <>
       {step === 3 && (
@@ -13,10 +17,17 @@ export function CompanionCompletionStep({
             A clearer direction.
             <br />A concrete next step.
           </h2>
-          <p>Your objective is saved in Clarity. Your context will be here when you return.</p>
-          <Link className="button button-primary" to="/os/clarity">
-            See your objective <ArrowUpRight size={16} />
+          <p>
+            Your goal is saved in Clarity. Your chosen steps are linked actions. Follow their
+            progress below, now or when you return.
+          </p>
+          {error && <p role="alert">{error}</p>}
+          <Link className="button button-primary" to={`/os/consistency?objective=${savedId}`}>
+            Follow your actions <ArrowUpRight size={16} />
           </Link>
+          <Button variant="ghost" onClick={reset}>
+            Plan another goal
+          </Button>
         </div>
       )}
     </>

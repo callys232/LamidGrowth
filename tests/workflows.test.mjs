@@ -59,6 +59,25 @@ async function setup(filename = ':memory:') {
 }
 const write = { id: 'action', toolId: 'action.prepare', input: { title: 'Prepare report' } };
 
+test('human workflow rules block writes and allow only explicitly authorized workflow steps', async () => {
+  const f = await setup();
+  try {
+    const policy = await f.store.insert(f.workspace, 'ai_policy', { enabled: false, dailyLimit: 10, rules: { workflowCommands: false, changes: { 'action.prepare': 'block' } } });
+    const run = await f.runtime.create(f.workspace, f.user, f.spec([write]));
+    await assert.rejects(() => f.runtime.command(run.id, f.workspace, f.user, { command: 'start', version: run.version }, { fromCompanion: true }), /block workflowCommands/);
+    assert.equal((await f.read(run)).state, 'draft');
+    await f.command(run, 'start');
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).state, 'paused');
+    assert.equal((await f.store.records(f.workspace, 'action')).length, 0);
+    await f.store.db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(JSON.stringify({ enabled: false, dailyLimit: 10, rules: { changes: { 'action.prepare': 'allow' } } }), policy.id);
+    await f.command(run, 'resume');
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).state, 'completed');
+    assert.equal((await f.store.records(f.workspace, 'action')).length, 1);
+  } finally { await f.store.db.close(); }
+});
+
 test('workflow changes wait for exact versioned approval and execute once', async () => {
   const f = await setup();
   try {

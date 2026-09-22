@@ -3192,6 +3192,34 @@ small {
   padding: 21px;
   margin-bottom: 24px;
 }
+.companion-pathway {
+  margin-block: 24px;
+  overflow-wrap: anywhere;
+}
+.companion-pathway ol {
+  padding-left: 24px;
+}
+.companion-pathway li {
+  margin-block: 18px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+.companion-pathway li p {
+  white-space: pre-wrap;
+}
+.companion-pathway .pathway-selection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.companion-pathway .pathway-selection input {
+  width: auto;
+}
+.companion-pathway progress {
+  width: 100%;
+}
 .plan-summary > h3 {
   font-size: 26px;
   margin: 12px 0;
@@ -3434,6 +3462,29 @@ small {
 .settings-card {
   padding: 27px;
   margin-bottom: 22px;
+}
+.settings-card.ai-rules-card form {
+  display: block;
+  max-width: 850px;
+}
+.ai-rules-card fieldset {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 18px;
+  margin: 24px 0;
+}
+.ai-rules-card legend {
+  padding-inline: 8px;
+  font-weight: 600;
+}
+.ai-rules-card .checkbox-field {
+  margin-block: 12px;
+}
+.ai-rules-card p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-block: 14px;
 }
 .settings-card h2 {
   font-size: 28px;
