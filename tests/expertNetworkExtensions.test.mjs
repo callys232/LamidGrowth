@@ -9,6 +9,18 @@ before(async () => {
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     ecosystemAdminEmails: [adminEmail],
+    // The AI-human-handoff test below drives a real companion message through context-curator (a
+    // paid specialist), so it needs AI configured the way production would have it — same stub
+    // pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -33,6 +45,9 @@ async function request(path, body, cookie, method = 'POST') {
 async function signup(name, email) {
   const result = await request('/auth/signup', { name, email, password: `a-long-${name.toLowerCase()}-password`, context: 'Founder' });
   assert.equal(result.status, 201);
+  // External AI requires a verified account (see aiPolicy.mjs) — verify immediately using the
+  // dev-mode token the signup response includes, same as tests/ai.test.mjs's fixture.
+  await request('/auth/verify', { token: result.data.verificationToken }, result.cookie);
   return result.cookie;
 }
 async function makeExpert(name, email) {
@@ -153,14 +168,17 @@ test('expert teams: a team led by the engaged freelancer can be assigned to thei
 test('AI-human handoff: the Companion agent automatically raises a handoff for a regulated-sounding message', async () => {
   const client = await signup('Auto Handoff Client', 'auto-handoff-client@example.test');
   const expert = await makeExpert('Auto Handoff Expert', 'auto-handoff-expert@example.test');
+  // External AI is disabled by default (see ai.mjs); enable it for this workspace before driving
+  // a real companion message through context-curator.
+  await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, client, 'PATCH');
 
-  const plain = await request('/companion/messages', { message: 'What is going on right now?' }, client);
+  const plain = await request('/companion/messages', { message: 'What is going on right now?', consent: true }, client);
   assert.equal(plain.status, 201);
   assert.equal(plain.data.humanHandoffRequested, undefined);
 
   const regulated = await request(
     '/companion/messages',
-    { message: 'I need licensed legal review of this vendor contract before signing.' },
+    { message: 'I need licensed legal review of this vendor contract before signing.', consent: true },
     client,
   );
   assert.equal(regulated.status, 201);

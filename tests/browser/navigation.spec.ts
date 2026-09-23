@@ -20,11 +20,21 @@ test('mega menus expose options on hover and support keyboard navigation', async
   ).toHaveCount(14);
   await page.getByRole('button', { name: 'Experts', exact: true }).hover();
   // All five Experts entries link to the live consolidated /experts page now — none are
-  // "planned, not yet available" placeholders anymore.
+  // "planned, not yet available" placeholders anymore. Each jumps to its own band on that page
+  // rather than the bare /experts URL (see PublicHeader.tsx / expertGroupSlug).
   await expect(page.locator('.mega-planned')).toHaveCount(0);
   const expertsLinks = page.getByRole('region', { name: 'Experts', exact: true }).getByRole('link');
   await expect(expertsLinks).toHaveCount(5);
-  for (const link of await expertsLinks.all()) await expect(link).toHaveAttribute('href', '/experts');
+  const expertAnchors = [
+    '/experts#finding-engaging-expertise',
+    '/experts#expert-matching',
+    '/experts#verification',
+    '/experts#capability-strategy',
+    '/experts#become-an-expert',
+  ];
+  // Each anchor target's existence is verified on /experts itself, in expert-network.spec.ts.
+  const hrefs = await expertsLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+  expect(hrefs).toEqual(expertAnchors);
   await page.getByRole('button', { name: 'Resources', exact: true }).hover();
   await expect(
     page.getByRole('region', { name: 'Resources', exact: true }).getByRole('link'),

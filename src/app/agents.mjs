@@ -9,6 +9,7 @@ import { chooseAgent, guidance } from './companionRouting.mjs';
 import { mountCompanionTasks } from './companionTasks.mjs';
 import { hasToolAccess } from './entitlements.mjs';
 import { readAIRules, enforceFeature } from './aiRules.mjs';
+import { collectAgentSources } from './agentSources.mjs';
 
 const messageInput = z
   .object({
@@ -30,17 +31,7 @@ const permissionForBand = { A1: 'work:write', A2: 'workspace:manage', A3: 'works
 
 async function reviewSources(ctx, deps, useCase, question, extraKinds = []) {
   const model = await requireApprovedModel(ctx.store, useCase);
-  const [objectives, actions, ...extras] = await Promise.all([
-    ctx.store.records(ctx.workspace.id, 'objective'),
-    ctx.store.records(ctx.workspace.id, 'action'),
-    ...extraKinds.map((kind) => ctx.store.records(ctx.workspace.id, kind)),
-  ]);
-  const sources = [...objectives, ...actions, ...extras.flat()].map((record) => ({
-    id: record.id,
-    version: record.version,
-    kind: record.kind,
-    data: record,
-  }));
+  const sources = await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds);
   if (!deps.aiProvider) {
     return {
       response: `AI is not configured, so this is a recorded-data summary only: ${sources.length} item(s) on file (${

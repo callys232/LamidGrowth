@@ -7,6 +7,10 @@
   --sandstone: #d8cfc4;
   --warm-white: #fbfaf7;
   --signature-red: #c12129;
+  /* Brand red as body/label text needs more contrast on dark surfaces than the brand hue itself
+     provides (#c12129 on a dark surface measures ~2.7:1). Buttons/borders keep --signature-red
+     unchanged for brand consistency; text uses this instead. */
+  --signature-red-text: var(--signature-red);
   --structured-teal: #1ca8a8;
   --growth-green: #2e8f4e;
   --capability-purple: #6a4fbf;
@@ -54,6 +58,7 @@
     --border: #2a313c;
     --text-muted: #9aa0a6;
     --text-muted-strong: #c7ccd1;
+    --signature-red-text: #f87171;
     color: var(--ink);
     background: var(--paper);
   }
@@ -69,6 +74,7 @@
   --border: #2a313c;
   --text-muted: #9aa0a6;
   --text-muted-strong: #c7ccd1;
+  --signature-red-text: #f87171;
   color: var(--ink);
   background: var(--paper);
 }
@@ -128,7 +134,9 @@ em,
 }
 .workspace-layout .judgment-panel p,
 .workspace-layout .judgment-panel .tag,
-.workspace-layout .judgment-panel > a,
+.workspace-layout .judgment-panel > a {
+  color: var(--text-secondary);
+}
 .workspace-layout .review-callout {
   color: var(--text-muted);
 }

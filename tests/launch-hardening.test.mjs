@@ -103,6 +103,11 @@ test('Companion enforces verification, workspace opt-in and consent, with one pr
   const f = await fixture(t, { aiProvider: provider }), a = await f.signup();
   // Give an unverified account purchased-like test funds: credit availability must not bypass identity gates.
   await f.store.db.prepare('UPDATE users SET points_balance = 1000').run();
+  // context-curator is a paid specialist (65 points) gated by entitlements.mjs's hasToolAccess,
+  // a check independent of and earlier than the verification/consent/policy gates this test
+  // actually exercises — without it every call below would 403 on "not included in your plan"
+  // before ever reaching those gates, hiding what this test is meant to prove.
+  await f.store.db.prepare('UPDATE workspaces SET tier = \'enterprise\'').run();
   assert.equal((await f.call('/companion/messages', { message: 'Help me', consent: true }, a.cookie)).status, 403);
   await f.verify(a);
   assert.equal((await f.call('/companion/messages', { message: 'Help me', consent: true }, a.cookie)).status, 403);
@@ -123,18 +128,21 @@ test('revocation during a provider request rejects the late result and refunds o
   let release;
   const f = await fixture(t, { aiProvider: { name: 'test', model: 'test', async review() { await new Promise(r => { release = r; }); return { review: { summary: 'late', evidenceIds: [] } }; } } });
   const a = await f.signup(); await f.verify(a);
-  // Purchased-like fixture funding is separate from the 100-point signup incentive.
+  // Purchased-like fixture funding is separate from the welcomeRewardPoints signup incentive.
   await f.store.transaction(async () => {
     const user = await f.store.db.prepare('SELECT id FROM users WHERE email = ?').get(a.email);
     await f.store.db.prepare('UPDATE users SET points_balance = points_balance + 100 WHERE id = ?').run(user.id);
     await f.store.db.prepare("INSERT INTO points_ledger VALUES (?, ?, NULL, 100, 'test_fixture_funding', NULL, ?)").run(randomUUID(), user.id, Date.now());
   });
+  // Same entitlement grant as the concurrent-retries test above — context-curator is a paid
+  // specialist gated by entitlements.mjs, independent of the AI-rules revocation this test exercises.
+  await f.store.db.prepare('UPDATE workspaces SET tier = \'enterprise\'').run();
   await f.call('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, a.cookie, 'PATCH');
   const result = f.call('/companion/messages', { message: 'Help me', consent: true }, a.cookie);
   await waitForProvider(() => release, result);
   await f.call('/ai/settings', { enabled: false, dailyLimit: 10, version: 1 }, a.cookie, 'PATCH');
   release(); assert.equal((await result).status, 403);
-  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, 200);
+  assert.equal((await f.call('/points', undefined, a.cookie)).data.balance, welcomeRewardPoints + 100);
 });
 
 test('scheduler lease transfers to a replacement owner and stale agent charges refund once', async t => {

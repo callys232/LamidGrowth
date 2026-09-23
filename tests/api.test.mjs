@@ -1,6 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createFundedTestApp as createApp } from './support/funded-app.mjs';
+import { markDatabaseError } from '../server/databaseErrors.mjs';
 let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
@@ -46,6 +47,20 @@ async function demo() {
 test('private APIs reject unauthenticated requests', async () => {
   assert.equal((await request('/state')).status, 401);
   assert.equal((await request('/objectives', { title: 'unauthorized' })).status, 401);
+});
+
+test('database outages return 503 while liveness remains healthy', async () => {
+  const prepare = store.db.prepare;
+  store.db.prepare = () => ({ get: async () => { throw markDatabaseError(new Error('Connection terminated due to connection timeout')); } });
+  try {
+    const failed = await request('/state', undefined, 'lamid_session=unavailable');
+    assert.equal(failed.status, 503);
+    assert.equal(failed.data.code, 'DATABASE_UNAVAILABLE');
+    assert.equal(failed.headers.get('retry-after'), '3');
+    assert.ok(failed.data.requestId);
+    assert.equal((await request('/health')).status, 200);
+    assert.equal((await request('/ready')).status, 503);
+  } finally { store.db.prepare = prepare; }
 });
 test('isolated sample workspaces cannot read or change each other’s work', async () => {
   const first = await demo();

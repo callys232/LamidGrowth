@@ -72,8 +72,11 @@ test('consulting project uses the implemented workspace tools end to end', async
   await page
     .getByLabel('A meaningful outcome')
     .fill('A concise steering pack with decisions and owners.');
-  await page.getByRole('button', { name: 'Choose the next step' }).click();
+  await page.getByRole('button', { name: 'Explore a pathway' }).click();
+  const preview = page.getByRole('region', { name: 'Suggested pathway' });
+  await expect(preview).toBeVisible();
   await page.getByLabel('Your next action (optional)').fill('Draft the decision log');
+  await expect(page.getByRole('button', { name: 'Save my plan' })).toBeEnabled();
   await page.getByRole('button', { name: 'Save my plan' }).click();
   await expect(page.getByRole('heading', { name: /A clearer direction/ })).toBeVisible();
 

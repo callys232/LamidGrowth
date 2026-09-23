@@ -60,6 +60,8 @@ test(
         };
       },
     });
+    // This test compares quota reservations, so both callers must first have tool access.
+    await f.store.db.prepare("UPDATE workspaces SET tier = 'enterprise' WHERE id = ?").run(f.state.workspace.id);
     const previous = process.env.AI_GLOBAL_DAILY_LIMIT;
     t.after(() => {
       if (previous === undefined) delete process.env.AI_GLOBAL_DAILY_LIMIT;

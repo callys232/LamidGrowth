@@ -1,0 +1,38 @@
+{
+  "name": "Amara",
+  "locale": "en-NG",
+  "role": "Founder",
+  "goal": "Plan my first client project",
+  "stage": "completed evaluation",
+  "completed": [
+    "signup + verification",
+    "Clarity: objective created",
+    "Consistency: action created",
+    "Knowledge: entry saved",
+    "Rhythm: reflection saved",
+    "Companion: free starter worksheet completed",
+    "AI policy enabled",
+    "Companion: direct chat with named specialist",
+    "Commercial: job posted",
+    "Commercial: bid submitted (counterpart)",
+    "Document tool: Get a quote",
+    "Document tool: Get a budget estimate",
+    "Document tool: Scope of Work",
+    "Document tool: Statement of Work",
+    "Document tool: Client Brief",
+    "Document tool: Deliverables Checklist",
+    "Document tool: Acceptance Criteria",
+    "Commercial: manual proposal drafted (counterpart)",
+    "Awarded proposal, project created",
+    "Milestone + deliverable created",
+    "Milestone submitted for review",
+    "Milestone verified and approved",
+    "Invoice generated with downloadable PDF",
+    "Pricing: buy-points UI verified (no real purchase attempted)"
+  ],
+  "notes": [
+    "Bidding/proposal/document-tools flow: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.specialist-changeorder-card')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('.specialist-changeorder-card') with timeout 60000ms\u001b[22m\n\u001b[2m  - waiting for locator('.specialist-changeorder-card')\u001b[22m\n",
+    "Talent: no \"Save profile\" button found on page load."
+  ],
+  "pointsRemaining": 395
+}

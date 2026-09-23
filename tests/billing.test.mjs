@@ -9,6 +9,18 @@ before(async () => {
     filename: ':memory:',
     rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
     ecosystemAdminEmails: [adminEmail],
+    // The no-concierge billing test below drives a real companion message through
+    // signal-monitoring (a paid specialist), so it needs AI configured the way production would
+    // have it — same stub pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -45,7 +57,11 @@ async function signup(name, email) {
     context: 'Founder',
   });
   assert.equal(result.status, 201);
-  return result.cookie;
+  const cookie = result.cookie;
+  // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+  await request('/auth/verify', { token: result.data.verificationToken }, cookie);
+  await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, cookie, 'PATCH');
+  return cookie;
 }
 async function approvedProvider(name, monthlyRateMinor = 20000) {
   const provider = await signup(name);
@@ -61,7 +77,8 @@ async function approvedProvider(name, monthlyRateMinor = 20000) {
 
 test('a workspace with no concierge ever assigned has an empty concierge fee history but real points usage', async () => {
   const owner = await signup('No Concierge Owner');
-  await request('/companion/messages', { message: 'what changed recently' }, owner);
+  const companion = await request('/companion/messages', { message: 'what changed recently', consent: true }, owner);
+  assert.equal(companion.status, 201, JSON.stringify(companion.data));
   const statement = await request('/billing/statement', undefined, owner, 'GET');
   assert.equal(statement.status, 200);
   assert.equal(statement.data.lineItems.length, 0);

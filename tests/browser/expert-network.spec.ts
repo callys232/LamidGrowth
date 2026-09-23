@@ -16,8 +16,18 @@ async function signUp(page: import('@playwright/test').Page, name: string, email
 test('the consolidated /experts page renders every group with its own heading', async ({ page }) => {
   await page.goto('/experts');
   await expect(page.getByRole('heading', { name: 'Bring the Right Human Expertise Into the Work.' })).toBeVisible();
-  for (const group of ['Finding & Engaging Expertise', 'Expert Matching', 'Verification', 'Capability Strategy', 'Become an Expert']) {
-    await expect(page.locator('.experts-group-header').getByText(group, { exact: true })).toBeVisible();
+  const groups: Array<[name: string, slug: string]> = [
+    ['Finding & Engaging Expertise', 'finding-engaging-expertise'],
+    ['Expert Matching', 'expert-matching'],
+    ['Verification', 'verification'],
+    ['Capability Strategy', 'capability-strategy'],
+    ['Become an Expert', 'become-an-expert'],
+  ];
+  for (const [name, slug] of groups) {
+    const band = page.locator(`#${slug}`);
+    await expect(band).toBeVisible();
+    await expect(band.getByRole('heading', { level: 2 })).toBeVisible();
+    await expect(band).toContainText(name);
   }
 });
 

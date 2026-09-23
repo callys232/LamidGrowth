@@ -1,0 +1,305 @@
+# Executed test inventory
+
+Original full-run results; targeted reruns are recorded separately in REPORT.md.
+
+## Backend
+
+- PASS 1: activity feed requires authentication
+- FAIL 2: activity feed merges jobs, workflows, and agent runs, sorted by recency
+- PASS 3: stored records without a kind remain usable under human data-sharing rules
+- PASS 4: an empty workspace can request suggestions without falsely reporting blocked data
+- PASS 5: companion messages require authentication
+- PASS 6: companion agent catalog lists the seeded agents
+- PASS 7: a signal, capability, analytics, or market question routes to its specialist agent
+- PASS 8: a generic question routes to the read-only context curator agent
+- PASS 9: a diagnostic-style question routes to the diagnostic intelligence agent
+- PASS 10: a workflow command routes to the orchestration agent and never bypasses approval
+- PASS 11: a workspace member cannot use the mutating workflow-orchestration agent
+- PASS 12: a successful agent run debits points and reports the new balance
+- PASS 13: a failed agent run refunds the points it charged
+- PASS 14: an agent is rejected before it runs if the workspace has too few points
+- PASS 15: the consultant matcher ranks bids and is only visible to the job owner
+- PASS 16: the proposal drafter grounds its draft in the real job and rejects unrelated users
+- PASS 17: the 8 new commercial document tools reject a missing job/proposal before charging, without completing
+- PASS 18: the scope builder grounds its draft in the real job and rejects unrelated users
+- PASS 19: quote and estimate generators compute from the real budget range without calling AI
+- PASS 20: the change order generator grounds in the real proposal and rejects unrelated users
+- PASS 21: sends a message to the AI model and receives a valid return reply with structured logs
+- PASS 22: OpenAI provider AI connectivity check records successful request and usage logs
+- PASS 23: Anthropic provider AI connectivity check records successful response logs
+- PASS 24: MultiProvider AI connectivity failover logs primary failure and fallback success
+- PASS 25: AI connectivity check handles and logs network failure when all providers fail
+- PASS 26: Unconfigured AI provider returns unconfigured status and logs error
+- PASS 27: human rules reject unknown powers, enforce features and bound points
+- PASS 28: only user-allowed source types leave the workspace
+- PASS 29: external AI rejects a response when the human changes rules mid-request
+- PASS 30: AI goal pathways follow human data and feature rules without creating work
+- PASS 31: Deep Review and Companion share the final workspace and global quota slots
+- PASS 32: OpenAI adapter uses bounded structured responses without tool execution and rejects refusals
+- PASS 33: AI reviews require opt-in and consent, enforce source scope and cannot execute actions
+- PASS 34: AI output cannot cite another source or survive revocation during an in-flight request
+- PASS 35: out-of-scope model evidence fails validation and leaves no accepted review
+- PASS 36: a cancelled AI review cannot accept a late provider response
+- PASS 37: private APIs reject unauthenticated requests
+- PASS 38: database outages return 503 while liveness remains healthy
+- PASS 39: isolated sample workspaces cannot read or change each other’s work
+- PASS 40: review cannot be bypassed and stale approvals fail atomically
+- PASS 41: state transitions support pause and resume while preserving completed history
+- PASS 42: signup, session, logout, login and data persistence
+- PASS 43: only an ecosystem administrator can permanently delete an account
+- PASS 44: enterprise administrators disable workspace membership without disabling accounts
+- PASS 45: points are charged once for job posts and bids
+- PASS 46: job posts support client and freelancer proposal drafts
+- PASS 47: password recovery is privacy-safe, single-use, and revokes sessions
+- PASS 48: account verification uses expiring single-use tokens
+- PASS 49: strict validation rejects invalid dates, unknown fields, and initial completion
+- PASS 50: cross-origin mutations are rejected
+- PASS 51: rate limits block bursts and return retry timing
+- PASS 52: guided plans save an objective and first action together
+- PASS 53: goal pathways preview without writes and save selected steps exactly once
+- PASS 54: goal deletion requires confirmation, isolates workspaces and removes linked actions
+- PASS 55: objective revisions are isolated, versioned, and cannot conceal unfinished actions
+- PASS 56: reflections and exports are workspace scoped
+- FAIL 57: a workspace with no concierge ever assigned has an empty concierge fee history but real points usage
+- PASS 58: the ecosystem fee is charged once at assignment; the PM fee recurs every 30-day cycle
+- PASS 59: the assigned concierge cannot view the billing statement
+- PASS 60: guidance, manual selection, private history and resumable approved specialist tasks
+- PASS 61: routing covers common needs and preserves follow-up context
+- PASS 62: task plans are bounded and have no repeated specialist
+- PASS 63: specific document requests are not captured by generic action verbs
+- PASS 64: follow-up routing retains safe context but never repeats a workflow command
+- PASS 65: support and signup requests use free guidance; plans contain no write agents
+- PASS 66: a user applies, a non-admin cannot approve, an ecosystem admin can
+- PASS 67: a duplicate application while pending or approved is rejected
+- PASS 68: an owner can only assign an approved provider, and only one active concierge at a time
+- PASS 69: product-owned pages preserve every original paragraph without clipping or prefix filtering
+- PASS 70: every document route resolves to a unique named product page and matching content
+- PASS 71: rollback failure preserves the original error and discards the broken connection
+- PASS 72: failed standalone database calls discard disconnected clients
+- PASS 73: acquisition retries are bounded and never retry authentication errors or saturated pools
+- PASS 74: database failures return a safe retryable response without masking unrelated errors
+- PASS 75: business validation errors roll back but keep a healthy connection reusable
+- PASS 76: an uncertain commit is never replayed automatically
+- PASS 77: startup failures close both pools even when acquisition or rollback fails
+- PASS 78: a completed document run can be exported as a PDF with a valid header
+- PASS 79: a stranger in a different workspace cannot export or sign someone else's document
+- PASS 80: signing a document records an attestation bound to the current content hash
+- PASS 81: the full 248-tool catalog is public at /engines/catalog — the public-facing pages are where a user learns of everything
+- PASS 82: the in-app engine catalog requires a session
+- PASS 83: running an engine still requires a session even though the public catalog does not
+- PASS 84: an enterprise-tier workspace (the funded-test default) sees the full 248-tool catalog in-app
+- PASS 85: a workspace's in-app catalog is filtered to its signup context, cumulative by rank, and always includes what it's bought a bundle for
+- PASS 86: a financial-kind run returns arithmetically correct figures and appears on the public billables page
+- PASS 87: an assessment-kind run refuses a dimension the engine does not declare, without charging points
+- PASS 88: an assessment-kind run scores the module's own declared dimensions and charges points
+- PASS 89: running an engine is rejected before charging when the workspace has too few points
+- PASS 90: an unknown engine code returns 404
+- FAIL 91: a non-enterprise (individual) workspace cannot add members
+- PASS 92: an enterprise workspace rejects new members once member_limit is reached
+- PASS 93: a disabled member loses workspace access on their very next request
+- PASS 94: an individual-tier workspace with no bundle cannot run a paid engine or a paid chat agent, and is not charged
+- PASS 95: the free chat agents remain accessible to an individual-tier workspace with no bundle
+- PASS 96: purchasing a bundle grants real access to exactly the tools it includes, confirmed only after the webhook fires
+- PASS 97: an enterprise-tier workspace can run any paid tool without any bundle
+- PASS 98: daily logger writes structured errors and separates UTC days
+- PASS 99: a non-admin is blocked from the escrow overview
+- PASS 100: an ecosystem admin sees correctly aggregated totals across multiple workspaces
+- PASS 101: a refund is refused before a dispute exists, even with held funds
+- PASS 102: a refund is refused with no held funding, even once disputed
+- PASS 103: a mocked fund -> dispute -> refund lifecycle only marks refunded after webhook confirmation
+- PASS 104: a failed refund API call marks refund_failed, never refunded
+- PASS 105: with no provider configured, funding is refused rather than faked
+- PASS 106: release is refused before a milestone is funded, even once approved
+- PASS 107: a mocked fund -> webhook hold -> release lifecycle marks funding released only after real confirmation
+- PASS 108: with no historical data, the estimate is honestly unavailable rather than invented
+- PASS 109: once enough real jobs exist in a category, the estimate reflects their actual budgets
+- PASS 110: smart tags narrow the estimate to a more specific match within a broad category
+- PASS 111: too few tag matches falls back to category-wide history with an honest note, not a fabricated tag estimate
+- PASS 112: an invalid category is rejected, matching job-posting validation
+- PASS 113: booking: an expert publishes availability and a client books it
+- PASS 114: expert teams: a lead creates a team, adds a member, and only the lead can manage it
+- PASS 115: expert teams: a team led by the engaged freelancer can be assigned to their project as a unit
+- FAIL 116: AI-human handoff: the Companion agent automatically raises a handoff for a regulated-sounding message
+- PASS 117: AI-human handoff: an agent-raised handoff can be accepted and completed by an expert
+- PASS 118: return-to-OS: an outcome can be recorded once per project and read back from the workspace feed
+- PASS 119: governance: a jurisdiction rule forces a scoping case to red, and the review queue can be claimed
+- PASS 120: member permissions and suspension stay inside the selected enterprise
+- PASS 121: completed objectives and mismatched workspace requests reject new work
+- PASS 122: charges replay atomically and exports include all workspace domains and audit history
+- PASS 123: populated account deletion preserves other accounts and their point ledger
+- PASS 124: enterprise capacity survives restart and descriptive context never changes tier
+- PASS 125: knowledge is tenant scoped, versioned, searchable, exportable and deletable
+- PASS 126: open opportunities exclude samples and bidders can recover their own bid and draft
+- PASS 127: converts using the stored indicative rate, for display only
+- PASS 128: same-currency conversion is a no-op rate of 1
+- PASS 129: an unknown currency pair returns 404 rather than inventing a rate
+- PASS 130: only a workspace owner can update an FX rate
+- PASS 131: pathways fit goal families and keep success and constraints visible
+- PASS 132: suggestion notes remain within action limits for maximum length inputs
+- PASS 133: inviting, accepting, then creating a project without ever submitting a bid
+- PASS 134: rejecting an invitation still leaves project creation blocked without a real bid
+- PASS 135: only the job owner can invite; only the invited freelancer can respond; duplicates are rejected
+- PASS 136: an accepted/rejected invitation shows up in both parties' activity feeds
+- PASS 137: production signup issues no secrets, grants exactly the welcome reward once after OTP, and retains login without OTP
+- PASS 138: same signed device gets no second reward; shared-network velocity waits for review
+- PASS 139: OTP expires, locks after five wrong guesses, resends rotate both code and link
+- PASS 140: production recovery mail resets password once and revokes existing sessions
+- FAIL 141: Companion enforces verification, workspace opt-in and consent, with one provider call for concurrent retries
+- FAIL 142: revocation during a provider request rejects the late result and refunds once
+- PASS 143: scheduler lease transfers to a replacement owner and stale agent charges refund once
+- PASS 144: production startup requires secure deploy configuration
+- PASS 145: a learning path can be created with modules, discovered by taxonomy, and completed module by module
+- PASS 146: prerequisites block enrollment until the required path is completed
+- PASS 147: assigning a path sets an enrollment on behalf of someone else, with a due date
+- PASS 148: a paid path charges points on enrollment and appears in the billables list
+- PASS 149: compliance requirements are visible to workspace members and gated to admins to create
+- PASS 150: attention distinguishes a stalled enrollment from one that needs you soon
+- PASS 151: mail outbox enqueues, decrypts, delivers message, and records logs
+- PASS 152: mail outbox captures retry attempts and logs structured delivery errors on failure
+- PASS 153: both project parties can post and read messages, in order
+- PASS 154: a stranger cannot read or post to a project they are not party to
+- FAIL 155: the model registry is seeded with approved companion use cases
+- FAIL 156: companion agent evidence records which registry entry authorized the call
+- FAIL 157: deprecating a use case blocks the agent instead of silently proceeding
+- PASS 158: with no payment provider configured, accounts record inertly and release never fakes success
+- PASS 159: crypto/USDT provider is registered but returns unimplemented for release
+- PASS 160: a mocked Paystack happy path: recipient, transfer, then webhook confirms payment
+- PASS 161: webhook rejects an invalid signature
+- PASS 162: only the milestone client can release payment
+- PASS 163: no active concierge means nothing to pay out
+- PASS 164: unconfigured provider refuses payout rather than faking success
+- PASS 165: a mocked Paystack payout marks only the unpaid pm_fee line items paid, leaving ecosystem_fee untouched
+- PASS 166: with no provider configured, purchase is refused rather than faked
+- PASS 167: a mocked Paystack checkout, confirmed by webhook, credits exactly the right points once
+- PASS 168: billables list every registered tool/engine with its points cost and the points unit price
+- PASS 169: a non-admin cannot create, list, or manage bundles
+- PASS 170: an admin can create a bundle from real tools, publish it, and it becomes purchasable
+- PASS 171: creating a bundle with an unknown tool id is rejected
+- PASS 172: an admin can delete a bundle
+- PASS 173: the full milestone lifecycle: project, milestone, deliverable, submission, verification, approval
+- PASS 174: only the assigned freelancer can submit, and only the client can decide
+- PASS 175: a project cannot be created assigning a freelancer with no bid on the job
+- PASS 176: disputing a milestone opens a dispute record and moves the milestone to disputed
+- PASS 177: the invoice generator only invoices approved milestones, with an exact deterministic amount
+- PASS 178: a shared database rate-limit bucket caps the same key across two separate app instances (simulated cluster workers)
+- FAIL 179: per-account spend limiting tracks independent keys — one user hitting their cap does not affect another
+- PASS 180: the window resets after it elapses, and Retry-After is set on a 429
+- PASS 181: readiness bounds waiting and shares pending database work across callers
+- PASS 182: a review can only be submitted by a real party on an approved milestone, and not twice
+- PASS 183: an out-of-range rating is rejected
+- PASS 184: a restricted conflict disclosure removes an expert from matching results
+- PASS 185: the consolidated migration creates all domain tables
+- PASS 186: domain tables enforce foreign-key integrity
+- PASS 187: domain tables support a basic insert/select roundtrip
+- PASS 188: a scoping case can start from only an objective, with no scope known yet
+- PASS 189: a regulated-sounding objective is flagged red even with everything else filled in
+- PASS 190: a fully-specified, non-regulated case becomes green after PATCH
+- PASS 191: suggest returns editable suggestions without changing the stored case
+- PASS 192: a red-band case cannot publish without explicit confirmation, and only over a job the user owns
+- PASS 193: mass assignment cannot credit or alter points balance on job/bid/companion requests
+- PASS 194: concurrent requests cannot drive the points balance negative (race-condition double spend)
+- PASS 195: idempotency key replays the cached result instead of double-charging, and a new key charges again
+- FAIL 196: the companion agent endpoint replays cached results under the same idempotency key
+- PASS 197: a mismatched idempotency-key replay with different input is rejected, not silently accepted
+- PASS 198: cross-tenant workspace tampering is rejected before any charge occurs
+- PASS 199: the dedicated spend rate limiter enforces a per-account ceiling on points-spending routes
+- PASS 200: two clients cannot both approve the same milestone twice (double-decision race)
+- PASS 201: five concurrent bids on the same job are all accepted without corrupting job state
+- PASS 202: a request body at exactly the JSON size limit is accepted; over the limit is rejected, not crashed
+- PASS 203: tampering with the session cookie is rejected, not treated as a valid session
+- PASS 204: a session for a disabled account is rejected on the next request
+- FAIL 205: ten concurrent Companion messages from the same user never over-deduct points below zero
+- FAIL 206: full job-to-invoice lifecycle succeeds for every job category
+- FAIL 207: Companion routes every documented phrase to the correct agent (Shared, Clarity, Capability, Growth, Consistency engines)
+- PASS 208: a workspace member is blocked from the Consistency engine (workflow-orchestration, band A2)
+- FAIL 209: boundary and adversarial inputs do not crash the server (500) — they get a clean 4xx
+- PASS 210: a profile can be created and re-saved (upsert)
+- PASS 211: Expert Finder ranks a matching profile above a non-matching one
+- PASS 212: skills assessments are graded deterministically, and a bogus skill 404s
+- PASS 213: vetting requires an ecosystem admin decision; a non-admin cannot approve
+- PASS 214: Candidate Screening blends bid score, assessment, vetting, and track record — and only the job owner can view it
+- PASS 215: candidate-matches compares freelancer profiles against a project, including non-bidders; only the owner can view it
+- PASS 216: job-matches ranks open jobs by fit to the freelancer's own profile
+- FAIL 217: lost completion recovers without another charge; pagination and cancellation preserve ownership
+- FAIL 218: Manufacturing — production line efficiency audit
+- FAIL 219: Wedding & marriage planning — full-service coordination
+- FAIL 220: Software engineering — SaaS analytics dashboard build
+- FAIL 221: Marketing & growth — DTC skincare launch campaign
+- FAIL 222: Legal & compliance — healthcare data-handling policy review
+- FAIL 223: acceptance report summary
+- PASS 224: prose, negation and malformed output never become positive verdicts
+- PASS 225: only explicit validated verdicts are accepted
+- PASS 226: human workflow rules block writes and allow only explicitly authorized workflow steps
+- PASS 227: workflow changes wait for exact versioned approval and execute once
+- PASS 228: workflow authority is bounded by principal, tenant, schedule, pause and expiry
+- PASS 229: failed workflow tool mutation rolls back and can be retried only within its budget
+- PASS 230: unfinished authorized work survives reopening the database without repeating completed steps
+- PASS 231: a workflow can only be deleted once it has actually finished, and only by its own authorizing owner
+
+## browser
+
+- PASS 1: tests\browser\account-recovery.spec.ts:4:1 › local account recovery resets the password and returns to sign in (25.5s)
+- PASS 2: tests\browser\admin-delete-account.spec.ts:4:1 › workspace administrators do not receive a permanent-delete control (5.7s)
+- FAIL 3: tests\browser\all-contexts.spec.ts:15:1 › each supported account context can create and load a workspace (2.0m)
+- PASS 4: tests\browser\backend-boundary.spec.ts:3:1 › backend routes work while server-only source stays outside frontend delivery (152ms)
+- PASS 5: tests\browser\commercial-knowledge.spec.ts:4:1 › workspace job posting charges once and knowledge can be edited and deleted (9.4s)
+- PASS 6: tests\browser\companion-widget.spec.ts:6:1 › visitor guidance works on mobile in both themes and restores keyboard focus (4.3s)
+- PASS 7: tests\browser\companion-widget.spec.ts:31:1 › specialist selection persists history and a coordinated plan survives reload (6.2s)
+- FAIL 8: tests\browser\consulting-project.spec.ts:4:1 › consulting project uses the implemented workspace tools end to end (30.7s)
+- PASS 9: tests\browser\design.spec.ts:3:1 › canonical palette and Three.js scene respond and settle without an idle loop (3.2s)
+- PASS 10: tests\browser\design.spec.ts:32:1 › reduced motion keeps the Three.js scene static and interface usable (4.8s)
+- PASS 11: tests\browser\enterprise.spec.ts:4:1 › enterprise evaluation links and signup journey remain navigable (16.1s)
+- FAIL 12: tests\browser\expert-network.spec.ts:16:1 › the consolidated /experts page renders every group with its own heading (6.7s)
+- PASS 13: tests\browser\expert-network.spec.ts:24:1 › an expert can publish availability, see it on the week calendar, and create a team (9.8s)
+- PASS 14: tests\browser\expert-network.spec.ts:47:1 › guided scoping wizard flags a regulated objective and offers expert review (7.7s)
+- PASS 15: tests\browser\goal-pathway.spec.ts:4:1 › choose a pathway, save it, and follow progress after reloading (12.1s)
+- PASS 16: tests\browser\goal-pathway.spec.ts:46:1 › human AI rules persist and block requests at the API (6.2s)
+- PASS 17: tests\browser\homepage.spec.ts:4:1 › homepage puts its main actions above the fold and the product page preview supports keyboard use (5.1s)
+- FAIL 18: tests\browser\homepage.spec.ts:55:1 › homepage and product page fit narrow screens and the preview remains usable (9.4s)
+- PASS 19: tests\browser\homepage.spec.ts:78:1 › homepage explains its cycle and changes relevant depth by audience (5.1s)
+- PASS 20: tests\browser\homepage.spec.ts:120:1 › outcome choices change content without moving the viewport or panel (3.3s)
+- PASS 21: tests\browser\homepage.spec.ts:145:1 › supporting homepage details expand and collapse with keyboard access (1.8s)
+- PASS 22: tests\browser\interactions.spec.ts:3:1 › list feedback follows scrolling and supports dynamically loaded items (2.2s)
+- PASS 23: tests\browser\journey.spec.ts:4:1 › public experience and workspace complete a connected operating cycle (14.1s)
+- FAIL 24: tests\browser\journey.spec.ts:67:1 › mobile navigation and onboarding work without horizontal overflow (30.5s)
+- FAIL 25: tests\browser\journey.spec.ts:114:1 › keyboard search, dialogs, and accessibility semantics (4.7s)
+- PASS 26: tests\browser\learning.spec.ts:4:1 › a learner can create a path, enroll, complete a module, and rate it (5.1s)
+- FAIL 27: tests\browser\navigation.spec.ts:4:1 › mega menus expose options on hover and support keyboard navigation (7.5s)
+- FAIL 28: tests\browser\theme.spec.ts:5:3 › public pages have readable text in light mode (16.9s)
+- FAIL 29: tests\browser\theme.spec.ts:5:3 › public pages have readable text in dark mode (14.4s)
+- PASS 30: tests\browser\theme.spec.ts:25:1 › navbar theme choice overrides the system, persists, and fits mobile (3.1s)
+- PASS 31: tests\browser\workflows.spec.ts:4:1 › a scheduled operating cycle requires each write approval and delivers a reminder (24.9s)
+- PASS 32: tests\browser\workflows.spec.ts:60:1 › workspace switching discards stale settings and owner controls reflect membership (5.6s)
+- PASS 33: tests\browser\copy.spec.ts:29:1 › every documented route renders every original copy paragraph (2.7m)
+
+## usability
+
+- PASS 1: tests\browser\regional-usability.spec.ts:19:3 › Lagos: onboarding, goal and specialist value (17.9s)
+- PASS 2: tests\browser\regional-usability.spec.ts:19:3 › Nairobi: onboarding, goal and specialist value (10.1s)
+- PASS 3: tests\browser\regional-usability.spec.ts:19:3 › London: onboarding, goal and specialist value (9.9s)
+- PASS 4: tests\browser\regional-usability.spec.ts:19:3 › New York: onboarding, goal and specialist value (9.6s)
+- PASS 5: tests\browser\regional-usability.spec.ts:19:3 › Toronto: onboarding, goal and specialist value (10.4s)
+- PASS 6: tests\browser\regional-usability.spec.ts:19:3 › Berlin: onboarding, goal and specialist value (10.7s)
+- PASS 7: tests\browser\regional-usability.spec.ts:19:3 › Mumbai: onboarding, goal and specialist value (10.1s)
+- PASS 8: tests\browser\regional-usability.spec.ts:19:3 › Dubai: onboarding, goal and specialist value (10.4s)
+- FAIL 9: tests\browser\regional-usability.spec.ts:19:3 › Sao Paulo: onboarding, goal and specialist value (33.3s)
+- PASS 10: tests\browser\regional-usability.spec.ts:19:3 › Sydney: onboarding, goal and specialist value (10.9s)
+
+## paid-path
+
+- FAIL 1: tests\browser\paid-path-demo.spec.ts:29:3 › Lagos-Paid: paid specialist sequence (simulated AI) (42.4s)
+- FAIL 2: tests\browser\paid-path-demo.spec.ts:29:3 › Berlin-Paid: paid specialist sequence (simulated AI) (37.7s)
+- FAIL 3: tests\browser\paid-path-demo.spec.ts:29:3 › Mumbai-Paid: paid specialist sequence (simulated AI) (38.7s)
+
+## deep-coverage
+
+- FAIL 1: tests\browser\deep-coverage.spec.ts:17:3 › Amara: deep coverage across engines, companion, and the full marketplace chain (44.7s)
+- FAIL 2: tests\browser\deep-coverage.spec.ts:17:3 › Zainab: deep coverage across engines, companion, and the full marketplace chain (43.3s)
+
+## human-pace
+
+- FAIL 1: tests\browser\human-pace.spec.ts:20:1 › a real first-time visitor: homepage, signup, first goal, first free outcome (1.1m)
+
+## click-everything
+
+- PASS 1: tests\browser\click-everything.spec.ts:23:1 › sweep every public page: click every internal link and safe button, report what breaks (2.6m)

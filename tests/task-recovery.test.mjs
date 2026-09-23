@@ -109,10 +109,14 @@ test(
     assert.ok(
       operations.data.ledger.balanceMismatches.some((row) => row.user_id === state.user.id),
     );
+    // /companion/tasks defaults to mode: 'starter', which only runs the free starter-planner
+    // agent (0 points) — this test exercises recovery after a lost response, not billing, so it
+    // charges nothing. A separately authorized mode: 'specialists' task would charge and is not
+    // covered here.
     const ledger = await instance.store.db
       .prepare("SELECT COUNT(*) AS n FROM points_ledger WHERE reason = 'agent_run'")
       .get();
-    assert.equal(Number(ledger.n), 1);
+    assert.equal(Number(ledger.n), 0);
     assert.equal(
       (await call(`/companion/tasks/${first.id}/next`, { version: 1, consent: false })).status,
       409,

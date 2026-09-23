@@ -68,10 +68,10 @@ for (const [city, locale, width, height, role, goal] of profiles) {
       // page, not a database shortcut.
       result.stage = 'enable AI policy';
       await page.goto('/os/settings/ai');
-      const enableBox = page.getByRole('checkbox', { name: 'Allow members to request external AI reviews' });
+      const enableBox = page.getByRole('checkbox', { name: 'Allow external AI in this workspace' });
       if (!(await enableBox.isChecked())) await enableBox.check();
-      await page.getByRole('button', { name: 'Save AI settings' }).click();
-      await expect(page.getByRole('checkbox', { name: 'Allow members to request external AI reviews' })).toBeChecked();
+      await page.getByRole('button', { name: 'Save AI rules' }).click();
+      await expect(page.getByRole('checkbox', { name: 'Allow external AI in this workspace' })).toBeChecked();
 
       result.stage = 'paid specialist plan';
       await page.goto('/os/companion/chat');

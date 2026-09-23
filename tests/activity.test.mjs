@@ -77,9 +77,12 @@ test('activity feed merges jobs, workflows, and agent runs, sorted by recency', 
   );
   assert.equal(workflow.status, 201);
 
+  // Free guidance agent (0 points, no AI call) — the demo account this fixture uses is
+  // deliberately barred from external AI (see aiPolicy.mjs), so this only needs to produce an
+  // agent_run row, not exercise a paid specialist.
   const message = await request(
     '/companion/messages',
-    { message: 'what is going on right now?' },
+    { message: 'I need support with my account' },
     cookie,
   );
   assert.equal(message.status, 201);

@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
-async function boot(schemaName, rateLimits) {
-  const { app, store } = await createApp({ filename: schemaName, rateLimits });
+async function boot(schemaName, rateLimits, options = {}) {
+  const { app, store } = await createApp({ filename: schemaName, rateLimits, ...options });
   const server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
   });
@@ -56,20 +56,46 @@ test('per-account spend limiting tracks independent keys — one user hitting th
   const schemaName = `ratelimit_keys_${randomUUID().replace(/-/g, '_')}`;
   let instance;
   try {
-    instance = await boot(schemaName, { spend: { max: 1, windowMs: 60_000 } });
+    instance = await boot(schemaName, { spend: { max: 1, windowMs: 60_000 } }, {
+      // The spend limiter sits in front of a real companion message through signal-monitoring (a
+      // paid specialist), so it needs AI configured the way production would have it — same stub
+      // pattern as tests/agents.test.mjs.
+      aiProvider: {
+        name: 'test',
+        model: 'test',
+        async review(context) {
+          return {
+            review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          };
+        },
+      },
+    });
     async function signup(email) {
       const response = await fetch(`${instance.base}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: 'Rate Limit User', email, password: 'a-long-ratelimit-password', context: 'Founder' }),
       });
-      return response.headers.get('set-cookie')?.split(';')[0];
+      const data = await response.json();
+      const cookie = response.headers.get('set-cookie')?.split(';')[0];
+      // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+      await fetch(`${instance.base}/api/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({ token: data.verificationToken }),
+      });
+      await fetch(`${instance.base}/api/ai/settings`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Cookie: cookie },
+        body: JSON.stringify({ enabled: true, dailyLimit: 10, version: 0 }),
+      });
+      return cookie;
     }
     async function sendMessage(cookie) {
       return fetch(`${instance.base}/api/companion/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Cookie: cookie },
-        body: JSON.stringify({ message: 'what changed recently' }),
+        body: JSON.stringify({ message: 'what changed recently', consent: true }),
       });
     }
     const userA = await signup(`ratelimit-a-${Date.now()}@example.test`);

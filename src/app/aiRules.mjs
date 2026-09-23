@@ -59,7 +59,7 @@ export function enforceFeature(policy, feature, points = 0) {
 export function scopeAIPayload(policy, payload, feature) {
   const rules = enforceFeature(policy, feature);
   const sources = payload.sources.filter((source) => rules.allowedSources.includes(source.kind));
-  if (!sources.length)
+  if (payload.sources.length > 0 && !sources.length)
     throw Object.assign(
       new Error('Your AI data rules do not allow any of the context needed for this request.'),
       { status: 403 },

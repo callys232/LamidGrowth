@@ -101,8 +101,10 @@ test('mobile navigation and onboarding work without horizontal overflow', async 
   await page.getByRole('button', { name: 'Bring it into focus' }).click();
   await page.getByLabel('The situation', { exact: true }).fill('I need time for focused work.');
   await page.getByLabel('A meaningful outcome').fill('Two hours of focused work per day.');
-  await page.getByRole('button', { name: 'Choose the next step' }).click();
+  await page.getByRole('button', { name: 'Explore a pathway' }).click();
+  await expect(page.getByRole('region', { name: 'Suggested pathway' })).toBeVisible();
   await page.getByLabel('Your next action (optional)').fill('Reserve a morning work block');
+  await expect(page.getByRole('button', { name: 'Save my plan' })).toBeEnabled();
   await page.getByRole('button', { name: 'Save my plan' }).click();
   await expect(
     page.getByRole('heading', { name: 'A clearer direction. A concrete next step.' }),

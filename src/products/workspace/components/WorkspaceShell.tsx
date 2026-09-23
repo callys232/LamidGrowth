@@ -62,6 +62,7 @@ export function useWorkspace() {
 }
 const navigation = [
   ['Overview', '/os', LayoutDashboard],
+  ['AI Settings', '/os/settings/ai', Settings2],
   ['Today', '/os/today', Sun],
   ['Clarity', '/os/clarity', Compass],
   ['Capability', '/os/capability', Layers3],
@@ -76,7 +77,6 @@ const navigation = [
   ['Engines', '/os/engines', Cpu],
   ['Guided Scoping', '/os/scoping/new', Wand2],
   ['Learning', '/os/learning', GraduationCap],
-  ['AI Settings', '/os/settings/ai', Settings2],
 ] as const;
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);

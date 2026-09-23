@@ -13,9 +13,9 @@
   line-height: 1.15;
   margin: 0 0 8px;
 }
-.pricing-billables-head p {
+.pricing-billables .pricing-billables-head p {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   max-width: 640px;
   margin: 0;
 }
@@ -41,10 +41,10 @@
   margin: 0;
   font-size: 16px;
 }
-.pricing-plan-card > p {
+.pricing-billables .pricing-plan-card > p {
   margin: 0;
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   flex-grow: 1;
 }
 .pricing-plan-price {
@@ -54,7 +54,7 @@
 .pricing-plan-price span {
   font-size: 12px;
   font-weight: 400;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 .pricing-plan-features {
   list-style: none;
@@ -64,11 +64,11 @@
   flex-direction: column;
   gap: 6px;
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 .pricing-plan-features li::before {
   content: '✓ ';
-  color: var(--signature-red, #c12129);
+  color: var(--signature-red-text, #c12129);
 }
 
 .pricing-billables-layout {
@@ -93,7 +93,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 .pricing-nav-group button {
@@ -106,11 +106,11 @@
   color: var(--ink);
 }
 .pricing-nav-group button:hover {
-  color: var(--signature-red, #c12129);
+  color: var(--signature-red-text, #c12129);
 }
 .pricing-nav-group button.is-active {
   border-left-color: var(--signature-red, #c12129);
-  color: var(--signature-red, #c12129);
+  color: var(--signature-red-text, #c12129);
   font-weight: 600;
 }
 
@@ -129,7 +129,7 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--surface-alt);
@@ -144,7 +144,7 @@
 
 .pricing-bundle-intro {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   max-width: 640px;
   margin: -8px 0 20px;
 }
@@ -177,7 +177,7 @@
 .pricing-bundle-select-all {
   background: transparent;
   border: none;
-  color: var(--signature-red, #c12129);
+  color: var(--signature-red-text, #c12129);
   font-size: 11px;
   font-weight: 600;
   padding: 0;
@@ -207,7 +207,7 @@
 }
 .pricing-bundle-tool-cost {
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .pricing-bundle-cart {
@@ -227,7 +227,7 @@
 }
 .pricing-bundle-empty {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin: 0;
 }
 .pricing-bundle-cart-list {
@@ -250,22 +250,22 @@
 .pricing-bundle-cart-list button {
   background: transparent;
   border: none;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 12px;
   padding: 2px 4px;
 }
 .pricing-bundle-cart-list button:hover {
-  color: var(--signature-red, #c12129);
+  color: var(--signature-red-text, #c12129);
 }
 .pricing-bundle-extra label {
   display: block;
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-bottom: 6px;
 }
 .pricing-bundle-extra > p {
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin: 6px 0 0;
 }
 .pricing-bundle-stepper {

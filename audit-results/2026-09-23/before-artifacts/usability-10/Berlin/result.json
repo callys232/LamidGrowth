@@ -1,0 +1,28 @@
+{
+  "city": "Berlin",
+  "locale": "de-DE",
+  "timezoneId": "Europe/Berlin",
+  "viewport": "1280x800",
+  "role": "Founder",
+  "goal": "Grow my consulting business",
+  "simulated": true,
+  "stage": "completed evaluation",
+  "completed": [
+    "homepage",
+    "signup and development OTP",
+    "goal creation",
+    "first specialist step"
+  ],
+  "homeOverflow": false,
+  "documentLanguage": "en",
+  "accessibility": [],
+  "welcomeBalance": 100,
+  "plan": "Grow my consulting business\n\nAwaiting Approval · Estimated Total 195 Points\n\nDiagnostic Intelligence\nPending\n65 points\nMarket Intelligence\nPending\n65 points\nCapability Mapper\nPending\n65 points\nApprove Diagnostic Intelligence · 65 pointsCancel remaining steps",
+  "firstResult": "Grow my consulting business\n\nAwaiting Approval · Estimated Total 195 Points\n\nDiagnostic Intelligence\nCompleted\n65 points\n\nAI is not configured, so this is a recorded-data summary only: 1 item(s) on file (0 objective(s), 0 action(s)). No automated assessment was performed.\n\nMarket Intelligence\nPending\n65 points\nCapability Mapper\nPending\n65 points\nApprove Market Intelligence · 65 pointsCancel remaining steps",
+  "remainingBalance": 35,
+  "secondStepMessage": "You do not have enough points for this agent.",
+  "workspaceOverflow": false,
+  "elapsedSeconds": 68,
+  "browserErrors": [],
+  "url": "http://127.0.0.1:3129/os/companion/chat"
+}

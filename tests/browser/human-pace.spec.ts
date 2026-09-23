@@ -105,7 +105,10 @@ test('a real first-time visitor: homepage, signup, first goal, first free outcom
 
     // Navigate to the Companion by clicking the real sidebar link, not a URL jump.
     result.stage = 'navigate to companion';
-    await page.getByRole('link', { name: 'Companion', exact: false }).click();
+    await page
+      .getByRole('navigation', { name: 'Workspace navigation' })
+      .getByRole('link', { name: 'Companion', exact: false })
+      .click();
     await page.waitForTimeout(pause(READ.medium));
     completed.push('navigated to Companion via sidebar');
 

@@ -123,7 +123,7 @@ test('a signal, capability, analytics, or market question routes to its speciali
 test('a generic question routes to the read-only context curator agent', async () => {
   const cookie = await enableAI(await signup('Routing Generic', 'routing-generic@example.test'));
   const result = await request('/companion/messages', { message: 'What is going on right now?', consent: true }, cookie);
-  assert.equal(result.status, 201);
+  assert.equal(result.status, 201, JSON.stringify(result.data));
   assert.equal(result.data.agentId, 'context-curator');
   assert.ok(typeof result.data.response === 'string' && result.data.response.length > 0);
 });

@@ -12,6 +12,18 @@ before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    // Each scenario below drives real companion messages through paid specialists
+    // (context-curator, diagnostic-intelligence, etc.), so this needs AI configured the way
+    // production would have it — same stub pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -55,7 +67,11 @@ async function signup(name, email) {
     context: 'Founder',
   });
   assert.equal(result.status, 201, `signup failed for ${name}: ${JSON.stringify(result.data)}`);
-  return result.cookie;
+  const cookie = result.cookie;
+  // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+  await request('/auth/verify', { token: result.data.verificationToken }, cookie);
+  await request('/ai/settings', { enabled: true, dailyLimit: 100, version: 0 }, cookie, 'PATCH');
+  return cookie;
 }
 
 /**
@@ -190,14 +206,14 @@ async function runScenario({
     JSON.stringify(decision.data),
   );
 
-  const companionAsClient = await request('/companion/messages', { message: companionMessage }, client);
+  const companionAsClient = await request('/companion/messages', { message: companionMessage, consent: true }, client);
   record(
     'companion agent (context) responded to the client',
     companionAsClient.status === 201 && typeof companionAsClient.data.response === 'string',
     JSON.stringify(companionAsClient.data),
   );
 
-  const companionSpecialist = await request('/companion/messages', { message: specialistMessage }, client);
+  const companionSpecialist = await request('/companion/messages', { message: specialistMessage, consent: true }, client);
   record(
     'companion routed a specialist-worded message to a non-default agent',
     companionSpecialist.status === 201 && companionSpecialist.data.agentId !== 'context-curator',

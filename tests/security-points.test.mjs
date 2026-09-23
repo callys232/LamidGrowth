@@ -13,6 +13,18 @@ before(async () => {
       mutation: { max: 1000 },
       spend: { max: 1000 }, // overridden per-test below where the limit itself is under test
     },
+    // The idempotency-replay test below drives a real companion message through context-curator
+    // (a paid specialist), so it needs AI configured the way production would have it — same
+    // stub pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -121,9 +133,19 @@ test('idempotency key replays the cached result instead of double-charging, and 
 });
 
 test('the companion agent endpoint replays cached results under the same idempotency key', async () => {
-  const cookie = await signup('Companion Replay', 'companion-replay@example.test');
+  const signupResult = await request('/auth/signup', {
+    name: 'Companion Replay',
+    email: 'companion-replay@example.test',
+    password: 'a-long-companion-replay-password',
+    context: 'Founder',
+  });
+  assert.equal(signupResult.status, 201);
+  const cookie = signupResult.cookie;
+  // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+  await request('/auth/verify', { token: signupResult.data.verificationToken }, cookie);
+  await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, cookie, 'PATCH');
   const key = 'companion-replay-key-0001';
-  const body = { message: 'what is going on right now?' };
+  const body = { message: 'what is going on right now?', consent: true };
 
   const first = await request('/companion/messages', body, cookie, 'POST', { 'Idempotency-Key': key });
   assert.equal(first.status, 201);

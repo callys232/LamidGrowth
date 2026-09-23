@@ -70,7 +70,7 @@ test('homepage and product page fit narrow screens and the preview remains usabl
       'Turn Good Decisions Into Reliable Progress.',
     );
     await expect(
-      page.getByRole('button', { name: 'Explore the workspace', exact: true }),
+      page.getByRole('region', { name: 'Explore the workspace', exact: true }),
     ).toBeVisible();
   }
 });

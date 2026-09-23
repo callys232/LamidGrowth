@@ -42,9 +42,9 @@ for (const [name, locale, role, goal] of profiles) {
     }
     async function enableAI(page2: Page) {
       await page2.goto('/os/settings/ai');
-      const box = page2.getByRole('checkbox', { name: 'Allow members to request external AI reviews' });
+      const box = page2.getByRole('checkbox', { name: 'Allow external AI in this workspace' });
       if (!(await box.isChecked())) await box.check();
-      await page2.getByRole('button', { name: 'Save AI settings' }).click();
+      await page2.getByRole('button', { name: 'Save AI rules' }).click();
       await expect(box).toBeChecked();
     }
 

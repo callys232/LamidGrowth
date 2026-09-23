@@ -7,6 +7,18 @@ before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    // The concurrent-companion-messages test below drives real companion messages through
+    // context-curator (a paid specialist), so it needs AI configured the way production would
+    // have it — same stub pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -223,10 +235,22 @@ test('a session for a disabled account is rejected on the next request', async (
 });
 
 test('ten concurrent Companion messages from the same user never over-deduct points below zero', async () => {
-  const client = await signup('Points Race Client');
+  counter++;
+  const email = `stress-race-${counter}-${Date.now()}@example.test`;
+  const signupResult = await request('/auth/signup', {
+    name: 'Points Race Client',
+    email,
+    password: `a-long-stress-password-${counter}`,
+    context: 'Founder',
+  });
+  assert.equal(signupResult.status, 201);
+  const client = signupResult.cookie;
+  // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+  await request('/auth/verify', { token: signupResult.data.verificationToken }, client);
+  await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, client, 'PATCH');
   const before = (await request('/points', undefined, client, 'GET')).data.balance;
   const results = await Promise.all(
-    Array.from({ length: 10 }, () => request('/companion/messages', { message: 'what changed recently' }, client)),
+    Array.from({ length: 10 }, () => request('/companion/messages', { message: 'what changed recently', consent: true }, client)),
   );
   assert.ok(results.every((r) => r.status === 201));
   const balances = results.map((r) => r.data.balance);

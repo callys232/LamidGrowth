@@ -1,0 +1,18 @@
+{
+  "stage": "navigate to companion",
+  "completed": [
+    "landed on homepage",
+    "clicked through to start",
+    "selected context",
+    "submitted signup",
+    "verified account, entered workspace",
+    "created first goal"
+  ],
+  "timings": {
+    "reached start page": 14,
+    "reached verification": 32,
+    "reached workspace": 39,
+    "created first goal": 64
+  },
+  "failure": "locator.click: Error: strict mode violation: getByRole('link', { name: 'Companion' }) resolved to 2 elements:\n    1) <a href=\"/os/companion\" data-discover=\"true\" class=\"sidebar-link companion-link\">…</a> aka getByRole('link', { name: 'Companion GUIDED' })\n    2) <a href=\"/os/companion\" data-discover=\"true\" class=\"button button-light\">…</a> aka getByRole('link', { name: 'Think it through with' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: 'Companion' })\u001b[22m\n"
+}

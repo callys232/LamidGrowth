@@ -32,16 +32,17 @@ if (production) {
   catch (error) { errorLogger('startup_error', { error: errorDetails(error) }); process.exit(1); }
 }
 const clusterEnabled = process.env.CLUSTER === 'true' || (production && process.env.CLUSTER !== 'false');
+const totalPoolBudget = Math.max(1, Math.floor(Number(process.env.PG_POOL_MAX) || 10));
 const workerCount = Math.max(
   1,
-  Math.min(16, Number.parseInt(process.env.WEB_CONCURRENCY || '', 10) || os.cpus().length),
+  Math.min(16, totalPoolBudget, Number.parseInt(process.env.WEB_CONCURRENCY || '', 10) || os.cpus().length),
 );
 // Every worker (primary or forked) opens its own Postgres pool against the same connection
 // string, so PG_POOL_MAX is a fleet-wide budget that must be divided across however many
 // processes are actually running — not applied per-process, or clustering would multiply total
 // connections by worker count and blow through Supabase's Session Pooler cap.
 const effectiveWorkers = clusterEnabled ? workerCount : 1;
-const poolMax = Math.max(1, Math.floor((Number(process.env.PG_POOL_MAX) || 10) / effectiveWorkers));
+const poolMax = Math.max(1, Math.floor(totalPoolBudget / effectiveWorkers));
 
 if (clusterEnabled && cluster.isPrimary && workerCount > 1) {
   console.log(`LAMID ONE primary ${process.pid} forking ${workerCount} workers.`);

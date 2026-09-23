@@ -1,0 +1,1095 @@
+[
+  {
+    "page": "/",
+    "links": [
+      {
+        "href": "/",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/pricing",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/login",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/start",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/how-it-works",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/how-it-works/clarity",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/how-it-works/capability",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/how-it-works/consistency",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/product/companion",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/demo",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/product",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/about",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/help/getting-started",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/help",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/trust/governance",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/trust/privacy",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/accessibility",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "Personal",
+        "clicked": true
+      },
+      {
+        "label": "Founder",
+        "clicked": true
+      },
+      {
+        "label": "Team",
+        "clicked": true
+      },
+      {
+        "label": "Enterprise",
+        "clicked": true
+      },
+      {
+        "label": "01\nChoose your next professional move",
+        "clicked": true
+      },
+      {
+        "label": "02\nTurn an idea into a viable direction",
+        "clicked": true
+      },
+      {
+        "label": "03\nPlan the next stage of the business",
+        "clicked": true
+      },
+      {
+        "label": "04\nStrengthen organizational alignment",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/product",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/how-it-works",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/pricing",
+    "links": [
+      {
+        "href": "/enterprise/contact",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/signup",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "All billables",
+        "clicked": true
+      },
+      {
+        "label": "Free tools",
+        "clicked": true
+      },
+      {
+        "label": "Create a Bundle",
+        "skipped": true
+      },
+      {
+        "label": "Capability",
+        "clicked": true
+      },
+      {
+        "label": "Clarity",
+        "clicked": true
+      },
+      {
+        "label": "Consistency",
+        "clicked": true
+      },
+      {
+        "label": "Finance",
+        "clicked": true
+      },
+      {
+        "label": "Growth",
+        "clicked": true
+      },
+      {
+        "label": "Guidance",
+        "clicked": true
+      },
+      {
+        "label": "Shared",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/about",
+    "links": [
+      {
+        "href": "/about/story",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/about/story",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/about/leadership",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/contact",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/help",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/security",
+    "links": [
+      {
+        "href": "/contact",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/responsible-ai",
+    "links": [
+      {
+        "href": "/responsible-ai#section-553",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/developers",
+    "links": [
+      {
+        "href": "/developers",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/careers",
+    "links": [
+      {
+        "href": "/careers",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/press",
+    "links": [
+      {
+        "href": "/press",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/insights",
+    "links": [
+      {
+        "href": "/insights",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/case-studies",
+    "links": [
+      {
+        "href": "/case-studies",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/resources",
+    "links": [
+      {
+        "href": "/resources",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/guides",
+    "links": [
+      {
+        "href": "/guides",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/research",
+    "links": [
+      {
+        "href": "/research",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/integrations",
+    "links": [
+      {
+        "href": "/integrations",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/who-its-for",
+    "links": [
+      {
+        "href": "/who-its-for/individuals",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/professionals",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/creators",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/founders",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/teams",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/smes",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/enterprises",
+        "status": 200,
+        "ok": true
+      },
+      {
+        "href": "/who-its-for/institutions",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/accessibility",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/support",
+    "links": [
+      {
+        "href": "/support",
+        "status": 200,
+        "ok": true
+      }
+    ],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/legal/privacy",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  },
+  {
+    "page": "/legal/terms",
+    "links": [],
+    "buttons": [
+      {
+        "label": "Product",
+        "clicked": true
+      },
+      {
+        "label": "Solutions",
+        "clicked": true
+      },
+      {
+        "label": "Experts",
+        "clicked": true
+      },
+      {
+        "label": "Resources",
+        "clicked": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      },
+      {
+        "label": "",
+        "skipped": true
+      }
+    ],
+    "status": 200,
+    "newConsoleErrors": []
+  }
+]

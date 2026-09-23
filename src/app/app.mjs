@@ -5,6 +5,7 @@ import { mountPublicCompanion } from './companionTasks.mjs';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { z } from 'zod';
 import { openStore, verifyPassword } from '../../server/store.mjs';
+import { databaseFailureResponse } from '../../server/databaseErrors.mjs';
 import { permissionsFor, requirePermission } from './policy.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
@@ -1403,7 +1404,8 @@ export async function createApp({
       return res.status(400).json({ error: 'Invalid JSON.' });
     if (error.type === 'entity.too.large')
       return res.status(413).json({ error: 'Request is too large.' });
-    const status = Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 ? error.status : 500;
+    const databaseFailure = databaseFailureResponse(error, { readOnly: ['GET', 'HEAD'].includes(req.method) });
+    const status = databaseFailure?.status || (Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 ? error.status : 500);
     if (status < 500) return res.status(status).json({ error: error.message });
     errorLogger('http_error', {
       requestId: req.requestId,
@@ -1414,6 +1416,7 @@ export async function createApp({
       error: errorDetails(error),
     });
     res.locals.errorLogged = true;
+    if (databaseFailure) return res.set('Retry-After', String(databaseFailure.retryAfter)).status(status).json({ error: databaseFailure.message, code: databaseFailure.code, requestId: req.requestId });
     res.status(status).json({ error: status === 500 ? 'Something went wrong. Please try again.' : error.message, requestId: req.requestId });
   });
   return { app, store, runtime, agentRuntime, mail: accounts.mail };

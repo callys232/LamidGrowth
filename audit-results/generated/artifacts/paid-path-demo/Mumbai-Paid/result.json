@@ -1,0 +1,9 @@
+{
+  "city": "Mumbai-Paid",
+  "locale": "en-IN",
+  "viewport": "360x740",
+  "role": "Individual",
+  "goal": "Make progress on my learning goal",
+  "stage": "enable AI policy",
+  "failure": "locator.isChecked: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('checkbox', { name: 'Allow members to request external AI reviews' })\u001b[22m\n"
+}

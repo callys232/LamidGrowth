@@ -48,6 +48,11 @@ async function signup(name, context = 'Founder') {
 
 test('a non-enterprise (individual) workspace cannot add members', async () => {
   const owner = await signup('Individual Owner', 'Founder');
+  // The shared funded-app fixture enterprise-tiers every new workspace so domain/behavior tests
+  // don't incidentally trip the entitlement gate; this test exercises that gate for real, so it
+  // downgrades back to individual first, same as engines.test.mjs / entitlements.test.mjs.
+  const ownerState = (await request('/state', undefined, owner, 'GET')).data;
+  await store.db.prepare("UPDATE workspaces SET tier = 'individual' WHERE id = ?").run(ownerState.workspace.id);
   const invitee = await signup('Invitee');
   const inviteeState = (await request('/state', undefined, invitee, 'GET')).data;
   const add = await request('/admin/members', { email: inviteeState.user.email }, owner);

@@ -5,6 +5,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { acquireDatabaseClient, isDatabaseConnectionError, markDatabaseError } from './databaseErrors.mjs';
 
 // This module is the one common dependency of every entry point that needs DATABASE_URL
 // (the production server, the e2e server, and every test file run directly via `node --test`,
@@ -68,8 +69,8 @@ const als = new AsyncLocalStorage();
 // immediately with more than a couple of schemas in play. Selecting the schema at the SQL level
 // instead, on every checked-out client, keeps every pool identical from the pooler's point of
 // view, while still giving each schema correct isolation.
-async function withClient(pool, schema, work) {
-  const client = await pool.connect();
+export async function withClient(pool, schema, work) {
+  const client = await acquireDatabaseClient(pool);
   // pool.on('error') (see openStore below) only covers a client that's IDLE, sitting unused in
   // the pool — one that's checked out (which this always is, for the lifetime of this function)
   // needs its own listener, or a connection severed between statements (not mid-query) is an
@@ -79,21 +80,28 @@ async function withClient(pool, schema, work) {
   // connection — adding a listener on every checkout without ever removing it accumulates
   // indefinitely on that one long-lived object (confirmed via a real MaxListenersExceededWarning),
   // so it must come off again before release, symmetric with the add.
-  const onError = (error) => console.error('Postgres client connection error:', error.message);
+  let discard = false;
+  let workStarted = false;
+  const onError = (error) => { discard = true; console.error('Postgres client connection error:', error.message); };
   client.on('error', onError);
   try {
     await client.query(`SET search_path TO "${schema}"`);
+    workStarted = true;
     return await work(client);
+  } catch (error) {
+    discard ||= isDatabaseConnectionError(error);
+    if (workStarted && isDatabaseConnectionError(error)) error.commitOutcomeUnknown = true;
+    throw markDatabaseError(error, pool);
   } finally {
     client.off('error', onError);
-    client.release();
+    client.release(discard);
   }
 }
 
 function createDb(pool, schema) {
   const run = (fn) => {
     const active = als.getStore();
-    return active ? fn(active) : withClient(pool, schema, fn);
+    return active ? fn(active).catch(error => { throw markDatabaseError(error, pool); }) : withClient(pool, schema, fn);
   };
   return {
     prepare(sql) {
@@ -124,28 +132,35 @@ function createDb(pool, schema) {
   };
 }
 
-function createTransaction(pool, schema) {
+export function createTransaction(pool, schema) {
   return async function transaction(work) {
     if (als.getStore())
       throw new Error('Nested transactions are not supported: a transaction() call was made while one was already active.');
-    const client = await pool.connect();
+    const client = await acquireDatabaseClient(pool);
     // See the identical comment in withClient above — a checked-out client needs its own error
     // listener, not just the pool's, and it must come off again before release (pg reuses the
     // same Client object across checkouts, so an unpaired add leaks listeners indefinitely).
-    const onError = (error) => console.error('Postgres client connection error:', error.message);
+    let discard = false;
+    let phase = 'begin';
+    const onError = (error) => { discard = true; console.error('Postgres client connection error:', error.message); };
     client.on('error', onError);
     try {
       await client.query(`SET search_path TO "${schema}"`);
       await client.query('BEGIN');
+      phase = 'work';
       const result = await als.run(client, () => work());
+      phase = 'commit';
       await client.query('COMMIT');
       return result;
     } catch (error) {
-      await client.query('ROLLBACK');
+      if (phase !== 'work') markDatabaseError(error, pool);
+      if (phase === 'commit' && isDatabaseConnectionError(error)) error.commitOutcomeUnknown = true;
+      discard ||= isDatabaseConnectionError(error);
+      if (!discard) { try { await client.query('ROLLBACK'); } catch { discard = true; } }
       throw error;
     } finally {
       client.off('error', onError);
-      client.release();
+      client.release(discard);
     }
   };
 }
@@ -795,7 +810,7 @@ export async function openStore(filename, { poolMax } = {}) {
     );
   const connectionString = isTestContext ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-  const bootstrap = new pg.Pool({ connectionString, ssl: sslConfig, max: 1, connectionTimeoutMillis: 15000, statement_timeout: 30000, lock_timeout: 10000 });
+  const bootstrap = new pg.Pool({ connectionString, ssl: sslConfig, max: 1, connectionTimeoutMillis: 15000, statement_timeout: 30000, query_timeout: 35000, lock_timeout: 10000 });
   // node-postgres emits 'error' on the POOL (not the individual client) when an idle pooled
   // connection is severed — a network blip, Supabase recycling a connection, anything that
   // doesn't happen while the client is actively mid-query. With no listener, Node's default
@@ -804,8 +819,12 @@ export async function openStore(filename, { poolMax } = {}) {
   // connection still rejects normally to its caller; this only stops the *idle*-connection case
   // from taking down every other request the process is serving.
   bootstrap.on('error', (error) => console.error('Idle Postgres connection error (bootstrap pool):', error.message));
+  let bootstrapClient;
+  const onBootstrapClientError = error => console.error('Postgres bootstrap connection error:', error.message);
   try {
-    await bootstrap.query(`CREATE SCHEMA IF NOT EXISTS "${schema}"`);
+    bootstrapClient = await acquireDatabaseClient(bootstrap, { attempts: 2 });
+    bootstrapClient.on('error', onBootstrapClientError);
+    await bootstrapClient.query(`CREATE SCHEMA IF NOT EXISTS "${schema}"`);
   } catch (error) {
     // Despite IF NOT EXISTS, Postgres's catalog check-then-create isn't itself atomic under true
     // concurrency: two processes racing to create the same schema (e.g. several cluster workers
@@ -814,15 +833,21 @@ export async function openStore(filename, { poolMax } = {}) {
     // exactly the desired end state — so it's safe to swallow specifically this error.
     if (error.code !== '23505') throw error;
   } finally {
+    bootstrapClient?.off('error', onBootstrapClientError);
+    bootstrapClient?.release(true);
     await bootstrap.end();
   }
 
-  const resolvedPoolMax = disposable ? 3 : poolMax || Number(process.env.PG_POOL_MAX) || 10;
+  const configuredPoolMax = Math.max(1, Math.floor(Number(poolMax) || Number(process.env.PG_POOL_MAX) || 10));
+  // Named reopen/shared-schema tests also use TEST_DATABASE_URL and must share its small budget.
+  const resolvedPoolMax = isTestContext ? Math.min(3, configuredPoolMax) : configuredPoolMax;
   const pool = new pg.Pool({
     connectionString,
     ssl: sslConfig,
     connectionTimeoutMillis: 15000,
     statement_timeout: 30000,
+    // Client deadline also bounds a query when the network cannot deliver the server timeout.
+    query_timeout: 35000,
     lock_timeout: 10000,
     idle_in_transaction_session_timeout: 60000,
     // Every pool uses identical, generic connection parameters — deliberately no per-schema
@@ -832,7 +857,9 @@ export async function openStore(filename, { poolMax } = {}) {
   });
   pool.on('error', (error) => console.error('Idle Postgres connection error:', error.message));
 
-  const client = await pool.connect();
+  let client;
+  try { client = await acquireDatabaseClient(pool, { attempts: 2 }); }
+  catch (error) { await pool.end().catch(() => {}); throw error; }
   // Symmetric add/remove — see the comment in withClient for why an unpaired add leaks listeners
   // on this pool's connections, which withClient/transaction go on to reuse for this store's
   // entire lifetime.
@@ -1149,10 +1176,10 @@ export async function openStore(filename, { poolMax } = {}) {
     )`);
     await client.query('COMMIT');
   } catch (error) {
-    await client.query('ROLLBACK');
+    try { await client.query('ROLLBACK'); } catch { /* Preserve the original startup error. */ }
     client.off('error', onClientError);
-    client.release();
-    await pool.end();
+    client.release(true);
+    await pool.end().catch(() => {});
     throw error;
   }
   client.off('error', onClientError);
@@ -1183,11 +1210,11 @@ export async function openStore(filename, { poolMax } = {}) {
       createdAt: row.created_at,
     }));
   };
-  // Only meaningful/safe for disposable test schemas — never called on 'public' or a named
-  // production/dev schema. Tears down both the schema and this store's own connection pool.
+  // Includes named test schemas used by reconnect tests, never the public schema or production.
   const dropSchema = async () => {
-    await pool.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
-    await pool.end();
+    if (!isTestContext || schema === 'public') throw new Error('Only isolated test database schemas can be dropped.');
+    try { await pool.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`); }
+    finally { await pool.end(); }
   };
 
   return { db, transaction, log, insert, records, schema, disposable, dropSchema };

@@ -1,0 +1,17 @@
+{
+  "name": "Amara",
+  "locale": "en-NG",
+  "role": "Founder",
+  "goal": "Plan my first client project",
+  "stage": "companion free worksheet",
+  "completed": [
+    "signup + verification",
+    "Clarity: objective created",
+    "Consistency: action created",
+    "Knowledge: entry saved",
+    "Rhythm: reflection saved",
+    "Companion: free starter worksheet completed"
+  ],
+  "notes": [],
+  "failure": "locator.isChecked: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('checkbox', { name: 'Allow members to request external AI reviews' })\u001b[22m\n"
+}

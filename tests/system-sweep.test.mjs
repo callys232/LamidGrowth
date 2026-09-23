@@ -7,6 +7,18 @@ before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
     rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    // Several tests below drive real companion messages through paid specialists (proposal-drafter,
+    // context-curator, etc.), so this needs AI configured the way production would have it — same
+    // stub pattern as tests/agents.test.mjs.
+    aiProvider: {
+      name: 'test',
+      model: 'test',
+      async review(context) {
+        return {
+          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+        };
+      },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -46,7 +58,11 @@ async function signup(name, context = 'Founder') {
     context,
   });
   assert.equal(result.status, 201, `signup failed: ${JSON.stringify(result.data)}`);
-  return result.cookie;
+  const cookie = result.cookie;
+  // External AI requires a verified account and workspace opt-in (see aiPolicy.mjs).
+  await request('/auth/verify', { token: result.data.verificationToken }, cookie);
+  await request('/ai/settings', { enabled: true, dailyLimit: 100, version: 0 }, cookie, 'PATCH');
+  return cookie;
 }
 
 const categories = [
@@ -111,7 +127,7 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
 
     const proposal = await request(
       '/companion/messages',
-      { message: 'draft a proposal for this job', jobId: job.data.id },
+      { message: 'draft a proposal for this job', jobId: job.data.id, consent: true },
       freelancer,
     );
     if (proposal.status !== 201 || proposal.data.agentId !== 'proposal-drafter')
@@ -203,20 +219,77 @@ const routingCases = [
   ['just checking in, nothing specific', 'context-curator'],
 ];
 
+// Agents whose execute() rejects (422) before ever reaching routing/AI, unless given the job,
+// proposal, or milestone id they document as required — see validatePrerequisites in agents.mjs.
+const jobScopedAgents = new Set([
+  'quote-generator',
+  'estimate-generator',
+  'proposal-drafter',
+  'scope-builder',
+  'sow-builder',
+  'brief-builder',
+  'deliverable-builder',
+  'acceptance-builder',
+]);
+
 test('Companion routes every documented phrase to the correct agent (Shared, Clarity, Capability, Growth, Consistency engines)', async () => {
   const breaks = [];
   const note = (area, detail) => breaks.push({ area, detail });
   const owner = await signup('Routing Owner');
+  const freelancer = await signup('Routing Freelancer');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Routing sweep job',
+      category: 'Software engineering',
+      projectType: 'Fixed-scope project',
+      description: 'A job used purely to give job/proposal/milestone-scoped specialists something real to reference.',
+      deliverables: 'Nothing real, this is a routing test.',
+      budgetMin: 500,
+      budgetMax: 2000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
+    owner,
+  );
+  assert.equal(job.status, 201, `job creation failed: ${JSON.stringify(job.data)}`);
+
+  await request(
+    `/jobs/${job.data.id}/bids`,
+    { coverLetter: 'I will deliver this work as described.', proposedAmount: 1000, currency: 'USD', timeline: '2 weeks' },
+    freelancer,
+  );
+
+  const proposal = await request(
+    `/jobs/${job.data.id}/proposals`,
+    { title: 'Routing proposal', scope: 'Deliver the routing sweep job as described in its brief.', deliverables: 'A completed deliverable.', amount: 1000, currency: 'USD', timeline: '2 weeks' },
+    owner,
+  );
+  assert.equal(proposal.status, 201, `proposal creation failed: ${JSON.stringify(proposal.data)}`);
+
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'Routing project', freelancerUserId: freelancerState.user.id },
+    owner,
+  );
+  assert.equal(project.status, 201, `project creation failed: ${JSON.stringify(project.data)}`);
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Routing milestone', description: '', amount: 500, currency: 'USD' },
+    owner,
+  );
+  assert.equal(milestone.status, 201, `milestone creation failed: ${JSON.stringify(milestone.data)}`);
+
   for (const [message, expectedAgentId] of routingCases) {
-    const result = await request('/companion/messages', { message }, owner);
-    if (expectedAgentId === 'workflow-orchestration') {
-      // workflow-orchestration is band A2 (workspace:manage) — owner should be allowed.
-      if (result.status !== 201 || result.data.agentId !== expectedAgentId)
-        note('routing', `"${message}" → expected ${expectedAgentId}, got status ${result.status} agentId ${result.data?.agentId}`);
-      continue;
-    }
+    const body = { message, consent: true };
+    if (jobScopedAgents.has(expectedAgentId)) body.jobId = job.data.id;
+    if (expectedAgentId === 'change-order') body.proposalId = proposal.data.id;
+    if (expectedAgentId === 'invoice-generator') body.milestoneId = milestone.data.id;
+    const result = await request('/companion/messages', body, owner);
     if (result.status !== 201 || result.data.agentId !== expectedAgentId)
-      note('routing', `"${message}" → expected ${expectedAgentId}, got status ${result.status} agentId ${result.data?.agentId}`);
+      note('routing', `"${message}" → expected ${expectedAgentId}, got status ${result.status} agentId ${result.data?.agentId} (${JSON.stringify(result.data)})`);
   }
   assert.deepEqual(breaks, [], `Routing breaks:\n${breaks.map((b) => `- [${b.area}] ${b.detail}`).join('\n')}`);
 });
