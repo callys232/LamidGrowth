@@ -611,8 +611,8 @@ small {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(var(--text-muted)10 1px, transparent 1px),
-    linear-gradient(90deg, var(--text-muted)10 1px, transparent 1px);
+    linear-gradient(var(--text-muted) 10 1px, transparent 1px),
+    linear-gradient(90deg, var(--text-muted) 10 1px, transparent 1px);
   background-size: 38px 38px;
   mask-image: radial-gradient(ellipse, black, transparent 69%);
 }
@@ -661,7 +661,7 @@ small {
   place-items: center;
 }
 .sphere-ring {
-  border: 1px solid var(--surface)6e;
+  border: 1px solid var(--surface) 6e;
   border-radius: 50%;
   position: absolute;
 }
@@ -684,7 +684,7 @@ small {
   display: grid;
   place-items: center;
   background: #0d1a2b;
-  box-shadow: 0 0 0 8px var(--surface-alt)28;
+  box-shadow: 0 0 0 8px var(--surface-alt) 28;
   font-size: 12px;
   letter-spacing: 2px;
   color: white;
@@ -1291,7 +1291,7 @@ small {
   color: white;
 }
 .footer-bottom {
-  border-top: 1px solid var(--surface)12;
+  border-top: 1px solid var(--surface) 12;
   padding-top: 22px;
   display: flex;
   justify-content: space-between;
@@ -1530,8 +1530,8 @@ small {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--surface)06;
-  border: 1px solid var(--surface)12;
+  background: var(--surface) 06;
+  border: 1px solid var(--surface) 12;
   padding: 12px 10px;
   border-radius: 7px;
   margin-bottom: 29px;
@@ -1609,11 +1609,11 @@ small {
   color: var(--text-muted);
 }
 .sidebar-link:hover {
-  background: var(--surface)08;
+  background: var(--surface) 08;
   color: white;
 }
 .sidebar-link.active {
-  background: var(--border)13;
+  background: var(--border) 13;
   color: var(--surface-alt);
 }
 .sidebar-link.active > svg {
@@ -1634,15 +1634,15 @@ small {
   height: 17px;
   display: grid;
   place-items: center;
-  background: var(--surface)0d;
-  border: 1px solid var(--surface)08;
+  background: var(--surface) 0d;
+  border: 1px solid var(--surface) 08;
   font-size: 8px;
   border-radius: 4px;
   color: #d8cfc4;
 }
 .sidebar-divider {
   height: 1px;
-  background: var(--surface)0d;
+  background: var(--surface) 0d;
   margin: 20px 9px;
 }
 .companion-link {
@@ -1655,7 +1655,7 @@ small {
   font-size: 5px;
   letter-spacing: 0.7px;
   margin-left: auto;
-  background: var(--border)1a;
+  background: var(--border) 1a;
   color: #d8cfc4;
   padding: 3px 4px;
   border-radius: 3px;
@@ -1668,8 +1668,8 @@ small {
   display: flex;
   gap: 10px;
   align-items: start;
-  background: var(--border)07;
-  border: 1px solid var(--border)13;
+  background: var(--border) 07;
+  border: 1px solid var(--border) 13;
   border-radius: 6px;
   padding: 13px 11px;
   margin: 0 2px 20px;
@@ -1687,7 +1687,7 @@ small {
   margin-top: 4px;
 }
 .profile-row {
-  border-top: 1px solid var(--surface)10;
+  border-top: 1px solid var(--surface) 10;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -1938,12 +1938,12 @@ small {
 .focus-orbit > div:nth-child(2) {
   width: 60%;
   height: 60%;
-  background: var(--text-muted)0d;
+  background: var(--text-muted) 0d;
 }
 .focus-orbit > div:nth-child(3) {
   width: 40%;
   height: 40%;
-  background: var(--text-muted)16;
+  background: var(--text-muted) 16;
 }
 .focus-orbit > span {
   font-size: 9px;
@@ -2956,7 +2956,7 @@ small {
   padding-bottom: 20px;
 }
 .kanban-column {
-  background: var(--border)30;
+  background: var(--border) 30;
   border-radius: 8px;
   min-height: 350px;
 }

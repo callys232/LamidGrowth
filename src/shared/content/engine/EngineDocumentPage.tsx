@@ -51,7 +51,10 @@ export function EngineDocumentPage({
         <div className="engine-container">
           {content.hero.label && <span className="engine-eyebrow">{content.hero.label}</span>}
           <h1 data-source-paragraph={title.sourceParagraph}>{title.text}</h1>
-          <p className="engine-hero-description" data-source-paragraph={description.sourceParagraph}>
+          <p
+            className="engine-hero-description"
+            data-source-paragraph={description.sourceParagraph}
+          >
             {description.text}
           </p>
           <CopyLine text={actions.text} paragraph={actions.sourceParagraph} />

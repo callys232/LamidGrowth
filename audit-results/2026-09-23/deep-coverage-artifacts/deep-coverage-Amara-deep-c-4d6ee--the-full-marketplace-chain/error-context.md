@@ -26,7 +26,7 @@ Call Log:
 ```ts
   23  |     const out = `artifacts/deep-coverage/${name}`;
   24  |     mkdirSync(out, { recursive: true });
-  25  | 
+  25  |
   26  |     async function signup(page2: Page, personaName: string, personaRole: string) {
   27  |       const email = `deep-${info.workerIndex}-${personaName.toLowerCase()}-${Date.now()}@example.test`;
   28  |       await page2.goto('/start');
@@ -51,11 +51,11 @@ Call Log:
   47  |       await page2.getByRole('button', { name: 'Save AI rules' }).click();
   48  |       await expect(box).toBeChecked();
   49  |     }
-  50  | 
+  50  |
   51  |     try {
   52  |       await signup(page, name, role);
   53  |       completed.push('signup + verification');
-  54  | 
+  54  |
   55  |       // --- Clarity: objective ---
   56  |       result.stage = 'clarity';
   57  |       await page.getByRole('button', { name: 'New objective', exact: true }).click();
@@ -65,7 +65,7 @@ Call Log:
   61  |       await page.getByRole('button', { name: 'Create objective', exact: true }).click();
   62  |       await expect(page.getByRole('dialog')).toHaveCount(0);
   63  |       completed.push('Clarity: objective created');
-  64  | 
+  64  |
   65  |       // --- Consistency: action ---
   66  |       result.stage = 'consistency';
   67  |       await page.goto('/os/consistency');
@@ -74,7 +74,7 @@ Call Log:
   70  |       await page.getByRole('button', { name: 'Add next action', exact: true }).click();
   71  |       await expect(page.getByRole('dialog')).toHaveCount(0);
   72  |       completed.push('Consistency: action created');
-  73  | 
+  73  |
   74  |       // --- Knowledge ---
   75  |       result.stage = 'knowledge';
   76  |       await page.goto('/os/knowledge');
@@ -84,7 +84,7 @@ Call Log:
   80  |       await page.getByRole('button', { name: 'Save knowledge', exact: true }).click();
   81  |       await expect(page.getByRole('dialog')).toHaveCount(0);
   82  |       completed.push('Knowledge: entry saved');
-  83  | 
+  83  |
   84  |       // --- Rhythm ---
   85  |       result.stage = 'rhythm';
   86  |       await page.goto('/os/rhythm');
@@ -95,7 +95,7 @@ Call Log:
   91  |       await page.getByRole('button', { name: 'Save reflection', exact: true }).click();
   92  |       await expect(page.getByRole('dialog')).toHaveCount(0);
   93  |       completed.push('Rhythm: reflection saved');
-  94  | 
+  94  |
   95  |       // --- Companion: free starter worksheet ---
   96  |       result.stage = 'companion free worksheet';
   97  |       await page.goto('/os/companion/chat');
@@ -107,10 +107,10 @@ Call Log:
   103 |       await starterCard.getByRole('button', { name: /^Approve /, exact: false }).click();
   104 |       await expect(starterCard).toContainText('Your free worksheet is ready.', { timeout: 60000 });
   105 |       completed.push('Companion: free starter worksheet completed');
-  106 | 
+  106 |
   107 |       await enableAI(page);
   108 |       completed.push('AI policy enabled');
-  109 | 
+  109 |
   110 |       // --- Companion: direct single-message chat with an explicit specialist ---
   111 |       result.stage = 'companion direct chat';
   112 |       await page.goto('/os/companion/chat');
@@ -127,7 +127,7 @@ Call Log:
 > 123 |         .toBeLessThan(balanceBeforeChat);
       |          ^ Error: expect(received).toBeLessThan(expected)
   124 |       completed.push('Companion: direct chat with named specialist');
-  125 | 
+  125 |
   126 |       // --- Commercial: post a job ---
   127 |       result.stage = 'commercial job posting';
   128 |       await page.goto('/os/commercial');
@@ -142,7 +142,7 @@ Call Log:
   137 |       await page.getByRole('button', { name: /^Post job/ }).click();
   138 |       await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 60000 });
   139 |       completed.push('Commercial: job posted');
-  140 | 
+  140 |
   141 |       // --- Bidding + manual proposal, via a lightweight counterpart account ---
   142 |       result.stage = 'bidding (counterpart)';
   143 |       const bidderContext = await browser.newContext({ locale, viewport: { width: 1280, height: 1000 }, reducedMotion: 'reduce' });
@@ -161,7 +161,7 @@ Call Log:
   156 |         await bidderPage.getByRole('button', { name: /^Submit bid/ }).click();
   157 |         await expect(bidderPage.getByText('Prepare proposal draft', { exact: true })).toBeVisible({ timeout: 60000 });
   158 |         completed.push('Commercial: bid submitted (counterpart)');
-  159 | 
+  159 |
   160 |         // --- Document tools, as the freelancer preparing to bid/deliver ---
   161 |         result.stage = 'document tools (counterpart)';
   162 |         for (const [label, kind] of [
@@ -181,7 +181,7 @@ Call Log:
   176 |           completed.push(`Document tool: ${label}`);
   177 |         }
   178 |         await bidderPage.screenshot({ path: `${out}/document-tools.png`, fullPage: true });
-  179 | 
+  179 |
   180 |         proposalTitle = `Proposal: ${goal}`;
   181 |         // The <details> section is already open once a bid exists (open={Boolean(bidId)}) — only
   182 |         // click the summary if the form isn't visible yet, since clicking an already-open
@@ -198,7 +198,7 @@ Call Log:
   193 |         await bidderPage.getByRole('button', { name: 'Save proposal draft', exact: true }).click();
   194 |         await expect(bidderPage.getByRole('button', { name: /^Award / })).toHaveCount(0); // freelancer never sees this
   195 |         completed.push('Commercial: manual proposal drafted (counterpart)');
-  196 | 
+  196 |
   197 |         // --- Change order, on the freshly-drafted proposal ---
   198 |         await bidderPage.getByLabel('Request a change to this proposal').fill('Add a second revision round to the plan.');
   199 |         await bidderPage.getByRole('button', { name: 'Draft change order', exact: false }).click();
@@ -208,7 +208,7 @@ Call Log:
   203 |       } catch (bidError) {
   204 |         notes.push(`Bidding/proposal/document-tools flow: ${(bidError as Error).message}`);
   205 |       }
-  206 | 
+  206 |
   207 |       // --- Client: award the proposal, creating a project ---
   208 |       // The job-post modal already closed itself after submission (job creation is the only
   209 |       // step that auto-closes it), so the client's page has never actually reopened this job's
@@ -221,7 +221,7 @@ Call Log:
   216 |       await page.getByRole('button', { name: /^Award /, exact: false }).first().click();
   217 |       await expect(page).toHaveURL(/\/os\/commercial\/projects\//, { timeout: 60000 });
   218 |       completed.push('Awarded proposal, project created');
-  219 | 
+  219 |
   220 |       // --- Milestone lifecycle to approval ---
   221 |       result.stage = 'milestone lifecycle';
   222 |       const projectUrl = page.url();

@@ -16,16 +16,25 @@ export function TimeseriesForm({
   periodLabel: string;
   periods: number;
   metrics: SeriesMetric[];
-  onSubmit: (input: { periodLabel: string; series: { metric: SeriesMetric; values: number[]; target?: number }[] }) => void;
+  onSubmit: (input: {
+    periodLabel: string;
+    series: { metric: SeriesMetric; values: number[]; target?: number }[];
+  }) => void;
   submitting: boolean;
 }) {
   const [values, setValues] = useState<number[][]>(
-    metrics.map((m) => (m.sample && m.sample.length === periods ? [...m.sample] : Array.from({ length: periods }, () => 0))),
+    metrics.map((m) =>
+      m.sample && m.sample.length === periods
+        ? [...m.sample]
+        : Array.from({ length: periods }, () => 0),
+    ),
   );
 
   function update(metricIdx: number, periodIdx: number, value: number) {
     setValues((prev) =>
-      prev.map((row, i) => (i === metricIdx ? row.map((v, j) => (j === periodIdx ? value : v)) : row)),
+      prev.map((row, i) =>
+        i === metricIdx ? row.map((v, j) => (j === periodIdx ? value : v)) : row,
+      ),
     );
   }
 
@@ -36,14 +45,21 @@ export function TimeseriesForm({
         e.preventDefault();
         onSubmit({
           periodLabel,
-          series: metrics.map((metric, i) => ({ metric, values: values[i], target: metric.target })),
+          series: metrics.map((metric, i) => ({
+            metric,
+            values: values[i],
+            target: metric.target,
+          })),
         });
       }}
     >
       {metrics.map((metric, mi) => (
         <fieldset key={metric.key} className="engine-form-row">
           <legend>
-            {metric.label} <span className="engine-form-unit">({metric.unit.trim()}, {metric.betterWhen} is better)</span>
+            {metric.label}{' '}
+            <span className="engine-form-unit">
+              ({metric.unit.trim()}, {metric.betterWhen} is better)
+            </span>
           </legend>
           {metric.hint && <p className="engine-form-hint">{metric.hint}</p>}
           <div className="engine-form-series">

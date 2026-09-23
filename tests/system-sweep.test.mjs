@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    rateLimits: {
+      api: { max: 5000 },
+      auth: { max: 5000 },
+      mutation: { max: 5000 },
+      spend: { max: 5000 },
+    },
     // Several tests below drive real companion messages through paid specialists (proposal-drafter,
     // context-curator, etc.), so this needs AI configured the way production would have it — same
     // stub pattern as tests/agents.test.mjs.
@@ -15,7 +20,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -27,7 +37,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -45,7 +55,11 @@ async function request(path, body, cookie, method = 'POST') {
   } catch {
     data = text;
   }
-  return { status: response.status, data, cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data,
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 let counter = 0;
 async function signup(name, context = 'Founder') {
@@ -108,22 +122,34 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
       client,
     );
     if (job.status !== 201) {
-      note('job creation', `${category}: expected 201, got ${job.status} — ${JSON.stringify(job.data)}`);
+      note(
+        'job creation',
+        `${category}: expected 201, got ${job.status} — ${JSON.stringify(job.data)}`,
+      );
       continue;
     }
 
     const bid = await request(
       `/jobs/${job.data.id}/bids`,
-      { coverLetter: 'I will deliver this work as described.', proposedAmount: 1000, currency: 'USD', timeline: '2 weeks' },
+      {
+        coverLetter: 'I will deliver this work as described.',
+        proposedAmount: 1000,
+        currency: 'USD',
+        timeline: '2 weeks',
+      },
       freelancer,
     );
     if (bid.status !== 201) {
-      note('bid submission', `${category}: expected 201, got ${bid.status} — ${JSON.stringify(bid.data)}`);
+      note(
+        'bid submission',
+        `${category}: expected 201, got ${bid.status} — ${JSON.stringify(bid.data)}`,
+      );
       continue;
     }
 
     const matches = await request(`/jobs/${job.data.id}/matches`, undefined, client, 'GET');
-    if (matches.status !== 200) note('consultant matcher', `${category}: expected 200, got ${matches.status}`);
+    if (matches.status !== 200)
+      note('consultant matcher', `${category}: expected 200, got ${matches.status}`);
 
     const proposal = await request(
       '/companion/messages',
@@ -131,15 +157,25 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
       freelancer,
     );
     if (proposal.status !== 201 || proposal.data.agentId !== 'proposal-drafter')
-      note('proposal drafter', `${category}: status ${proposal.status}, agentId ${proposal.data?.agentId}`);
+      note(
+        'proposal drafter',
+        `${category}: status ${proposal.status}, agentId ${proposal.data?.agentId}`,
+      );
 
     const project = await request(
       '/projects',
-      { jobId: job.data.id, title: `${category} project`, freelancerUserId: freelancerState.user.id },
+      {
+        jobId: job.data.id,
+        title: `${category} project`,
+        freelancerUserId: freelancerState.user.id,
+      },
       client,
     );
     if (project.status !== 201) {
-      note('project creation', `${category}: expected 201, got ${project.status} — ${JSON.stringify(project.data)}`);
+      note(
+        'project creation',
+        `${category}: expected 201, got ${project.status} — ${JSON.stringify(project.data)}`,
+      );
       continue;
     }
 
@@ -155,10 +191,15 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
 
     const deliverable = await request(
       `/milestones/${milestone.data.id}/deliverables`,
-      { title: 'Deliverable', description: '', criteria: ['Work is complete and matches the brief'] },
+      {
+        title: 'Deliverable',
+        description: '',
+        criteria: ['Work is complete and matches the brief'],
+      },
       client,
     );
-    if (deliverable.status !== 201) note('deliverable creation', `${category}: expected 201, got ${deliverable.status}`);
+    if (deliverable.status !== 201)
+      note('deliverable creation', `${category}: expected 201, got ${deliverable.status}`);
 
     const submission = await request(
       `/milestones/${milestone.data.id}/submissions`,
@@ -182,7 +223,10 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
       client,
     );
     if (decision.status !== 201 || decision.data.status !== 'approved')
-      note('approval decision', `${category}: status ${decision.status}, milestone status ${decision.data?.status}`);
+      note(
+        'approval decision',
+        `${category}: status ${decision.status}, milestone status ${decision.data?.status}`,
+      );
 
     const invoice = await request(
       '/companion/messages',
@@ -190,7 +234,10 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
       client,
     );
     if (invoice.status !== 201 || invoice.data.evidence?.amount !== 750)
-      note('invoice generator', `${category}: status ${invoice.status}, evidence ${JSON.stringify(invoice.data?.evidence)}`);
+      note(
+        'invoice generator',
+        `${category}: status ${invoice.status}, evidence ${JSON.stringify(invoice.data?.evidence)}`,
+      );
   }
   assert.deepEqual(
     breaks.filter((b) => b.area !== 'REPORT'),
@@ -245,7 +292,8 @@ test('Companion routes every documented phrase to the correct agent (Shared, Cla
       title: 'Routing sweep job',
       category: 'Software engineering',
       projectType: 'Fixed-scope project',
-      description: 'A job used purely to give job/proposal/milestone-scoped specialists something real to reference.',
+      description:
+        'A job used purely to give job/proposal/milestone-scoped specialists something real to reference.',
       deliverables: 'Nothing real, this is a routing test.',
       budgetMin: 500,
       budgetMax: 2000,
@@ -258,13 +306,25 @@ test('Companion routes every documented phrase to the correct agent (Shared, Cla
 
   await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work as described.', proposedAmount: 1000, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this work as described.',
+      proposedAmount: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
 
   const proposal = await request(
     `/jobs/${job.data.id}/proposals`,
-    { title: 'Routing proposal', scope: 'Deliver the routing sweep job as described in its brief.', deliverables: 'A completed deliverable.', amount: 1000, currency: 'USD', timeline: '2 weeks' },
+    {
+      title: 'Routing proposal',
+      scope: 'Deliver the routing sweep job as described in its brief.',
+      deliverables: 'A completed deliverable.',
+      amount: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     owner,
   );
   assert.equal(proposal.status, 201, `proposal creation failed: ${JSON.stringify(proposal.data)}`);
@@ -280,7 +340,11 @@ test('Companion routes every documented phrase to the correct agent (Shared, Cla
     { title: 'Routing milestone', description: '', amount: 500, currency: 'USD' },
     owner,
   );
-  assert.equal(milestone.status, 201, `milestone creation failed: ${JSON.stringify(milestone.data)}`);
+  assert.equal(
+    milestone.status,
+    201,
+    `milestone creation failed: ${JSON.stringify(milestone.data)}`,
+  );
 
   for (const [message, expectedAgentId] of routingCases) {
     const body = { message, consent: true };
@@ -289,9 +353,16 @@ test('Companion routes every documented phrase to the correct agent (Shared, Cla
     if (expectedAgentId === 'invoice-generator') body.milestoneId = milestone.data.id;
     const result = await request('/companion/messages', body, owner);
     if (result.status !== 201 || result.data.agentId !== expectedAgentId)
-      note('routing', `"${message}" → expected ${expectedAgentId}, got status ${result.status} agentId ${result.data?.agentId} (${JSON.stringify(result.data)})`);
+      note(
+        'routing',
+        `"${message}" → expected ${expectedAgentId}, got status ${result.status} agentId ${result.data?.agentId} (${JSON.stringify(result.data)})`,
+      );
   }
-  assert.deepEqual(breaks, [], `Routing breaks:\n${breaks.map((b) => `- [${b.area}] ${b.detail}`).join('\n')}`);
+  assert.deepEqual(
+    breaks,
+    [],
+    `Routing breaks:\n${breaks.map((b) => `- [${b.area}] ${b.detail}`).join('\n')}`,
+  );
 });
 
 test('a workspace member is blocked from the Consistency engine (workflow-orchestration, band A2)', async () => {
@@ -300,14 +371,34 @@ test('a workspace member is blocked from the Consistency engine (workflow-orches
   const memberState = (await request('/state', undefined, memberAccount, 'GET')).data;
 
   const added = await request('/admin/members', { email: memberState.user.email }, owner);
-  assert.equal(added.status, 201, `expected member add to succeed, got ${added.status} — ${JSON.stringify(added.data)}`);
+  assert.equal(
+    added.status,
+    201,
+    `expected member add to succeed, got ${added.status} — ${JSON.stringify(added.data)}`,
+  );
 
   const ownerState = (await request('/state', undefined, owner, 'GET')).data;
-  const switched = await request('/workspace/switch', { workspaceId: ownerState.workspace.id }, memberAccount);
-  assert.equal(switched.status, 200, `expected workspace switch to succeed, got ${switched.status}`);
+  const switched = await request(
+    '/workspace/switch',
+    { workspaceId: ownerState.workspace.id },
+    memberAccount,
+  );
+  assert.equal(
+    switched.status,
+    200,
+    `expected workspace switch to succeed, got ${switched.status}`,
+  );
 
-  const attempt = await request('/companion/messages', { message: 'approve the paused workflow' }, memberAccount);
-  assert.equal(attempt.status, 403, `member should be blocked from workflow-orchestration, got ${attempt.status}`);
+  const attempt = await request(
+    '/companion/messages',
+    { message: 'approve the paused workflow' },
+    memberAccount,
+  );
+  assert.equal(
+    attempt.status,
+    403,
+    `member should be blocked from workflow-orchestration, got ${attempt.status}`,
+  );
 });
 
 test('boundary and adversarial inputs do not crash the server (500) — they get a clean 4xx', async () => {
@@ -358,7 +449,11 @@ test('boundary and adversarial inputs do not crash the server (500) — they get
   ]);
   attempts.push([
     'companion message with a script-injection payload',
-    await request('/companion/messages', { message: '<script>alert(1)</script> what changed recently' }, client),
+    await request(
+      '/companion/messages',
+      { message: '<script>alert(1)</script> what changed recently' },
+      client,
+    ),
   ]);
   {
     const freelancer = await signup('Edge Freelancer');
@@ -397,7 +492,12 @@ test('boundary and adversarial inputs do not crash the server (500) — they get
   }
 
   for (const [label, result] of attempts) {
-    if (result.status >= 500) note('crash', `${label}: server returned ${result.status} — ${JSON.stringify(result.data)}`);
+    if (result.status >= 500)
+      note('crash', `${label}: server returned ${result.status} — ${JSON.stringify(result.data)}`);
   }
-  assert.deepEqual(breaks, [], `Server crashed on:\n${breaks.map((b) => `- [${b.area}] ${b.detail}`).join('\n')}`);
+  assert.deepEqual(
+    breaks,
+    [],
+    `Server crashed on:\n${breaks.map((b) => `- [${b.area}] ${b.detail}`).join('\n')}`,
+  );
 });

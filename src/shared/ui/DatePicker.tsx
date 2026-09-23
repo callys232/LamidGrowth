@@ -14,7 +14,11 @@ function formatValue(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 function isSameDay(a: Date, b: Date): boolean {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
 }
 function monthGrid(year: number, month: number): Date[] {
   const first = new Date(year, month, 1);
@@ -86,7 +90,9 @@ export function DatePicker({
           setView(selected ?? new Date());
           const rect = wrapRef.current?.getBoundingClientRect();
           setOpenUpward(
-            !!rect && window.innerHeight - rect.bottom < POPOVER_HEIGHT_ESTIMATE && rect.top > POPOVER_HEIGHT_ESTIMATE,
+            !!rect &&
+              window.innerHeight - rect.bottom < POPOVER_HEIGHT_ESTIMATE &&
+              rect.top > POPOVER_HEIGHT_ESTIMATE,
           );
           setOpen((o) => !o);
         }}

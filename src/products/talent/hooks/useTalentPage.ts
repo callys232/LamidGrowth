@@ -85,8 +85,22 @@ export type Booking = {
   format: string;
   created_at: string;
 };
-export type ExpertTeamMember = { id: string; team_id: string; user_id: string; role: string; access_scope: string; created_at: string };
-export type ExpertTeam = { id: string; name: string; lead_user_id: string; description: string; created_at: string; members: ExpertTeamMember[] };
+export type ExpertTeamMember = {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  access_scope: string;
+  created_at: string;
+};
+export type ExpertTeam = {
+  id: string;
+  name: string;
+  lead_user_id: string;
+  description: string;
+  created_at: string;
+  members: ExpertTeamMember[];
+};
 export type ReviewQueueEntry = {
   id: string;
   scoping_case_id: string;
@@ -121,7 +135,10 @@ export function useTalentPage() {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [viewingAvailability, setViewingAvailability] = useState<{ userId: string; slots: AvailabilitySlot[] } | null>(null);
+  const [viewingAvailability, setViewingAvailability] = useState<{
+    userId: string;
+    slots: AvailabilitySlot[];
+  } | null>(null);
   const [teams, setTeams] = useState<ExpertTeam[]>([]);
   const [reviewQueue, setReviewQueue] = useState<ReviewQueueEntry[]>([]);
   const [handoffInbox, setHandoffInbox] = useState<HandoffItem[]>([]);
@@ -220,9 +237,13 @@ export function useTalentPage() {
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean),
-        experienceYears: data.get('experienceYears') ? Number(data.get('experienceYears')) : undefined,
+        experienceYears: data.get('experienceYears')
+          ? Number(data.get('experienceYears'))
+          : undefined,
         availability: data.get('availability') || undefined,
-        hourlyRate: data.get('hourlyRate') ? Math.round(Number(data.get('hourlyRate')) * 100) : undefined,
+        hourlyRate: data.get('hourlyRate')
+          ? Math.round(Number(data.get('hourlyRate')) * 100)
+          : undefined,
         currency: data.get('currency') || undefined,
         location: data.get('location') || undefined,
         languages: String(data.get('languages') || '')
@@ -265,7 +286,11 @@ export function useTalentPage() {
     }
   }
 
-  async function searchExperts(skill: string, maxRate?: number, filters?: { domain?: string; function?: string; industry?: string }) {
+  async function searchExperts(
+    skill: string,
+    maxRate?: number,
+    filters?: { domain?: string; function?: string; industry?: string },
+  ) {
     setBusy(true);
     setError('');
     try {
@@ -298,7 +323,9 @@ export function useTalentPage() {
     setError('');
     setLastAssessment(null);
     try {
-      setQuiz(await api<QuizQuestion[]>(`/talent/quiz/${encodeURIComponent(skill)}`, undefined, 'GET'));
+      setQuiz(
+        await api<QuizQuestion[]>(`/talent/quiz/${encodeURIComponent(skill)}`, undefined, 'GET'),
+      );
       setQuizSkill(skill);
     } catch (error) {
       setError((error as Error).message);
@@ -309,9 +336,16 @@ export function useTalentPage() {
   async function submitQuiz(answers: number[]) {
     setBusy(true);
     try {
-      const result = await api<AssessmentResult>('/talent/assessments', { skill: quizSkill, answers });
+      const result = await api<AssessmentResult>('/talent/assessments', {
+        skill: quizSkill,
+        answers,
+      });
       setLastAssessment(result);
-      notify(result.passed ? `Passed with ${result.score}%!` : `Scored ${result.score}% — below the ${result.threshold}% pass threshold.`);
+      notify(
+        result.passed
+          ? `Passed with ${result.score}%!`
+          : `Scored ${result.score}% — below the ${result.threshold}% pass threshold.`,
+      );
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -321,7 +355,9 @@ export function useTalentPage() {
 
   async function loadAvailability() {
     try {
-      setAvailability(await api<AvailabilitySlot[]>('/booking/availability/mine', undefined, 'GET'));
+      setAvailability(
+        await api<AvailabilitySlot[]>('/booking/availability/mine', undefined, 'GET'),
+      );
     } catch {
       // No expert profile yet — availability naturally starts empty until one is created.
     }
@@ -374,7 +410,11 @@ export function useTalentPage() {
     }
     setError('');
     try {
-      const slots = await api<AvailabilitySlot[]>(`/booking/availability/${userId}`, undefined, 'GET');
+      const slots = await api<AvailabilitySlot[]>(
+        `/booking/availability/${userId}`,
+        undefined,
+        'GET',
+      );
       setViewingAvailability({ userId, slots });
     } catch (error) {
       setError((error as Error).message);
@@ -438,7 +478,10 @@ export function useTalentPage() {
     setBusy(true);
     setError('');
     try {
-      await api('/expert-teams', { name: data.get('name'), description: data.get('description') || undefined });
+      await api('/expert-teams', {
+        name: data.get('name'),
+        description: data.get('description') || undefined,
+      });
       form.reset();
       await loadTeams();
       notify('Expert team created.');

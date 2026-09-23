@@ -6,7 +6,13 @@ import type { Member } from '../types';
 export type EscrowOverview = {
   totals: { heldMinor: number; releasedMinor: number; refundedMinor: number; pendingMinor: number };
   byStatus: Record<string, number>;
-  currentlyHeld: Array<{ milestoneId: string; workspaceId: string; amountMinor: number; currency: string; heldAt: string }>;
+  currentlyHeld: Array<{
+    milestoneId: string;
+    workspaceId: string;
+    amountMinor: number;
+    currency: string;
+    heldAt: string;
+  }>;
 };
 export type ConciergeApplication = {
   id: string;
@@ -35,7 +41,11 @@ export function useMembersPage() {
   }, []);
   async function loadConciergeApplications() {
     try {
-      const data = await api<ConciergeApplication[]>('/admin/concierge-applications', undefined, 'GET');
+      const data = await api<ConciergeApplication[]>(
+        '/admin/concierge-applications',
+        undefined,
+        'GET',
+      );
       setConciergeApplications(data);
       setIsEcosystemAdmin(true);
     } catch {

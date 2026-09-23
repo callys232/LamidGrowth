@@ -158,8 +158,7 @@ export function anthropicProvider({
       });
       if (!response.ok) throw new Error(`AI provider request failed (${response.status}).`);
       const body = await response.json();
-      if (body.stop_reason === 'refusal')
-        throw new Error('The AI provider declined this request.');
+      if (body.stop_reason === 'refusal') throw new Error('The AI provider declined this request.');
       const toolUse = (body.content || []).find((item) => item.type === 'tool_use');
       if (!toolUse) throw new Error('The AI provider did not return a structured review.');
       return {
@@ -207,7 +206,10 @@ export function multiProvider(providers) {
 // since there's no fallback attempt to leave room for.
 export function defaultAiProvider() {
   const bothConfigured = Boolean(
-    process.env.OPENAI_API_KEY && process.env.OPENAI_MODEL && process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_MODEL,
+    process.env.OPENAI_API_KEY &&
+    process.env.OPENAI_MODEL &&
+    process.env.ANTHROPIC_API_KEY &&
+    process.env.ANTHROPIC_MODEL,
   );
   const sharedTimeout = bothConfigured ? { timeoutMs: 20000 } : undefined;
   return multiProvider([openAIProvider(sharedTimeout), anthropicProvider(sharedTimeout)]);
@@ -234,7 +236,8 @@ export function mountAI(app, store, provider) {
       accountEligible:
         !req.user.demo &&
         Boolean(
-          (await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))?.verified_at,
+          (await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))
+            ?.verified_at,
         ),
     });
   });
@@ -255,19 +258,26 @@ export function mountAI(app, store, provider) {
     if (
       input.enabled &&
       (req.user.demo ||
-        !(await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))?.verified_at)
+        !(await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))
+          ?.verified_at)
     )
       return res
         .status(403)
         .json({ error: 'Verify your account before enabling external AI reviews.' });
     await transaction(async () => {
-      await db.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get(`ai-policy:${req.workspace.id}`);
+      await db
+        .prepare('SELECT pg_advisory_xact_lock(hashtext(?))')
+        .get(`ai-policy:${req.workspace.id}`);
       const previous = await policy(req.workspace.id);
       if (previous.version !== input.version)
         throw Object.assign(new Error('AI settings changed. Reload before saving.'), {
           status: 409,
         });
-      const data = { enabled: input.enabled, dailyLimit: input.dailyLimit, rules: input.rules || rulesFor(previous) };
+      const data = {
+        enabled: input.enabled,
+        dailyLimit: input.dailyLimit,
+        rules: input.rules || rulesFor(previous),
+      };
       if (previous.id) await update(previous.id, data);
       else await insert(req.workspace.id, 'ai_policy', data);
       await log(
@@ -280,13 +290,19 @@ export function mountAI(app, store, provider) {
     });
     res.json({ ok: true });
   });
-  app.get('/api/ai/reviews', async (req, res) => res.json(await records(req.workspace.id, 'ai_review')));
+  app.get('/api/ai/reviews', async (req, res) =>
+    res.json(await records(req.workspace.id, 'ai_review')),
+  );
   app.patch('/api/ai/reviews/:id', async (req, res) => {
     z.object({ command: z.literal('cancel') })
       .strict()
       .parse(req.body);
     await transaction(async () => {
-      const row = await db.prepare("SELECT data FROM records WHERE id = ? AND workspace_id = ? AND kind = 'ai_review' FOR UPDATE").get(req.params.id, req.workspace.id);
+      const row = await db
+        .prepare(
+          "SELECT data FROM records WHERE id = ? AND workspace_id = ? AND kind = 'ai_review' FOR UPDATE",
+        )
+        .get(req.params.id, req.workspace.id);
       const review = row ? { ...JSON.parse(row.data), id: req.params.id } : null;
       if (!review) throw Object.assign(new Error('Review not found.'), { status: 404 });
       if (review.principalId !== req.user.id && req.workspace.role !== 'owner')
@@ -298,7 +314,13 @@ export function mountAI(app, store, provider) {
         throw Object.assign(new Error('This review is no longer pending.'), { status: 409 });
       await update(review.id, { ...review, status: 'cancelled' });
       await db.prepare("UPDATE ai_usage SET status = 'cancelled' WHERE id = ?").run(review.id);
-      await refundInTransaction(store, review.principalId, req.workspace.id, review.id, 'ai_review');
+      await refundInTransaction(
+        store,
+        review.principalId,
+        req.workspace.id,
+        review.id,
+        'ai_review',
+      );
       await log(
         req.workspace.id,
         req.user.name,
@@ -328,7 +350,8 @@ export function mountAI(app, store, provider) {
         .json({ error: 'AI is not configured. Guided planning remains available.' });
     if (
       req.user.demo ||
-      !(await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))?.verified_at
+      !(await db.prepare('SELECT verified_at FROM users WHERE id = ?').get(req.user.id))
+        ?.verified_at
     )
       return res.status(403).json({ error: 'External AI reviews require a verified account.' });
     const currentPolicy = await policy(req.workspace.id);
@@ -391,28 +414,33 @@ export function mountAI(app, store, provider) {
         Math.max(1, Number.parseInt(process.env.AI_GLOBAL_DAILY_LIMIT || '100', 10) || 100),
       );
       if (
-        (await db
-          .prepare('SELECT COUNT(*) AS count FROM ai_usage WHERE created_at >= ?')
-          .get(day)).count >= globalLimit
+        (await db.prepare('SELECT COUNT(*) AS count FROM ai_usage WHERE created_at >= ?').get(day))
+          .count >= globalLimit
       )
         throw Object.assign(new Error('The server has reached its daily AI request limit.'), {
           status: 429,
         });
       if (
-        (await db
-          .prepare(
-            'SELECT COUNT(*) AS count FROM ai_usage WHERE workspace_id = ? AND created_at >= ?',
-          )
-          .get(req.workspace.id, day)).count >= currentPolicy.dailyLimit
+        (
+          await db
+            .prepare(
+              'SELECT COUNT(*) AS count FROM ai_usage WHERE workspace_id = ? AND created_at >= ?',
+            )
+            .get(req.workspace.id, day)
+        ).count >= currentPolicy.dailyLimit
       )
         throw Object.assign(new Error('This workspace has reached its daily AI request limit.'), {
           status: 429,
         });
       const charged = await db
-        .prepare('UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?')
+        .prepare(
+          'UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?',
+        )
         .run(engineReviewCost, req.user.id, engineReviewCost);
       if (charged.changes !== 1)
-        throw Object.assign(new Error('Not enough points to request this review.'), { status: 402 });
+        throw Object.assign(new Error('Not enough points to request this review.'), {
+          status: 402,
+        });
       const item = await insert(req.workspace.id, 'ai_review', {
         requestKey: input.requestKey,
         fingerprint,
@@ -426,22 +454,20 @@ export function mountAI(app, store, provider) {
         pointsCharged: engineReviewCost,
         status: 'pending',
       });
-      await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        req.user.id,
-        req.workspace.id,
-        -engineReviewCost,
-        'ai_review',
-        item.id,
-        Date.now(),
-      );
-      await db.prepare('INSERT INTO ai_usage VALUES (?, ?, ?, ?, ?)').run(
-        item.id,
-        req.workspace.id,
-        req.user.id,
-        Date.now(),
-        'pending',
-      );
+      await db
+        .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          randomUUID(),
+          req.user.id,
+          req.workspace.id,
+          -engineReviewCost,
+          'ai_review',
+          item.id,
+          Date.now(),
+        );
+      await db
+        .prepare('INSERT INTO ai_usage VALUES (?, ?, ?, ?, ?)')
+        .run(item.id, req.workspace.id, req.user.id, Date.now(), 'pending');
       await log(
         req.workspace.id,
         req.user.name,
@@ -457,11 +483,9 @@ export function mountAI(app, store, provider) {
     inFlight.set(item.id, controller);
     try {
       const beforeSend = await authorizeExternalAI(store, req.workspace.id, req.user.id);
-      if (beforeSend.version !== currentPolicy.version) throw new Error('AI rules changed before the request was sent.');
-      const result = await provider.review(
-        payload,
-        { signal: controller.signal },
-      );
+      if (beforeSend.version !== currentPolicy.version)
+        throw new Error('AI rules changed before the request was sent.');
+      const result = await provider.review(payload, { signal: controller.signal });
       const review = reviewSchema.parse(result.review);
       if (review.evidenceIds.some((id) => !payload.sources.some((source) => source.id === id)))
         throw new Error('The AI response referenced evidence outside the supplied context.');
@@ -475,13 +499,18 @@ export function mountAI(app, store, provider) {
         const latestPolicy = await policy(req.workspace.id);
         if (!active || !latestPolicy.enabled || latestPolicy.version !== currentPolicy.version)
           throw new Error('Workspace authority changed while the review was being prepared.');
-        const current = await db.prepare('SELECT data FROM records WHERE id = ? FOR UPDATE').get(item.id);
+        const current = await db
+          .prepare('SELECT data FROM records WHERE id = ? FOR UPDATE')
+          .get(item.id);
         let sourceChanged = false;
         for (const source of sources) {
           const row = await db
             .prepare('SELECT version FROM records WHERE id = ? AND workspace_id = ?')
             .get(source.id, req.workspace.id);
-          if (row?.version !== source.version) { sourceChanged = true; break; }
+          if (row?.version !== source.version) {
+            sourceChanged = true;
+            break;
+          }
         }
         if (!current || JSON.parse(current.data).status !== 'pending' || sourceChanged)
           throw new Error('Source context changed while the review was being prepared.');
@@ -508,7 +537,9 @@ export function mountAI(app, store, provider) {
     } catch (error) {
       logHandledError(req, res, 'ai_review_error', error);
       await transaction(async () => {
-        const current = await db.prepare('SELECT data FROM records WHERE id = ? FOR UPDATE').get(item.id);
+        const current = await db
+          .prepare('SELECT data FROM records WHERE id = ? FOR UPDATE')
+          .get(item.id);
         if (!current || JSON.parse(current.data).status !== 'pending') return;
         await db.prepare("UPDATE ai_usage SET status = 'failed' WHERE id = ?").run(item.id);
         await refundInTransaction(store, req.user.id, req.workspace.id, item.id, 'ai_review');

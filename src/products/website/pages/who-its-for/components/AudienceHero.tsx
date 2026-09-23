@@ -29,7 +29,10 @@ export function AudienceHero() {
       <div className="audience-container">
         {content.hero.label && <span className="audience-eyebrow">{content.hero.label}</span>}
         <h1 data-source-paragraph={title.sourceParagraph}>{title.text}</h1>
-        <p className="audience-hero-description" data-source-paragraph={description.sourceParagraph}>
+        <p
+          className="audience-hero-description"
+          data-source-paragraph={description.sourceParagraph}
+        >
           {description.text}
         </p>
         <CopyLine text={actions.text} paragraph={actions.sourceParagraph} />

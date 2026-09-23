@@ -33,7 +33,9 @@ test('mega menus expose options on hover and support keyboard navigation', async
     '/experts#become-an-expert',
   ];
   // Each anchor target's existence is verified on /experts itself, in expert-network.spec.ts.
-  const hrefs = await expertsLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+  const hrefs = await expertsLinks.evaluateAll((links) =>
+    links.map((link) => link.getAttribute('href')),
+  );
   expect(hrefs).toEqual(expertAnchors);
   await page.getByRole('button', { name: 'Resources', exact: true }).hover();
   await expect(

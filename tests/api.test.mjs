@@ -20,7 +20,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST', extra = {}) {
   const response = await fetch(`${base}/api${path}`, {
@@ -51,7 +51,11 @@ test('private APIs reject unauthenticated requests', async () => {
 
 test('database outages return 503 while liveness remains healthy', async () => {
   const prepare = store.db.prepare;
-  store.db.prepare = () => ({ get: async () => { throw markDatabaseError(new Error('Connection terminated due to connection timeout')); } });
+  store.db.prepare = () => ({
+    get: async () => {
+      throw markDatabaseError(new Error('Connection terminated due to connection timeout'));
+    },
+  });
   try {
     const failed = await request('/state', undefined, 'lamid_session=unavailable');
     assert.equal(failed.status, 503);
@@ -60,7 +64,9 @@ test('database outages return 503 while liveness remains healthy', async () => {
     assert.ok(failed.data.requestId);
     assert.equal((await request('/health')).status, 200);
     assert.equal((await request('/ready')).status, 503);
-  } finally { store.db.prepare = prepare; }
+  } finally {
+    store.db.prepare = prepare;
+  }
 });
 test('isolated sample workspaces cannot read or change each other’s work', async () => {
   const first = await demo();
@@ -230,7 +236,9 @@ test('signup, session, logout, login and data persistence', async () => {
   assert.equal(state.objectives.length, 1);
   assert.equal(state.objectives[0].id, objective.data.id);
   assert.equal(state.user.demo, false);
-  const row = await store.db.prepare('SELECT password FROM users WHERE email = ?').get(credentials.email);
+  const row = await store.db
+    .prepare('SELECT password FROM users WHERE email = ?')
+    .get(credentials.email);
   assert.notEqual(row.password, credentials.password);
   assert.equal(
     (await request('/auth/login', { email: credentials.email, password: 'wrong-password' })).status,
@@ -383,9 +391,11 @@ test('points are charged once for job posts and bids', async () => {
   );
   assert.equal(post.status, 201);
   assert.equal(
-    (await store.db
-      .prepare('SELECT points_balance FROM users WHERE email = ?')
-      .get('points-client@example.test')).points_balance,
+    (
+      await store.db
+        .prepare('SELECT points_balance FROM users WHERE email = ?')
+        .get('points-client@example.test')
+    ).points_balance,
     99960,
   );
   const bid = await request(
@@ -400,9 +410,11 @@ test('points are charged once for job posts and bids', async () => {
   );
   assert.equal(bid.status, 201);
   assert.equal(
-    (await store.db
-      .prepare('SELECT points_balance FROM users WHERE email = ?')
-      .get('points-freelancer@example.test')).points_balance,
+    (
+      await store.db
+        .prepare('SELECT points_balance FROM users WHERE email = ?')
+        .get('points-freelancer@example.test')
+    ).points_balance,
     99980,
   );
 });
@@ -616,7 +628,7 @@ test('rate limits block bursts and return retry timing', async () => {
     assert.match(blocked.headers.get('retry-after'), /^\d+$/);
   } finally {
     await new Promise((resolve) => limitedServer.close(resolve));
-    limited.store.db.close();
+    await limited.store.db.close();
   }
 });
 test('guided plans save an objective and first action together', async () => {
@@ -652,7 +664,13 @@ test('guided plans save an objective and first action together', async () => {
 test('goal pathways preview without writes and save selected steps exactly once', async () => {
   const cookie = await demo();
   const before = (await request('/state', undefined, cookie)).data;
-  const objective = { title: 'Grow a small business', context: 'Founder', priority: 'Medium', success: 'Three customers', constraints: 'One afternoon per week' };
+  const objective = {
+    title: 'Grow a small business',
+    context: 'Founder',
+    priority: 'Medium',
+    success: 'Three customers',
+    constraints: 'One afternoon per week',
+  };
   assert.equal((await request('/plans/preview', { objective })).status, 401);
   const preview = await request('/plans/preview', { objective }, cookie);
   assert.equal(preview.status, 200);
@@ -660,27 +678,54 @@ test('goal pathways preview without writes and save selected steps exactly once'
   const afterPreview = (await request('/state', undefined, cookie)).data;
   assert.equal(afterPreview.objectives.length, before.objectives.length);
   assert.equal(afterPreview.actions.length, before.actions.length);
-  for (const pathway of [[{ title: '   ' }], Array(11).fill({ title: 'Too many' }), [{ title: 'Valid', notes: 'x'.repeat(5001) }]]) {
+  for (const pathway of [
+    [{ title: '   ' }],
+    Array(11).fill({ title: 'Too many' }),
+    [{ title: 'Valid', notes: 'x'.repeat(5001) }],
+  ]) {
     assert.equal((await request('/plans', { objective, pathway }, cookie)).status, 400);
   }
-  const input = { objective, pathway: [preview.data.steps[0], { title: 'Interview two customers', notes: 'Ask about their current workaround.' }] };
+  const input = {
+    objective,
+    pathway: [
+      preview.data.steps[0],
+      { title: 'Interview two customers', notes: 'Ask about their current workaround.' },
+    ],
+  };
   const headers = { 'Idempotency-Key': 'pathway-save-retry' };
   const saved = await request('/plans', input, cookie, 'POST', headers);
   assert.equal(saved.status, 201);
   const replay = await request('/plans', input, cookie, 'POST', headers);
   assert.deepEqual(replay.data, saved.data);
   assert.equal(saved.data.actions.length, 2);
-  assert.deepEqual(saved.data.actions.map(action => action.pathwayOrder), [1, 2]);
-  assert.ok(saved.data.actions.every(action => action.objectiveId === saved.data.objective.id && action.status === 'Planned'));
+  assert.deepEqual(
+    saved.data.actions.map((action) => action.pathwayOrder),
+    [1, 2],
+  );
+  assert.ok(
+    saved.data.actions.every(
+      (action) => action.objectiveId === saved.data.objective.id && action.status === 'Planned',
+    ),
+  );
   const persisted = (await request('/state', undefined, cookie)).data;
   assert.equal(persisted.objectives.length, before.objectives.length + 1);
   assert.equal(persisted.actions.length, before.actions.length + 2);
   const foreign = (await request('/state', undefined, await demo())).data;
-  assert.ok(!foreign.actions.some(action => action.objectiveId === saved.data.objective.id));
+  assert.ok(!foreign.actions.some((action) => action.objectiveId === saved.data.objective.id));
   const action = saved.data.actions[0];
-  const started = await request(`/actions/${action.id}`, { version: action.version, status: 'In progress' }, cookie, 'PATCH');
+  const started = await request(
+    `/actions/${action.id}`,
+    { version: action.version, status: 'In progress' },
+    cookie,
+    'PATCH',
+  );
   assert.equal(started.status, 200);
-  const completed = await request(`/actions/${action.id}`, { version: started.data.version, status: 'Done' }, cookie, 'PATCH');
+  const completed = await request(
+    `/actions/${action.id}`,
+    { version: started.data.version, status: 'Done' },
+    cookie,
+    'PATCH',
+  );
   assert.equal(completed.status, 200);
   assert.equal(completed.data.pathwayOrder, 1);
 });
@@ -688,21 +733,66 @@ test('goal pathways preview without writes and save selected steps exactly once'
 test('goal deletion requires confirmation, isolates workspaces and removes linked actions', async () => {
   const cookie = await demo();
   const other = await demo();
-  const saved = await request('/plans', { objective: { title: 'Delete this goal', context: 'Individual', priority: 'Medium' }, pathway: [{ title: 'Linked action' }] }, cookie);
+  const saved = await request(
+    '/plans',
+    {
+      objective: { title: 'Delete this goal', context: 'Individual', priority: 'Medium' },
+      pathway: [{ title: 'Linked action' }],
+    },
+    cookie,
+  );
   const path = `/objectives/${saved.data.objective.id}`;
   assert.equal((await request(path, { version: 1, confirm: true }, other, 'DELETE')).status, 404);
   assert.equal((await request(path, { version: 1 }, cookie, 'DELETE')).status, 400);
   assert.equal((await request(path, { version: 2, confirm: true }, cookie, 'DELETE')).status, 409);
-  const workflow = await request('/workflows', { title: 'Unfinished goal work', objectiveId: saved.data.objective.id, expiresAt: new Date(Date.now() + 86400000).toISOString(), steps: [{ id: 'inspect', toolId: 'context.snapshot' }] }, cookie);
+  const workflow = await request(
+    '/workflows',
+    {
+      title: 'Unfinished goal work',
+      objectiveId: saved.data.objective.id,
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      steps: [{ id: 'inspect', toolId: 'context.snapshot' }],
+    },
+    cookie,
+  );
   assert.equal(workflow.status, 201);
   assert.equal((await request(path, { version: 1, confirm: true }, cookie, 'DELETE')).status, 409);
-  assert.equal((await request(`/workflows/${workflow.data.id}`, { version: workflow.data.version, command: 'cancel' }, cookie, 'PATCH')).status, 200);
+  assert.equal(
+    (
+      await request(
+        `/workflows/${workflow.data.id}`,
+        { version: workflow.data.version, command: 'cancel' },
+        cookie,
+        'PATCH',
+      )
+    ).status,
+    200,
+  );
   assert.equal((await request(path, { version: 1, confirm: true }, cookie, 'DELETE')).status, 200);
   const state = (await request('/state', undefined, cookie)).data;
-  assert.ok(!state.objectives.some(goal => goal.id === saved.data.objective.id));
-  assert.ok(!state.actions.some(action => action.objectiveId === saved.data.objective.id));
-  assert.equal((await request(`/actions/${saved.data.actions[0].id}`, { version: 1, status: 'In progress' }, cookie, 'PATCH')).status, 404);
-  assert.equal((await request('/actions', { title: 'Cannot revive', objectiveId: saved.data.objective.id, owner: 'Owner' }, cookie)).status, 404);
+  assert.ok(!state.objectives.some((goal) => goal.id === saved.data.objective.id));
+  assert.ok(!state.actions.some((action) => action.objectiveId === saved.data.objective.id));
+  assert.equal(
+    (
+      await request(
+        `/actions/${saved.data.actions[0].id}`,
+        { version: 1, status: 'In progress' },
+        cookie,
+        'PATCH',
+      )
+    ).status,
+    404,
+  );
+  assert.equal(
+    (
+      await request(
+        '/actions',
+        { title: 'Cannot revive', objectiveId: saved.data.objective.id, owner: 'Owner' },
+        cookie,
+      )
+    ).status,
+    404,
+  );
 });
 
 test('objective revisions are isolated, versioned, and cannot conceal unfinished actions', async () => {

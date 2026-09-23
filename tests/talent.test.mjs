@@ -7,7 +7,12 @@ const adminEmail = 'talent-admin@lamidgrowth.test';
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
   }));
   server = await new Promise((resolve) => {
@@ -18,7 +23,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -50,21 +55,29 @@ async function signup(name, email) {
 
 test('a profile can be created and re-saved (upsert)', async () => {
   const user = await signup('Profile Owner');
-  const created = await request('/talent/profile', {
-    headline: 'Senior JavaScript engineer',
-    skills: ['javascript', 'react'],
-    hourlyRate: 8000,
-    currency: 'USD',
-    languages: ['English'],
-  }, user);
+  const created = await request(
+    '/talent/profile',
+    {
+      headline: 'Senior JavaScript engineer',
+      skills: ['javascript', 'react'],
+      hourlyRate: 8000,
+      currency: 'USD',
+      languages: ['English'],
+    },
+    user,
+  );
   assert.equal(created.status, 200);
   assert.equal(created.data.vetting_status, 'unverified');
 
-  const updated = await request('/talent/profile', {
-    headline: 'Lead JavaScript engineer',
-    skills: ['javascript', 'react', 'node'],
-    languages: [],
-  }, user);
+  const updated = await request(
+    '/talent/profile',
+    {
+      headline: 'Lead JavaScript engineer',
+      skills: ['javascript', 'react', 'node'],
+      languages: [],
+    },
+    user,
+  );
   assert.equal(updated.status, 200);
   assert.equal(updated.data.headline, 'Lead JavaScript engineer');
   assert.equal(updated.data.skills.length, 3);
@@ -76,10 +89,23 @@ test('a profile can be created and re-saved (upsert)', async () => {
 test('Expert Finder ranks a matching profile above a non-matching one', async () => {
   const matching = await signup('Matching Expert');
   const nonMatching = await signup('Unrelated Expert');
-  await request('/talent/profile', { headline: 'React and JavaScript specialist', skills: ['javascript', 'react'], languages: [] }, matching);
-  await request('/talent/profile', { headline: 'Legal contract specialist', skills: ['contracts', 'compliance'], languages: [] }, nonMatching);
+  await request(
+    '/talent/profile',
+    { headline: 'React and JavaScript specialist', skills: ['javascript', 'react'], languages: [] },
+    matching,
+  );
+  await request(
+    '/talent/profile',
+    { headline: 'Legal contract specialist', skills: ['contracts', 'compliance'], languages: [] },
+    nonMatching,
+  );
 
-  const results = await request('/talent/experts?skill=javascript%20react', undefined, matching, 'GET');
+  const results = await request(
+    '/talent/experts?skill=javascript%20react',
+    undefined,
+    matching,
+    'GET',
+  );
   assert.equal(results.status, 200);
   const matchingResult = results.data.find((r) => r.headline.includes('React'));
   const nonMatchingResult = results.data.find((r) => r.headline.includes('Legal'));
@@ -90,7 +116,11 @@ test('Expert Finder ranks a matching profile above a non-matching one', async ()
 
 test('skills assessments are graded deterministically, and a bogus skill 404s', async () => {
   const user = await signup('Quiz Taker');
-  await request('/talent/profile', { headline: 'JS dev', skills: ['javascript'], languages: [] }, user);
+  await request(
+    '/talent/profile',
+    { headline: 'JS dev', skills: ['javascript'], languages: [] },
+    user,
+  );
 
   const quiz = await request('/talent/quiz/javascript', undefined, user, 'GET');
   assert.equal(quiz.status, 200);
@@ -101,17 +131,29 @@ test('skills assessments are graded deterministically, and a bogus skill 404s', 
   assert.equal(bogus.status, 404);
 
   // All-correct answer key, derived from the known QUIZ_BANK in src/app/talent.mjs.
-  const perfect = await request('/talent/assessments', { skill: 'javascript', answers: [2, 0, 1, 1, 2] }, user);
+  const perfect = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [2, 0, 1, 1, 2] },
+    user,
+  );
   assert.equal(perfect.status, 201);
   assert.equal(perfect.data.score, 100);
   assert.equal(perfect.data.passed, true);
 
-  const zero = await request('/talent/assessments', { skill: 'javascript', answers: [0, 1, 2, 0, 1] }, user);
+  const zero = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [0, 1, 2, 0, 1] },
+    user,
+  );
   assert.equal(zero.status, 201);
   assert.equal(zero.data.score, 0);
   assert.equal(zero.data.passed, false);
 
-  const bogusSubmit = await request('/talent/assessments', { skill: 'not-a-real-skill', answers: [0] }, user);
+  const bogusSubmit = await request(
+    '/talent/assessments',
+    { skill: 'not-a-real-skill', answers: [0] },
+    user,
+  );
   assert.equal(bogusSubmit.status, 404);
 });
 
@@ -119,7 +161,11 @@ test('vetting requires an ecosystem admin decision; a non-admin cannot approve',
   const admin = adminCookie;
   const applicant = await signup('Vetting Applicant');
   const nonAdmin = await signup('Nosy User');
-  await request('/talent/profile', { headline: 'Vetted expert', skills: ['javascript'], languages: [] }, applicant);
+  await request(
+    '/talent/profile',
+    { headline: 'Vetted expert', skills: ['javascript'], languages: [] },
+    applicant,
+  );
   const applicantState = (await request('/state', undefined, applicant, 'GET')).data;
 
   const submit = await request('/talent/profile/vetting', {}, applicant);
@@ -128,14 +174,24 @@ test('vetting requires an ecosystem admin decision; a non-admin cannot approve',
 
   const blockedList = await request('/admin/talent/vetting', undefined, nonAdmin, 'GET');
   assert.equal(blockedList.status, 403);
-  const blockedDecision = await request(`/admin/talent/vetting/${applicantState.user.id}`, { decision: 'verified' }, nonAdmin, 'PATCH');
+  const blockedDecision = await request(
+    `/admin/talent/vetting/${applicantState.user.id}`,
+    { decision: 'verified' },
+    nonAdmin,
+    'PATCH',
+  );
   assert.equal(blockedDecision.status, 403);
 
   const list = await request('/admin/talent/vetting', undefined, admin, 'GET');
   assert.equal(list.status, 200);
   assert.equal(list.data.length, 1);
 
-  const decision = await request(`/admin/talent/vetting/${applicantState.user.id}`, { decision: 'verified' }, admin, 'PATCH');
+  const decision = await request(
+    `/admin/talent/vetting/${applicantState.user.id}`,
+    { decision: 'verified' },
+    admin,
+    'PATCH',
+  );
   assert.equal(decision.status, 200);
   assert.equal(decision.data.vetting_status, 'verified');
 });
@@ -146,11 +202,24 @@ test('Candidate Screening blends bid score, assessment, vetting, and track recor
   const freelancer = await signup('Screening Freelancer');
   const stranger = await signup('Screening Stranger');
 
-  await request('/talent/profile', { headline: 'Software engineer', skills: ['javascript'], languages: [] }, freelancer);
+  await request(
+    '/talent/profile',
+    { headline: 'Software engineer', skills: ['javascript'], languages: [] },
+    freelancer,
+  );
   await request('/talent/profile/vetting', {}, freelancer);
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
-  await request(`/admin/talent/vetting/${freelancerState.user.id}`, { decision: 'verified' }, admin, 'PATCH');
-  await request('/talent/assessments', { skill: 'javascript', answers: [2, 0, 1, 1, 2] }, freelancer);
+  await request(
+    `/admin/talent/vetting/${freelancerState.user.id}`,
+    { decision: 'verified' },
+    admin,
+    'PATCH',
+  );
+  await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [2, 0, 1, 1, 2] },
+    freelancer,
+  );
 
   const job = await request(
     '/jobs',
@@ -169,11 +238,21 @@ test('Candidate Screening blends bid score, assessment, vetting, and track recor
   );
   await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this working feature as described.', proposedAmount: 1000, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this working feature as described.',
+      proposedAmount: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
 
-  const strangerAttempt = await request(`/jobs/${job.data.id}/screening`, undefined, stranger, 'GET');
+  const strangerAttempt = await request(
+    `/jobs/${job.data.id}/screening`,
+    undefined,
+    stranger,
+    'GET',
+  );
   assert.equal(strangerAttempt.status, 403);
 
   const screening = await request(`/jobs/${job.data.id}/screening`, undefined, client, 'GET');
@@ -190,8 +269,16 @@ test('candidate-matches compares freelancer profiles against a project, includin
   const client = await signup('CandidateMatch Client');
   const matchingFreelancer = await signup('CandidateMatch Match');
   const nonMatchingFreelancer = await signup('CandidateMatch NoMatch');
-  await request('/talent/profile', { headline: 'React dashboard specialist', skills: ['react', 'dashboard'], languages: [] }, matchingFreelancer);
-  await request('/talent/profile', { headline: 'Legal contract review', skills: ['contracts', 'compliance'], languages: [] }, nonMatchingFreelancer);
+  await request(
+    '/talent/profile',
+    { headline: 'React dashboard specialist', skills: ['react', 'dashboard'], languages: [] },
+    matchingFreelancer,
+  );
+  await request(
+    '/talent/profile',
+    { headline: 'Legal contract review', skills: ['contracts', 'compliance'], languages: [] },
+    nonMatchingFreelancer,
+  );
 
   const job = await request(
     '/jobs',
@@ -209,7 +296,12 @@ test('candidate-matches compares freelancer profiles against a project, includin
     client,
   );
 
-  const strangerAttempt = await request(`/jobs/${job.data.id}/candidate-matches`, undefined, matchingFreelancer, 'GET');
+  const strangerAttempt = await request(
+    `/jobs/${job.data.id}/candidate-matches`,
+    undefined,
+    matchingFreelancer,
+    'GET',
+  );
   assert.equal(strangerAttempt.status, 403);
 
   const matches = await request(`/jobs/${job.data.id}/candidate-matches`, undefined, client, 'GET');
@@ -218,10 +310,18 @@ test('candidate-matches compares freelancer profiles against a project, includin
   assert.ok(!matches.data.some((m) => m.headline.includes('Legal')));
 });
 
-test('job-matches ranks open jobs by fit to the freelancer\'s own profile', async () => {
+test("job-matches ranks open jobs by fit to the freelancer's own profile", async () => {
   const client = await signup('JobMatch Client');
   const freelancer = await signup('JobMatch Freelancer');
-  await request('/talent/profile', { headline: 'Marketing and growth specialist', skills: ['marketing', 'growth', 'campaigns'], languages: [] }, freelancer);
+  await request(
+    '/talent/profile',
+    {
+      headline: 'Marketing and growth specialist',
+      skills: ['marketing', 'growth', 'campaigns'],
+      languages: [],
+    },
+    freelancer,
+  );
 
   const matchingJob = await request(
     '/jobs',

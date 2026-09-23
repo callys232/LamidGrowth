@@ -22,13 +22,21 @@ let app, store, server, base, adminCookie;
 before(async () => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/m', access_code: 'm' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/m', access_code: 'm' },
+      }),
   });
   const paymentProvider = (name) =>
     name === 'paystack' ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl }) : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
     ecosystemAdminEmails: [adminEmail],
   }));
@@ -40,7 +48,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -87,10 +95,27 @@ async function fundAMilestone(amount) {
     },
     client,
   );
-  await request(`/jobs/${job.data.id}/bids`, { coverLetter: 'A bid for this job that is long enough.', proposedAmount: amount, currency: 'USD', timeline: '1 week' }, freelancer);
+  await request(
+    `/jobs/${job.data.id}/bids`,
+    {
+      coverLetter: 'A bid for this job that is long enough.',
+      proposedAmount: amount,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    freelancer,
+  );
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
-  const project = await request('/projects', { jobId: job.data.id, title: 'Overview project', freelancerUserId: freelancerState.user.id }, client);
-  const milestone = await request(`/projects/${project.data.id}/milestones`, { title: 'Phase 1', description: '', amount, currency: 'USD' }, client);
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'Overview project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount, currency: 'USD' },
+    client,
+  );
   const fund = await request(`/milestones/${milestone.data.id}/fund`, {}, client);
   const event = { event: 'charge.success', data: { reference: fund.data.reference } };
   const rawBody = Buffer.from(JSON.stringify(event));

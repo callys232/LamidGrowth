@@ -26,143 +26,143 @@ Call log:
 
 ```yaml
 - generic [ref=f3e2]:
-  - generic [ref=f3e3]:
-    - link "Skip to workspace" [ref=f3e4] [cursor=pointer]:
-      - /url: "#workspace-main"
-    - complementary [ref=f3e5]:
-      - generic [ref=f3e6]:
-        - link "LAMID ONE home" [ref=f3e7] [cursor=pointer]:
-          - /url: /
-          - generic [ref=f3e15]: LAMID ONE
-        - button "Close navigation" [ref=f3e16] [cursor=pointer]
-      - generic [ref=f3e20]:
-        - generic [ref=f3e21]: J
-        - generic [ref=f3e22]:
-          - strong [ref=f3e23]: Jordan's workspace
-          - generic [ref=f3e24]: Founder workspace
-        - combobox "Switch workspace" [ref=f3e25] [cursor=pointer]:
-          - option "Jordan's workspace" [selected]
-      - generic [ref=f3e28]: YOUR OPERATING SPACE
-      - navigation "Workspace navigation" [ref=f3e29]:
-        - link "Overview" [ref=f3e30] [cursor=pointer]:
-          - /url: /os
-        - link "AI Settings" [ref=f3e36] [cursor=pointer]:
-          - /url: /os/settings/ai
-        - link "Today" [ref=f3e40] [cursor=pointer]:
-          - /url: /os/today
-        - link "Clarity" [ref=f3e47] [cursor=pointer]:
-          - /url: /os/clarity
-        - link "Capability" [ref=f3e51] [cursor=pointer]:
-          - /url: /os/capability
-        - link "Consistency" [ref=f3e56] [cursor=pointer]:
-          - /url: /os/consistency
-        - link "Progress" [ref=f3e60] [cursor=pointer]:
-          - /url: /os/progress
-        - link "Rhythm" [ref=f3e64] [cursor=pointer]:
-          - /url: /os/rhythm
-        - link "Commercial" [ref=f3e67] [cursor=pointer]:
-          - /url: /os/commercial
-        - link "Knowledge" [ref=f3e72] [cursor=pointer]:
-          - /url: /os/knowledge
-        - link "Talent" [ref=f3e77] [cursor=pointer]:
-          - /url: /os/talent
-        - link "Finance" [ref=f3e83] [cursor=pointer]:
-          - /url: /os/finance
-        - link "People" [ref=f3e87] [cursor=pointer]:
-          - /url: /os/people
-        - link "Engines" [ref=f3e93] [cursor=pointer]:
-          - /url: /os/engines
-        - link "Guided Scoping" [ref=f3e97] [cursor=pointer]:
-          - /url: /os/scoping/new
-        - link "Learning" [ref=f3e101] [cursor=pointer]:
-          - /url: /os/learning
-        - link "Companion GUIDED" [ref=f3e106] [cursor=pointer]:
-          - /url: /os/companion
-          - text: Companion
-          - generic [ref=f3e109]: GUIDED
-        - link "Workflows" [ref=f3e110] [cursor=pointer]:
-          - /url: /os/workflows
-        - link "Governance" [ref=f3e115] [cursor=pointer]:
-          - /url: /os/governance
-      - generic [ref=f3e119]:
-        - generic [ref=f3e124]:
-          - text: Your work. Your judgment.
-          - generic [ref=f3e125]: You decide what happens next.
-        - link "Settings" [ref=f3e126] [cursor=pointer]:
-          - /url: /os/settings
-        - generic [ref=f3e130]:
-          - generic [ref=f3e131]: JT
-          - generic [ref=f3e132]:
-            - strong [ref=f3e133]: Jordan Test
-            - generic [ref=f3e134]: Workspace owner
-          - button "Sign out" [ref=f3e135] [cursor=pointer]
-    - generic [ref=f3e139]:
-      - banner [ref=f3e140]:
-        - generic [ref=f3e141]:
-          - button "Open workspace navigation" [ref=f3e142] [cursor=pointer]
-          - generic [ref=f3e144]: Workspace
-          - generic [ref=f3e145]: /
-          - generic [ref=f3e146]: Companion
-        - generic [ref=f3e147]:
-          - button [ref=f3e148] [cursor=pointer]
-          - link "0 actions need review" [ref=f3e152] [cursor=pointer]:
-            - /url: /os/today
-          - generic [ref=f3e156]: J
-      - main [ref=f3e157]:
-        - generic [ref=f3e159]:
-          - generic [ref=f3e160]: COMPANION · SPACE TO THINK
-          - heading "What Are You Working Through?" [level=1] [ref=f3e161]
-          - paragraph [ref=f3e162]: Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You remain able to review, redirect, pause, revoke, or override what happens next.
-        - paragraph [ref=f3e163]:
-          - link "Review an existing objective with AI" [ref=f3e164] [cursor=pointer]:
-            - /url: /os/insights
-          - text: ", or use guided planning below."
-        - generic [ref=f3e165]:
-          - generic [ref=f3e166]:
-            - generic [ref=f3e171]:
-              - strong [ref=f3e172]: Your thinking partner
-              - generic [ref=f3e173]: Guided planning · based on your inputs
-            - generic [ref=f3e174]:
-              - generic [ref=f3e175]:
-                - heading "Let’s start with what’s on your mind." [level=2] [ref=f3e176]
-                - paragraph [ref=f3e177]: A decision, an opportunity, a challenge. It doesn’t have to be perfectly formed.
-              - generic [ref=f3e178]:
-                - generic [ref=f3e179]:
-                  - generic [ref=f3e180]: What do you want to move forward?
-                  - textbox "What do you want to move forward?" [ref=f3e181]:
-                    - /placeholder: I want to…
-                - generic [ref=f3e182]:
-                  - button "Bring a business idea into focus" [ref=f3e183] [cursor=pointer]
-                  - button "Make a difficult decision" [ref=f3e185] [cursor=pointer]
-                  - button "Build a more intentional week" [ref=f3e187] [cursor=pointer]
-                - button "Bring it into focus" [disabled] [ref=f3e189]
-          - complementary [ref=f3e192]:
-            - generic [ref=f3e193]: YOUR CONTEXT, IN VIEW
-            - heading "A continuous thread." [level=3] [ref=f3e194]
-            - paragraph [ref=f3e195]: What you bring into this conversation stays connected to the work you choose to create.
-            - generic [ref=f3e196]:
-              - generic [ref=f3e197]: "01"
-              - generic [ref=f3e198]:
-                - strong [ref=f3e199]: Clarify the objective
-                - generic [ref=f3e200]: What matters now?
-            - generic [ref=f3e201]:
-              - generic [ref=f3e202]: "02"
-              - generic [ref=f3e203]:
-                - strong [ref=f3e204]: Understand the situation
-                - generic [ref=f3e205]: What shapes your decision?
-            - generic [ref=f3e206]:
-              - generic [ref=f3e207]: "03"
-              - generic [ref=f3e208]:
-                - strong [ref=f3e209]: Make the next move
-                - generic [ref=f3e210]: What will you do next?
-            - generic [ref=f3e211]:
-              - strong [ref=f3e215]: Your judgment comes first.
-              - paragraph [ref=f3e216]: Nothing is saved until you choose. External AI runs only when you request it and consent, within your AI rules. Suggestions do not execute work.
-        - group [ref=f3e217]:
-          - generic "▸ Getting started" [ref=f3e218] [cursor=pointer]
-      - contentinfo [ref=f3e219]:
-        - generic [ref=f3e220]: Context connected. Judgment stays human.
-  - button "Ask Companion" [ref=f3e222] [cursor=pointer]
+    - generic [ref=f3e3]:
+        - link "Skip to workspace" [ref=f3e4] [cursor=pointer]:
+            - /url: '#workspace-main'
+        - complementary [ref=f3e5]:
+            - generic [ref=f3e6]:
+                - link "LAMID ONE home" [ref=f3e7] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=f3e15]: LAMID ONE
+                - button "Close navigation" [ref=f3e16] [cursor=pointer]
+            - generic [ref=f3e20]:
+                - generic [ref=f3e21]: J
+                - generic [ref=f3e22]:
+                    - strong [ref=f3e23]: Jordan's workspace
+                    - generic [ref=f3e24]: Founder workspace
+                - combobox "Switch workspace" [ref=f3e25] [cursor=pointer]:
+                    - option "Jordan's workspace" [selected]
+            - generic [ref=f3e28]: YOUR OPERATING SPACE
+            - navigation "Workspace navigation" [ref=f3e29]:
+                - link "Overview" [ref=f3e30] [cursor=pointer]:
+                    - /url: /os
+                - link "AI Settings" [ref=f3e36] [cursor=pointer]:
+                    - /url: /os/settings/ai
+                - link "Today" [ref=f3e40] [cursor=pointer]:
+                    - /url: /os/today
+                - link "Clarity" [ref=f3e47] [cursor=pointer]:
+                    - /url: /os/clarity
+                - link "Capability" [ref=f3e51] [cursor=pointer]:
+                    - /url: /os/capability
+                - link "Consistency" [ref=f3e56] [cursor=pointer]:
+                    - /url: /os/consistency
+                - link "Progress" [ref=f3e60] [cursor=pointer]:
+                    - /url: /os/progress
+                - link "Rhythm" [ref=f3e64] [cursor=pointer]:
+                    - /url: /os/rhythm
+                - link "Commercial" [ref=f3e67] [cursor=pointer]:
+                    - /url: /os/commercial
+                - link "Knowledge" [ref=f3e72] [cursor=pointer]:
+                    - /url: /os/knowledge
+                - link "Talent" [ref=f3e77] [cursor=pointer]:
+                    - /url: /os/talent
+                - link "Finance" [ref=f3e83] [cursor=pointer]:
+                    - /url: /os/finance
+                - link "People" [ref=f3e87] [cursor=pointer]:
+                    - /url: /os/people
+                - link "Engines" [ref=f3e93] [cursor=pointer]:
+                    - /url: /os/engines
+                - link "Guided Scoping" [ref=f3e97] [cursor=pointer]:
+                    - /url: /os/scoping/new
+                - link "Learning" [ref=f3e101] [cursor=pointer]:
+                    - /url: /os/learning
+                - link "Companion GUIDED" [ref=f3e106] [cursor=pointer]:
+                    - /url: /os/companion
+                    - text: Companion
+                    - generic [ref=f3e109]: GUIDED
+                - link "Workflows" [ref=f3e110] [cursor=pointer]:
+                    - /url: /os/workflows
+                - link "Governance" [ref=f3e115] [cursor=pointer]:
+                    - /url: /os/governance
+            - generic [ref=f3e119]:
+                - generic [ref=f3e124]:
+                    - text: Your work. Your judgment.
+                    - generic [ref=f3e125]: You decide what happens next.
+                - link "Settings" [ref=f3e126] [cursor=pointer]:
+                    - /url: /os/settings
+                - generic [ref=f3e130]:
+                    - generic [ref=f3e131]: JT
+                    - generic [ref=f3e132]:
+                        - strong [ref=f3e133]: Jordan Test
+                        - generic [ref=f3e134]: Workspace owner
+                    - button "Sign out" [ref=f3e135] [cursor=pointer]
+        - generic [ref=f3e139]:
+            - banner [ref=f3e140]:
+                - generic [ref=f3e141]:
+                    - button "Open workspace navigation" [ref=f3e142] [cursor=pointer]
+                    - generic [ref=f3e144]: Workspace
+                    - generic [ref=f3e145]: /
+                    - generic [ref=f3e146]: Companion
+                - generic [ref=f3e147]:
+                    - button [ref=f3e148] [cursor=pointer]
+                    - link "0 actions need review" [ref=f3e152] [cursor=pointer]:
+                        - /url: /os/today
+                    - generic [ref=f3e156]: J
+            - main [ref=f3e157]:
+                - generic [ref=f3e159]:
+                    - generic [ref=f3e160]: COMPANION · SPACE TO THINK
+                    - heading "What Are You Working Through?" [level=1] [ref=f3e161]
+                    - paragraph [ref=f3e162]: Describe the decision, challenge, opportunity, or objective. Add the context that matters and set what may continue progressing between interactions. You remain able to review, redirect, pause, revoke, or override what happens next.
+                - paragraph [ref=f3e163]:
+                    - link "Review an existing objective with AI" [ref=f3e164] [cursor=pointer]:
+                        - /url: /os/insights
+                    - text: ', or use guided planning below.'
+                - generic [ref=f3e165]:
+                    - generic [ref=f3e166]:
+                        - generic [ref=f3e171]:
+                            - strong [ref=f3e172]: Your thinking partner
+                            - generic [ref=f3e173]: Guided planning · based on your inputs
+                        - generic [ref=f3e174]:
+                            - generic [ref=f3e175]:
+                                - heading "Let’s start with what’s on your mind." [level=2] [ref=f3e176]
+                                - paragraph [ref=f3e177]: A decision, an opportunity, a challenge. It doesn’t have to be perfectly formed.
+                            - generic [ref=f3e178]:
+                                - generic [ref=f3e179]:
+                                    - generic [ref=f3e180]: What do you want to move forward?
+                                    - textbox "What do you want to move forward?" [ref=f3e181]:
+                                        - /placeholder: I want to…
+                                - generic [ref=f3e182]:
+                                    - button "Bring a business idea into focus" [ref=f3e183] [cursor=pointer]
+                                    - button "Make a difficult decision" [ref=f3e185] [cursor=pointer]
+                                    - button "Build a more intentional week" [ref=f3e187] [cursor=pointer]
+                                - button "Bring it into focus" [disabled] [ref=f3e189]
+                    - complementary [ref=f3e192]:
+                        - generic [ref=f3e193]: YOUR CONTEXT, IN VIEW
+                        - heading "A continuous thread." [level=3] [ref=f3e194]
+                        - paragraph [ref=f3e195]: What you bring into this conversation stays connected to the work you choose to create.
+                        - generic [ref=f3e196]:
+                            - generic [ref=f3e197]: '01'
+                            - generic [ref=f3e198]:
+                                - strong [ref=f3e199]: Clarify the objective
+                                - generic [ref=f3e200]: What matters now?
+                        - generic [ref=f3e201]:
+                            - generic [ref=f3e202]: '02'
+                            - generic [ref=f3e203]:
+                                - strong [ref=f3e204]: Understand the situation
+                                - generic [ref=f3e205]: What shapes your decision?
+                        - generic [ref=f3e206]:
+                            - generic [ref=f3e207]: '03'
+                            - generic [ref=f3e208]:
+                                - strong [ref=f3e209]: Make the next move
+                                - generic [ref=f3e210]: What will you do next?
+                        - generic [ref=f3e211]:
+                            - strong [ref=f3e215]: Your judgment comes first.
+                            - paragraph [ref=f3e216]: Nothing is saved until you choose. External AI runs only when you request it and consent, within your AI rules. Suggestions do not execute work.
+                - group [ref=f3e217]:
+                    - generic "▸ Getting started" [ref=f3e218] [cursor=pointer]
+            - contentinfo [ref=f3e219]:
+                - generic [ref=f3e220]: Context connected. Judgment stays human.
+    - button "Ask Companion" [ref=f3e222] [cursor=pointer]
 ```
 
 # Test source
@@ -300,5 +300,5 @@ Call log:
   132 |     [],
   133 |   );
   134 | });
-  135 | 
+  135 |
 ```

@@ -98,7 +98,9 @@ export function MembersMembershipManagementSlide({
             {(escrowOverview.totals.pendingMinor / 100).toFixed(2)}
           </p>
           {escrowOverview.currentlyHeld.length === 0 ? (
-            <Empty title="Nothing currently held">No milestone has funds in escrow right now.</Empty>
+            <Empty title="Nothing currently held">
+              No milestone has funds in escrow right now.
+            </Empty>
           ) : (
             escrowOverview.currentlyHeld.map((item) => (
               <div className="audit-event" key={item.milestoneId}>
@@ -117,8 +119,13 @@ export function MembersMembershipManagementSlide({
       {isEcosystemAdmin && (
         <section className="panel settings-card">
           <h2>Concierge applications</h2>
-          <p>Platform-wide review — approving a provider lets any workspace owner assign them as a concierge.</p>
-          {conciergeApplications.length === 0 && <Empty title="No applications yet">Nothing to review.</Empty>}
+          <p>
+            Platform-wide review — approving a provider lets any workspace owner assign them as a
+            concierge.
+          </p>
+          {conciergeApplications.length === 0 && (
+            <Empty title="No applications yet">Nothing to review.</Empty>
+          )}
           {conciergeApplications.map((application) => (
             <div className="audit-event" key={application.id}>
               <div>
@@ -132,7 +139,10 @@ export function MembersMembershipManagementSlide({
               </div>
               {application.status === 'pending' && (
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <Button disabled={busy} onClick={() => void decideConciergeApplication(application.id, 'approve')}>
+                  <Button
+                    disabled={busy}
+                    onClick={() => void decideConciergeApplication(application.id, 'approve')}
+                  >
                     Approve
                   </Button>
                   <Button

@@ -9,9 +9,15 @@ async function setupTestStore() {
   const store = await openStore(schemaName);
 
   const userId = randomUUID();
-  await store.db.prepare(
-    "INSERT INTO users (id, email, password, name, demo, created_at) VALUES (?, ?, 'pass', 'Mail Test User', 0, ?)"
-  ).run(userId, `user_${Date.now()}_${randomUUID().slice(0, 8)}@example.test`, new Date().toISOString());
+  await store.db
+    .prepare(
+      "INSERT INTO users (id, email, password, name, demo, created_at) VALUES (?, ?, 'pass', 'Mail Test User', 0, ?)",
+    )
+    .run(
+      userId,
+      `user_${Date.now()}_${randomUUID().slice(0, 8)}@example.test`,
+      new Date().toISOString(),
+    );
 
   return { store, userId };
 }
@@ -27,7 +33,12 @@ test('mail outbox enqueues, decrypts, delivers message, and records logs', async
 
   const mockProvider = {
     async send(message, id) {
-      logs.push({ event: 'mail_sent', messageId: id, recipient: message.to, timestamp: Date.now() });
+      logs.push({
+        event: 'mail_sent',
+        messageId: id,
+        recipient: message.to,
+        timestamp: Date.now(),
+      });
       sentMessages.push({ message, id });
     },
   };
@@ -35,10 +46,18 @@ test('mail outbox enqueues, decrypts, delivers message, and records logs', async
   const key = randomBytes(32);
   const outbox = createMailOutbox(store, mockProvider, key);
 
-  assert.equal(outbox.configured, true, 'outbox should be configured when mail provider is supplied');
+  assert.equal(
+    outbox.configured,
+    true,
+    'outbox should be configured when mail provider is supplied',
+  );
 
   const mailId = randomUUID();
-  const testMessage = { to: 'test@example.com', subject: 'Welcome to Lamid', text: 'Your account is ready.' };
+  const testMessage = {
+    to: 'test@example.com',
+    subject: 'Welcome to Lamid',
+    text: 'Your account is ready.',
+  };
   const expiresAt = Date.now() + 300000; // 5 minutes
 
   logs.push({ event: 'enqueue_message', messageId: mailId });
@@ -97,7 +116,11 @@ test('mail outbox captures retry attempts and logs structured delivery errors on
     const outbox = createMailOutbox(store, failingProvider, key);
 
     const mailId = randomUUID();
-    const message = { to: 'fail@example.com', subject: 'Notification', text: 'Failed delivery test' };
+    const message = {
+      to: 'fail@example.com',
+      subject: 'Notification',
+      text: 'Failed delivery test',
+    };
     await outbox.enqueue(mailId, userId, message, Date.now() + 300000);
 
     // Trigger queue processing which should encounter error and log

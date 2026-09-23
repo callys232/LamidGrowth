@@ -23,7 +23,12 @@ export function NarrativeForm({
     >
       <label>
         Notes
-        <textarea rows={6} maxLength={4000} value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          rows={6}
+          maxLength={4000}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
       <Button type="submit" disabled={submitting || !notes.trim()}>
         {submitting ? 'Running…' : 'Structure this input'}

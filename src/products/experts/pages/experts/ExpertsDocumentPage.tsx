@@ -18,11 +18,7 @@ const TONES = ['plain', 'tint', 'plain', 'tint', 'dark'] as const;
 export function ExpertsDocumentPage({ embedded = false }: DocumentPageProps) {
   if (embedded)
     return (
-      <DocumentPageLayout
-        page={content}
-        embedded
-        hero={<ExpertNetworkHeroSlide embedded />}
-      >
+      <DocumentPageLayout page={content} embedded hero={<ExpertNetworkHeroSlide embedded />}>
         {content.sections.map((section, index) => (
           <Fragment key={section.label}>
             {'group' in section && section.group && (

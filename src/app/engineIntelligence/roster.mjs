@@ -48,18 +48,27 @@ export function computeRoster(rows) {
 
   if (roleCount === 0) {
     return {
-      totalHeadcount: 0, roleCount: 0, meanCapability: 0, weightedCapability: 0,
-      capabilityGapPct: 0, meanAttritionRisk: 0, headcountAtRisk: 0, atRiskPct: 0,
-      singlePointRoles: [], benchCoveragePct: 0, criticalRoleCount: 0,
+      totalHeadcount: 0,
+      roleCount: 0,
+      meanCapability: 0,
+      weightedCapability: 0,
+      capabilityGapPct: 0,
+      meanAttritionRisk: 0,
+      headcountAtRisk: 0,
+      atRiskPct: 0,
+      singlePointRoles: [],
+      benchCoveragePct: 0,
+      criticalRoleCount: 0,
       warnings: ['Add at least one role with headcount to run this assessment.'],
     };
   }
 
   const meanCapability = r1(clean.reduce((a, r) => a + num(r.capability), 0) / roleCount);
 
-  const weightedCapability = totalHeadcount > 0
-    ? r1(clean.reduce((a, r) => a + num(r.capability) * num(r.headcount), 0) / totalHeadcount)
-    : 0;
+  const weightedCapability =
+    totalHeadcount > 0
+      ? r1(clean.reduce((a, r) => a + num(r.capability) * num(r.headcount), 0) / totalHeadcount)
+      : 0;
 
   // Distance from a fully-capable workforce (5.0), as a percentage.
   const capabilityGapPct = r1(((5 - weightedCapability) / 5) * 100);
@@ -71,34 +80,44 @@ export function computeRoster(rows) {
   const atRiskPct = totalHeadcount > 0 ? r1((headcountAtRisk / totalHeadcount) * 100) : 0;
 
   const criticalRoles = clean.filter((r) => r.critical);
-  const singlePointRoles = criticalRoles
-    .filter((r) => num(r.successors) === 0)
-    .map((r) => r.role);
+  const singlePointRoles = criticalRoles.filter((r) => num(r.successors) === 0).map((r) => r.role);
 
-  const benchCoveragePct = criticalRoles.length > 0
-    ? r1((criticalRoles.filter((r) => num(r.successors) > 0).length / criticalRoles.length) * 100)
-    : 0;
+  const benchCoveragePct =
+    criticalRoles.length > 0
+      ? r1((criticalRoles.filter((r) => num(r.successors) > 0).length / criticalRoles.length) * 100)
+      : 0;
 
   /* ── Checks a CPO would raise ── */
   if (singlePointRoles.length > 0) {
     warnings.push(
-      `${singlePointRoles.length} critical role${singlePointRoles.length > 1 ? 's have' : ' has'} no ready successor: ${singlePointRoles.slice(0, 3).join(', ')}${singlePointRoles.length > 3 ? '…' : ''}.`
+      `${singlePointRoles.length} critical role${singlePointRoles.length > 1 ? 's have' : ' has'} no ready successor: ${singlePointRoles.slice(0, 3).join(', ')}${singlePointRoles.length > 3 ? '…' : ''}.`,
     );
   }
   if (atRiskPct > 20) {
     warnings.push(`${atRiskPct}% of headcount sits in high-attrition-risk roles.`);
   }
   if (weightedCapability < 3) {
-    warnings.push(`Weighted capability is ${weightedCapability}/5 — below the level most roles require.`);
+    warnings.push(
+      `Weighted capability is ${weightedCapability}/5 — below the level most roles require.`,
+    );
   }
   if (criticalRoles.length === 0) {
     warnings.push('No roles marked critical — succession risk cannot be assessed.');
   }
 
   return {
-    totalHeadcount, roleCount, meanCapability, weightedCapability, capabilityGapPct,
-    meanAttritionRisk, headcountAtRisk, atRiskPct, singlePointRoles,
-    benchCoveragePct, criticalRoleCount: criticalRoles.length, warnings,
+    totalHeadcount,
+    roleCount,
+    meanCapability,
+    weightedCapability,
+    capabilityGapPct,
+    meanAttritionRisk,
+    headcountAtRisk,
+    atRiskPct,
+    singlePointRoles,
+    benchCoveragePct,
+    criticalRoleCount: criticalRoles.length,
+    warnings,
   };
 }
 

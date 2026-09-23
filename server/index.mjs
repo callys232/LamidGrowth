@@ -28,14 +28,23 @@ for (const event of ['uncaughtException', 'unhandledRejection']) {
 
 const production = process.argv.includes('--production');
 if (production) {
-  try { validateProductionConfig(); }
-  catch (error) { errorLogger('startup_error', { error: errorDetails(error) }); process.exit(1); }
+  try {
+    validateProductionConfig();
+  } catch (error) {
+    errorLogger('startup_error', { error: errorDetails(error) });
+    process.exit(1);
+  }
 }
-const clusterEnabled = process.env.CLUSTER === 'true' || (production && process.env.CLUSTER !== 'false');
+const clusterEnabled =
+  process.env.CLUSTER === 'true' || (production && process.env.CLUSTER !== 'false');
 const totalPoolBudget = Math.max(1, Math.floor(Number(process.env.PG_POOL_MAX) || 10));
 const workerCount = Math.max(
   1,
-  Math.min(16, totalPoolBudget, Number.parseInt(process.env.WEB_CONCURRENCY || '', 10) || os.cpus().length),
+  Math.min(
+    16,
+    totalPoolBudget,
+    Number.parseInt(process.env.WEB_CONCURRENCY || '', 10) || os.cpus().length,
+  ),
 );
 // Every worker (primary or forked) opens its own Postgres pool against the same connection
 // string, so PG_POOL_MAX is a fleet-wide budget that must be divided across however many
@@ -60,8 +69,12 @@ if (clusterEnabled && cluster.isPrimary && workerCount > 1) {
       process.exit(0);
     });
 } else {
-  try { await startServer(); }
-  catch (error) { errorLogger('startup_error', { error: errorDetails(error) }); process.exit(1); }
+  try {
+    await startServer();
+  } catch (error) {
+    errorLogger('startup_error', { error: errorDetails(error) });
+    process.exit(1);
+  }
 }
 
 async function startServer() {
@@ -106,12 +119,20 @@ async function startServer() {
       } catch (error) {
         errorLogger('workflow_worker_error', { error: errorDetails(error) });
       }
-    })().finally(() => { ticking = null; });
+    })().finally(() => {
+      ticking = null;
+    });
   }, 1000);
   worker?.unref();
   let delivering = null;
   const mailWorker = setInterval(() => {
-    if (!delivering) delivering = mail.tick().catch((error) => errorLogger('mail_queue_error', { error: errorDetails(error) })).finally(() => { delivering = null; });
+    if (!delivering)
+      delivering = mail
+        .tick()
+        .catch((error) => errorLogger('mail_queue_error', { error: errorDetails(error) }))
+        .finally(() => {
+          delivering = null;
+        });
   }, 1000);
   mailWorker.unref();
 
@@ -133,7 +154,9 @@ async function startServer() {
       clearInterval(sweep);
       server.close(async () => {
         if (delivering) await delivering;
-        await store.db.prepare("DELETE FROM service_leases WHERE owner = ? AND name != 'daily-backup'").run(owner);
+        await store.db
+          .prepare("DELETE FROM service_leases WHERE owner = ? AND name != 'daily-backup'")
+          .run(owner);
         await frontend.close();
         await store.db.close();
         process.exit(0);

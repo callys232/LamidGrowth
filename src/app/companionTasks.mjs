@@ -14,7 +14,17 @@ export function mountPublicCompanion(app) {
       .object({
         message: z.string().trim().min(1).max(500),
         previousTopic: z
-          .enum(['onboarding', 'support', 'pricing', 'opportunities', 'clarity', 'capability', 'consistency', 'companion', 'workflows'])
+          .enum([
+            'onboarding',
+            'support',
+            'pricing',
+            'opportunities',
+            'clarity',
+            'capability',
+            'consistency',
+            'companion',
+            'workflows',
+          ])
           .nullish(),
       })
       .strict()
@@ -84,11 +94,16 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
   });
   app.post('/api/companion/tasks', requirePermission('work:write'), async (req, res) => {
     const { message, mode, jobId } = z
-      .object({ message: z.string().trim().min(5).max(1200), mode: z.enum(['starter', 'specialists']).default('starter'), jobId: z.string().uuid().optional() })
+      .object({
+        message: z.string().trim().min(5).max(1200),
+        mode: z.enum(['starter', 'specialists']).default('starter'),
+        jobId: z.string().uuid().optional(),
+      })
       .strict()
       .parse(req.body);
     const selected = mode === 'starter' ? ['starter-planner'] : planSpecialists(message);
-    for (const agentId of selected) await runtime.validatePrerequisites(req.workspace, req.user, agentId, { jobId });
+    for (const agentId of selected)
+      await runtime.validatePrerequisites(req.workspace, req.user, agentId, { jobId });
     const steps = selected.map((agentId) => ({
       agentId,
       name: runtime.agentFor(agentId).name,
@@ -126,7 +141,10 @@ export function mountCompanionTasks(app, store, runtime, spendLimiter) {
       const index = task.steps.findIndex((step) => step.status !== 'completed');
       if (index < 0) return res.json(task);
       const step = task.steps[index];
-      if (step.status !== 'running') await runtime.validatePrerequisites(req.workspace, req.user, step.agentId, { jobId: task.jobId });
+      if (step.status !== 'running')
+        await runtime.validatePrerequisites(req.workspace, req.user, step.agentId, {
+          jobId: task.jobId,
+        });
       if (runtime.agentFor(step.agentId).points !== step.points)
         return res.status(409).json({
           error: 'This specialist price changed. Preview a new task before approving it.',

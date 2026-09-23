@@ -174,9 +174,11 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
     run.reason = reason;
     run.version++;
     run.updated_at = new Date(now()).toISOString();
-    await db.prepare(
-      'UPDATE workflow_runs SET state = ?, version = ?, steps = ?, updated_at = ?, reason = ? WHERE id = ?',
-    ).run(run.state, run.version, JSON.stringify(run.steps), run.updated_at, reason, run.id);
+    await db
+      .prepare(
+        'UPDATE workflow_runs SET state = ?, version = ?, steps = ?, updated_at = ?, reason = ? WHERE id = ?',
+      )
+      .run(run.state, run.version, JSON.stringify(run.steps), run.updated_at, reason, run.id);
   }
   async function principalFor(run) {
     return db
@@ -189,7 +191,9 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
   }
   async function objectiveFor(run) {
     const row = await db
-      .prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE")
+      .prepare(
+        "SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE",
+      )
       .get(run.objective_id, run.workspace_id);
     if (!row) fail('The scoped objective is no longer available.');
     return { ...JSON.parse(row.data), id: row.id, version: row.version };
@@ -240,23 +244,26 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         updated_at: new Date(now()).toISOString(),
         reason: '',
       };
-      if (!(await principalFor(run))) fail('Only an active workspace owner can authorize a workflow.', 403);
+      if (!(await principalFor(run)))
+        fail('Only an active workspace owner can authorize a workflow.', 403);
       await objectiveFor(run);
-      await db.prepare('INSERT INTO workflow_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        run.id,
-        workspace,
-        principal,
-        run.title,
-        run.objective_id,
-        run.state,
-        1,
-        JSON.stringify(steps),
-        startAt,
-        expiresAt,
-        run.created_at,
-        run.updated_at,
-        '',
-      );
+      await db
+        .prepare('INSERT INTO workflow_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          run.id,
+          workspace,
+          principal,
+          run.title,
+          run.objective_id,
+          run.state,
+          1,
+          JSON.stringify(steps),
+          startAt,
+          expiresAt,
+          run.created_at,
+          run.updated_at,
+          '',
+        );
       await log(workspace, principal, 'Workflow drafted', run.id, run.title);
       return run;
     });
@@ -326,7 +333,8 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
       if (!run) fail('Workflow not found.', 404);
       if (!terminal.has(run.state))
         fail('Only a completed, cancelled or expired workflow can be deleted. Cancel it first.');
-      if (run.principal_id !== actor) fail('Only the authorizing workspace owner can delete this workflow.', 403);
+      if (run.principal_id !== actor)
+        fail('Only the authorizing workspace owner can delete this workflow.', 403);
       await db.prepare('DELETE FROM workflow_runs WHERE id = ?').run(id);
       await log(workspace, actor, 'Workflow deleted', id, run.title);
     });
@@ -363,25 +371,44 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         if (!tool || step.toolVersion !== '1.0.0')
           fail('The registered tool version is unavailable.');
         const objective = await objectiveFor(run);
-        await db.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get(`ai-policy:${run.workspace_id}`);
+        await db
+          .prepare('SELECT pg_advisory_xact_lock(hashtext(?))')
+          .get(`ai-policy:${run.workspace_id}`);
         const policy = await readAIRules(store, run.workspace_id);
         const changeMode = policy.rules.changes[step.toolId] || 'block';
         if (tool.writes && changeMode === 'block') {
           run.state = 'paused';
           step.approval = null;
-          await persist(run, 'Your AI rules block this change. Review AI Settings before resuming.');
-          await log(run.workspace_id, principal.name, 'Workflow blocked by AI rules', run.id, step.toolId);
+          await persist(
+            run,
+            'Your AI rules block this change. Review AI Settings before resuming.',
+          );
+          await log(
+            run.workspace_id,
+            principal.name,
+            'Workflow blocked by AI rules',
+            run.id,
+            step.toolId,
+          );
           return;
         }
         if (
           tool.writes &&
           changeMode !== 'allow' &&
-          (!step.approval || step.approval.objectiveVersion !== objective.version || (step.approval.policyVersion || 0) !== policy.version)
+          (!step.approval ||
+            step.approval.objectiveVersion !== objective.version ||
+            (step.approval.policyVersion || 0) !== policy.version)
         ) {
           step.approval = null;
           run.state = 'needs_approval';
           await persist(run, 'Review the exact next step before it changes workspace data.');
-          await log(run.workspace_id, principal.name, 'Workflow needs approval', run.id, step.toolId);
+          await log(
+            run.workspace_id,
+            principal.name,
+            'Workflow needs approval',
+            run.id,
+            step.toolId,
+          );
           return;
         }
         const output = await tool.execute(
@@ -394,18 +421,20 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
           objective: { id: objective.id, version: objective.version },
           method: 'deterministic',
         };
-        await db.prepare('INSERT INTO tool_invocations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-          randomUUID(),
-          run.id,
-          step.id,
-          step.toolId,
-          step.toolVersion,
-          run.principal_id,
-          run.workspace_id,
-          JSON.stringify(step.input),
-          JSON.stringify(evidence),
-          new Date(now()).toISOString(),
-        );
+        await db
+          .prepare('INSERT INTO tool_invocations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            randomUUID(),
+            run.id,
+            step.id,
+            step.toolId,
+            step.toolVersion,
+            run.principal_id,
+            run.workspace_id,
+            JSON.stringify(step.input),
+            JSON.stringify(evidence),
+            new Date(now()).toISOString(),
+          );
         step.state = 'completed';
         step.output = evidence;
         step.attempts++;
@@ -456,10 +485,11 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
     remove,
     tick,
     list: async (workspace) =>
-      (await db
-        .prepare('SELECT * FROM workflow_runs WHERE workspace_id = ? ORDER BY created_at DESC')
-        .all(workspace))
-        .map(decode),
+      (
+        await db
+          .prepare('SELECT * FROM workflow_runs WHERE workspace_id = ? ORDER BY created_at DESC')
+          .all(workspace)
+      ).map(decode),
   };
 }
 
@@ -507,5 +537,7 @@ export function mountWorkflows(app, store, runtime) {
     });
     res.json({ ok: true });
   });
-  app.get('/api/progress', async (req, res) => res.json(await store.records(req.workspace.id, 'progress')));
+  app.get('/api/progress', async (req, res) =>
+    res.json(await store.records(req.workspace.id, 'progress')),
+  );
 }

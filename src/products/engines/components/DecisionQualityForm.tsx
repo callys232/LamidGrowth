@@ -14,7 +14,11 @@ export function DecisionQualityForm({
 }: {
   requirements: DecisionQualityRequirement[];
   questions: DecisionQualityQuestion[];
-  onSubmit: (input: { answers: Record<string, number>; consequence: string; reversibility: string }) => void;
+  onSubmit: (input: {
+    answers: Record<string, number>;
+    consequence: string;
+    reversibility: string;
+  }) => void;
   submitting: boolean;
 }) {
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -62,7 +66,9 @@ export function DecisionQualityForm({
                 {q.prompt}
                 <select
                   value={answers[q.id] ?? ''}
-                  onChange={(e) => setAnswers((prev) => ({ ...prev, [q.id]: Number(e.target.value) }))}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({ ...prev, [q.id]: Number(e.target.value) }))
+                  }
                 >
                   <option value="" disabled>
                     Select the closest state…
@@ -81,11 +87,13 @@ export function DecisionQualityForm({
       <Button type="submit" disabled={submitting || answeredCount === 0}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>
-      {answeredCount === 0 && <p className="engine-form-hint">Answer at least one question above.</p>}
+      {answeredCount === 0 && (
+        <p className="engine-form-hint">Answer at least one question above.</p>
+      )}
       {answeredCount > 0 && answeredCount < questions.length && (
         <p className="engine-form-hint">
-          {answeredCount} of {questions.length} answered — unanswered questions count as zero (see the header note on
-          why).
+          {answeredCount} of {questions.length} answered — unanswered questions count as zero (see
+          the header note on why).
         </p>
       )}
     </form>

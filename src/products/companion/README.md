@@ -70,7 +70,7 @@ Free-text preferences guide model output; they do not grant execution permission
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route              | Page composition                                                                           | Copy                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
 | /product/companion | [ProductCompanionDocumentPage](./pages/product-companion/ProductCompanionDocumentPage.tsx) | [content.json](./pages/product-companion/content.json) |
-| /os/companion | [OsCompanionDocumentPage](./pages/os-companion/OsCompanionDocumentPage.tsx) | [content.json](./pages/os-companion/content.json) |
+| /os/companion      | [OsCompanionDocumentPage](./pages/os-companion/OsCompanionDocumentPage.tsx)                | [content.json](./pages/os-companion/content.json)      |

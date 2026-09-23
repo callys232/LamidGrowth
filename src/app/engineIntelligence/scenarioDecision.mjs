@@ -94,34 +94,49 @@ const num = (v) => {
  * @param {Scenario[]} scenariosIn
  * @param {DecisionOption[]} optionsIn
  */
-export function computeScenarioDecision(
-  scenariosIn,
-  optionsIn,
-) {
+export function computeScenarioDecision(scenariosIn, optionsIn) {
   const warnings = [];
   const guidance = [];
 
   const scenarios = (scenariosIn ?? []).filter((s) => s?.name?.trim());
-  const options   = (optionsIn ?? []).filter((o) => o?.name?.trim());
+  const options = (optionsIn ?? []).filter((o) => o?.name?.trim());
 
   const empty = (msg) => ({
-    scenarios: [], options: [],
+    scenarios: [],
+    options: [],
     byRule: { expected_value: null, minimax_regret: null, maximin: null },
-    rulesAgree: false, conflict: null, evpi: 0, evpiPct: 0, dominated: [],
-    headline: msg, guidance: [], warnings: [msg],
+    rulesAgree: false,
+    conflict: null,
+    evpi: 0,
+    evpiPct: 0,
+    dominated: [],
+    headline: msg,
+    guidance: [],
+    warnings: [msg],
   });
 
-  if (scenarios.length === 0) return empty('Define at least two scenarios — a single future is a forecast, not an analysis.');
-  if (options.length === 0)   return empty('Define at least two options — with one course of action there is nothing to analyse.');
-  if (scenarios.length === 1) warnings.push('Only one scenario. With no alternative future, expected value collapses to a single payoff and regret is undefined.');
-  if (options.length === 1)   warnings.push('Only one option — this reports its payoffs but cannot recommend, because there is nothing to compare against.');
+  if (scenarios.length === 0)
+    return empty('Define at least two scenarios — a single future is a forecast, not an analysis.');
+  if (options.length === 0)
+    return empty(
+      'Define at least two options — with one course of action there is nothing to analyse.',
+    );
+  if (scenarios.length === 1)
+    warnings.push(
+      'Only one scenario. With no alternative future, expected value collapses to a single payoff and regret is undefined.',
+    );
+  if (options.length === 1)
+    warnings.push(
+      'Only one option — this reports its payoffs but cannot recommend, because there is nothing to compare against.',
+    );
 
   /* Probabilities are normalised rather than rejected, so a set that
      sums to 95 or 103 still produces an answer — but the user is told,
      because a set that does not sum to 100 usually means a scenario is
      missing rather than that the numbers are slightly off. */
   const rawTotal = scenarios.reduce((s, x) => s + Math.max(0, num(x.probability)), 0);
-  if (rawTotal <= 0) return empty('Every scenario has zero probability. At least one future has to be possible.');
+  if (rawTotal <= 0)
+    return empty('Every scenario has zero probability. At least one future has to be possible.');
   if (Math.abs(rawTotal - 100) > 1) {
     warnings.push(
       `Scenario probabilities sum to ${r2(rawTotal)}%, not 100%. They have been normalised, but a gap this size usually means a scenario is missing.`,
@@ -144,21 +159,29 @@ export function computeScenarioDecision(
 
   const analyses = options.map((o) => {
     const values = norm.map((s) => payoff(o, s.id));
-    const expectedValue = r2(norm.reduce((sum, s) => sum + payoff(o, s.id) * (s.normalisedPct / 100), 0));
+    const expectedValue = r2(
+      norm.reduce((sum, s) => sum + payoff(o, s.id) * (s.normalisedPct / 100), 0),
+    );
 
     const regrets = norm.map((s) => (bestPerScenario.get(s.id) ?? 0) - payoff(o, s.id));
     const maxRegret = r2(Math.max(...regrets));
-    const expectedRegret = r2(norm.reduce((sum, s, i) => sum + regrets[i] * (s.normalisedPct / 100), 0));
+    const expectedRegret = r2(
+      norm.reduce((sum, s, i) => sum + regrets[i] * (s.normalisedPct / 100), 0),
+    );
 
-    const wins = norm.filter((s) => payoff(o, s.id) >= (bestPerScenario.get(s.id) ?? 0) - 1e-9).length;
+    const wins = norm.filter(
+      (s) => payoff(o, s.id) >= (bestPerScenario.get(s.id) ?? 0) - 1e-9,
+    ).length;
 
     return {
-      id: o.id, name: o.name.trim(),
+      id: o.id,
+      name: o.name.trim(),
       expectedValue,
       worstCase: r2(Math.min(...values)),
-      bestCase:  r2(Math.max(...values)),
-      range:     r2(Math.max(...values) - Math.min(...values)),
-      maxRegret, expectedRegret,
+      bestCase: r2(Math.max(...values)),
+      range: r2(Math.max(...values) - Math.min(...values)),
+      maxRegret,
+      expectedRegret,
       winsPct: r2((wins / norm.length) * 100),
       dominatedBy: null,
     };
@@ -186,29 +209,41 @@ export function computeScenarioDecision(
   const live = analyses.filter((a) => !a.dominatedBy);
   const pool = live.length > 0 ? live : analyses;
 
-  const pick = (
-    rule,
-    cmp,
-    val,
-  ) => {
+  const pick = (rule, cmp, val) => {
     const best = [...pool].sort(cmp)[0];
     return best ? { id: best.id, name: best.name, value: r2(val(best)) } : null;
   };
 
   const byRule = {
-    expected_value: pick('expected_value', (a, b) => b.expectedValue - a.expectedValue, (a) => a.expectedValue),
-    minimax_regret: pick('minimax_regret', (a, b) => a.maxRegret - b.maxRegret, (a) => a.maxRegret),
-    maximin:        pick('maximin',        (a, b) => b.worstCase - a.worstCase,     (a) => a.worstCase),
+    expected_value: pick(
+      'expected_value',
+      (a, b) => b.expectedValue - a.expectedValue,
+      (a) => a.expectedValue,
+    ),
+    minimax_regret: pick(
+      'minimax_regret',
+      (a, b) => a.maxRegret - b.maxRegret,
+      (a) => a.maxRegret,
+    ),
+    maximin: pick(
+      'maximin',
+      (a, b) => b.worstCase - a.worstCase,
+      (a) => a.worstCase,
+    ),
   };
 
-  const ids = Object.values(byRule).filter(Boolean).map((r) => r.id);
+  const ids = Object.values(byRule)
+    .filter(Boolean)
+    .map((r) => r.id);
   const rulesAgree = ids.length > 0 && new Set(ids).size === 1;
 
   /* ── EVPI ──
      EV if you could know the scenario before choosing, minus the EV of
      the best single commitment you can make now. */
   const evWithPerfectInfo = norm.reduce(
-    (sum, s) => sum + (bestPerScenario.get(s.id) ?? 0) * (s.normalisedPct / 100), 0);
+    (sum, s) => sum + (bestPerScenario.get(s.id) ?? 0) * (s.normalisedPct / 100),
+    0,
+  );
   const bestEv = byRule.expected_value?.value ?? 0;
   const evpi = r2(Math.max(0, evWithPerfectInfo - bestEv));
   const evpiPct = bestEv !== 0 ? r2((evpi / Math.abs(bestEv)) * 100) : 0;
@@ -219,11 +254,17 @@ export function computeScenarioDecision(
     /* Dominance eliminated everything else. This is the clearest result
        the engine can produce, so it must not fall silent just because
        there is no longer a comparison to make. */
-    guidance.push(`${pool[0].name} is the only option not beaten in every scenario. The rest are dominated — there is no trade-off left to weigh.`);
+    guidance.push(
+      `${pool[0].name} is the only option not beaten in every scenario. The rest are dominated — there is no trade-off left to weigh.`,
+    );
   } else if (rulesAgree && pool.length > 1) {
-    guidance.push(`${byRule.expected_value.name} wins on expected value, on worst case and on regret. When all three agree the choice does not need a meeting.`);
+    guidance.push(
+      `${byRule.expected_value.name} wins on expected value, on worst case and on regret. When all three agree the choice does not need a meeting.`,
+    );
   } else if (!rulesAgree) {
-    const ev = byRule.expected_value, mm = byRule.maximin, mr = byRule.minimax_regret;
+    const ev = byRule.expected_value,
+      mm = byRule.maximin,
+      mr = byRule.minimax_regret;
     conflict =
       `${ev?.name} is the best bet, ${mm?.name} is the safest if things go badly, and ${mr?.name} is the one you are least likely to regret. ` +
       `They disagree, which means this is a question about risk appetite, not about analysis — more data will not resolve it.`;
@@ -231,26 +272,38 @@ export function computeScenarioDecision(
   }
 
   if (evpiPct < 5 && bestEv !== 0) {
-    guidance.push(`Resolving the uncertainty entirely would improve the outcome by only ${evpi} (${evpiPct}%). Further research cannot change the answer — decide now.`);
+    guidance.push(
+      `Resolving the uncertainty entirely would improve the outcome by only ${evpi} (${evpiPct}%). Further research cannot change the answer — decide now.`,
+    );
   } else if (evpiPct > 25) {
-    guidance.push(`Knowing which scenario occurs would be worth ${evpi} (${evpiPct}% of the best expected value). That is the ceiling on what research or a pilot is worth — spend up to it, not beyond.`);
+    guidance.push(
+      `Knowing which scenario occurs would be worth ${evpi} (${evpiPct}% of the best expected value). That is the ceiling on what research or a pilot is worth — spend up to it, not beyond.`,
+    );
   }
 
   const robust = [...pool].sort((a, b) => b.winsPct - a.winsPct)[0];
   if (robust && robust.winsPct >= 60 && robust.id !== byRule.expected_value?.id) {
-    guidance.push(`${robust.name} is best in ${robust.winsPct}% of scenarios without winning on expected value — a robust choice rather than an optimising one.`);
+    guidance.push(
+      `${robust.name} is best in ${robust.winsPct}% of scenarios without winning on expected value — a robust choice rather than an optimising one.`,
+    );
   }
   const widest = [...pool].sort((a, b) => b.range - a.range)[0];
   if (widest && widest.range > 0 && widest.id === byRule.expected_value?.id) {
-    guidance.push(`${widest.name} has the widest spread of outcomes of any live option. It is the best bet and the most exposed one; size the commitment accordingly.`);
+    guidance.push(
+      `${widest.name} has the widest spread of outcomes of any live option. It is the best bet and the most exposed one; size the commitment accordingly.`,
+    );
   }
 
   if (dominated.length > 0) {
-    warnings.push(`${dominated.length} option${dominated.length > 1 ? 's are' : ' is'} beaten in every scenario and cannot be rational: ${dominated.map((d) => `${d.name} (by ${d.by})`).join(', ')}.`);
+    warnings.push(
+      `${dominated.length} option${dominated.length > 1 ? 's are' : ' is'} beaten in every scenario and cannot be rational: ${dominated.map((d) => `${d.name} (by ${d.by})`).join(', ')}.`,
+    );
   }
   const equalProbs = new Set(norm.map((s) => s.normalisedPct)).size === 1 && norm.length > 2;
   if (equalProbs) {
-    warnings.push('Every scenario carries identical probability. That is rarely a belief — it is usually a placeholder nobody revisited.');
+    warnings.push(
+      'Every scenario carries identical probability. That is rarely a belief — it is usually a placeholder nobody revisited.',
+    );
   }
 
   const headline = byRule.expected_value
@@ -262,19 +315,35 @@ export function computeScenarioDecision(
   return {
     scenarios: norm,
     options: analyses.sort((a, b) => b.expectedValue - a.expectedValue),
-    byRule, rulesAgree, conflict, evpi, evpiPct, dominated,
-    headline, guidance, warnings,
+    byRule,
+    rulesAgree,
+    conflict,
+    evpi,
+    evpiPct,
+    dominated,
+    headline,
+    guidance,
+    warnings,
   };
 }
 
 /** Deterministic summary the model reads — it never recomputes these. */
 export function scenarioDecisionToPrompt(r) {
   const lines = [`• ${r.headline}`];
-  lines.push(`• Expected value: ${r.byRule.expected_value?.name ?? '—'} (${r.byRule.expected_value?.value ?? 0})`);
-  lines.push(`• Safest worst case: ${r.byRule.maximin?.name ?? '—'} (${r.byRule.maximin?.value ?? 0})`);
-  lines.push(`• Least regret: ${r.byRule.minimax_regret?.name ?? '—'} (max regret ${r.byRule.minimax_regret?.value ?? 0})`);
-  lines.push(`• EVPI: ${r.evpi} (${r.evpiPct}% of best EV) — the ceiling on what research is worth`);
+  lines.push(
+    `• Expected value: ${r.byRule.expected_value?.name ?? '—'} (${r.byRule.expected_value?.value ?? 0})`,
+  );
+  lines.push(
+    `• Safest worst case: ${r.byRule.maximin?.name ?? '—'} (${r.byRule.maximin?.value ?? 0})`,
+  );
+  lines.push(
+    `• Least regret: ${r.byRule.minimax_regret?.name ?? '—'} (max regret ${r.byRule.minimax_regret?.value ?? 0})`,
+  );
+  lines.push(
+    `• EVPI: ${r.evpi} (${r.evpiPct}% of best EV) — the ceiling on what research is worth`,
+  );
   for (const g of r.guidance) lines.push(`• ${g}`);
-  for (const d of r.dominated) lines.push(`• DOMINATED: ${d.name} is beaten in every scenario by ${d.by}`);
+  for (const d of r.dominated)
+    lines.push(`• DOMINATED: ${d.name} is beaten in every scenario by ${d.by}`);
   return lines.join('\n');
 }

@@ -156,17 +156,25 @@ export function computeBenchStrength(inputs) {
   const clean = (inputs ?? []).filter((r) => r?.title?.trim());
   if (clean.length === 0) {
     return {
-      roles: [], uncovered: [], thin: [], priorities: [], concentration: [],
-      coveredPct: 0, criticalSeats: 0,
+      roles: [],
+      uncovered: [],
+      thin: [],
+      priorities: [],
+      concentration: [],
+      coveredPct: 0,
+      criticalSeats: 0,
       headline: 'No roles to assess yet.',
       planWarnings: [],
-      warnings: ['Add the seats you cannot afford to leave empty. Succession cover is measured per seat — there is nothing to average.'],
+      warnings: [
+        'Add the seats you cannot afford to leave empty. Succession cover is measured per seat — there is nothing to average.',
+      ],
     };
   }
 
   const roles = clean.map((r) => {
     const criticality = clamp(r.criticality, 1, 5);
-    const flightRisk = RISK_WEIGHT[r.incumbentFlightRisk] !== undefined ? r.incumbentFlightRisk : 'medium';
+    const flightRisk =
+      RISK_WEIGHT[r.incumbentFlightRisk] !== undefined ? r.incumbentFlightRisk : 'medium';
     /* Six months is the default notice for a senior seat. Generous
        rather than pessimistic, so the engine is not manufacturing
        urgency the organisation would not actually face. */
@@ -175,10 +183,18 @@ export function computeBenchStrength(inputs) {
     const named = (r.successors ?? []).filter((s) => s?.person?.trim());
     const readyInTime = named
       .filter((s) => READY_MONTHS[s.readiness] <= noticeMonths)
-      .map((s) => ({ person: s.person.trim(), readiness: s.readiness, readinessLabel: READINESS_LABEL[s.readiness] }));
+      .map((s) => ({
+        person: s.person.trim(),
+        readiness: s.readiness,
+        readinessLabel: READINESS_LABEL[s.readiness],
+      }));
     const tooLate = named
       .filter((s) => READY_MONTHS[s.readiness] > noticeMonths)
-      .map((s) => ({ person: s.person.trim(), readiness: s.readiness, readinessLabel: READINESS_LABEL[s.readiness] }));
+      .map((s) => ({
+        person: s.person.trim(),
+        readiness: s.readiness,
+        readinessLabel: READINESS_LABEL[s.readiness],
+      }));
 
     const coverDepth = readyInTime.length;
     const cover = coverDepth === 0 ? 'uncovered' : coverDepth === 1 ? 'thin' : 'covered';
@@ -234,7 +250,8 @@ export function computeBenchStrength(inputs) {
   const concentration = [...bySeat.entries()]
     .filter(([, seats]) => seats.length > 1)
     .map(([person, seats]) => ({
-      person: roles.flatMap((r) => r.readyInTime).find((s) => s.person.toLowerCase() === person).person,
+      person: roles.flatMap((r) => r.readyInTime).find((s) => s.person.toLowerCase() === person)
+        .person,
       seats,
     }))
     .sort((a, b) => b.seats.length - a.seats.length);
@@ -263,16 +280,22 @@ export function computeBenchStrength(inputs) {
   }
 
   if (roles.length >= 3 && roles.every((r) => r.readyInTime.length === 0)) {
-    planWarnings.push('Nothing on this plan is ready inside its own notice period. The grid records intent, not cover.');
+    planWarnings.push(
+      'Nothing on this plan is ready inside its own notice period. The grid records intent, not cover.',
+    );
   }
 
   /* ── Input quality ── */
   const noSuccessors = roles.filter((r) => r.readyInTime.length + r.tooLate.length === 0);
   if (noSuccessors.length === roles.length) {
-    warnings.push('No successors named on any seat. This reads as a list of roles rather than a succession plan.');
+    warnings.push(
+      'No successors named on any seat. This reads as a list of roles rather than a succession plan.',
+    );
   }
   if (roles.every((r) => r.criticality === roles[0].criticality) && roles.length > 2) {
-    warnings.push('Every seat is rated identically for criticality, so the ranking below reflects only flight risk and cover. Differentiate what actually hurts most.');
+    warnings.push(
+      'Every seat is rated identically for criticality, so the ranking below reflects only flight risk and cover. Differentiate what actually hurts most.',
+    );
   }
 
   const headline =
@@ -283,8 +306,16 @@ export function computeBenchStrength(inputs) {
         : `All ${roles.length} seats have at least two successors ready inside the notice period.`;
 
   return {
-    roles, uncovered, thin, priorities, concentration,
-    coveredPct, criticalSeats, headline, planWarnings, warnings,
+    roles,
+    uncovered,
+    thin,
+    priorities,
+    concentration,
+    coveredPct,
+    criticalSeats,
+    headline,
+    planWarnings,
+    warnings,
   };
 }
 
@@ -298,7 +329,9 @@ export function computeBenchStrength(inputs) {
 export function benchStrengthToPrompt(r) {
   const out = [r.headline, ''];
 
-  out.push(`${r.coveredPct}% of seats have two or more successors ready inside their notice period. ${r.criticalSeats} seat(s) rated critical (4+).`);
+  out.push(
+    `${r.coveredPct}% of seats have two or more successors ready inside their notice period. ${r.criticalSeats} seat(s) rated critical (4+).`,
+  );
   out.push('');
 
   for (const role of r.roles) {
@@ -307,16 +340,25 @@ export function benchStrengthToPrompt(r) {
     );
     out.push(`  ${role.reading}`);
     if (role.readyInTime.length) {
-      out.push(`  Ready in time: ${role.readyInTime.map((s) => `${s.person} (${s.readinessLabel.toLowerCase()})`).join(', ')}.`);
+      out.push(
+        `  Ready in time: ${role.readyInTime.map((s) => `${s.person} (${s.readinessLabel.toLowerCase()})`).join(', ')}.`,
+      );
     }
     if (role.tooLate.length) {
-      out.push(`  Named but too late: ${role.tooLate.map((s) => `${s.person} (${s.readinessLabel.toLowerCase()})`).join(', ')}.`);
+      out.push(
+        `  Named but too late: ${role.tooLate.map((s) => `${s.person} (${s.readinessLabel.toLowerCase()})`).join(', ')}.`,
+      );
     }
-    out.push(`  Exposure ${role.exposure} = criticality ${role.criticality} × departure likelihood ${RISK_WEIGHT[role.flightRisk]} × cover shortfall ${Math.max(0, 2 - role.coverDepth) / 2} × 20.`);
+    out.push(
+      `  Exposure ${role.exposure} = criticality ${role.criticality} × departure likelihood ${RISK_WEIGHT[role.flightRisk]} × cover shortfall ${Math.max(0, 2 - role.coverDepth) / 2} × 20.`,
+    );
   }
 
   if (r.priorities.length) {
-    out.push('', `Work in this order: ${r.priorities.map((p) => `${p.title} (${p.exposure})`).join(', ')}.`);
+    out.push(
+      '',
+      `Work in this order: ${r.priorities.map((p) => `${p.title} (${p.exposure})`).join(', ')}.`,
+    );
   }
   if (r.planWarnings.length) {
     out.push('', 'Problems with the plan as a whole:');

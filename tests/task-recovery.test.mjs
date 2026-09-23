@@ -55,9 +55,9 @@ test(
       (await call(`/companion/tasks?limit=1&before=${page.data[0].cursor}`)).data[0].id,
       first.id,
     );
-  assert.equal((await call('/companion/tasks?limit=0')).status, 400);
-  assert.equal((await call('/companion/tasks?before=invalid')).status, 400);
-  assert.equal((await call('/companion/tasks?before=9999999999999999999')).status, 400);
+    assert.equal((await call('/companion/tasks?limit=0')).status, 400);
+    assert.equal((await call('/companion/tasks?before=invalid')).status, 400);
+    assert.equal((await call('/companion/tasks?before=9999999999999999999')).status, 400);
     assert.equal((await call(`/companion/tasks/${second.id}/cancel`, { version: 2 })).status, 409);
     const cancelled = await call(`/companion/tasks/${second.id}/cancel`, { version: 1 });
     assert.equal(cancelled.data.status, 'cancelled');

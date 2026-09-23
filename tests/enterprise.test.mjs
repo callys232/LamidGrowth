@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     enterpriseMemberLimit: 2,
   }));
   server = await new Promise((resolve) => {
@@ -16,7 +21,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -52,7 +57,9 @@ test('a non-enterprise (individual) workspace cannot add members', async () => {
   // don't incidentally trip the entitlement gate; this test exercises that gate for real, so it
   // downgrades back to individual first, same as engines.test.mjs / entitlements.test.mjs.
   const ownerState = (await request('/state', undefined, owner, 'GET')).data;
-  await store.db.prepare("UPDATE workspaces SET tier = 'individual' WHERE id = ?").run(ownerState.workspace.id);
+  await store.db
+    .prepare("UPDATE workspaces SET tier = 'individual' WHERE id = ?")
+    .run(ownerState.workspace.id);
   const invitee = await signup('Invitee');
   const inviteeState = (await request('/state', undefined, invitee, 'GET')).data;
   const add = await request('/admin/members', { email: inviteeState.user.email }, owner);
@@ -84,14 +91,23 @@ test('a disabled member loses workspace access on their very next request', asyn
   assert.equal(add.status, 201);
 
   const ownerState = (await request('/state', undefined, owner, 'GET')).data;
-  const switched = await request('/workspace/switch', { workspaceId: ownerState.workspace.id }, member);
+  const switched = await request(
+    '/workspace/switch',
+    { workspaceId: ownerState.workspace.id },
+    member,
+  );
   assert.equal(switched.status, 200);
 
   const workingState = await request('/state', undefined, member, 'GET');
   assert.equal(workingState.status, 200);
   assert.equal(workingState.data.workspace.id, ownerState.workspace.id);
 
-  const disable = await request(`/admin/members/${memberState.user.id}`, { status: 'disabled' }, owner, 'PATCH');
+  const disable = await request(
+    `/admin/members/${memberState.user.id}`,
+    { status: 'disabled' },
+    owner,
+    'PATCH',
+  );
   assert.equal(disable.status, 200);
 
   const afterDisable = await request('/state', undefined, member, 'GET');

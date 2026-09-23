@@ -35,9 +35,9 @@ Call log:
 
 ```yaml
 - generic [ref=f4e2]:
-  - status [ref=f4e3]:
-    - generic [ref=f4e6]: Bringing your context together…
-  - button "Ask Companion" [ref=f4e7] [cursor=pointer]
+    - status [ref=f4e3]:
+        - generic [ref=f4e6]: Bringing your context together…
+    - button "Ask Companion" [ref=f4e7] [cursor=pointer]
 ```
 
 # Test source
@@ -45,7 +45,7 @@ Call log:
 ```ts
   1   | import { verifySignup } from './auth-helpers';
   2   | import { test, expect } from '@playwright/test';
-  3   | 
+  3   |
   4   | test('consulting project uses the implemented workspace tools end to end', async ({ page }) => {
   5   |   await page.goto('/start');
   6   |   await page.getByRole('button', { name: 'Professional', exact: true }).click();
@@ -56,7 +56,7 @@ Call log:
   11  |   await page.getByRole('button', { name: 'Create your workspace', exact: true }).click();
   12  |   await verifySignup(page);
   13  |   await expect(page).toHaveURL('/os');
-  14  | 
+  14  |
   15  |   await page.getByRole('button', { name: 'New objective', exact: true }).click();
   16  |   await page
   17  |     .getByLabel('Your objective', { exact: true })
@@ -67,7 +67,7 @@ Call log:
   22  |     .fill('A prioritized roadmap accepted by the client.');
   23  |   await page.getByRole('button', { name: 'Create objective', exact: true }).click();
   24  |   await expect(page.getByRole('dialog')).toHaveCount(0);
-  25  | 
+  25  |
   26  |   await page.getByRole('link', { name: 'Clarity', exact: true }).click();
   27  |   await expect(
   28  |     page.getByRole('heading', { name: 'Deliver the operating model assessment' }),
@@ -75,7 +75,7 @@ Call log:
   30  |   await page.getByRole('button', { name: 'View context & success criteria' }).click();
   31  |   await expect(page.getByRole('dialog')).toBeVisible();
   32  |   await page.getByRole('button', { name: 'Close dialog' }).click();
-  33  | 
+  33  |
   34  |   await page.getByRole('link', { name: 'Capability', exact: true }).click();
   35  |   await page.getByRole('button', { name: 'Add a capability-building action' }).click();
   36  |   await page.getByLabel('Action', { exact: true }).fill('Interview the three stakeholder groups');
@@ -84,7 +84,7 @@ Call log:
   39  |     .fill('Capture constraints, decision rights, and evidence gaps.');
 > 40  |   await page.getByRole('button', { name: 'Add next action', exact: true }).click();
       |                                                                            ^ Error: locator.click: Test timeout of 30000ms exceeded.
-  41  | 
+  41  |
   42  |   await page.getByRole('link', { name: 'Consistency', exact: true }).click();
   43  |   await expect(
   44  |     page.getByRole('button', { name: /Interview the three stakeholder groups/ }),
@@ -94,7 +94,7 @@ Call log:
   48  |   await page.getByRole('button', { name: /Interview the three stakeholder groups/ }).click();
   49  |   await page.getByRole('button', { name: 'Start action' }).click();
   50  |   await expect(page.getByRole('dialog')).toHaveCount(0);
-  51  | 
+  51  |
   52  |   await page.getByRole('link', { name: 'Today', exact: true }).click();
   53  |   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
   54  |     'Start With What Matters Today.',
@@ -106,7 +106,7 @@ Call log:
   60  |   await expect(page.locator('.audit-event').filter({ hasText: 'Action created' })).toContainText(
   61  |     'Interview the three stakeholder groups',
   62  |   );
-  63  | 
+  63  |
   64  |   await page.getByRole('link', { name: 'Companion', exact: false }).click();
   65  |   await page
   66  |     .getByLabel('What do you want to move forward?')
@@ -122,7 +122,7 @@ Call log:
   76  |   await page.getByLabel('Your next action (optional)').fill('Draft the decision log');
   77  |   await page.getByRole('button', { name: 'Save my plan' }).click();
   78  |   await expect(page.getByRole('heading', { name: /A clearer direction/ })).toBeVisible();
-  79  | 
+  79  |
   80  |   await page.getByRole('link', { name: 'Rhythm', exact: true }).click();
   81  |   await page.getByRole('button', { name: 'Record a reflection' }).click();
   82  |   await page
@@ -135,7 +135,7 @@ Call log:
   89  |   await expect(page.locator('.review-card')).toContainText(
   90  |     'Stakeholder interviews created a shared baseline.',
   91  |   );
-  92  | 
+  92  |
   93  |   await page.getByRole('link', { name: 'Progress', exact: true }).click();
   94  |   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
   95  |     'See What Is Changing Over Time.',
@@ -146,9 +146,9 @@ Call log:
   100 |     'Deliver the operating model assessment',
   101 |   );
   102 |   await page.getByRole('button', { name: 'Close dialog' }).click();
-  103 | 
+  103 |
   104 |   await page.getByRole('link', { name: 'Settings', exact: true }).click();
   105 |   await page.getByRole('link', { name: /Export workspace data/ }).click();
   106 | });
-  107 | 
+  107 |
 ```

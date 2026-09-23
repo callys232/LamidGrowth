@@ -69,75 +69,95 @@ export function computeScenarios(options) {
 
   if (clean.length === 0) {
     return {
-      options: [], best: null, safest: null, hasTradeoff: false, totalCost: 0,
-      sensitivity: [], tightestMargin: null,
+      options: [],
+      best: null,
+      safest: null,
+      hasTradeoff: false,
+      totalCost: 0,
+      sensitivity: [],
+      tightestMargin: null,
       warnings: ['Add at least two options to compare.'],
     };
   }
 
   const derived = clean.map((o) => {
-    const p        = clampPct(o.probability) / 100;
-    const upside   = num(o.upside);
+    const p = clampPct(o.probability) / 100;
+    const upside = num(o.upside);
     const downside = Math.abs(num(o.downside));
-    const cost     = Math.abs(num(o.cost));
-    const horizon  = Math.max(1, num(o.horizon));
+    const cost = Math.abs(num(o.cost));
+    const horizon = Math.max(1, num(o.horizon));
 
     // Standard EV: p × upside − (1−p) × downside
     const expectedValue = r2(p * upside - (1 - p) * downside);
-    const netExpected   = r2(expectedValue - cost);
+    const netExpected = r2(expectedValue - cost);
 
     return {
       ...o,
       probability: clampPct(o.probability),
       expectedValue,
       netExpected,
-      range:         r2(upside + downside),
+      range: r2(upside + downside),
       valuePerMonth: r2(netExpected / horizon),
-      rank:          0,
+      rank: 0,
     };
   });
 
   // Rank by net expected value.
   const byValue = [...derived].sort((a, b) => b.netExpected - a.netExpected);
-  byValue.forEach((o, i) => { o.rank = i + 1; });
+  byValue.forEach((o, i) => {
+    o.rank = i + 1;
+  });
 
-  const best   = byValue[0] ?? null;
+  const best = byValue[0] ?? null;
   // Safest = smallest downside spread, not smallest cost.
   const safest = [...derived].sort((a, b) => a.range - b.range)[0] ?? null;
 
   const hasTradeoff = Boolean(best && safest && best.id !== safest.id);
-  const totalCost   = r2(derived.reduce((a, o) => a + Math.abs(num(o.cost)), 0));
+  const totalCost = r2(derived.reduce((a, o) => a + Math.abs(num(o.cost)), 0));
 
   /* ── Checks worth surfacing ── */
   if (clean.length === 1) {
     warnings.push('Only one option entered — there is nothing to compare it against.');
   }
   if (best && best.netExpected < 0) {
-    warnings.push('Every option has negative expected value after cost. Doing nothing may dominate.');
+    warnings.push(
+      'Every option has negative expected value after cost. Doing nothing may dominate.',
+    );
   }
   if (hasTradeoff) {
-    warnings.push(`Highest-value option (${best.name}) is not the lowest-risk one (${safest.name}).`);
+    warnings.push(
+      `Highest-value option (${best.name}) is not the lowest-risk one (${safest.name}).`,
+    );
   }
   const vague = derived.filter((o) => o.probability > 45 && o.probability < 55).length;
   if (vague > 0 && derived.length > 1) {
-    warnings.push(`${vague} option${vague > 1 ? 's sit' : ' sits'} near 50% probability — that usually means the estimate is a guess.`);
+    warnings.push(
+      `${vague} option${vague > 1 ? 's sit' : ' sits'} near 50% probability — that usually means the estimate is a guess.`,
+    );
   }
 
   /* ── Sensitivity: what would have to be wrong for the ranking to change ── */
   const sensitivity = best ? byValue.slice(1).map((c) => breakeven(c, best)) : [];
-  const margins = sensitivity
-    .map((s) => s.marginPoints)
-    .filter((m) => m !== null);
+  const margins = sensitivity.map((s) => s.marginPoints).filter((m) => m !== null);
   const tightestMargin = margins.length ? Math.min(...margins) : null;
 
   if (tightestMargin !== null && tightestMargin <= 10) {
     const tight = sensitivity.find((s) => s.marginPoints === tightestMargin);
     warnings.push(
-      `The ranking is fragile: ${tight.challenger} overtakes ${tight.leader} once its probability passes ${tight.breakevenPct}% — only ${tightestMargin} points above the ${tight.currentPct}% entered.`
+      `The ranking is fragile: ${tight.challenger} overtakes ${tight.leader} once its probability passes ${tight.breakevenPct}% — only ${tightestMargin} points above the ${tight.currentPct}% entered.`,
     );
   }
 
-  return { options: byValue, best, safest, hasTradeoff, totalCost, sensitivity, tightestMargin, warnings };
+  return {
+    options: byValue,
+    best,
+    safest,
+    hasTradeoff,
+    totalCost,
+    sensitivity,
+    tightestMargin,
+    warnings,
+  };
 }
 
 /**
@@ -153,18 +173,18 @@ export function computeScenarios(options) {
  * when the breakeven falls outside 0–100 and is therefore unreachable.
  */
 function breakeven(challenger, leader) {
-  const upside   = num(challenger.upside);
+  const upside = num(challenger.upside);
   const downside = Math.abs(num(challenger.downside));
-  const cost     = Math.abs(num(challenger.cost));
-  const spread   = upside + downside;
+  const cost = Math.abs(num(challenger.cost));
+  const spread = upside + downside;
 
   const base = {
-    challenger:   challenger.name,
-    leader:       leader.name,
+    challenger: challenger.name,
+    leader: leader.name,
     breakevenPct: null,
-    currentPct:   challenger.probability,
+    currentPct: challenger.probability,
     marginPoints: null,
-    flipsEasily:  false,
+    flipsEasily: false,
   };
 
   if (spread === 0) return base;
@@ -186,16 +206,16 @@ function breakeven(challenger, leader) {
 export function scenariosToPrompt(s) {
   const lines = s.options.map(
     (o) =>
-      `• ${o.name}: ${o.probability}% likely, EV ${o.expectedValue.toLocaleString()}, net of cost ${o.netExpected.toLocaleString()}, ${o.horizon}mo horizon, risk spread ${o.range.toLocaleString()} (rank ${o.rank})`
+      `• ${o.name}: ${o.probability}% likely, EV ${o.expectedValue.toLocaleString()}, net of cost ${o.netExpected.toLocaleString()}, ${o.horizon}mo horizon, risk spread ${o.range.toLocaleString()} (rank ${o.rank})`,
   );
-  if (s.best)   lines.push(`• Highest net expected value: ${s.best.name}`);
+  if (s.best) lines.push(`• Highest net expected value: ${s.best.name}`);
   if (s.safest) lines.push(`• Narrowest risk spread: ${s.safest.name}`);
   if (s.hasTradeoff) lines.push(`• A value-versus-risk tradeoff exists between these two.`);
 
   for (const sv of s.sensitivity) {
     if (sv.breakevenPct === null) continue;
     lines.push(
-      `• ${sv.challenger} overtakes ${sv.leader} at ${sv.breakevenPct}% probability (currently ${sv.currentPct}%, margin ${sv.marginPoints} points)${sv.flipsEasily ? ' — fragile' : ''}`
+      `• ${sv.challenger} overtakes ${sv.leader} at ${sv.breakevenPct}% probability (currently ${sv.currentPct}%, margin ${sv.marginPoints} points)${sv.flipsEasily ? ' — fragile' : ''}`,
     );
   }
   return lines.join('\n');

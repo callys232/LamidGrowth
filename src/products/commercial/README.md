@@ -26,6 +26,6 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route             | Page composition                                                                        | Copy                                                  |
+| ----------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | /os/opportunities | [OsOpportunitiesDocumentPage](./pages/os-opportunities/OsOpportunitiesDocumentPage.tsx) | [content.json](./pages/os-opportunities/content.json) |

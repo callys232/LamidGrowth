@@ -11,7 +11,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    rateLimits: {
+      api: { max: 5000 },
+      auth: { max: 5000 },
+      mutation: { max: 5000 },
+      spend: { max: 5000 },
+    },
     // Each scenario below drives real companion messages through paid specialists
     // (context-curator, diagnostic-intelligence, etc.), so this needs AI configured the way
     // production would have it — same stub pattern as tests/agents.test.mjs.
@@ -20,7 +25,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -32,7 +42,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 
 async function request(path, body, cookie, method = 'POST', extra = {}) {
@@ -111,11 +121,25 @@ async function runScenario({
   record('client and freelancer accounts created', true);
 
   const freelancerState = await request('/state', undefined, freelancer, 'GET');
-  record('freelancer state loaded', freelancerState.status === 200, JSON.stringify(freelancerState.data));
+  record(
+    'freelancer state loaded',
+    freelancerState.status === 200,
+    JSON.stringify(freelancerState.data),
+  );
 
   const job = await request(
     '/jobs',
-    { title: jobTitle, category, projectType, description, deliverables, budgetMin, budgetMax, currency, timeline },
+    {
+      title: jobTitle,
+      category,
+      projectType,
+      description,
+      deliverables,
+      budgetMin,
+      budgetMax,
+      currency,
+      timeline,
+    },
     client,
   );
   record('job posted', job.status === 201, JSON.stringify(job.data));
@@ -130,7 +154,9 @@ async function runScenario({
   const matches = await request(`/jobs/${job.data.id}/matches`, undefined, client, 'GET');
   record(
     'consultant matcher scored the bid',
-    matches.status === 200 && matches.data.length === 1 && typeof matches.data[0].total === 'number',
+    matches.status === 200 &&
+      matches.data.length === 1 &&
+      typeof matches.data[0].total === 'number',
     JSON.stringify(matches.data),
   );
 
@@ -154,7 +180,11 @@ async function runScenario({
     { jobId: job.data.id, title: jobTitle, freelancerUserId: freelancerState.data.user.id },
     client,
   );
-  record('project created from the awarded job', project.status === 201, JSON.stringify(project.data));
+  record(
+    'project created from the awarded job',
+    project.status === 201,
+    JSON.stringify(project.data),
+  );
 
   const milestone = await request(
     `/projects/${project.data.id}/milestones`,
@@ -179,7 +209,11 @@ async function runScenario({
     { notes: submissionNotes, assets: [] },
     freelancer,
   );
-  record('freelancer submitted the milestone', submission.status === 201, JSON.stringify(submission.data));
+  record(
+    'freelancer submitted the milestone',
+    submission.status === 201,
+    JSON.stringify(submission.data),
+  );
 
   const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
   record(
@@ -202,18 +236,27 @@ async function runScenario({
   );
   record(
     `client recorded decision "${finalDecision}"`,
-    decision.status === 201 && decision.data.status === (finalDecision === 'approve' ? 'approved' : 'disputed'),
+    decision.status === 201 &&
+      decision.data.status === (finalDecision === 'approve' ? 'approved' : 'disputed'),
     JSON.stringify(decision.data),
   );
 
-  const companionAsClient = await request('/companion/messages', { message: companionMessage, consent: true }, client);
+  const companionAsClient = await request(
+    '/companion/messages',
+    { message: companionMessage, consent: true },
+    client,
+  );
   record(
     'companion agent (context) responded to the client',
     companionAsClient.status === 201 && typeof companionAsClient.data.response === 'string',
     JSON.stringify(companionAsClient.data),
   );
 
-  const companionSpecialist = await request('/companion/messages', { message: specialistMessage, consent: true }, client);
+  const companionSpecialist = await request(
+    '/companion/messages',
+    { message: specialistMessage, consent: true },
+    client,
+  );
   record(
     'companion routed a specialist-worded message to a non-default agent',
     companionSpecialist.status === 201 && companionSpecialist.data.agentId !== 'context-curator',
@@ -312,7 +355,8 @@ const scenarios = [
       'Dashboard displays usage metrics and retention charts',
       'CSV export works for enterprise customers',
     ],
-    submissionNotes: 'Implemented usage metrics, retention charts, and CSV export, tested with enterprise accounts.',
+    submissionNotes:
+      'Implemented usage metrics, retention charts, and CSV export, tested with enterprise accounts.',
     finalDecision: 'approve',
     companionMessage: 'what is going on right now with this build?',
     specialistMessage: 'show me our kpi and performance metrics for this project',
@@ -326,7 +370,8 @@ const scenarios = [
     jobTitle: 'Launch campaign strategy for a direct-to-consumer skincare brand',
     description:
       'We are launching a new direct-to-consumer skincare line and need a growth marketer to design a launch campaign covering paid social, influencer outreach, and email sequencing.',
-    deliverables: 'A launch campaign plan covering paid social, influencer outreach, and an email sequence.',
+    deliverables:
+      'A launch campaign plan covering paid social, influencer outreach, and an email sequence.',
     budgetMin: 1500,
     budgetMax: 2500,
     currency: 'USD',
@@ -387,7 +432,9 @@ for (const scenario of scenarios) {
 test('acceptance report summary', () => {
   for (const report of reports) {
     const passed = report.steps.filter((s) => s.ok).length;
-    console.log(`\n=== ${report.label} (${report.category}) — ${passed}/${report.steps.length} steps passed ===`);
+    console.log(
+      `\n=== ${report.label} (${report.category}) — ${passed}/${report.steps.length} steps passed ===`,
+    );
     for (const step of report.steps) console.log(`  ${step.ok ? '✔' : '✘'} ${step.name}`);
   }
   assert.equal(reports.length, scenarios.length);

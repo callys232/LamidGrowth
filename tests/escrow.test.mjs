@@ -25,7 +25,12 @@ async function boot(fetchImpl, { configured = true } = {}) {
       : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
   }));
   server = await new Promise((resolve) => {
@@ -35,7 +40,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
 }
 async function teardown() {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 }
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -81,13 +86,22 @@ async function approvedMilestone(client, freelancer, amount = 750) {
   );
   const bid = await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work as agreed.', proposedAmount: amount, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this work as agreed.',
+      proposedAmount: amount,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
   void bid;
   const project = await request(
     '/projects',
-    { jobId: job.data.id, title: 'Escrow project', freelancerUserId: (await request('/state', undefined, freelancer, 'GET')).data.user.id },
+    {
+      jobId: job.data.id,
+      title: 'Escrow project',
+      freelancerUserId: (await request('/state', undefined, freelancer, 'GET')).data.user.id,
+    },
     client,
   );
   const milestone = await request(
@@ -95,10 +109,22 @@ async function approvedMilestone(client, freelancer, amount = 750) {
     { title: 'Phase 1', description: '', amount, currency: 'USD' },
     client,
   );
-  await request(`/milestones/${milestone.data.id}/deliverables`, { title: 'D', description: '', criteria: ['Work is complete'] }, client);
-  const submission = await request(`/milestones/${milestone.data.id}/submissions`, { notes: 'Work is complete as agreed.' }, freelancer);
+  await request(
+    `/milestones/${milestone.data.id}/deliverables`,
+    { title: 'D', description: '', criteria: ['Work is complete'] },
+    client,
+  );
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: 'Work is complete as agreed.' },
+    freelancer,
+  );
   const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
-  await request(`/verification-cases/${verification.data.id}/decisions`, { decision: 'approve', reason: 'Approved.' }, client);
+  await request(
+    `/verification-cases/${verification.data.id}/decisions`,
+    { decision: 'approve', reason: 'Approved.' },
+    client,
+  );
   return { milestoneId: milestone.data.id, project: project.data };
 }
 
@@ -106,7 +132,10 @@ test('with no provider configured, funding is refused rather than faked', async 
   await boot(undefined, { configured: false });
   t.after(teardown);
   const client = await signup('NoProvider Client', 'noprovider-escrow-client@example.test');
-  const freelancer = await signup('NoProvider Freelancer', 'noprovider-escrow-freelancer@example.test');
+  const freelancer = await signup(
+    'NoProvider Freelancer',
+    'noprovider-escrow-freelancer@example.test',
+  );
   const { milestoneId } = await approvedMilestone(client, freelancer);
   const fund = await request(`/milestones/${milestoneId}/fund`, {}, client);
   assert.equal(fund.status, 503);
@@ -121,7 +150,11 @@ test('release is refused before a milestone is funded, even once approved', asyn
   const client = await signup('Unfunded Client', 'unfunded-client@example.test');
   const freelancer = await signup('Unfunded Freelancer', 'unfunded-freelancer@example.test');
   const { milestoneId } = await approvedMilestone(client, freelancer);
-  const release = await request(`/milestones/${milestoneId}/release`, { provider: 'paystack' }, client);
+  const release = await request(
+    `/milestones/${milestoneId}/release`,
+    { provider: 'paystack' },
+    client,
+  );
   assert.equal(release.status, 400);
   assert.ok(release.data.error.includes('no funds held in escrow'));
 });
@@ -129,7 +162,10 @@ test('release is refused before a milestone is funded, even once approved', asyn
 test('a mocked fund -> webhook hold -> release lifecycle marks funding released only after real confirmation', async (t) => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/xyz', access_code: 'xyz' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/xyz', access_code: 'xyz' },
+      }),
     'https://api.paystack.co/transferrecipient': () =>
       jsonResponse(200, { status: true, data: { recipient_code: 'RCP_escrow_1' } }),
     'https://api.paystack.co/transfer': (body) =>
@@ -141,7 +177,12 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
   const freelancer = await signup('Escrow Freelancer', 'escrow-freelancer@example.test');
   await request(
     '/payment-accounts',
-    { provider: 'paystack', accountName: 'Escrow Freelancer', accountNumber: '0123456789', bankCode: '058' },
+    {
+      provider: 'paystack',
+      accountName: 'Escrow Freelancer',
+      accountNumber: '0123456789',
+      bankCode: '058',
+    },
     freelancer,
   );
   const { milestoneId } = await approvedMilestone(client, freelancer, 750);
@@ -154,11 +195,20 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
   assert.equal(fund.status, 201);
   assert.equal(fund.data.amountMinor, 75000);
 
-  const beforeWebhook = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  const beforeWebhook = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(beforeWebhook.data.status, 'pending');
 
   // Release attempted before the hold is confirmed still fails.
-  const tooEarlyRelease = await request(`/milestones/${milestoneId}/release`, { provider: 'paystack' }, client);
+  const tooEarlyRelease = await request(
+    `/milestones/${milestoneId}/release`,
+    { provider: 'paystack' },
+    client,
+  );
   assert.equal(tooEarlyRelease.status, 400);
 
   // A second fund attempt while one is pending is rejected.
@@ -175,33 +225,61 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
   });
   assert.equal(webhookResponse.status, 200);
 
-  const afterWebhook = await request(`/milestones/${milestoneId}/funding`, undefined, freelancer, 'GET');
+  const afterWebhook = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    freelancer,
+    'GET',
+  );
   assert.equal(afterWebhook.data.status, 'held');
   assert.ok(afterWebhook.data.held_at);
 
   // Only the client can release.
-  const blockedRelease = await request(`/milestones/${milestoneId}/release`, { provider: 'paystack' }, freelancer);
+  const blockedRelease = await request(
+    `/milestones/${milestoneId}/release`,
+    { provider: 'paystack' },
+    freelancer,
+  );
   assert.equal(blockedRelease.status, 403);
 
-  const release = await request(`/milestones/${milestoneId}/release`, { provider: 'paystack' }, client);
+  const release = await request(
+    `/milestones/${milestoneId}/release`,
+    { provider: 'paystack' },
+    client,
+  );
   assert.equal(release.status, 201);
   assert.equal(release.data.status, 'processing');
 
   // Funding is still "held" (not yet "released") until Paystack confirms the transfer succeeded —
   // no optimistic "released" before real confirmation.
-  const afterReleaseCall = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  const afterReleaseCall = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(afterReleaseCall.data.status, 'held');
 
-  const transferEvent = { event: 'transfer.success', data: { reference: release.data.provider_reference } };
+  const transferEvent = {
+    event: 'transfer.success',
+    data: { reference: release.data.provider_reference },
+  };
   const transferRawBody = Buffer.from(JSON.stringify(transferEvent));
-  const transferSignature = createHmac('sha512', PAYSTACK_SECRET).update(transferRawBody).digest('hex');
+  const transferSignature = createHmac('sha512', PAYSTACK_SECRET)
+    .update(transferRawBody)
+    .digest('hex');
   await fetch(`${base}/api/webhooks/paystack`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-paystack-signature': transferSignature },
     body: transferRawBody,
   });
 
-  const finalFunding = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  const finalFunding = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(finalFunding.data.status, 'released');
   assert.ok(finalFunding.data.released_at);
 });

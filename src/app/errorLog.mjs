@@ -7,7 +7,15 @@ export function errorDetails(error) {
   const message = error instanceof Error ? error.message : String(error);
   return {
     name: error instanceof Error ? error.name : 'Error',
-    ...(error?.databaseFailure ? { database: { code: error.code || 'CONNECTION_ERROR', pool: error.databasePool, commitOutcomeUnknown: Boolean(error.commitOutcomeUnknown) } } : {}),
+    ...(error?.databaseFailure
+      ? {
+          database: {
+            code: error.code || 'CONNECTION_ERROR',
+            pool: error.databasePool,
+            commitOutcomeUnknown: Boolean(error.commitOutcomeUnknown),
+          },
+        }
+      : {}),
     // Logs are operational records. Never copy request bodies, query strings or headers here.
     message: message.slice(0, 1000),
     ...(error instanceof Error && error.stack ? { stack: error.stack.slice(0, 6000) } : {}),

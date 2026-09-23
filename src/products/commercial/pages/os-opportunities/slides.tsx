@@ -34,14 +34,24 @@ export function RequiredCapabilitySlide2({ embedded = false }: DocumentPageProps
 /** Choose Between Two Growth Paths */
 export function ChooseBetweenTwoGrowthPathsSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[2]}
+      index={2}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 
 /** Goal-Aware Opportunity Matching */
 export function GoalAwareOpportunityMatchingSlide4({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[3]}
+      index={3}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

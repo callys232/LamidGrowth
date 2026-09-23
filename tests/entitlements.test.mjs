@@ -22,13 +22,24 @@ let app, store, server, base;
 before(async () => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/mock', access_code: 'mock' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/mock', access_code: 'mock' },
+      }),
   });
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
-    paymentProvider: (name) => (name === 'paystack' ? importedPaystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl }) : null),
+    paymentProvider: (name) =>
+      name === 'paystack'
+        ? importedPaystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl })
+        : null,
     // A stub aiProvider so the one AI-backed chat agent this file exercises (opportunity-signals)
     // can complete rather than 503 for lack of a configured provider — same pattern as agents.test.mjs.
     aiProvider: {
@@ -36,7 +47,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `stub review: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: [] },
+          review: {
+            summary: `stub review: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: [],
+          },
         };
       },
     },
@@ -48,7 +64,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 
 async function request(path, body, cookie, method = 'POST') {
@@ -60,7 +76,11 @@ async function request(path, body, cookie, method = 'POST') {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 
 let counter = 0;
@@ -80,7 +100,9 @@ async function signup(name, email) {
  * this gate. Downgrading back to 'individual' here is what actually exercises it. */
 async function downgradeToIndividual(cookie) {
   const state = await request('/state', undefined, cookie, 'GET');
-  await store.db.prepare("UPDATE workspaces SET tier = 'individual' WHERE id = ?").run(state.data.workspace.id);
+  await store.db
+    .prepare("UPDATE workspaces SET tier = 'individual' WHERE id = ?")
+    .run(state.data.workspace.id);
   return state.data;
 }
 
@@ -99,13 +121,19 @@ async function fireWebhook(reference) {
 test('an individual-tier workspace with no bundle cannot run a paid engine or a paid chat agent, and is not charged', async () => {
   const cookie = await signup('Blocked Individual');
   const { user } = await downgradeToIndividual(cookie);
-  const before = user.points_balance ?? (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  const before =
+    user.points_balance ??
+    (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
 
   const engineRun = await request('/engines/f01/run', { input: {} }, cookie);
   assert.equal(engineRun.status, 403);
   assert.match(engineRun.data.error, /not included in your plan|isn't included/);
 
-  const agentRun = await request('/companion/messages', { message: 'surface opportunities', agentId: 'opportunity-signals' }, cookie);
+  const agentRun = await request(
+    '/companion/messages',
+    { message: 'surface opportunities', agentId: 'opportunity-signals' },
+    cookie,
+  );
   assert.equal(agentRun.status, 403);
 
   const balance = await request('/finance/points', undefined, cookie, 'GET');
@@ -115,7 +143,11 @@ test('an individual-tier workspace with no bundle cannot run a paid engine or a 
 test('the free chat agents remain accessible to an individual-tier workspace with no bundle', async () => {
   const cookie = await signup('Free Tools Individual');
   await downgradeToIndividual(cookie);
-  const result = await request('/companion/messages', { message: 'help me get started', agentId: 'onboarding' }, cookie);
+  const result = await request(
+    '/companion/messages',
+    { message: 'help me get started', agentId: 'onboarding' },
+    cookie,
+  );
   assert.equal(result.status, 201);
   assert.equal(result.data.pointsCharged, 0);
 });
@@ -129,12 +161,22 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
 
   const create = await request(
     '/admin/bundles',
-    { name: 'Finance Starter', priceMinor: 5000, pointsIncluded: 100, agentIds: ['f01', 'opportunity-signals'] },
+    {
+      name: 'Finance Starter',
+      priceMinor: 5000,
+      pointsIncluded: 100,
+      agentIds: ['f01', 'opportunity-signals'],
+    },
     adminCookie,
   );
   assert.equal(create.status, 201);
   const bundleId = create.data.id;
-  const publish = await request(`/admin/bundles/${bundleId}`, { status: 'active' }, adminCookie, 'PATCH');
+  const publish = await request(
+    `/admin/bundles/${bundleId}`,
+    { status: 'active' },
+    adminCookie,
+    'PATCH',
+  );
   assert.equal(publish.status, 200);
 
   // Blocked before purchase.
@@ -150,7 +192,15 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
 
   const engineRun = await request(
     '/engines/f01/run',
-    { input: { currency: 'USD', periodLabel: 'Month', periods: [{ revenue: 1000, cogs: 400, opex: 300 }], cashBalance: 1000, headcount: 1 } },
+    {
+      input: {
+        currency: 'USD',
+        periodLabel: 'Month',
+        periods: [{ revenue: 1000, cogs: 400, opex: 300 }],
+        cashBalance: 1000,
+        headcount: 1,
+      },
+    },
     buyerCookie,
   );
   assert.equal(engineRun.status, 200);
@@ -161,7 +211,11 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
   // verified, so this only asserts the entitlement gate specifically was cleared (a different
   // error message), not a full successful run. The DB check below is the precise assertion for
   // what this test actually covers.
-  const agentRun = await request('/companion/messages', { message: 'surface opportunities', agentId: 'opportunity-signals', consent: true }, buyerCookie);
+  const agentRun = await request(
+    '/companion/messages',
+    { message: 'surface opportunities', agentId: 'opportunity-signals', consent: true },
+    buyerCookie,
+  );
   assert.doesNotMatch(agentRun.data.error, /isn't included in your plan/);
 
   // A different paid tool NOT in the bundle stays blocked — the grant is scoped to bundle_items,
@@ -172,7 +226,8 @@ test('purchasing a bundle grants real access to exactly the tools it includes, c
   assert.equal(other.status, 403);
 
   const row = await store.db
-    .prepare('SELECT * FROM workspace_agent_entitlements WHERE workspace_id = ? ORDER BY agent_id').all(workspace.id);
+    .prepare('SELECT * FROM workspace_agent_entitlements WHERE workspace_id = ? ORDER BY agent_id')
+    .all(workspace.id);
   assert.deepEqual(row.map((r) => r.agent_id).sort(), ['f01', 'opportunity-signals']);
 });
 
@@ -183,7 +238,20 @@ test('an enterprise-tier workspace can run any paid tool without any bundle', as
   // that every context can already reach.
   const engineRun = await request(
     '/engines/a02/run',
-    { input: { roles: [{ role: 'Engineer', headcount: 3, capability: 3, attritionRisk: 2, successors: 1, critical: true }] } },
+    {
+      input: {
+        roles: [
+          {
+            role: 'Engineer',
+            headcount: 3,
+            capability: 3,
+            attritionRisk: 2,
+            successors: 1,
+            critical: true,
+          },
+        ],
+      },
+    },
     cookie,
   );
   assert.equal(engineRun.status, 200);

@@ -70,10 +70,9 @@ export function mountKnowledge(app, store) {
         );
       await validateObjective(req.workspace.id, input.objectiveId);
       const updated = enrich(input, req.user.id);
-      await db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
-        JSON.stringify(updated),
-        row.id,
-      );
+      await db
+        .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+        .run(JSON.stringify(updated), row.id);
       await log(
         req.workspace.id,
         req.user.name,

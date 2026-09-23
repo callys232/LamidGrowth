@@ -14,7 +14,7 @@ async function fixture(t, options = {}) {
   await new Promise((resolve) => server.once('listening', resolve));
   t.after(async () => {
     await new Promise((resolve) => server.close(resolve));
-    store.db.close();
+    await store.db.close();
   });
   async function request(path, body, cookie, method = 'POST', headers = {}) {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/api${path}`, {
@@ -130,7 +130,8 @@ test('member permissions and suspension stay inside the selected enterprise', as
   );
   await request(`/admin/members/${member.user.id}`, { status: 'disabled' }, one.cookie, 'PATCH');
   assert.equal(
-    (await store.db.prepare('SELECT disabled_at FROM users WHERE id = ?').get(member.user.id)).disabled_at,
+    (await store.db.prepare('SELECT disabled_at FROM users WHERE id = ?').get(member.user.id))
+      .disabled_at,
     null,
   );
   assert.equal(
@@ -294,8 +295,11 @@ test('populated account deletion preserves other accounts and their point ledger
     99980,
   );
   assert.equal(
-    (await store.db.prepare('SELECT workspace_id FROM points_ledger WHERE user_id = ?').get(bidder.user.id))
-      .workspace_id,
+    (
+      await store.db
+        .prepare('SELECT workspace_id FROM points_ledger WHERE user_id = ?')
+        .get(bidder.user.id)
+    ).workspace_id,
     null,
   );
   // Postgres enforces referential integrity synchronously (unlike SQLite's optional PRAGMA
@@ -321,7 +325,8 @@ test('populated account deletion preserves other accounts and their point ledger
     200,
   );
   assert.equal(
-    (await store.db.prepare('SELECT bid_id FROM proposals WHERE job_id = ?').get(job2.data.id)).bid_id,
+    (await store.db.prepare('SELECT bid_id FROM proposals WHERE job_id = ?').get(job2.data.id))
+      .bid_id,
     null,
   );
 });
@@ -349,10 +354,16 @@ test('enterprise capacity survives restart and descriptive context never changes
     await instance.store.db.prepare("UPDATE workspaces SET context = 'Professional'").run();
     await instance.store.db.close();
     instance = await createApp({ filename: schemaName });
-    assert.equal((await instance.store.db.prepare('SELECT tier FROM workspaces').get()).tier, 'enterprise');
     assert.equal(
-      (await instance.store.db.prepare('SELECT COUNT(*) AS count FROM migrations WHERE version = 1').get())
-        .count,
+      (await instance.store.db.prepare('SELECT tier FROM workspaces').get()).tier,
+      'enterprise',
+    );
+    assert.equal(
+      (
+        await instance.store.db
+          .prepare('SELECT COUNT(*) AS count FROM migrations WHERE version = 1')
+          .get()
+      ).count,
       1,
     );
   } finally {

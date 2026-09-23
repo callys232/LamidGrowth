@@ -17,7 +17,7 @@ export async function sendAiMessage(provider, messagePrompt, sources = [], logge
       prompt: messagePrompt,
       sourceCount: sources.length,
       timestamp: new Date().toISOString(),
-    })
+    }),
   );
 
   if (!provider) {
@@ -27,7 +27,7 @@ export async function sendAiMessage(provider, messagePrompt, sources = [], logge
         event: 'ai_message_failed',
         error: errorMsg,
         timestamp: new Date().toISOString(),
-      })
+      }),
     );
     throw new Error(errorMsg);
   }
@@ -47,7 +47,7 @@ export async function sendAiMessage(provider, messagePrompt, sources = [], logge
         reply: result.review,
         usage: result.usage || null,
         timestamp: new Date().toISOString(),
-      })
+      }),
     );
 
     return {
@@ -69,7 +69,7 @@ export async function sendAiMessage(provider, messagePrompt, sources = [], logge
         latencyMs,
         error: error.message,
         timestamp: new Date().toISOString(),
-      })
+      }),
     );
     throw error;
   }
@@ -90,7 +90,8 @@ test('sends a message to the AI model and receives a valid return reply with str
   const logs = [];
   const mockLogger = (entry) => logs.push(JSON.parse(entry));
 
-  const promptMessage = 'Assess the strategic alignment of expanding our enterprise service tier in Q4';
+  const promptMessage =
+    'Assess the strategic alignment of expanding our enterprise service tier in Q4';
   const mockSources = [
     { id: 'obj-99', version: 1, kind: 'objective', data: { title: 'Enterprise Expansion' } },
   ];
@@ -121,7 +122,10 @@ test('sends a message to the AI model and receives a valid return reply with str
                     summary: 'Enterprise expansion aligns well with Q4 revenue goals.',
                     assumptions: ['Dedicated account managers will be assigned.'],
                     suggestions: [
-                      { title: 'Draft SLA Agreement', rationale: 'Required for enterprise clients' },
+                      {
+                        title: 'Draft SLA Agreement',
+                        rationale: 'Required for enterprise clients',
+                      },
                       { title: 'Review Security Policy', rationale: 'Enterprise SOC2 compliance' },
                     ],
                     evidenceIds: ['obj-99'],

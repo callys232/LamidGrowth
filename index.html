@@ -15,7 +15,8 @@
       (function () {
         try {
           var stored = localStorage.getItem('lamid-theme');
-          if (stored === 'light' || stored === 'dark') document.documentElement.dataset.theme = stored;
+          if (stored === 'light' || stored === 'dark')
+            document.documentElement.dataset.theme = stored;
         } catch (e) {}
       })();
     </script>

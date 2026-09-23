@@ -217,7 +217,10 @@ export function CompanionWidget() {
                       </li>
                     )}
                     {turns.map((turn, index) => (
-                      <li key={index} className={`companion-chat-turn companion-chat-turn-${turn.role}`}>
+                      <li
+                        key={index}
+                        className={`companion-chat-turn companion-chat-turn-${turn.role}`}
+                      >
                         {turn.role === 'agent' && (
                           <span className="companion-chat-avatar" aria-hidden="true">
                             <Bot size={13} strokeWidth={2.25} />

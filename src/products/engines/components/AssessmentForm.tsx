@@ -51,7 +51,10 @@ export function AssessmentForm({
           </label>
           <label>
             Weight (1–3)
-            <select value={row.weight} onChange={(e) => update(i, { weight: Number(e.target.value) })}>
+            <select
+              value={row.weight}
+              onChange={(e) => update(i, { weight: Number(e.target.value) })}
+            >
               <option value={1}>1 — minor</option>
               <option value={2}>2 — standard</option>
               <option value={3}>3 — critical</option>
@@ -59,7 +62,10 @@ export function AssessmentForm({
           </label>
           <label>
             Evidence (0–2)
-            <select value={row.evidence} onChange={(e) => update(i, { evidence: Number(e.target.value) })}>
+            <select
+              value={row.evidence}
+              onChange={(e) => update(i, { evidence: Number(e.target.value) })}
+            >
               <option value={0}>0 — none / opinion only</option>
               <option value={1}>1 — some documented evidence</option>
               <option value={2}>2 — well documented</option>

@@ -16,7 +16,9 @@ const ENGINE_CODE_PATTERN = /^[a-z]\d{2,3}$/;
 /** Called from the Paystack webhook once a bundle purchase is confirmed (charge.success) — never
  * from the purchase-initiation route, since a pending/unpaid purchase must not grant access. */
 export async function grantBundleEntitlements(store, workspaceId, bundleId) {
-  const items = await store.db.prepare('SELECT agent_id FROM bundle_items WHERE bundle_id = ?').all(bundleId);
+  const items = await store.db
+    .prepare('SELECT agent_id FROM bundle_items WHERE bundle_id = ?')
+    .all(bundleId);
   const grantedAt = new Date().toISOString();
   for (const item of items) {
     await store.db
@@ -35,7 +37,9 @@ export async function grantBundleEntitlements(store, workspaceId, bundleId) {
  * includes it (the entitlement-row check below applies regardless of context). */
 export async function hasToolAccess(store, workspace, agentId) {
   if (workspace.tier === 'enterprise') return true;
-  const manifest = await store.db.prepare('SELECT points_cost FROM agent_manifests WHERE id = ?').get(agentId);
+  const manifest = await store.db
+    .prepare('SELECT points_cost FROM agent_manifests WHERE id = ?')
+    .get(agentId);
   if (manifest && manifest.points_cost === 0) return true;
   if (ENGINE_CODE_PATTERN.test(agentId)) {
     const config = MODULE_REGISTRY[agentId.toUpperCase()];
@@ -43,7 +47,9 @@ export async function hasToolAccess(store, workspace, agentId) {
     if (config && workspaceRank >= config.minContextRank) return true;
   }
   const row = await store.db
-    .prepare('SELECT 1 FROM workspace_agent_entitlements WHERE workspace_id = ? AND agent_id = ? LIMIT 1')
+    .prepare(
+      'SELECT 1 FROM workspace_agent_entitlements WHERE workspace_id = ? AND agent_id = ? LIMIT 1',
+    )
     .get(workspace.id, agentId);
   return Boolean(row);
 }

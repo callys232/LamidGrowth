@@ -51,7 +51,9 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
     setBusy(true);
     setError('');
     try {
-      const result = await api<{ authorizationUrl: string }>('/points/purchase', { points: totalPoints });
+      const result = await api<{ authorizationUrl: string }>('/points/purchase', {
+        points: totalPoints,
+      });
       window.location.href = result.authorizationUrl;
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
@@ -73,9 +75,10 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
   return (
     <div className="pricing-bundle-builder">
       <p className="pricing-bundle-intro">
-        Grow your toolkit in the areas that matter most. Pick the tools you want, and we'll total the points —
-        priced at the same {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}/point rate as
-        everything else, no markup.
+        Grow your toolkit in the areas that matter most. Pick the tools you want, and we'll total
+        the points — priced at the same{' '}
+        {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}/point rate as everything
+        else, no markup.
       </p>
       <div className="pricing-bundle-layout">
         <div className="pricing-bundle-engines">
@@ -85,7 +88,11 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
               <article key={engine} className="pricing-bundle-engine-card">
                 <header>
                   <h4>{engine}</h4>
-                  <button type="button" className="pricing-bundle-select-all" onClick={() => toggleEngine(tools)}>
+                  <button
+                    type="button"
+                    className="pricing-bundle-select-all"
+                    onClick={() => toggleEngine(tools)}
+                  >
                     {allSelected ? 'Clear all' : 'Select all'}
                   </button>
                 </header>
@@ -114,13 +121,19 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
         <aside className="pricing-bundle-cart">
           <h4>Your bundle</h4>
           {selectedTools.length === 0 ? (
-            <p className="pricing-bundle-empty">Pick at least one tool to start building your bundle.</p>
+            <p className="pricing-bundle-empty">
+              Pick at least one tool to start building your bundle.
+            </p>
           ) : (
             <ul className="pricing-bundle-cart-list">
               {selectedTools.map((tool) => (
                 <li key={tool.id}>
                   <span>{tool.name}</span>
-                  <button type="button" aria-label={`Remove ${tool.name}`} onClick={() => toggle(tool.id)}>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${tool.name}`}
+                    onClick={() => toggle(tool.id)}
+                  >
                     ✕
                   </button>
                 </li>
@@ -147,7 +160,11 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
                 value={extraPoints}
                 onChange={(e) => setExtraPoints(Math.max(0, Number(e.target.value) || 0))}
               />
-              <button type="button" onClick={() => setExtraPoints((n) => n + 50)} aria-label="Increase extra points">
+              <button
+                type="button"
+                onClick={() => setExtraPoints((n) => n + 50)}
+                aria-label="Increase extra points"
+              >
                 +
               </button>
             </div>

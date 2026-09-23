@@ -26,7 +26,7 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route                 | Page composition                                                                                | Copy                                                      |
+| --------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | /how-it-works/clarity | [HowItWorksClarityDocumentPage](./pages/how-it-works-clarity/HowItWorksClarityDocumentPage.tsx) | [content.json](./pages/how-it-works-clarity/content.json) |
-| /os/clarity | [OsClarityDocumentPage](./pages/os-clarity/OsClarityDocumentPage.tsx) | [content.json](./pages/os-clarity/content.json) |
+| /os/clarity           | [OsClarityDocumentPage](./pages/os-clarity/OsClarityDocumentPage.tsx)                           | [content.json](./pages/os-clarity/content.json)           |

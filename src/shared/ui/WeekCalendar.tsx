@@ -45,8 +45,16 @@ export function WeekCalendar({ events }: { events: CalendarEvent[] }) {
             ) : (
               <ul>
                 {dayEvents.map((event) => (
-                  <li key={event.id} className={`week-calendar-event week-calendar-event-${event.status}`}>
-                    <strong>{new Date(event.startAt).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</strong>
+                  <li
+                    key={event.id}
+                    className={`week-calendar-event week-calendar-event-${event.status}`}
+                  >
+                    <strong>
+                      {new Date(event.startAt).toLocaleTimeString(undefined, {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </strong>
                     <span>{event.label}</span>
                   </li>
                 ))}

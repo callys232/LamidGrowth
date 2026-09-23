@@ -9,7 +9,9 @@ const fail = (message, status) => {
 };
 
 function documentHash(run) {
-  return createHash('sha256').update(run.output || '').digest('hex');
+  return createHash('sha256')
+    .update(run.output || '')
+    .digest('hex');
 }
 
 export function mountDocuments(app, store) {
@@ -25,10 +27,11 @@ export function mountDocuments(app, store) {
   }
   async function signaturesFor(run) {
     const currentHash = documentHash(run);
-    return (await db
-      .prepare('SELECT * FROM document_signatures WHERE agent_run_id = ? ORDER BY created_at')
-      .all(run.id))
-      .map((signature) => ({ ...signature, valid: signature.document_hash === currentHash }));
+    return (
+      await db
+        .prepare('SELECT * FROM document_signatures WHERE agent_run_id = ? ORDER BY created_at')
+        .all(run.id)
+    ).map((signature) => ({ ...signature, valid: signature.document_hash === currentHash }));
   }
 
   app.get('/api/agent-runs/:id/pdf', async (req, res, next) => {
@@ -36,7 +39,10 @@ export function mountDocuments(app, store) {
       const run = await runFor(req.params.id, req.workspace.id);
       const doc = renderAgentRunPdf(run, req.workspace, await signaturesFor(run));
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${run.agent_id}-${run.id.slice(0, 8)}.pdf"`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${run.agent_id}-${run.id.slice(0, 8)}.pdf"`,
+      );
       doc.pipe(res);
       doc.end();
     } catch (error) {
@@ -60,16 +66,16 @@ export function mountDocuments(app, store) {
       const id = randomUUID();
       const now = new Date().toISOString();
       await transaction(async () => {
-        await db.prepare('INSERT INTO document_signatures VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-          id,
+        await db
+          .prepare('INSERT INTO document_signatures VALUES (?, ?, ?, ?, ?, ?, ?)')
+          .run(id, run.id, req.user.id, input.signerName, documentHash(run), now, now);
+        await log(
+          req.workspace.id,
+          req.user.name,
+          'Document signed (in-app attestation)',
           run.id,
-          req.user.id,
           input.signerName,
-          documentHash(run),
-          now,
-          now,
         );
-        await log(req.workspace.id, req.user.name, 'Document signed (in-app attestation)', run.id, input.signerName);
       });
       const record = await db.prepare('SELECT * FROM document_signatures WHERE id = ?').get(id);
       res.status(201).json({

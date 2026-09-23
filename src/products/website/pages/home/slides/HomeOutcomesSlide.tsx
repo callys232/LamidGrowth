@@ -18,10 +18,7 @@ const outcomes = content.sections[2].paragraphs.slice(2, 6).map((paragraph) => {
 export function HomeOutcomesSlide() {
   const [selected, setSelected] = useState(0);
   return (
-    <HomeSection
-      section={2}
-      className="home-outcomes-section"
-    >
+    <HomeSection section={2} className="home-outcomes-section">
       <div className="home-outcome-showcase">
         <div className="home-outcome-choices" role="group" aria-label="Choose an outcome">
           {outcomes.map((outcome, index) => (

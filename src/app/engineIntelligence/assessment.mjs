@@ -67,18 +67,25 @@ export function computeAssessment(rows) {
 
   if (clean.length === 0) {
     return {
-      dimensions: [], indexPct: 0, adjustedIndexPct: 0, evidenceGapPts: 0,
-      weakest: null, strongest: null, spreadPts: 0, priorities: [],
-      documentedCount: 0, warnings: ['Rate at least one dimension to produce a score.'],
+      dimensions: [],
+      indexPct: 0,
+      adjustedIndexPct: 0,
+      evidenceGapPts: 0,
+      weakest: null,
+      strongest: null,
+      spreadPts: 0,
+      priorities: [],
+      documentedCount: 0,
+      warnings: ['Rate at least one dimension to produce a score.'],
     };
   }
 
   const dimensions = clean.map((r) => {
-    const rating   = num(r.rating, 0, MAX_RATING, 0);
-    const weight   = num(r.weight, 1, 3, 1);
+    const rating = num(r.rating, 0, MAX_RATING, 0);
+    const weight = num(r.weight, 1, 3, 1);
     const evidence = num(r.evidence, 0, 2, 0);
 
-    const scorePct    = r1((rating / MAX_RATING) * 100);
+    const scorePct = r1((rating / MAX_RATING) * 100);
     const adjustedPct = r1(scorePct * EVIDENCE_FACTOR[evidence]);
 
     return {
@@ -94,10 +101,12 @@ export function computeAssessment(rows) {
 
   const totalWeight = dimensions.reduce((a, d) => a + d.weight, 0) || 1;
   const indexPct = r1(dimensions.reduce((a, d) => a + d.scorePct * d.weight, 0) / totalWeight);
-  const adjustedIndexPct = r1(dimensions.reduce((a, d) => a + d.adjustedPct * d.weight, 0) / totalWeight);
+  const adjustedIndexPct = r1(
+    dimensions.reduce((a, d) => a + d.adjustedPct * d.weight, 0) / totalWeight,
+  );
 
-  const byScore  = [...dimensions].sort((a, b) => a.scorePct - b.scorePct);
-  const weakest  = byScore[0] ?? null;
+  const byScore = [...dimensions].sort((a, b) => a.scorePct - b.scorePct);
+  const weakest = byScore[0] ?? null;
   const strongest = byScore[byScore.length - 1] ?? null;
   const spreadPts = weakest && strongest ? r1(strongest.scorePct - weakest.scorePct) : 0;
 
@@ -110,7 +119,7 @@ export function computeAssessment(rows) {
     .map((d) => d.label);
 
   const documentedCount = dimensions.filter((d) => d.evidence === 2).length;
-  const unsupported     = dimensions.filter((d) => d.unsupported);
+  const unsupported = dimensions.filter((d) => d.unsupported);
 
   /* ── Checks a reviewer would raise ── */
   if (unsupported.length > 0) {
@@ -124,19 +133,32 @@ export function computeAssessment(rows) {
     );
   }
   if (documentedCount === 0) {
-    warnings.push('No dimension is backed by documented evidence, so this reads as an opinion rather than an assessment.');
+    warnings.push(
+      'No dimension is backed by documented evidence, so this reads as an opinion rather than an assessment.',
+    );
   }
   if (indexPct - adjustedIndexPct >= 15) {
-    warnings.push(`The score drops ${r1(indexPct - adjustedIndexPct)} points once evidence is accounted for.`);
+    warnings.push(
+      `The score drops ${r1(indexPct - adjustedIndexPct)} points once evidence is accounted for.`,
+    );
   }
   if (dimensions.every((d) => d.weight === dimensions[0].weight) && dimensions.length > 2) {
-    warnings.push('Every dimension carries the same weight — set what matters most for a sharper priority order.');
+    warnings.push(
+      'Every dimension carries the same weight — set what matters most for a sharper priority order.',
+    );
   }
 
   return {
-    dimensions, indexPct, adjustedIndexPct,
+    dimensions,
+    indexPct,
+    adjustedIndexPct,
     evidenceGapPts: r1(indexPct - adjustedIndexPct),
-    weakest, strongest, spreadPts, priorities, documentedCount, warnings,
+    weakest,
+    strongest,
+    spreadPts,
+    priorities,
+    documentedCount,
+    warnings,
   };
 }
 
@@ -152,7 +174,7 @@ export function assessmentToPrompt(s) {
   );
 
   lines.push(`• Weighted index: ${s.indexPct}% raw, ${s.adjustedIndexPct}% evidence-adjusted`);
-  if (s.weakest)   lines.push(`• Weakest: ${s.weakest.label} at ${s.weakest.scorePct}%`);
+  if (s.weakest) lines.push(`• Weakest: ${s.weakest.label} at ${s.weakest.scorePct}%`);
   if (s.strongest) lines.push(`• Strongest: ${s.strongest.label} at ${s.strongest.scorePct}%`);
   lines.push(`• Spread between best and worst: ${s.spreadPts} points`);
   if (s.priorities.length) lines.push(`• Highest-return priorities: ${s.priorities.join(', ')}`);

@@ -17,7 +17,9 @@ test('a scheduled operating cycle requires each write approval and delivers a re
   // A workflow attaches to an open objective, so one must exist before the "Create a workflow"
   // panel appears.
   await page.getByRole('button', { name: 'New objective', exact: true }).click();
-  await page.getByLabel('Your objective', { exact: true }).fill('Prepare the weekly decision cycle');
+  await page
+    .getByLabel('Your objective', { exact: true })
+    .fill('Prepare the weekly decision cycle');
   await page.getByLabel('Why it matters').fill('Keep the weekly review consistent.');
   await page.getByLabel('What does success look like?').fill('A repeatable weekly workflow.');
   await page.getByRole('button', { name: 'Create objective', exact: true }).click();

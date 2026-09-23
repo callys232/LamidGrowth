@@ -26,7 +26,12 @@ async function boot(fetchImpl, { configured = true } = {}) {
       : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
   }));
   server = await new Promise((resolve) => {
@@ -36,7 +41,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
 }
 async function teardown() {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 }
 
 async function request(path, body, cookie, method = 'POST') {
@@ -83,7 +88,12 @@ async function fullyApprovedMilestone(client, freelancer, freelancerUserId, amou
   assert.equal(job.status, 201);
   const bid = await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work.', proposedAmount: amount, currency: 'USD', timeline: '4 weeks' },
+    {
+      coverLetter: 'I will deliver this work.',
+      proposedAmount: amount,
+      currency: 'USD',
+      timeline: '4 weeks',
+    },
     freelancer,
   );
   assert.equal(bid.status, 201);
@@ -137,7 +147,12 @@ test('with no payment provider configured, accounts record inertly and release n
 
   const account = await request(
     '/payment-accounts',
-    { provider: 'paystack', accountName: 'NoProvider Freelancer', accountNumber: '0000000000', bankCode: '058' },
+    {
+      provider: 'paystack',
+      accountName: 'NoProvider Freelancer',
+      accountNumber: '0000000000',
+      bankCode: '058',
+    },
     freelancer,
   );
   assert.equal(account.status, 201);
@@ -148,10 +163,19 @@ test('with no payment provider configured, accounts record inertly and release n
   // With no provider configured, the milestone was never funded either — release correctly
   // refuses because there is nothing held in escrow, which is the more specific and equally
   // honest reason (never a fake success either way).
-  const release = await request('/milestones/' + milestone.id + '/release', { provider: 'paystack' }, client);
+  const release = await request(
+    '/milestones/' + milestone.id + '/release',
+    { provider: 'paystack' },
+    client,
+  );
   assert.equal(release.status, 400);
   assert.ok(release.data.error.includes('no funds held'));
-  const transfers = await request(`/milestones/${milestone.id}/transfers`, undefined, client, 'GET');
+  const transfers = await request(
+    `/milestones/${milestone.id}/transfers`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(transfers.data.length, 0);
 });
 
@@ -171,7 +195,11 @@ test('crypto/USDT provider is registered but returns unimplemented for release',
   const { milestone } = await fullyApprovedMilestone(client, freelancer, freelancerState.user.id);
   // Funding only ever runs through Paystack today, so a crypto_usdt milestone was never
   // funded either — release refuses for that reason, still never a fake success.
-  const release = await request('/milestones/' + milestone.id + '/release', { provider: 'crypto_usdt' }, client);
+  const release = await request(
+    '/milestones/' + milestone.id + '/release',
+    { provider: 'crypto_usdt' },
+    client,
+  );
   assert.equal(release.status, 400);
   assert.ok(release.data.error.includes('no funds held'));
 });
@@ -183,7 +211,10 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
     'https://api.paystack.co/transfer': (body) =>
       jsonResponse(200, { status: true, data: { reference: body.reference, status: 'pending' } }),
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/mock', access_code: 'mock' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/mock', access_code: 'mock' },
+      }),
   });
   await boot(fetchImpl);
   t.after(teardown);
@@ -193,13 +224,23 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
 
   const account = await request(
     '/payment-accounts',
-    { provider: 'paystack', accountName: 'Paystack Freelancer', accountNumber: '0123456789', bankCode: '058' },
+    {
+      provider: 'paystack',
+      accountName: 'Paystack Freelancer',
+      accountNumber: '0123456789',
+      bankCode: '058',
+    },
     freelancer,
   );
   assert.equal(account.status, 201);
   assert.equal(account.data.recipient_code, 'RCP_mock_123');
 
-  const { milestone } = await fullyApprovedMilestone(client, freelancer, freelancerState.user.id, 750);
+  const { milestone } = await fullyApprovedMilestone(
+    client,
+    freelancer,
+    freelancerState.user.id,
+    750,
+  );
 
   // Fund the milestone and confirm the hold via webhook before release is possible.
   const fund = await request(`/milestones/${milestone.id}/fund`, {}, client);
@@ -213,7 +254,11 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
     body: fundRawBody,
   });
 
-  const release = await request('/milestones/' + milestone.id + '/release', { provider: 'paystack' }, client);
+  const release = await request(
+    '/milestones/' + milestone.id + '/release',
+    { provider: 'paystack' },
+    client,
+  );
   assert.equal(release.status, 201);
   assert.equal(release.data.status, 'processing');
   assert.equal(release.data.amount_minor, 75000);
@@ -230,7 +275,12 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
   });
   assert.equal(webhookResponse.status, 200);
 
-  const transfers = await request(`/milestones/${milestone.id}/transfers`, undefined, client, 'GET');
+  const transfers = await request(
+    `/milestones/${milestone.id}/transfers`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(transfers.data[0].status, 'succeeded');
 
   // Idempotent replay: sending the exact same event again must not double-process.
@@ -271,13 +321,26 @@ test('only the milestone client can release payment', async (t) => {
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
   await request(
     '/payment-accounts',
-    { provider: 'paystack', accountName: 'AuthPay Freelancer', accountNumber: '0123456780', bankCode: '058' },
+    {
+      provider: 'paystack',
+      accountName: 'AuthPay Freelancer',
+      accountNumber: '0123456780',
+      bankCode: '058',
+    },
     freelancer,
   );
   const { milestone } = await fullyApprovedMilestone(client, freelancer, freelancerState.user.id);
 
-  const freelancerRelease = await request('/milestones/' + milestone.id + '/release', { provider: 'paystack' }, freelancer);
+  const freelancerRelease = await request(
+    '/milestones/' + milestone.id + '/release',
+    { provider: 'paystack' },
+    freelancer,
+  );
   assert.equal(freelancerRelease.status, 403);
-  const strangerRelease = await request('/milestones/' + milestone.id + '/release', { provider: 'paystack' }, stranger);
+  const strangerRelease = await request(
+    '/milestones/' + milestone.id + '/release',
+    { provider: 'paystack' },
+    stranger,
+  );
   assert.equal(strangerRelease.status, 403);
 });

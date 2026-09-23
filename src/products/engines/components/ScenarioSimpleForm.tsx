@@ -5,9 +5,22 @@ import './engine-forms.css';
 
 const FIELDS: FieldDef[] = [
   { key: 'name', label: 'Option', type: 'text' },
-  { key: 'probability', label: 'Probability of upside (0-100%)', type: 'number', min: 0, max: 100, default: 50 },
+  {
+    key: 'probability',
+    label: 'Probability of upside (0-100%)',
+    type: 'number',
+    min: 0,
+    max: 100,
+    default: 50,
+  },
   { key: 'upside', label: 'Value if it succeeds', type: 'number', default: 0 },
-  { key: 'downside', label: 'Loss if it fails (positive number)', type: 'number', min: 0, default: 0 },
+  {
+    key: 'downside',
+    label: 'Loss if it fails (positive number)',
+    type: 'number',
+    min: 0,
+    default: 0,
+  },
   { key: 'cost', label: 'Cost', type: 'number', min: 0, default: 0 },
   { key: 'horizon', label: 'Months to outcome', type: 'number', min: 0, default: 6 },
 ];
@@ -30,13 +43,24 @@ export function ScenarioSimpleForm({
         e.preventDefault();
         onSubmit({
           options: rows.map((r) => ({
-            id: r.id, name: r.name, probability: Number(r.probability), upside: Number(r.upside),
-            downside: Number(r.downside), cost: Number(r.cost), horizon: Number(r.horizon),
+            id: r.id,
+            name: r.name,
+            probability: Number(r.probability),
+            upside: Number(r.upside),
+            downside: Number(r.downside),
+            cost: Number(r.cost),
+            horizon: Number(r.horizon),
           })),
         });
       }}
     >
-      <RowListForm fields={FIELDS} rows={rows} onChange={setRows} addLabel="Add option" minRows={2} />
+      <RowListForm
+        fields={FIELDS}
+        rows={rows}
+        onChange={setRows}
+        addLabel="Add option"
+        minRows={2}
+      />
       <Button type="submit" disabled={submitting || rows.length < 2}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>

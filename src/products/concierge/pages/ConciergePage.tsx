@@ -17,7 +17,9 @@ export function ConciergePage() {
     <section className="concierge-page">
       <header>
         <h1>Concierge</h1>
-        <p>A dedicated PM assigned to run projects and tasks on your behalf, or apply to become one.</p>
+        <p>
+          A dedicated PM assigned to run projects and tasks on your behalf, or apply to become one.
+        </p>
       </header>
 
       {page.error && (
@@ -30,7 +32,8 @@ export function ConciergePage() {
         <h2>Become a concierge provider</h2>
         {page.myApplication ? (
           <p>
-            <strong>{page.myApplication.headline}</strong> — {statusLabel[page.myApplication.status]}
+            <strong>{page.myApplication.headline}</strong> —{' '}
+            {statusLabel[page.myApplication.status]}
           </p>
         ) : (
           <form onSubmit={page.apply}>
@@ -40,7 +43,10 @@ export function ConciergePage() {
             <Field label="Experience">
               <textarea name="experience" rows={3} maxLength={5000} />
             </Field>
-            <Field label="Your monthly rate (USD)" hint="Charged to the client for as long as you're assigned">
+            <Field
+              label="Your monthly rate (USD)"
+              hint="Charged to the client for as long as you're assigned"
+            >
               <input name="monthlyRate" type="number" min={0} step="0.01" />
             </Field>
             <Button type="submit" disabled={page.busy}>
@@ -53,7 +59,9 @@ export function ConciergePage() {
       {page.canAssign && (
         <section className="panel settings-card">
           <h2>Bring in a concierge</h2>
-          <p>A one-time ecosystem fee applies at assignment, plus the provider's own recurring rate.</p>
+          <p>
+            A one-time ecosystem fee applies at assignment, plus the provider's own recurring rate.
+          </p>
           {page.providers.length === 0 ? (
             <Empty title="No approved providers yet">Check back once providers are approved.</Empty>
           ) : (
@@ -63,7 +71,8 @@ export function ConciergePage() {
                   <strong>{provider.name}</strong>
                   <p>
                     {provider.headline}
-                    {provider.monthlyRateMinor > 0 && ` · $${(provider.monthlyRateMinor / 100).toFixed(2)}/mo`}
+                    {provider.monthlyRateMinor > 0 &&
+                      ` · $${(provider.monthlyRateMinor / 100).toFixed(2)}/mo`}
                   </p>
                 </div>
                 <Button disabled={page.busy} onClick={() => void page.assign(provider.id)}>
@@ -100,7 +109,8 @@ export function ConciergePage() {
             <p>
               <small>
                 Points used: {page.statement.pointsUsage.totalPointsSpent} (≈ $
-                {(page.statement.pointsUsage.estimatedCostMinor / 100).toFixed(2)}). {page.statement.pointsUsage.note}
+                {(page.statement.pointsUsage.estimatedCostMinor / 100).toFixed(2)}).{' '}
+                {page.statement.pointsUsage.note}
               </small>
             </p>
           )}

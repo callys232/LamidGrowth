@@ -20,4 +20,3 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 ## Hooks
 
 - [useKnowledgePage.ts](./hooks/useKnowledgePage.ts)
-

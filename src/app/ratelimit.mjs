@@ -1,7 +1,10 @@
 // Backed by the shared SQLite file (already WAL-mode, busy_timeout=5000) rather than an
 // in-memory Map, so counters are correct across multiple cluster worker processes: an
 // attacker hammering one IP is capped at `max` total, not `max` per worker.
-export function createRateLimiter(store, { windowMs, max, message, namespace = 'default', key = (req) => req.ip }) {
+export function createRateLimiter(
+  store,
+  { windowMs, max, message, namespace = 'default', key = (req) => req.ip },
+) {
   const { db } = store;
   const upsert = db.prepare(`
     INSERT INTO rate_limit_buckets (key, count, reset_at) VALUES (?, 1, ?)

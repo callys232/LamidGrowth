@@ -7,7 +7,12 @@ const adminEmail = 'learning-admin@lamidgrowth.test';
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
   }));
   server = await new Promise((resolve) => {
@@ -17,7 +22,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -28,10 +33,19 @@ async function request(path, body, cookie, method = 'POST') {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 async function signup(name, email) {
-  const result = await request('/auth/signup', { name, email, password: `a-long-${name.toLowerCase()}-password`, context: 'Founder' });
+  const result = await request('/auth/signup', {
+    name,
+    email,
+    password: `a-long-${name.toLowerCase()}-password`,
+    context: 'Founder',
+  });
   assert.equal(result.status, 201);
   return result.cookie;
 }
@@ -43,27 +57,39 @@ test('a learning path can be created with modules, discovered by taxonomy, and c
   const author = await signup('Path Author', 'path-author@example.test');
   const learner = await signup('Path Learner', 'path-learner@example.test');
 
-  const path = await request('/learning/paths', {
-    title: 'Financial Modeling Basics',
-    description: 'Learn to build a simple three-statement model.',
-    domain: 'Finance',
-    estimatedHours: 4,
-    language: 'en',
-  }, author);
+  const path = await request(
+    '/learning/paths',
+    {
+      title: 'Financial Modeling Basics',
+      description: 'Learn to build a simple three-statement model.',
+      domain: 'Finance',
+      estimatedHours: 4,
+      language: 'en',
+    },
+    author,
+  );
   assert.equal(path.status, 201);
   assert.equal(path.data.modules.length, 0);
 
-  const module1 = await request(`/learning/paths/${path.data.id}/modules`, {
-    title: 'Reading: Income statements',
-    format: 'reading',
-    orderIndex: 0,
-  }, author);
+  const module1 = await request(
+    `/learning/paths/${path.data.id}/modules`,
+    {
+      title: 'Reading: Income statements',
+      format: 'reading',
+      orderIndex: 0,
+    },
+    author,
+  );
   assert.equal(module1.status, 201);
-  const module2 = await request(`/learning/paths/${path.data.id}/modules`, {
-    title: 'Assessment: Statement basics',
-    format: 'assessment',
-    orderIndex: 1,
-  }, author);
+  const module2 = await request(
+    `/learning/paths/${path.data.id}/modules`,
+    {
+      title: 'Assessment: Statement basics',
+      format: 'assessment',
+      orderIndex: 1,
+    },
+    author,
+  );
   assert.equal(module2.status, 201);
   assert.equal(module2.data.modules.length, 2);
 
@@ -75,7 +101,11 @@ test('a learning path can be created with modules, discovered by taxonomy, and c
   assert.equal(enrolled.data.status, 'in_progress');
 
   const [readingModule, assessmentModule] = module2.data.modules;
-  const missingScore = await request(`/learning/modules/${assessmentModule.id}/complete`, {}, learner);
+  const missingScore = await request(
+    `/learning/modules/${assessmentModule.id}/complete`,
+    {},
+    learner,
+  );
   assert.equal(missingScore.status, 400);
 
   const step1 = await request(`/learning/modules/${readingModule.id}/complete`, {}, learner);
@@ -83,16 +113,28 @@ test('a learning path can be created with modules, discovered by taxonomy, and c
   assert.equal(step1.data.progress, 50);
   assert.equal(step1.data.status, 'in_progress');
 
-  const step2 = await request(`/learning/modules/${assessmentModule.id}/complete`, { score: 90 }, learner);
+  const step2 = await request(
+    `/learning/modules/${assessmentModule.id}/complete`,
+    { score: 90 },
+    learner,
+  );
   assert.equal(step2.status, 200);
   assert.equal(step2.data.progress, 100);
   assert.equal(step2.data.status, 'completed');
 
-  const certificate = await request(`/learning/enrollments/${step2.data.id}/certificate`, {}, learner);
+  const certificate = await request(
+    `/learning/enrollments/${step2.data.id}/certificate`,
+    {},
+    learner,
+  );
   assert.equal(certificate.status, 201);
   assert.equal(certificate.data.enrollment_id, step2.data.id);
 
-  const feedback = await request(`/learning/paths/${path.data.id}/feedback`, { rating: 5, comment: 'Clear and practical.' }, learner);
+  const feedback = await request(
+    `/learning/paths/${path.data.id}/feedback`,
+    { rating: 5, comment: 'Clear and practical.' },
+    learner,
+  );
   assert.equal(feedback.status, 201);
   assert.equal(feedback.data.count, 1);
   assert.equal(feedback.data.average, 5);
@@ -104,7 +146,11 @@ test('prerequisites block enrollment until the required path is completed', asyn
 
   const basics = await request('/learning/paths', { title: 'Basics', description: '' }, author);
   const advanced = await request('/learning/paths', { title: 'Advanced', description: '' }, author);
-  const linked = await request(`/learning/paths/${advanced.data.id}/prerequisites`, { requiresPathId: basics.data.id }, author);
+  const linked = await request(
+    `/learning/paths/${advanced.data.id}/prerequisites`,
+    { requiresPathId: basics.data.id },
+    author,
+  );
   assert.equal(linked.status, 201);
 
   const blocked = await request(`/learning/paths/${advanced.data.id}/enroll`, {}, learner);
@@ -122,14 +168,26 @@ test('assigning a path sets an enrollment on behalf of someone else, with a due 
   const learner = await signup('Assign Learner', 'assign-learner@example.test');
   const outsider = await signup('Assign Outsider', 'assign-outsider@example.test');
 
-  const path = await request('/learning/paths', { title: 'Onboarding Checklist', description: '' }, coach);
+  const path = await request(
+    '/learning/paths',
+    { title: 'Onboarding Checklist', description: '' },
+    coach,
+  );
   const learnerId = await userId(learner);
 
-  const denied = await request(`/learning/paths/${path.data.id}/assign`, { userId: learnerId }, outsider);
+  const denied = await request(
+    `/learning/paths/${path.data.id}/assign`,
+    { userId: learnerId },
+    outsider,
+  );
   assert.equal(denied.status, 403);
 
   const dueAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-  const assigned = await request(`/learning/paths/${path.data.id}/assign`, { userId: learnerId, dueAt }, coach);
+  const assigned = await request(
+    `/learning/paths/${path.data.id}/assign`,
+    { userId: learnerId, dueAt },
+    coach,
+  );
   assert.equal(assigned.status, 201);
   assert.equal(assigned.data.user_id, learnerId);
   assert.equal(assigned.data.assigned_by, await userId(coach));
@@ -142,11 +200,17 @@ test('a paid path charges points on enrollment and appears in the billables list
   const author = await signup('Paid Author', 'paid-author@example.test');
   const learner = await signup('Paid Learner', 'paid-learner@example.test');
 
-  const path = await request('/learning/paths', { title: 'Premium Negotiation Skills', description: '', pointsCost: 30 }, author);
+  const path = await request(
+    '/learning/paths',
+    { title: 'Premium Negotiation Skills', description: '', pointsCost: 30 },
+    author,
+  );
   assert.equal(path.status, 201);
 
   const billables = await request('/billables', undefined, learner, 'GET');
-  assert.ok(billables.data.learningPaths.some((p) => p.id === path.data.id && p.points_cost === 30));
+  assert.ok(
+    billables.data.learningPaths.some((p) => p.id === path.data.id && p.points_cost === 30),
+  );
 
   const before = await request('/points', undefined, learner, 'GET');
   const enrolled = await request(`/learning/paths/${path.data.id}/enroll`, {}, learner);
@@ -159,11 +223,23 @@ test('compliance requirements are visible to workspace members and gated to admi
   const admin = await signup('Learning Admin', adminEmail);
   const member = await signup('Compliance Member', 'compliance-member@example.test');
 
-  const path = await request('/learning/paths', { title: 'Security Awareness', description: '' }, admin);
-  const denied = await request('/admin/learning/compliance', { pathId: path.data.id, dueDays: 30 }, member);
+  const path = await request(
+    '/learning/paths',
+    { title: 'Security Awareness', description: '' },
+    admin,
+  );
+  const denied = await request(
+    '/admin/learning/compliance',
+    { pathId: path.data.id, dueDays: 30 },
+    member,
+  );
   assert.equal(denied.status, 403);
 
-  const created = await request('/admin/learning/compliance', { pathId: path.data.id, dueDays: 30 }, admin);
+  const created = await request(
+    '/admin/learning/compliance',
+    { pathId: path.data.id, dueDays: 30 },
+    admin,
+  );
   assert.equal(created.status, 201);
 
   // Compliance requirements are scoped to the workspace that set them; check visibility from
@@ -182,10 +258,18 @@ test('attention distinguishes a stalled enrollment from one that needs you soon'
   const learner = await signup('Attention Learner', 'attention-learner@example.test');
   const learnerId = await userId(learner);
 
-  const stalledPath = await request('/learning/paths', { title: 'Stalled Path', description: '' }, author);
+  const stalledPath = await request(
+    '/learning/paths',
+    { title: 'Stalled Path', description: '' },
+    author,
+  );
   await request(`/learning/paths/${stalledPath.data.id}/enroll`, {}, learner);
 
-  const duePath = await request('/learning/paths', { title: 'Due Soon Path', description: '' }, author);
+  const duePath = await request(
+    '/learning/paths',
+    { title: 'Due Soon Path', description: '' },
+    author,
+  );
   const dueAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
   await request(`/learning/paths/${duePath.data.id}/assign`, { userId: learnerId, dueAt }, author);
 

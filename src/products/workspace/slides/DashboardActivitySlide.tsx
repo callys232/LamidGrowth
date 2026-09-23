@@ -25,9 +25,12 @@ const iconFor: Record<ActivityItem['type'], typeof Activity> = {
 };
 
 const timeLabel = (value: string) =>
-  new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(
-    new Date(value),
-  );
+  new Intl.DateTimeFormat('en', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(new Date(value));
 
 /** Every activity across objectives, marketplace, workflows, and the Companion in one feed. */
 export function DashboardActivitySlide() {
@@ -37,7 +40,9 @@ export function DashboardActivitySlide() {
       <div className="panel-heading">
         <div>
           <h2>Everything happening in your workspace</h2>
-          <span>Objectives, marketplace activity, workflows, and Companion agents in one place.</span>
+          <span>
+            Objectives, marketplace activity, workflows, and Companion agents in one place.
+          </span>
         </div>
       </div>
       {loading && <p className="activity-feed-status">Loading…</p>}

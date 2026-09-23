@@ -14,7 +14,9 @@ export function EngineResultView({
   balance?: number;
   result: EngineResult;
 }) {
-  const flatFields = isPlainObject(result.summary) ? primitiveEntries(result.summary as Record<string, unknown>) : [];
+  const flatFields = isPlainObject(result.summary)
+    ? primitiveEntries(result.summary as Record<string, unknown>)
+    : [];
 
   return (
     <div className="engine-result">
@@ -54,5 +56,7 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 }
 
 function primitiveEntries(obj: Record<string, unknown>): [string, unknown][] {
-  return Object.entries(obj).filter(([, v]) => typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean');
+  return Object.entries(obj).filter(
+    ([, v]) => typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean',
+  );
 }

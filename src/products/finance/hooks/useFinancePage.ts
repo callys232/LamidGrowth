@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react';
 import { api, ApiError } from '../../../api';
 
-export type PointsLedgerEntry = { amount: number; reason: string; reference_id: string | null; created_at: number };
+export type PointsLedgerEntry = {
+  amount: number;
+  reason: string;
+  reference_id: string | null;
+  created_at: number;
+};
 export type PointsOverview = {
   balance: number;
   unitPriceMinor: number;
@@ -32,7 +37,13 @@ export type Transfer = {
   createdAt: string;
 };
 export type FinanceOverview = {
-  escrow: { heldMinor: number; releasedMinor: number; refundedMinor: number; pendingMinor: number; items: EscrowItem[] };
+  escrow: {
+    heldMinor: number;
+    releasedMinor: number;
+    refundedMinor: number;
+    pendingMinor: number;
+    items: EscrowItem[];
+  };
   transfers: Transfer[];
   billing: { lineItems: unknown[]; totalMinor: number; currency: string };
 };

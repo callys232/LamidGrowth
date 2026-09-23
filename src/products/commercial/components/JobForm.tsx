@@ -6,7 +6,15 @@ import { Modal } from '../../../shared/ui/Modal';
 import type { Options } from '../types';
 
 type EstimateResponse =
-  | { available: true; budgetMin: number; budgetMax: number; currency: string; basis: string; sampleSize: number; note?: string }
+  | {
+      available: true;
+      budgetMin: number;
+      budgetMax: number;
+      currency: string;
+      basis: string;
+      sampleSize: number;
+      note?: string;
+    }
   | { available: false; sampleSize: number; message: string };
 
 export function JobForm({
@@ -31,7 +39,10 @@ export function JobForm({
   const [estimating, setEstimating] = useState(false);
   const key = useRef(crypto.randomUUID());
 
-  const tags = tagsText.split(',').map((t) => t.trim()).filter(Boolean);
+  const tags = tagsText
+    .split(',')
+    .map((t) => t.trim())
+    .filter(Boolean);
 
   async function runEstimate() {
     setEstimating(true);
@@ -93,7 +104,11 @@ export function JobForm({
           </select>
         </Field>
         <Field label="Project type">
-          <select name="projectType" value={projectType} onChange={(e) => setProjectType(e.target.value)}>
+          <select
+            name="projectType"
+            value={projectType}
+            onChange={(e) => setProjectType(e.target.value)}
+          >
             {options.projectTypes.map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -119,19 +134,33 @@ export function JobForm({
             onChange={(e) => setDeliverables(e.target.value)}
           />
         </Field>
-        <Field label="Smart tags" hint="Comma-separated, e.g. mobile-app, react-native — narrows the estimate within this category">
-          <input value={tagsText} onChange={(e) => setTagsText(e.target.value)} placeholder="mobile-app, react-native" />
+        <Field
+          label="Smart tags"
+          hint="Comma-separated, e.g. mobile-app, react-native — narrows the estimate within this category"
+        >
+          <input
+            value={tagsText}
+            onChange={(e) => setTagsText(e.target.value)}
+            placeholder="mobile-app, react-native"
+          />
         </Field>
-        <Button type="button" variant="secondary" disabled={estimating} onClick={() => void runEstimate()}>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={estimating}
+          onClick={() => void runEstimate()}
+        >
           {estimating ? 'Estimating…' : 'Estimate budget from real platform data'}
         </Button>
         {estimate && (
           <p style={{ fontSize: 12 }}>
             {estimate.available ? (
               <>
-                Based on {estimate.sampleSize} real {estimate.basis === 'tag-matched-history' ? 'tag-matched' : 'category'} job
-                {estimate.sampleSize === 1 ? '' : 's'}: {estimate.budgetMin}–{estimate.budgetMax} {estimate.currency}.
-                {estimate.note ? ` ${estimate.note}` : ''} This is a starting suggestion — adjust it below as needed.
+                Based on {estimate.sampleSize} real{' '}
+                {estimate.basis === 'tag-matched-history' ? 'tag-matched' : 'category'} job
+                {estimate.sampleSize === 1 ? '' : 's'}: {estimate.budgetMin}–{estimate.budgetMax}{' '}
+                {estimate.currency}.{estimate.note ? ` ${estimate.note}` : ''} This is a starting
+                suggestion — adjust it below as needed.
               </>
             ) : (
               estimate.message

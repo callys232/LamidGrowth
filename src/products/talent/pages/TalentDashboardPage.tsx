@@ -33,10 +33,7 @@ export function TalentDashboardPage() {
       )}
 
       <section className="panel settings-card">
-        <h3>
-          My profile{' '}
-          {page.profile && <StatusPill status={page.profile.vetting_status} />}
-        </h3>
+        <h3>My profile {page.profile && <StatusPill status={page.profile.vetting_status} />}</h3>
         <form onSubmit={page.saveProfile}>
           <Field label="Headline">
             <input name="headline" defaultValue={page.profile?.headline} required maxLength={200} />
@@ -45,13 +42,25 @@ export function TalentDashboardPage() {
             <input name="skills" defaultValue={page.profile?.skills.join(', ')} required />
           </Field>
           <Field label="Experience (years)">
-            <input name="experienceYears" type="number" min={0} max={60} defaultValue={page.profile?.experience_years ?? undefined} />
+            <input
+              name="experienceYears"
+              type="number"
+              min={0}
+              max={60}
+              defaultValue={page.profile?.experience_years ?? undefined}
+            />
           </Field>
           <Field label="Availability">
             <input name="availability" defaultValue={page.profile?.availability ?? undefined} />
           </Field>
           <Field label="Hourly rate (USD)">
-            <input name="hourlyRate" type="number" min={0} step="0.01" defaultValue={page.profile ? page.profile.hourly_rate ?? undefined : undefined} />
+            <input
+              name="hourlyRate"
+              type="number"
+              min={0}
+              step="0.01"
+              defaultValue={page.profile ? (page.profile.hourly_rate ?? undefined) : undefined}
+            />
           </Field>
           <input type="hidden" name="currency" value="USD" />
           <Field label="Location">
@@ -66,7 +75,10 @@ export function TalentDashboardPage() {
           <Field label="Domains" hint="Comma-separated, e.g. Finance, Technology and engineering">
             <input name="domains" defaultValue={page.profile?.domains.join(', ')} />
           </Field>
-          <Field label="Functions" hint="Comma-separated, e.g. M&A and due diligence, Growth strategy">
+          <Field
+            label="Functions"
+            hint="Comma-separated, e.g. M&A and due diligence, Growth strategy"
+          >
             <input name="functions" defaultValue={page.profile?.functions.join(', ')} />
           </Field>
           <Field label="Industries" hint="Comma-separated, e.g. Fintech, Healthcare">
@@ -77,7 +89,11 @@ export function TalentDashboardPage() {
           </Button>
         </form>
         {page.profile && page.profile.vetting_status === 'unverified' && (
-          <Button variant="secondary" disabled={page.busy} onClick={() => void page.requestVetting()}>
+          <Button
+            variant="secondary"
+            disabled={page.busy}
+            onClick={() => void page.requestVetting()}
+          >
             Request vetting
           </Button>
         )}
@@ -85,7 +101,10 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Credentials</h3>
-        <p>Licenses, certifications, degrees, publications, or prior roles submitted for verification.</p>
+        <p>
+          Licenses, certifications, degrees, publications, or prior roles submitted for
+          verification.
+        </p>
         <form onSubmit={page.addCredential}>
           <Field label="Type">
             <select name="type" required defaultValue="certification">
@@ -116,7 +135,9 @@ export function TalentDashboardPage() {
           </Button>
         </form>
         {page.credentials.length === 0 ? (
-          <Empty title="No credentials yet">Submit a credential to strengthen your expert profile.</Empty>
+          <Empty title="No credentials yet">
+            Submit a credential to strengthen your expert profile.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.credentials.map((credential) => (
@@ -164,7 +185,10 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Availability</h3>
-        <p>Open slots for advisory sessions, workshops, or fractional blocks that clients can book directly.</p>
+        <p>
+          Open slots for advisory sessions, workshops, or fractional blocks that clients can book
+          directly.
+        </p>
         <form onSubmit={page.addAvailability}>
           <Field label="Starts">
             <input name="startAt" type="datetime-local" required />
@@ -184,21 +208,28 @@ export function TalentDashboardPage() {
           </Button>
         </form>
         {page.availability.length === 0 ? (
-          <Empty title="No availability published">Publish a slot so clients can book time with you.</Empty>
+          <Empty title="No availability published">
+            Publish a slot so clients can book time with you.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.availability.map((slot) => (
               <li key={slot.id} className="activity-feed-row">
                 <span className="activity-feed-title">
                   <strong>
-                    {new Date(slot.start_at).toLocaleString()} → {new Date(slot.end_at).toLocaleString()}
+                    {new Date(slot.start_at).toLocaleString()} →{' '}
+                    {new Date(slot.end_at).toLocaleString()}
                   </strong>
                   <br />
                   <small>{slot.format.replace(/_/g, ' ')}</small>
                 </span>
                 <StatusPill status={slot.status} />
                 {slot.status === 'open' && (
-                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.removeAvailability(slot.id)}>
+                  <Button
+                    variant="secondary"
+                    disabled={page.busy}
+                    onClick={() => void page.removeAvailability(slot.id)}
+                  >
                     Remove
                   </Button>
                 )}
@@ -212,21 +243,28 @@ export function TalentDashboardPage() {
         <h3>Bookings</h3>
         <p>Confirmed sessions where you are the client or the expert.</p>
         {page.bookings.length === 0 ? (
-          <Empty title="No bookings yet">Book a slot from an expert's profile, or publish your own availability above.</Empty>
+          <Empty title="No bookings yet">
+            Book a slot from an expert's profile, or publish your own availability above.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.bookings.map((booking) => (
               <li key={booking.id} className="activity-feed-row">
                 <span className="activity-feed-title">
                   <strong>
-                    {new Date(booking.start_at).toLocaleString()} → {new Date(booking.end_at).toLocaleString()}
+                    {new Date(booking.start_at).toLocaleString()} →{' '}
+                    {new Date(booking.end_at).toLocaleString()}
                   </strong>
                   <br />
                   <small>{booking.format.replace(/_/g, ' ')}</small>
                 </span>
                 <StatusPill status={booking.status} />
                 {booking.status === 'confirmed' && (
-                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.cancelBooking(booking.id)}>
+                  <Button
+                    variant="secondary"
+                    disabled={page.busy}
+                    onClick={() => void page.cancelBooking(booking.id)}
+                  >
                     Cancel
                   </Button>
                 )}
@@ -238,20 +276,29 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Expert teams</h3>
-        <p>Compose complementary specialists around a complex objective while preserving responsibilities and access boundaries.</p>
+        <p>
+          Compose complementary specialists around a complex objective while preserving
+          responsibilities and access boundaries.
+        </p>
         <form onSubmit={page.createTeam}>
           <Field label="Team name">
             <input name="name" required maxLength={200} placeholder="e.g. Growth Pod" />
           </Field>
           <Field label="Description">
-            <input name="description" maxLength={2000} placeholder="What this team is composed for" />
+            <input
+              name="description"
+              maxLength={2000}
+              placeholder="What this team is composed for"
+            />
           </Field>
           <Button type="submit" disabled={page.busy}>
             Create team
           </Button>
         </form>
         {page.teams.length === 0 ? (
-          <Empty title="No expert teams yet">Create a team to compose specialists around a complex objective.</Empty>
+          <Empty title="No expert teams yet">
+            Create a team to compose specialists around a complex objective.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.teams.map((team) => (
@@ -265,7 +312,8 @@ export function TalentDashboardPage() {
                   </small>
                   <br />
                   <small>
-                    Team ID (share with a client to assign this team to their project): <code>{team.id}</code>
+                    Team ID (share with a client to assign this team to their project):{' '}
+                    <code>{team.id}</code>
                   </small>
                 </span>
               </li>
@@ -276,9 +324,14 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Review queue</h3>
-        <p>Scoping cases flagged for qualified human review — claim one, then mark it complete when you've reviewed it.</p>
+        <p>
+          Scoping cases flagged for qualified human review — claim one, then mark it complete when
+          you've reviewed it.
+        </p>
         {page.reviewQueue.length === 0 ? (
-          <Empty title="Nothing pending">Amber and red-flagged scoping cases that need review will appear here.</Empty>
+          <Empty title="Nothing pending">
+            Amber and red-flagged scoping cases that need review will appear here.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.reviewQueue.map((entry) => (
@@ -294,7 +347,11 @@ export function TalentDashboardPage() {
                 <StatusPill status={entry.risk_band} />
                 <StatusPill status={entry.status} />
                 {entry.status === 'pending' && (
-                  <Button variant="secondary" disabled={page.busy} onClick={() => void page.claimReview(entry.id)}>
+                  <Button
+                    variant="secondary"
+                    disabled={page.busy}
+                    onClick={() => void page.claimReview(entry.id)}
+                  >
                     Claim
                   </Button>
                 )}
@@ -323,7 +380,9 @@ export function TalentDashboardPage() {
         <h3>Handoff inbox</h3>
         <p>Work an AI agent could not complete on its own and handed off with its full context.</p>
         {page.handoffInbox.length === 0 ? (
-          <Empty title="No handoffs waiting">When an agent needs qualified human judgment, it will appear here.</Empty>
+          <Empty title="No handoffs waiting">
+            When an agent needs qualified human judgment, it will appear here.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.handoffInbox.map((handoff) => (
@@ -336,16 +395,26 @@ export function TalentDashboardPage() {
                 <StatusPill status={handoff.status} />
                 {handoff.status === 'pending' && (
                   <>
-                    <Button disabled={page.busy} onClick={() => void page.acceptHandoff(handoff.id)}>
+                    <Button
+                      disabled={page.busy}
+                      onClick={() => void page.acceptHandoff(handoff.id)}
+                    >
                       Accept
                     </Button>
-                    <Button variant="secondary" disabled={page.busy} onClick={() => void page.declineHandoff(handoff.id)}>
+                    <Button
+                      variant="secondary"
+                      disabled={page.busy}
+                      onClick={() => void page.declineHandoff(handoff.id)}
+                    >
                       Decline
                     </Button>
                   </>
                 )}
                 {handoff.status === 'accepted' && (
-                  <Button disabled={page.busy} onClick={() => void page.completeHandoff(handoff.id)}>
+                  <Button
+                    disabled={page.busy}
+                    onClick={() => void page.completeHandoff(handoff.id)}
+                  >
                     Mark complete
                   </Button>
                 )}
@@ -359,10 +428,18 @@ export function TalentDashboardPage() {
         <h3>Skills assessment</h3>
         <p>A deterministic multiple-choice quiz — 80% or higher earns a pass badge.</p>
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="secondary" disabled={page.busy} onClick={() => void page.loadQuiz('javascript')}>
+          <Button
+            variant="secondary"
+            disabled={page.busy}
+            onClick={() => void page.loadQuiz('javascript')}
+          >
             Take JavaScript assessment
           </Button>
-          <Button variant="secondary" disabled={page.busy} onClick={() => void page.loadQuiz('project-management')}>
+          <Button
+            variant="secondary"
+            disabled={page.busy}
+            onClick={() => void page.loadQuiz('project-management')}
+          >
             Take Project Management assessment
           </Button>
         </div>
@@ -402,7 +479,8 @@ export function TalentDashboardPage() {
         {page.lastAssessment && (
           <p>
             <strong>
-              {page.lastAssessment.score}% — {page.lastAssessment.passed ? 'Passed' : 'Not yet passed'}
+              {page.lastAssessment.score}% —{' '}
+              {page.lastAssessment.passed ? 'Passed' : 'Not yet passed'}
             </strong>
           </p>
         )}
@@ -410,12 +488,31 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Expert Finder</h3>
-        <p>Search for verified talent by skill — every result shows why it ranked, not just a black-box score.</p>
+        <p>
+          Search for verified talent by skill — every result shows why it ranked, not just a
+          black-box score.
+        </p>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <input placeholder="e.g. react javascript" value={skillQuery} onChange={(e) => setSkillQuery(e.target.value)} />
-          <input placeholder="Domain filter" value={domainFilter} onChange={(e) => setDomainFilter(e.target.value)} />
-          <input placeholder="Function filter" value={functionFilter} onChange={(e) => setFunctionFilter(e.target.value)} />
-          <input placeholder="Industry filter" value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)} />
+          <input
+            placeholder="e.g. react javascript"
+            value={skillQuery}
+            onChange={(e) => setSkillQuery(e.target.value)}
+          />
+          <input
+            placeholder="Domain filter"
+            value={domainFilter}
+            onChange={(e) => setDomainFilter(e.target.value)}
+          />
+          <input
+            placeholder="Function filter"
+            value={functionFilter}
+            onChange={(e) => setFunctionFilter(e.target.value)}
+          />
+          <input
+            placeholder="Industry filter"
+            value={industryFilter}
+            onChange={(e) => setIndustryFilter(e.target.value)}
+          />
           <Button
             disabled={page.busy || !skillQuery.trim()}
             onClick={() =>
@@ -430,7 +527,11 @@ export function TalentDashboardPage() {
           </Button>
         </div>
         <Field label="Invite to job ID" hint="Paste the job's ID to enable the Invite action below">
-          <input value={inviteJobId} onChange={(e) => setInviteJobId(e.target.value)} placeholder="job id" />
+          <input
+            value={inviteJobId}
+            onChange={(e) => setInviteJobId(e.target.value)}
+            placeholder="job id"
+          />
         </Field>
         {page.expertResults.length === 0 ? (
           <Empty title="No results yet">Search by skill to find matching experts.</Empty>
@@ -443,26 +544,42 @@ export function TalentDashboardPage() {
                   <br />
                   <small>
                     {result.skills.join(', ')}
-                    {result.domains.length > 0 && ` · ${result.domains.join(', ')}`} · score {result.score} (skill{' '}
-                    {result.breakdown.skillScore}, rate {result.breakdown.rateFit}, vetting {result.breakdown.vettingBonus}, credentials{' '}
-                    {result.breakdown.credentialBonus}, reputation {result.breakdown.reputationBonus})
+                    {result.domains.length > 0 && ` · ${result.domains.join(', ')}`} · score{' '}
+                    {result.score} (skill {result.breakdown.skillScore}, rate{' '}
+                    {result.breakdown.rateFit}, vetting {result.breakdown.vettingBonus}, credentials{' '}
+                    {result.breakdown.credentialBonus}, reputation{' '}
+                    {result.breakdown.reputationBonus})
                   </small>
                 </span>
                 <StatusPill status={result.vettingStatus} />
                 <Button
                   variant="secondary"
                   disabled={page.busy || !inviteJobId.trim()}
-                  onClick={() => void page.inviteToJob(inviteJobId.trim(), result.userId, `Interested in working with you on this project.`)}
+                  onClick={() =>
+                    void page.inviteToJob(
+                      inviteJobId.trim(),
+                      result.userId,
+                      `Interested in working with you on this project.`,
+                    )
+                  }
                 >
                   Invite
                 </Button>
-                <Button variant="secondary" disabled={page.busy} onClick={() => void page.viewExpertAvailability(result.userId)}>
-                  {page.viewingAvailability?.userId === result.userId ? 'Hide availability' : 'View availability'}
+                <Button
+                  variant="secondary"
+                  disabled={page.busy}
+                  onClick={() => void page.viewExpertAvailability(result.userId)}
+                >
+                  {page.viewingAvailability?.userId === result.userId
+                    ? 'Hide availability'
+                    : 'View availability'}
                 </Button>
                 {page.viewingAvailability?.userId === result.userId && (
                   <div style={{ flexBasis: '100%', marginTop: 8 }}>
                     {page.viewingAvailability.slots.length === 0 ? (
-                      <Empty title="No open slots">This expert hasn't published availability yet.</Empty>
+                      <Empty title="No open slots">
+                        This expert hasn't published availability yet.
+                      </Empty>
                     ) : (
                       <ol className="activity-feed-list">
                         {page.viewingAvailability.slots.map((slot) => (
@@ -471,11 +588,15 @@ export function TalentDashboardPage() {
                               <strong>{new Date(slot.start_at).toLocaleString()}</strong>
                               <br />
                               <small>
-                                {new Date(slot.start_at).toLocaleTimeString()} – {new Date(slot.end_at).toLocaleTimeString()} ·{' '}
+                                {new Date(slot.start_at).toLocaleTimeString()} –{' '}
+                                {new Date(slot.end_at).toLocaleTimeString()} ·{' '}
                                 {slot.format.replace(/_/g, ' ')}
                               </small>
                             </span>
-                            <Button disabled={page.busy} onClick={() => void page.bookSlot(slot.id, '')}>
+                            <Button
+                              disabled={page.busy}
+                              onClick={() => void page.bookSlot(slot.id, '')}
+                            >
                               Book
                             </Button>
                           </li>
@@ -494,7 +615,9 @@ export function TalentDashboardPage() {
         <h3>Invitations</h3>
         <p>Project invitations sent to you or by you.</p>
         {page.invitations.length === 0 ? (
-          <Empty title="No invitations yet">Invitations you send or receive will appear here.</Empty>
+          <Empty title="No invitations yet">
+            Invitations you send or receive will appear here.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.invitations.map((invitation) => (
@@ -507,10 +630,17 @@ export function TalentDashboardPage() {
                 <StatusPill status={invitation.status} />
                 {invitation.status === 'pending' && (
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <Button disabled={page.busy} onClick={() => void page.respondToInvitation(invitation.id, 'accept')}>
+                    <Button
+                      disabled={page.busy}
+                      onClick={() => void page.respondToInvitation(invitation.id, 'accept')}
+                    >
                       Accept
                     </Button>
-                    <Button variant="ghost" disabled={page.busy} onClick={() => void page.respondToInvitation(invitation.id, 'reject')}>
+                    <Button
+                      variant="ghost"
+                      disabled={page.busy}
+                      onClick={() => void page.respondToInvitation(invitation.id, 'reject')}
+                    >
                       Decline
                     </Button>
                   </div>
@@ -523,12 +653,16 @@ export function TalentDashboardPage() {
 
       <section className="panel settings-card">
         <h3>Job matches</h3>
-        <p>Open projects ranked by fit to your own profile, so you can prioritize what to bid on.</p>
+        <p>
+          Open projects ranked by fit to your own profile, so you can prioritize what to bid on.
+        </p>
         <Button variant="secondary" disabled={page.busy} onClick={() => void page.loadJobMatches()}>
           Find matching projects
         </Button>
         {page.jobMatches.length === 0 ? (
-          <Empty title="No matches loaded yet">Click above to see open projects ranked for you.</Empty>
+          <Empty title="No matches loaded yet">
+            Click above to see open projects ranked for you.
+          </Empty>
         ) : (
           <ol className="activity-feed-list">
             {page.jobMatches.map((match) => (
@@ -537,7 +671,8 @@ export function TalentDashboardPage() {
                   <strong>{match.title}</strong>
                   <br />
                   <small>
-                    {match.category} · {match.budgetMin}-{match.budgetMax} {match.currency} · score {match.score}
+                    {match.category} · {match.budgetMin}-{match.budgetMax} {match.currency} · score{' '}
+                    {match.score}
                   </small>
                 </span>
               </li>

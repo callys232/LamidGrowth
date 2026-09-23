@@ -7,7 +7,14 @@ const FIELDS: FieldDef[] = [
   { key: 'role', label: 'Role', type: 'text' },
   { key: 'headcount', label: 'Headcount', type: 'number', min: 0, default: 1 },
   { key: 'capability', label: 'Avg. capability (1-5)', type: 'number', min: 1, max: 5, default: 3 },
-  { key: 'attritionRisk', label: 'Attrition risk (1-5)', type: 'number', min: 1, max: 5, default: 2 },
+  {
+    key: 'attritionRisk',
+    label: 'Attrition risk (1-5)',
+    type: 'number',
+    min: 1,
+    max: 5,
+    default: 2,
+  },
   { key: 'successors', label: 'Ready successors', type: 'number', min: 0, default: 0 },
   { key: 'critical', label: 'Critical role', type: 'checkbox' },
 ];
@@ -30,8 +37,13 @@ export function RosterForm({
         e.preventDefault();
         onSubmit({
           roles: rows.map((r) => ({
-            id: r.id, role: r.role, headcount: Number(r.headcount), capability: Number(r.capability),
-            attritionRisk: Number(r.attritionRisk), successors: Number(r.successors), critical: Boolean(r.critical),
+            id: r.id,
+            role: r.role,
+            headcount: Number(r.headcount),
+            capability: Number(r.capability),
+            attritionRisk: Number(r.attritionRisk),
+            successors: Number(r.successors),
+            critical: Boolean(r.critical),
           })),
         });
       }}

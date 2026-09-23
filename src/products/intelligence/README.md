@@ -22,7 +22,7 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route                 | Page composition                                                                                    | Copy                                                      |
+| --------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | /product/intelligence | [ProductIntelligenceDocumentPage](./pages/product-intelligence/ProductIntelligenceDocumentPage.tsx) | [content.json](./pages/product-intelligence/content.json) |
-| /os/insights | [OsInsightsDocumentPage](./pages/os-insights/OsInsightsDocumentPage.tsx) | [content.json](./pages/os-insights/content.json) |
+| /os/insights          | [OsInsightsDocumentPage](./pages/os-insights/OsInsightsDocumentPage.tsx)                            | [content.json](./pages/os-insights/content.json)          |

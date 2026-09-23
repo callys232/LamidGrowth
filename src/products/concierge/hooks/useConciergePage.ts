@@ -9,7 +9,12 @@ export type ConciergeApplication = {
   status: 'pending' | 'approved' | 'rejected';
   monthly_rate_minor: number;
 };
-export type ConciergeProvider = { id: string; name: string; headline: string; monthlyRateMinor: number };
+export type ConciergeProvider = {
+  id: string;
+  name: string;
+  headline: string;
+  monthlyRateMinor: number;
+};
 export type BillingLineItem = {
   id: string;
   kind: 'ecosystem_fee' | 'pm_fee';
@@ -23,7 +28,12 @@ export type BillingStatement = {
   lineItems: BillingLineItem[];
   totalMinor: number;
   currency: string;
-  pointsUsage: { totalPointsSpent: number; estimatedCostMinor: number; currency: string; note: string };
+  pointsUsage: {
+    totalPointsSpent: number;
+    estimatedCostMinor: number;
+    currency: string;
+    note: string;
+  };
 };
 
 export function useConciergePage() {
@@ -82,7 +92,9 @@ export function useConciergePage() {
     try {
       await api('/workspace/concierge', { userId });
       notify('Concierge assigned to this workspace.');
-      const refreshed = await api<BillingStatement>('/billing/statement', undefined, 'GET').catch(() => null);
+      const refreshed = await api<BillingStatement>('/billing/statement', undefined, 'GET').catch(
+        () => null,
+      );
       if (refreshed) setStatement(refreshed);
     } catch (error) {
       setError((error as Error).message);
@@ -91,5 +103,15 @@ export function useConciergePage() {
     }
   }
 
-  return { myApplication, providers, statement, busy, error, canAssign, canViewBilling, apply, assign };
+  return {
+    myApplication,
+    providers,
+    statement,
+    busy,
+    error,
+    canAssign,
+    canViewBilling,
+    apply,
+    assign,
+  };
 }

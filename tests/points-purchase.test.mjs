@@ -25,7 +25,12 @@ async function boot(fetchImpl, { configured = true } = {}) {
       : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
   }));
   server = await new Promise((resolve) => {
@@ -35,7 +40,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
 }
 async function teardown() {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 }
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -74,7 +79,10 @@ test('with no provider configured, purchase is refused rather than faked', async
 test('a mocked Paystack checkout, confirmed by webhook, credits exactly the right points once', async (t) => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/abc', access_code: 'abc' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/abc', access_code: 'abc' },
+      }),
   });
   await boot(fetchImpl);
   t.after(teardown);
@@ -99,7 +107,9 @@ test('a mocked Paystack checkout, confirmed by webhook, credits exactly the righ
 
   const purchases = await request('/points/purchases', undefined, client, 'GET');
   assert.equal(purchases.data[0].status, 'completed');
-  const balanceRow = await store.db.prepare('SELECT points_balance FROM users WHERE email = ?').get('points-client@example.test');
+  const balanceRow = await store.db
+    .prepare('SELECT points_balance FROM users WHERE email = ?')
+    .get('points-client@example.test');
   assert.equal(balanceRow.points_balance, 100050); // 100000 test-fixture grant + 50 purchased
 
   // Replaying the identical webhook event does not double-credit.

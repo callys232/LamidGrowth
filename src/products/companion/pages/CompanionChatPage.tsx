@@ -27,7 +27,9 @@ const QUICK_PICK_IDS = [
 export function CompanionChatPage() {
   const [agents, setAgents] = useState<AgentManifest[]>([]);
   useEffect(() => {
-    api<AgentManifest[]>('/companion/agents', undefined, 'GET').then(setAgents).catch(() => {});
+    api<AgentManifest[]>('/companion/agents', undefined, 'GET')
+      .then(setAgents)
+      .catch(() => {});
   }, []);
   const chat = useCompanionChat(agents);
 
@@ -35,7 +37,10 @@ export function CompanionChatPage() {
     <section className="companion-chat">
       <header>
         <h1>What are you working through?</h1>
-        <p>Tell me what's on your mind — I'll bring in the right specialist, or you can pick one yourself.</p>
+        <p>
+          Tell me what's on your mind — I'll bring in the right specialist, or you can pick one
+          yourself.
+        </p>
       </header>
 
       {agents.length > 0 && (
@@ -44,8 +49,8 @@ export function CompanionChatPage() {
           <ul>
             {agents.map((agent) => (
               <li key={agent.id}>
-                <strong>{agent.name}</strong> — {gateLabel[agent.humanGate]} ·{' '}
-                {agent.pointsCost} point{agent.pointsCost === 1 ? '' : 's'}
+                <strong>{agent.name}</strong> — {gateLabel[agent.humanGate]} · {agent.pointsCost}{' '}
+                point{agent.pointsCost === 1 ? '' : 's'}
               </li>
             ))}
           </ul>
@@ -81,34 +86,42 @@ export function CompanionChatPage() {
                 <p>{turn.text}</p>
                 {turn.role === 'agent' && turn.humanHandoffRequested && (
                   <p className="companion-chat-handoff-note">
-                    This also went to a qualified human expert for review — you'll see it move in your project's handoff list.
+                    This also went to a qualified human expert for review — you'll see it move in
+                    your project's handoff list.
                   </p>
                 )}
-                {turn.role === 'agent' && turn.runId && turn.agentId && documentAgentIds.has(turn.agentId) && (
-                  <div className="companion-chat-document-actions">
-                    <a
-                      className="companion-chat-download"
-                      href={`/api/agent-runs/${turn.runId}/pdf`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Download PDF
-                    </a>
-                    {(turn.signedBy?.length ?? 0) === 0 ? (
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const signerName = window.prompt('Type your full legal name to sign (in-app attestation, not a qualified e-signature):');
-                          if (signerName?.trim()) void chat.sign(turn.runId!, signerName.trim());
-                        }}
+                {turn.role === 'agent' &&
+                  turn.runId &&
+                  turn.agentId &&
+                  documentAgentIds.has(turn.agentId) && (
+                    <div className="companion-chat-document-actions">
+                      <a
+                        className="companion-chat-download"
+                        href={`/api/agent-runs/${turn.runId}/pdf`}
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        Sign this document
-                      </Button>
-                    ) : (
-                      <span className="companion-chat-signed">Signed by {turn.signedBy!.join(', ')}</span>
-                    )}
-                  </div>
-                )}
+                        Download PDF
+                      </a>
+                      {(turn.signedBy?.length ?? 0) === 0 ? (
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            const signerName = window.prompt(
+                              'Type your full legal name to sign (in-app attestation, not a qualified e-signature):',
+                            );
+                            if (signerName?.trim()) void chat.sign(turn.runId!, signerName.trim());
+                          }}
+                        >
+                          Sign this document
+                        </Button>
+                      ) : (
+                        <span className="companion-chat-signed">
+                          Signed by {turn.signedBy!.join(', ')}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 <span className="companion-chat-time">{turn.at}</span>
               </div>
             </li>
@@ -141,7 +154,11 @@ export function CompanionChatPage() {
         }}
       >
         {agents.length > 0 && (
-          <div className="companion-chat-quick-pick" role="group" aria-label="Quick pick a specialist">
+          <div
+            className="companion-chat-quick-pick"
+            role="group"
+            aria-label="Quick pick a specialist"
+          >
             <button
               type="button"
               className={chat.agentId === 'auto' ? 'is-active' : ''}
@@ -164,12 +181,23 @@ export function CompanionChatPage() {
           </div>
         )}
         <Field label="Specialist">
-          <select value={chat.agentId} onChange={event => chat.setAgentId(event.target.value)} disabled={chat.busy}>
+          <select
+            value={chat.agentId}
+            onChange={(event) => chat.setAgentId(event.target.value)}
+            disabled={chat.busy}
+          >
             <option value="auto">Auto — choose from my message and context</option>
-            {agents.map(agent => <option key={agent.id} value={agent.id}>{agent.name} · {agent.pointsCost} points</option>)}
+            {agents.map((agent) => (
+              <option key={agent.id} value={agent.id}>
+                {agent.name} · {agent.pointsCost} points
+              </option>
+            ))}
           </select>
         </Field>
-        <Field label="Your message" hint="Try a question, a diagnostic request, or a workflow command.">
+        <Field
+          label="Your message"
+          hint="Try a question, a diagnostic request, or a workflow command."
+        >
           <textarea
             value={chat.draft}
             onChange={(event) => chat.setDraft(event.target.value)}
@@ -179,8 +207,14 @@ export function CompanionChatPage() {
           />
         </Field>
         <label className="checkbox-field">
-          <input type="checkbox" checked={chat.consent} onChange={event => chat.setConsent(event.target.checked)} disabled={chat.busy} />
-          Allow this request to share relevant workspace context with external AI, if enabled in workspace settings.
+          <input
+            type="checkbox"
+            checked={chat.consent}
+            onChange={(event) => chat.setConsent(event.target.checked)}
+            disabled={chat.busy}
+          />
+          Allow this request to share relevant workspace context with external AI, if enabled in
+          workspace settings.
         </label>
         <Button type="submit" disabled={chat.busy || !chat.draft.trim()}>
           Send

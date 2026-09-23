@@ -36,7 +36,11 @@ test('a shared database rate-limit bucket caps the same key across two separate 
     // proving the ceiling is shared across "workers", not 5 per worker (which would be 10 total).
     const succeeded = results.filter((s) => s === 200).length;
     const limited = results.filter((s) => s === 429).length;
-    assert.equal(succeeded, 5, `expected exactly 5 successes across both workers, got ${succeeded} (${JSON.stringify(results)})`);
+    assert.equal(
+      succeeded,
+      5,
+      `expected exactly 5 successes across both workers, got ${succeeded} (${JSON.stringify(results)})`,
+    );
     assert.equal(limited, 3);
   } finally {
     if (workerA) await stop(workerA);
@@ -56,25 +60,39 @@ test('per-account spend limiting tracks independent keys — one user hitting th
   const schemaName = `ratelimit_keys_${randomUUID().replace(/-/g, '_')}`;
   let instance;
   try {
-    instance = await boot(schemaName, { spend: { max: 1, windowMs: 60_000 } }, {
-      // The spend limiter sits in front of a real companion message through signal-monitoring (a
-      // paid specialist), so it needs AI configured the way production would have it — same stub
-      // pattern as tests/agents.test.mjs.
-      aiProvider: {
-        name: 'test',
-        model: 'test',
-        async review(context) {
-          return {
-            review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
-          };
+    instance = await boot(
+      schemaName,
+      { spend: { max: 1, windowMs: 60_000 } },
+      {
+        // The spend limiter sits in front of a real companion message through signal-monitoring (a
+        // paid specialist), so it needs AI configured the way production would have it — same stub
+        // pattern as tests/agents.test.mjs.
+        aiProvider: {
+          name: 'test',
+          model: 'test',
+          async review(context) {
+            return {
+              review: {
+                summary: `AI summary: ${context.question}`,
+                assumptions: [],
+                suggestions: [],
+                evidenceIds: (context.sources || []).map((s) => s.id),
+              },
+            };
+          },
         },
       },
-    });
+    );
     async function signup(email) {
       const response = await fetch(`${instance.base}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'Rate Limit User', email, password: 'a-long-ratelimit-password', context: 'Founder' }),
+        body: JSON.stringify({
+          name: 'Rate Limit User',
+          email,
+          password: 'a-long-ratelimit-password',
+          context: 'Founder',
+        }),
       });
       const data = await response.json();
       const cookie = response.headers.get('set-cookie')?.split(';')[0];

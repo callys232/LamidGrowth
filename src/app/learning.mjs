@@ -26,11 +26,24 @@ const moduleSchema = z
     quizSkill: z.string().trim().max(60).nullish(),
   })
   .strict();
-const completeModuleSchema = z.object({ score: z.number().int().min(0).max(100).nullish() }).strict();
-const assignSchema = z.object({ userId: z.string().uuid(), dueAt: z.string().datetime().nullish() }).strict();
-const feedbackSchema = z.object({ rating: z.number().int().min(1).max(5), comment: z.string().trim().max(2000).default('') }).strict();
+const completeModuleSchema = z
+  .object({ score: z.number().int().min(0).max(100).nullish() })
+  .strict();
+const assignSchema = z
+  .object({ userId: z.string().uuid(), dueAt: z.string().datetime().nullish() })
+  .strict();
+const feedbackSchema = z
+  .object({
+    rating: z.number().int().min(1).max(5),
+    comment: z.string().trim().max(2000).default(''),
+  })
+  .strict();
 const complianceSchema = z
-  .object({ pathId: z.string().uuid(), mandatory: z.boolean().default(true), dueDays: z.number().int().positive().max(3650).nullish() })
+  .object({
+    pathId: z.string().uuid(),
+    mandatory: z.boolean().default(true),
+    dueDays: z.number().int().positive().max(3650).nullish(),
+  })
   .strict();
 
 const fail = (message, status) => {
@@ -47,7 +60,9 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     return path;
   }
   async function modulesFor(pathId) {
-    return db.prepare('SELECT * FROM learning_modules WHERE path_id = ? ORDER BY order_index').all(pathId);
+    return db
+      .prepare('SELECT * FROM learning_modules WHERE path_id = ? ORDER BY order_index')
+      .all(pathId);
   }
   async function pathDetail(id) {
     const path = await pathFor(id);
@@ -59,13 +74,22 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
       )
       .all(id);
     const feedback = await db
-      .prepare('SELECT COUNT(*) AS count, AVG(rating) AS average FROM learning_feedback WHERE path_id = ?')
+      .prepare(
+        'SELECT COUNT(*) AS count, AVG(rating) AS average FROM learning_feedback WHERE path_id = ?',
+      )
       .get(id);
-    return { ...path, modules, prerequisites, feedback: { count: feedback.count, average: feedback.average } };
+    return {
+      ...path,
+      modules,
+      prerequisites,
+      feedback: { count: feedback.count, average: feedback.average },
+    };
   }
   async function completedPathIds(userId) {
     const rows = await db
-      .prepare("SELECT path_id FROM learning_enrollments WHERE user_id = ? AND status = 'completed'")
+      .prepare(
+        "SELECT path_id FROM learning_enrollments WHERE user_id = ? AND status = 'completed'",
+      )
       .all(userId);
     return new Set(rows.map((r) => r.path_id));
   }
@@ -89,7 +113,9 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
       params.push(industry);
     }
     const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
-    const paths = await db.prepare(`SELECT * FROM learning_paths ${where} ORDER BY created_at DESC`).all(...params);
+    const paths = await db
+      .prepare(`SELECT * FROM learning_paths ${where} ORDER BY created_at DESC`)
+      .all(...params);
     // Keep the same shape as the detail endpoint (modules/prerequisites/feedback) so the
     // frontend never has to special-case "list" vs "detail" responses.
     res.json(await Promise.all(paths.map((path) => pathDetail(path.id))));
@@ -103,63 +129,74 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     const input = pathSchema.parse(req.body);
     const id = randomUUID();
     const now = new Date().toISOString();
-    await db.prepare(
-      `INSERT INTO learning_paths
+    await db
+      .prepare(
+        `INSERT INTO learning_paths
        (id, workspace_id, title, description, created_at, domain, function, industry, estimated_hours, points_cost, language, coach_user_id, created_by)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    ).run(
-      id,
-      req.workspace.id,
-      input.title,
-      input.description,
-      now,
-      input.domain ?? null,
-      input.function ?? null,
-      input.industry ?? null,
-      input.estimatedHours ?? null,
-      input.pointsCost ?? null,
-      input.language,
-      input.coachUserId ?? null,
-      req.user.id,
-    );
+      )
+      .run(
+        id,
+        req.workspace.id,
+        input.title,
+        input.description,
+        now,
+        input.domain ?? null,
+        input.function ?? null,
+        input.industry ?? null,
+        input.estimatedHours ?? null,
+        input.pointsCost ?? null,
+        input.language,
+        input.coachUserId ?? null,
+        req.user.id,
+      );
     await log(req.workspace.id, req.user.name, 'Learning path created', id, input.title);
     res.status(201).json(await pathDetail(id));
   });
 
   app.post('/api/learning/paths/:id/modules', async (req, res) => {
     const path = await pathFor(req.params.id);
-    if (path.created_by !== req.user.id) return res.status(403).json({ error: 'Only the path author can add modules.' });
+    if (path.created_by !== req.user.id)
+      return res.status(403).json({ error: 'Only the path author can add modules.' });
     const input = moduleSchema.parse(req.body);
     const id = randomUUID();
-    await db.prepare('INSERT INTO learning_modules VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-      id,
-      path.id,
-      input.title,
-      input.description,
-      input.format,
-      input.orderIndex,
-      input.estimatedMinutes ?? null,
-      input.contentUrl ?? null,
-      input.quizSkill ?? null,
-      new Date().toISOString(),
-    );
+    await db
+      .prepare('INSERT INTO learning_modules VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(
+        id,
+        path.id,
+        input.title,
+        input.description,
+        input.format,
+        input.orderIndex,
+        input.estimatedMinutes ?? null,
+        input.contentUrl ?? null,
+        input.quizSkill ?? null,
+        new Date().toISOString(),
+      );
     res.status(201).json(await pathDetail(path.id));
   });
 
   // Prerequisites — a path-level dependency: cannot enroll in path until requires_path_id is completed.
   app.post('/api/learning/paths/:id/prerequisites', async (req, res) => {
     const path = await pathFor(req.params.id);
-    if (path.created_by !== req.user.id) return res.status(403).json({ error: 'Only the path author can set prerequisites.' });
+    if (path.created_by !== req.user.id)
+      return res.status(403).json({ error: 'Only the path author can set prerequisites.' });
     const requiresPathId = z.string().uuid().parse(req.body?.requiresPathId);
-    if (requiresPathId === path.id) return res.status(400).json({ error: 'A path cannot require itself.' });
+    if (requiresPathId === path.id)
+      return res.status(400).json({ error: 'A path cannot require itself.' });
     await pathFor(requiresPathId);
     const id = randomUUID();
-    await db.prepare('INSERT INTO learning_prerequisites VALUES (?, ?, ?)').run(id, path.id, requiresPathId);
+    await db
+      .prepare('INSERT INTO learning_prerequisites VALUES (?, ?, ?)')
+      .run(id, path.id, requiresPathId);
     res.status(201).json(await pathDetail(path.id));
   });
 
   async function requirePrerequisitesMet(pathId, userId) {
-    const required = await db.prepare('SELECT requires_path_id FROM learning_prerequisites WHERE path_id = ?').all(pathId);
+    const required = await db
+      .prepare('SELECT requires_path_id FROM learning_prerequisites WHERE path_id = ?')
+      .all(pathId);
     if (!required.length) return;
     const completed = await completedPathIds(userId);
     const unmet = required.filter((r) => !completed.has(r.requires_path_id));
@@ -168,7 +205,11 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
 
   async function enroll(pathId, userId, { assignedBy = null, dueAt = null } = {}) {
     const path = await pathFor(pathId);
-    if (await db.prepare('SELECT 1 FROM learning_enrollments WHERE path_id = ? AND user_id = ?').get(pathId, userId))
+    if (
+      await db
+        .prepare('SELECT 1 FROM learning_enrollments WHERE path_id = ? AND user_id = ?')
+        .get(pathId, userId)
+    )
       fail('Already enrolled in this path.', 400);
     await requirePrerequisitesMet(pathId, userId);
     const id = randomUUID();
@@ -176,29 +217,37 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     await transaction(async () => {
       if (path.points_cost) {
         const charged = await db
-          .prepare('UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?')
+          .prepare(
+            'UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?',
+          )
           .run(path.points_cost, userId, path.points_cost);
         if (charged.changes !== 1) fail('Not enough points to enroll in this path.', 402);
-        await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-          randomUUID(),
-          userId,
-          null,
-          -path.points_cost,
-          'learning_enrollment',
-          id,
-          Date.now(),
-        );
+        await db
+          .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            randomUUID(),
+            userId,
+            null,
+            -path.points_cost,
+            'learning_enrollment',
+            id,
+            Date.now(),
+          );
       }
-      await db.prepare(
-        'INSERT INTO learning_enrollments (id, path_id, user_id, status, progress, created_at, assigned_by, due_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      ).run(id, pathId, userId, 'in_progress', 0, now, assignedBy, dueAt, null);
+      await db
+        .prepare(
+          'INSERT INTO learning_enrollments (id, path_id, user_id, status, progress, created_at, assigned_by, due_at, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        )
+        .run(id, pathId, userId, 'in_progress', 0, now, assignedBy, dueAt, null);
     });
     return id;
   }
 
   app.post('/api/learning/paths/:id/enroll', async (req, res) => {
     const id = await enroll(req.params.id, req.user.id);
-    res.status(201).json(await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(id));
+    res
+      .status(201)
+      .json(await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(id));
   });
 
   // Assignment — a coach/path-author assigns the path to someone else, optionally with a due date
@@ -208,9 +257,14 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     if (path.created_by !== req.user.id && path.coach_user_id !== req.user.id)
       return res.status(403).json({ error: 'Only the path author or coach can assign it.' });
     const input = assignSchema.parse(req.body);
-    const id = await enroll(path.id, input.userId, { assignedBy: req.user.id, dueAt: input.dueAt ?? null });
+    const id = await enroll(path.id, input.userId, {
+      assignedBy: req.user.id,
+      dueAt: input.dueAt ?? null,
+    });
     await log(req.workspace.id, req.user.name, 'Learning path assigned', id, path.title);
-    res.status(201).json(await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(id));
+    res
+      .status(201)
+      .json(await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(id));
   });
 
   app.get('/api/learning/enrollments/mine', async (req, res) => {
@@ -234,106 +288,151 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
   // on acknowledgement. Completing every module marks the enrollment complete and stale-proofs the
   // status the same way scoping cases track "user_review".
   app.post('/api/learning/modules/:id/complete', async (req, res) => {
-    const module = await db.prepare('SELECT * FROM learning_modules WHERE id = ?').get(req.params.id);
+    const module = await db
+      .prepare('SELECT * FROM learning_modules WHERE id = ?')
+      .get(req.params.id);
     if (!module) return res.status(404).json({ error: 'Module not found.' });
     const enrollment = await db
       .prepare('SELECT * FROM learning_enrollments WHERE path_id = ? AND user_id = ?')
       .get(module.path_id, req.user.id);
-    if (!enrollment) return res.status(400).json({ error: 'Enroll in this path before completing its modules.' });
-    if (enrollment.status === 'completed') return res.status(400).json({ error: 'This path is already completed.' });
+    if (!enrollment)
+      return res.status(400).json({ error: 'Enroll in this path before completing its modules.' });
+    if (enrollment.status === 'completed')
+      return res.status(400).json({ error: 'This path is already completed.' });
     const input = completeModuleSchema.parse(req.body ?? {});
     if (module.format === 'assessment' && input.score == null)
       return res.status(400).json({ error: 'An assessment module requires a score.' });
-    if (await db.prepare('SELECT 1 FROM learning_module_completions WHERE enrollment_id = ? AND module_id = ?').get(enrollment.id, module.id))
+    if (
+      await db
+        .prepare(
+          'SELECT 1 FROM learning_module_completions WHERE enrollment_id = ? AND module_id = ?',
+        )
+        .get(enrollment.id, module.id)
+    )
       return res.status(400).json({ error: 'This module is already completed.' });
     const totalModules = (await modulesFor(module.path_id)).length;
     await transaction(async () => {
-      await db.prepare('INSERT INTO learning_module_completions VALUES (?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        enrollment.id,
-        module.id,
-        input.score ?? null,
-        new Date().toISOString(),
-      );
+      await db
+        .prepare('INSERT INTO learning_module_completions VALUES (?, ?, ?, ?, ?)')
+        .run(randomUUID(), enrollment.id, module.id, input.score ?? null, new Date().toISOString());
       const completedCountRow = await db
-        .prepare('SELECT COUNT(*) AS count FROM learning_module_completions WHERE enrollment_id = ?')
+        .prepare(
+          'SELECT COUNT(*) AS count FROM learning_module_completions WHERE enrollment_id = ?',
+        )
         .get(enrollment.id);
       const completedCount = completedCountRow.count;
       const progress = totalModules ? Math.round((completedCount / totalModules) * 100) : 100;
       const nowComplete = totalModules > 0 && completedCount >= totalModules;
-      await db.prepare('UPDATE learning_enrollments SET progress = ?, status = ?, completed_at = ? WHERE id = ?').run(
-        progress,
-        nowComplete ? 'completed' : 'in_progress',
-        nowComplete ? new Date().toISOString() : null,
-        enrollment.id,
-      );
+      await db
+        .prepare(
+          'UPDATE learning_enrollments SET progress = ?, status = ?, completed_at = ? WHERE id = ?',
+        )
+        .run(
+          progress,
+          nowComplete ? 'completed' : 'in_progress',
+          nowComplete ? new Date().toISOString() : null,
+          enrollment.id,
+        );
     });
-    res.json(await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(enrollment.id));
+    res.json(
+      await db.prepare('SELECT * FROM learning_enrollments WHERE id = ?').get(enrollment.id),
+    );
   });
 
   // Certificates are a generated artifact tied to a completed enrollment, and can optionally
   // strengthen an Expert Network credential rather than living only inside the learning module.
   app.post('/api/learning/enrollments/:id/certificate', async (req, res) => {
     const enrollment = await enrollmentFor(req.params.id, req.user.id);
-    if (enrollment.status !== 'completed') return res.status(400).json({ error: 'Complete the path before issuing a certificate.' });
-    if (await db.prepare('SELECT * FROM learning_certificates WHERE enrollment_id = ?').get(enrollment.id))
-      return res.status(400).json({ error: 'A certificate has already been issued for this enrollment.' });
+    if (enrollment.status !== 'completed')
+      return res.status(400).json({ error: 'Complete the path before issuing a certificate.' });
+    if (
+      await db
+        .prepare('SELECT * FROM learning_certificates WHERE enrollment_id = ?')
+        .get(enrollment.id)
+    )
+      return res
+        .status(400)
+        .json({ error: 'A certificate has already been issued for this enrollment.' });
     const path = await pathFor(enrollment.path_id);
     const id = randomUUID();
     const now = new Date().toISOString();
     let credentialId = null;
     await transaction(async () => {
-      const profile = await db.prepare('SELECT id FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+      const profile = await db
+        .prepare('SELECT id FROM talent_profiles WHERE user_id = ?')
+        .get(req.user.id);
       if (profile) {
         credentialId = randomUUID();
-        await db.prepare(
-          `INSERT INTO expert_credentials
+        await db
+          .prepare(
+            `INSERT INTO expert_credentials
            (id, profile_id, type, title, issuer, issued_at, expires_at, evidence_url, verification_status, created_at)
            VALUES (?, ?, 'certification', ?, 'LAMID ONE Learning', ?, NULL, NULL, 'unverified', ?)`,
-        ).run(credentialId, profile.id, path.title, now, now);
+          )
+          .run(credentialId, profile.id, path.title, now, now);
       }
-      await db.prepare('INSERT INTO learning_certificates VALUES (?, ?, ?, ?, ?)').run(id, enrollment.id, credentialId, now, null);
+      await db
+        .prepare('INSERT INTO learning_certificates VALUES (?, ?, ?, ?, ?)')
+        .run(id, enrollment.id, credentialId, now, null);
     });
-    res.status(201).json(await db.prepare('SELECT * FROM learning_certificates WHERE id = ?').get(id));
+    res
+      .status(201)
+      .json(await db.prepare('SELECT * FROM learning_certificates WHERE id = ?').get(id));
   });
 
   app.post('/api/learning/paths/:id/feedback', async (req, res) => {
     const path = await pathFor(req.params.id);
-    const enrolled = await db.prepare('SELECT 1 FROM learning_enrollments WHERE path_id = ? AND user_id = ?').get(path.id, req.user.id);
-    if (!enrolled) return res.status(400).json({ error: 'Enroll in this path before leaving feedback.' });
+    const enrolled = await db
+      .prepare('SELECT 1 FROM learning_enrollments WHERE path_id = ? AND user_id = ?')
+      .get(path.id, req.user.id);
+    if (!enrolled)
+      return res.status(400).json({ error: 'Enroll in this path before leaving feedback.' });
     const input = feedbackSchema.parse(req.body);
-    const existing = await db.prepare('SELECT id FROM learning_feedback WHERE path_id = ? AND user_id = ?').get(path.id, req.user.id);
+    const existing = await db
+      .prepare('SELECT id FROM learning_feedback WHERE path_id = ? AND user_id = ?')
+      .get(path.id, req.user.id);
     if (existing)
-      await db.prepare('UPDATE learning_feedback SET rating = ?, comment = ? WHERE id = ?').run(input.rating, input.comment, existing.id);
+      await db
+        .prepare('UPDATE learning_feedback SET rating = ?, comment = ? WHERE id = ?')
+        .run(input.rating, input.comment, existing.id);
     else
-      await db.prepare('INSERT INTO learning_feedback VALUES (?, ?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        path.id,
-        req.user.id,
-        input.rating,
-        input.comment,
-        new Date().toISOString(),
-      );
+      await db
+        .prepare('INSERT INTO learning_feedback VALUES (?, ?, ?, ?, ?, ?)')
+        .run(
+          randomUUID(),
+          path.id,
+          req.user.id,
+          input.rating,
+          input.comment,
+          new Date().toISOString(),
+        );
     res.status(201).json((await pathDetail(path.id)).feedback);
   });
 
   // Compliance — a workspace can require a path be completed, with an audit-visible record
   // distinct from voluntary capability-building enrollment.
   app.post('/api/admin/learning/compliance', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can set compliance requirements.' });
+    if (!isAdmin(req))
+      return res
+        .status(403)
+        .json({ error: 'Only an ecosystem administrator can set compliance requirements.' });
     const input = complianceSchema.parse(req.body);
     await pathFor(input.pathId);
     const id = randomUUID();
-    await db.prepare('INSERT INTO compliance_requirements VALUES (?, ?, ?, ?, ?, ?)').run(
-      id,
-      req.workspace.id,
-      input.pathId,
-      input.mandatory ? 1 : 0,
-      input.dueDays ?? null,
-      new Date().toISOString(),
-    );
+    await db
+      .prepare('INSERT INTO compliance_requirements VALUES (?, ?, ?, ?, ?, ?)')
+      .run(
+        id,
+        req.workspace.id,
+        input.pathId,
+        input.mandatory ? 1 : 0,
+        input.dueDays ?? null,
+        new Date().toISOString(),
+      );
     await log(req.workspace.id, req.user.name, 'Compliance requirement set', id, input.pathId);
-    res.status(201).json(await db.prepare('SELECT * FROM compliance_requirements WHERE id = ?').get(id));
+    res
+      .status(201)
+      .json(await db.prepare('SELECT * FROM compliance_requirements WHERE id = ?').get(id));
   });
 
   app.get('/api/learning/compliance/mine', async (req, res) => {
@@ -364,14 +463,19 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     const soon = now + 7 * 24 * 60 * 60 * 1000;
     res.json({
       needsYou: enrollments.filter((e) => e.due_at && new Date(e.due_at).getTime() <= soon),
-      stalled: enrollments.filter((e) => e.progress === 0 && (!e.due_at || new Date(e.due_at).getTime() > soon)),
+      stalled: enrollments.filter(
+        (e) => e.progress === 0 && (!e.due_at || new Date(e.due_at).getTime() > soon),
+      ),
     });
   });
 
   // Admin/manager reporting — completion rate and stalled enrollments per path, feeding the
   // organizational "Capability Patterns" surface.
   app.get('/api/admin/learning/report', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can view learning reports.' });
+    if (!isAdmin(req))
+      return res
+        .status(403)
+        .json({ error: 'Only an ecosystem administrator can view learning reports.' });
     const rows = await db
       .prepare(
         `SELECT p.id, p.title,

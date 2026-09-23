@@ -43,7 +43,11 @@ export function CopyLine({ text, paragraph }: { text: string; paragraph: number 
                   className="button button-primary"
                   key={i}
                   to={to}
-                  onClick={selfLink ? (e) => scrollForSelfLink(e.currentTarget, toHash ? `#${toHash}` : '') : undefined}
+                  onClick={
+                    selfLink
+                      ? (e) => scrollForSelfLink(e.currentTarget, toHash ? `#${toHash}` : '')
+                      : undefined
+                  }
                 >
                   {label}
                 </Link>

@@ -29,11 +29,15 @@ export function mountPeople(app, store) {
     if (profileIds.length > 0) {
       const placeholders = profileIds.map(() => '?').join(',');
       const assessments = await db
-        .prepare(`SELECT * FROM talent_assessments WHERE profile_id IN (${placeholders}) ORDER BY created_at DESC`)
+        .prepare(
+          `SELECT * FROM talent_assessments WHERE profile_id IN (${placeholders}) ORDER BY created_at DESC`,
+        )
         .all(...profileIds);
       for (const a of assessments) (assessmentsByProfile[a.profile_id] ??= []).push(a);
       const credentials = await db
-        .prepare(`SELECT * FROM expert_credentials WHERE profile_id IN (${placeholders}) ORDER BY created_at DESC`)
+        .prepare(
+          `SELECT * FROM expert_credentials WHERE profile_id IN (${placeholders}) ORDER BY created_at DESC`,
+        )
         .all(...profileIds);
       for (const c of credentials) (credentialsByProfile[c.profile_id] ??= []).push(c);
     }

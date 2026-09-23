@@ -28,7 +28,11 @@ export function useAuthPage({ login = false }: { login?: boolean }) {
     setError('');
     const data = new FormData(e.currentTarget);
     try {
-      const result = await api<{ verificationRequired?: boolean; challengeId?: string; developmentCode?: string }>(
+      const result = await api<{
+        verificationRequired?: boolean;
+        challengeId?: string;
+        developmentCode?: string;
+      }>(
         login ? '/auth/login' : '/auth/signup',
         login
           ? { email: data.get('email'), password: data.get('password') }
@@ -40,8 +44,11 @@ export function useAuthPage({ login = false }: { login?: boolean }) {
             },
       );
       if (result.verificationRequired) {
-        if (result.developmentCode) sessionStorage.setItem('lamid-development-otp', result.developmentCode);
-        navigate(`/verify?email=${encodeURIComponent(String(data.get('email')))}${result.challengeId ? `&challenge=${result.challengeId}` : ''}`);
+        if (result.developmentCode)
+          sessionStorage.setItem('lamid-development-otp', result.developmentCode);
+        navigate(
+          `/verify?email=${encodeURIComponent(String(data.get('email')))}${result.challengeId ? `&challenge=${result.challengeId}` : ''}`,
+        );
       } else navigate('/os');
     } catch (e) {
       setError((e as Error).message);

@@ -106,30 +106,28 @@ function normalise(values, direction) {
      information, so it contributes equally rather than dividing by
      zero or arbitrarily favouring someone. */
   if (span === 0) return values.map(() => 1);
-  return values.map((v) =>
-    direction === 'higher_better' ? (v - min) / span : (max - v) / span,
-  );
+  return values.map((v) => (direction === 'higher_better' ? (v - min) / span : (max - v) / span));
 }
 
-function scoreAll(
-  options,
-  criteria,
-  weightOverride,
-) {
+function scoreAll(options, criteria, weightOverride) {
   const weights = criteria.map((c) => Math.max(0, num(weightOverride?.[c.id] ?? c.weight)));
   const wSum = weights.reduce((a, b) => a + b, 0) || 1;
 
   const normalisedByCriterion = criteria.map((c) =>
-    normalise(options.map((o) => num(o.scores?.[c.id])), c.direction),
+    normalise(
+      options.map((o) => num(o.scores?.[c.id])),
+      c.direction,
+    ),
   );
 
   return options.map((o, oi) => ({
     id: o.id,
     name: o.name,
-    total: criteria.reduce(
-      (sum, _c, ci) => sum + normalisedByCriterion[ci][oi] * (weights[ci] / wSum),
-      0,
-    ) * 100,
+    total:
+      criteria.reduce(
+        (sum, _c, ci) => sum + normalisedByCriterion[ci][oi] * (weights[ci] / wSum),
+        0,
+      ) * 100,
   }));
 }
 
@@ -137,10 +135,7 @@ function scoreAll(
  * @param {SelectionOption[]} optionsIn
  * @param {Criterion[]} criteriaIn
  */
-export function computeSelection(
-  optionsIn,
-  criteriaIn,
-) {
+export function computeSelection(optionsIn, criteriaIn) {
   const warnings = [];
   const guidance = [];
 
@@ -150,17 +145,25 @@ export function computeSelection(
 
   if (criteria.length === 0 || all.length === 0) {
     return {
-      ranked: [], disqualified: [], winner: null, runnerUp: null,
-      marginPct: 0, tooCloseToCall: false, sensitivity: [], mostFragileCriterion: null,
+      ranked: [],
+      disqualified: [],
+      winner: null,
+      runnerUp: null,
+      marginPct: 0,
+      tooCloseToCall: false,
+      sensitivity: [],
+      mostFragileCriterion: null,
       headline: 'Nothing to compare yet.',
       guidance: [],
       warnings: ['Add at least two options and one criterion.'],
     };
   }
   if (live.length < 2) {
-    warnings.push(live.length === 1
-      ? 'Only one option is still in the running — this is an approval, not a selection.'
-      : 'Every option is disqualified.');
+    warnings.push(
+      live.length === 1
+        ? 'Only one option is still in the running — this is an approval, not a selection.'
+        : 'Every option is disqualified.',
+    );
   }
 
   const scored = scoreAll(live, criteria, undefined);
@@ -168,7 +171,10 @@ export function computeSelection(
 
   /* Per-criterion normalised values, reused for the breakdown. */
   const normPerCriterion = criteria.map((c) =>
-    normalise(live.map((o) => num(o.scores?.[c.id])), c.direction),
+    normalise(
+      live.map((o) => num(o.scores?.[c.id])),
+      c.direction,
+    ),
   );
   const wRaw = criteria.map((c) => Math.max(0, num(c.weight)));
   const wSum = wRaw.reduce((a, b) => a + b, 0) || 1;
@@ -179,25 +185,31 @@ export function computeSelection(
       const col = normPerCriterion[ci];
       const nv = oi >= 0 ? col[oi] : 0;
       return {
-        criterionId: c.id, name: c.name.trim(),
+        criterionId: c.id,
+        name: c.name.trim(),
         raw: num(o.scores?.[c.id]),
         normalised: r1(nv * 100) / 100,
         contribution: r1(nv * (wRaw[ci] / wSum) * 100),
-        isBest:  oi >= 0 && nv >= Math.max(...col) - 1e-9,
+        isBest: oi >= 0 && nv >= Math.max(...col) - 1e-9,
         isWorst: oi >= 0 && nv <= Math.min(...col) + 1e-9,
       };
     });
     return {
-      id: o.id, name: o.name.trim(),
+      id: o.id,
+      name: o.name.trim(),
       totalPct: disq ? 0 : r1(byId.get(o.id) ?? 0),
-      rank: 0, breakdown, dominatedBy: null,
+      rank: 0,
+      breakdown,
+      dominatedBy: null,
       disqualified: disq,
       ...(o.disqualifiedReason ? { disqualifiedReason: o.disqualifiedReason } : {}),
     };
   };
 
   const ranked = live.map((o) => build(o, false)).sort((a, b) => b.totalPct - a.totalPct);
-  ranked.forEach((o, i) => { o.rank = i + 1; });
+  ranked.forEach((o, i) => {
+    o.rank = i + 1;
+  });
   const disqualified = all.filter((o) => o.disqualified).map((o) => build(o, true));
 
   /* ── Dominance ──
@@ -208,12 +220,16 @@ export function computeSelection(
   for (const a of ranked) {
     for (const b of ranked) {
       if (a.id === b.id) continue;
-      const bBeatsA = criteria.every((_c, ci) => {
-        const av = a.breakdown[ci].normalised;
-        const bv = b.breakdown[ci].normalised;
-        return bv >= av;
-      }) && criteria.some((_c, ci) => b.breakdown[ci].normalised > a.breakdown[ci].normalised);
-      if (bBeatsA) { a.dominatedBy = b.name; break; }
+      const bBeatsA =
+        criteria.every((_c, ci) => {
+          const av = a.breakdown[ci].normalised;
+          const bv = b.breakdown[ci].normalised;
+          return bv >= av;
+        }) && criteria.some((_c, ci) => b.breakdown[ci].normalised > a.breakdown[ci].normalised);
+      if (bBeatsA) {
+        a.dominatedBy = b.name;
+        break;
+      }
     }
   }
 
@@ -239,7 +255,9 @@ export function computeSelection(
         for (const dir of ['increase', 'decrease']) {
           const delta = (dir === 'increase' ? 1 : -1) * (step / 100) * wSum;
           const next = Math.max(0, wRaw[ci] + delta);
-          const override = Object.fromEntries(criteria.map((x, xi) => [x.id, xi === ci ? next : wRaw[xi]]));
+          const override = Object.fromEntries(
+            criteria.map((x, xi) => [x.id, xi === ci ? next : wRaw[xi]]),
+          );
           const re = scoreAll(live, criteria, override).sort((a, b) => b.total - a.total);
           if (re[0] && re[0].id !== winner.id) {
             flipDistancePct = step;
@@ -251,7 +269,14 @@ export function computeSelection(
         if (flipDistancePct !== null) break;
       }
     }
-    return { criterionId: c.id, name: c.name.trim(), currentWeightPct: currentPct, flipDistancePct, flipsTo, direction };
+    return {
+      criterionId: c.id,
+      name: c.name.trim(),
+      currentWeightPct: currentPct,
+      flipDistancePct,
+      flipsTo,
+      direction,
+    };
   });
 
   const flippable = sensitivity.filter((s) => s.flipDistancePct !== null);
@@ -261,40 +286,62 @@ export function computeSelection(
 
   /* ── Guidance ── */
   if (tooCloseToCall && winner && runnerUp) {
-    guidance.push(`${winner.name} and ${runnerUp.name} are ${marginPct} points apart. That is inside the noise of the inputs — treat this as a tie and choose on something the scoring does not capture.`);
+    guidance.push(
+      `${winner.name} and ${runnerUp.name} are ${marginPct} points apart. That is inside the noise of the inputs — treat this as a tie and choose on something the scoring does not capture.`,
+    );
   }
   const fragileDistance = mostFragileCriterion?.flipDistancePct ?? null;
   if (mostFragileCriterion && fragileDistance !== null) {
     const f = mostFragileCriterion;
     const dir = f.direction === 'increase' ? 'up' : 'down';
-    guidance.push(fragileDistance <= 5
-      ? `The result is fragile: moving "${f.name}" by ${fragileDistance} points ${dir} hands it to ${f.flipsTo}. Agree that weight before relying on the answer.`
-      : `"${f.name}" is the weight that matters most — it would have to shift ${fragileDistance} points ${dir} before ${f.flipsTo} takes over.`);
+    guidance.push(
+      fragileDistance <= 5
+        ? `The result is fragile: moving "${f.name}" by ${fragileDistance} points ${dir} hands it to ${f.flipsTo}. Agree that weight before relying on the answer.`
+        : `"${f.name}" is the weight that matters most — it would have to shift ${fragileDistance} points ${dir} before ${f.flipsTo} takes over.`,
+    );
   }
   if (flippable.length === 0 && winner && live.length >= 2) {
-    guidance.push(`No single weight change flips this result — ${winner.name} wins under every weighting tested. That is a robust answer.`);
+    guidance.push(
+      `No single weight change flips this result — ${winner.name} wins under every weighting tested. That is a robust answer.`,
+    );
   }
   const dominated = ranked.filter((o) => o.dominatedBy);
   if (dominated.length > 0) {
-    guidance.push(`${dominated.map((d) => d.name).join(', ')} ${dominated.length > 1 ? 'are' : 'is'} beaten on every criterion. Keeping ${dominated.length > 1 ? 'them' : 'it'} in the comparison adds the appearance of choice, not choice.`);
+    guidance.push(
+      `${dominated.map((d) => d.name).join(', ')} ${dominated.length > 1 ? 'are' : 'is'} beaten on every criterion. Keeping ${dominated.length > 1 ? 'them' : 'it'} in the comparison adds the appearance of choice, not choice.`,
+    );
   }
   if (winner) {
     const weakest = winner.breakdown.filter((b) => b.isWorst);
     if (weakest.length > 0) {
-      guidance.push(`${winner.name} wins overall but is the worst option on ${weakest.map((w) => w.name).join(', ')}. Make sure that is acceptable rather than merely outweighed.`);
+      guidance.push(
+        `${winner.name} wins overall but is the worst option on ${weakest.map((w) => w.name).join(', ')}. Make sure that is acceptable rather than merely outweighed.`,
+      );
     }
   }
 
   const zeroWeights = criteria.filter((c) => num(c.weight) <= 0);
   if (zeroWeights.length > 0) {
-    warnings.push(`${zeroWeights.map((c) => c.name).join(', ')} carry zero weight and had no effect. Remove them or give them a weight.`);
+    warnings.push(
+      `${zeroWeights.map((c) => c.name).join(', ')} carry zero weight and had no effect. Remove them or give them a weight.`,
+    );
   }
-  if (criteria.length > 0 && criteria.every((c) => num(c.weight) === num(criteria[0].weight)) && criteria.length > 2) {
-    warnings.push('Every criterion carries the same weight. If they genuinely matter equally that is fine, but it is more often a weighting nobody has done yet.');
+  if (
+    criteria.length > 0 &&
+    criteria.every((c) => num(c.weight) === num(criteria[0].weight)) &&
+    criteria.length > 2
+  ) {
+    warnings.push(
+      'Every criterion carries the same weight. If they genuinely matter equally that is fine, but it is more often a weighting nobody has done yet.',
+    );
   }
-  const flat = criteria.filter((_c, ci) => new Set(normPerCriterion[ci].map((v) => r1(v * 100))).size === 1);
+  const flat = criteria.filter(
+    (_c, ci) => new Set(normPerCriterion[ci].map((v) => r1(v * 100))).size === 1,
+  );
   if (flat.length > 0) {
-    warnings.push(`${flat.map((c) => c.name).join(', ')} score identically across every option, so ${flat.length > 1 ? 'they cannot' : 'it cannot'} discriminate between them.`);
+    warnings.push(
+      `${flat.map((c) => c.name).join(', ')} score identically across every option, so ${flat.length > 1 ? 'they cannot' : 'it cannot'} discriminate between them.`,
+    );
   }
 
   const headline = !winner
@@ -304,8 +351,17 @@ export function computeSelection(
       : `${winner.name} wins by ${marginPct} points${mostFragileCriterion && fragileDistance !== null ? `, and holds unless "${mostFragileCriterion.name}" moves ${fragileDistance} points` : ' under every weighting tested'}.`;
 
   return {
-    ranked, disqualified, winner, runnerUp, marginPct, tooCloseToCall,
-    sensitivity, mostFragileCriterion, headline, guidance, warnings,
+    ranked,
+    disqualified,
+    winner,
+    runnerUp,
+    marginPct,
+    tooCloseToCall,
+    sensitivity,
+    mostFragileCriterion,
+    headline,
+    guidance,
+    warnings,
   };
 }
 
@@ -313,11 +369,18 @@ export function computeSelection(
 export function selectionToPrompt(r) {
   const lines = [`• ${r.headline}`];
   for (const o of r.ranked) {
-    lines.push(`• ${o.rank}. ${o.name}: ${o.totalPct}%${o.dominatedBy ? ` (DOMINATED by ${o.dominatedBy})` : ''}`);
+    lines.push(
+      `• ${o.rank}. ${o.name}: ${o.totalPct}%${o.dominatedBy ? ` (DOMINATED by ${o.dominatedBy})` : ''}`,
+    );
   }
-  for (const d of r.disqualified) lines.push(`• DISQUALIFIED: ${d.name}${d.disqualifiedReason ? ` — ${d.disqualifiedReason}` : ''}`);
+  for (const d of r.disqualified)
+    lines.push(
+      `• DISQUALIFIED: ${d.name}${d.disqualifiedReason ? ` — ${d.disqualifiedReason}` : ''}`,
+    );
   for (const s of r.sensitivity) {
-    lines.push(`• Weight "${s.name}" at ${s.currentWeightPct}%: ${s.flipDistancePct === null ? 'no shift changes the winner' : `${s.flipDistancePct}pt ${s.direction} hands it to ${s.flipsTo}`}`);
+    lines.push(
+      `• Weight "${s.name}" at ${s.currentWeightPct}%: ${s.flipDistancePct === null ? 'no shift changes the winner' : `${s.flipDistancePct}pt ${s.direction} hands it to ${s.flipsTo}`}`,
+    );
   }
   for (const g of r.guidance) lines.push(`• ${g}`);
   return lines.join('\n');

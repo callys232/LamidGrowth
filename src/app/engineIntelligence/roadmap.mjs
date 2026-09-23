@@ -113,10 +113,17 @@ export function computeRoadmap(
 
   if (items.length === 0) {
     return {
-      periods: [], unscheduled: [], criticalPathLength: 0, criticalPath: [],
-      totalValue: 0, scheduledValue: 0, valueCapturedPct: 0, valueMedianPeriod: null,
+      periods: [],
+      unscheduled: [],
+      criticalPathLength: 0,
+      criticalPath: [],
+      totalValue: 0,
+      scheduledValue: 0,
+      valueCapturedPct: 0,
+      valueMedianPeriod: null,
       headline: 'Nothing to schedule yet.',
-      guidance: [], warnings: ['Add initiatives to sequence.'],
+      guidance: [],
+      warnings: ['Add initiatives to sequence.'],
     };
   }
 
@@ -130,7 +137,9 @@ export function computeRoadmap(
   for (const i of items) {
     const missing = (i.dependsOn ?? []).filter((d) => !byId.has(d));
     if (missing.length) {
-      warnings.push(`"${i.name}" depends on ${missing.length} item(s) that are not in the list. Those links were ignored.`);
+      warnings.push(
+        `"${i.name}" depends on ${missing.length} item(s) that are not in the list. Those links were ignored.`,
+      );
     }
   }
 
@@ -143,13 +152,21 @@ export function computeRoadmap(
   const cyclic = new Set();
 
   const depth = (id, seen) => {
-    if (seen.has(id)) { cyclic.add(id); return 0; }
+    if (seen.has(id)) {
+      cyclic.add(id);
+      return 0;
+    }
     if (depthCache.has(id)) return depthCache.get(id);
-    const next = new Set(seen); next.add(id);
-    let best = 0; let bestChain = [];
+    const next = new Set(seen);
+    next.add(id);
+    let best = 0;
+    let bestChain = [];
     for (const d of deps(id)) {
       const dd = depth(d, next);
-      if (dd + 1 > best) { best = dd + 1; bestChain = [...(chainCache.get(d) ?? [d])]; }
+      if (dd + 1 > best) {
+        best = dd + 1;
+        bestChain = [...(chainCache.get(d) ?? [d])];
+      }
     }
     depthCache.set(id, best);
     chainCache.set(id, [...bestChain, id]);
@@ -158,7 +175,9 @@ export function computeRoadmap(
   for (const i of items) depth(i.id, new Set());
 
   if (cyclic.size > 0) {
-    warnings.push(`Circular dependency involving: ${[...cyclic].map((id) => byId.get(id)?.name ?? id).join(', ')}. No ordering can satisfy it — those items were excluded.`);
+    warnings.push(
+      `Circular dependency involving: ${[...cyclic].map((id) => byId.get(id)?.name ?? id).join(', ')}. No ordering can satisfy it — those items were excluded.`,
+    );
   }
 
   const schedulable = items.filter((i) => !cyclic.has(i.id));
@@ -189,27 +208,32 @@ export function computeRoadmap(
     let used = 0;
     const placed = [];
 
-    const eligible = () => [...remaining]
-      .map((id) => byId.get(id))
-      .filter((i) => {
-        if (num(i.earliestPeriod, 1) > p) return false;
-        return deps(i.id).every((d) => (completedBy.get(d) ?? Infinity) < p);
-      })
-      .sort((a, b) => {
-        if (Boolean(b.mandatory) !== Boolean(a.mandatory)) return Number(Boolean(b.mandatory)) - Number(Boolean(a.mandatory));
-        const ra = num(a.value) / Math.max(0.1, num(a.effort, 1));
-        const rb = num(b.value) / Math.max(0.1, num(b.effort, 1));
-        return rb - ra;
-      });
+    const eligible = () =>
+      [...remaining]
+        .map((id) => byId.get(id))
+        .filter((i) => {
+          if (num(i.earliestPeriod, 1) > p) return false;
+          return deps(i.id).every((d) => (completedBy.get(d) ?? Infinity) < p);
+        })
+        .sort((a, b) => {
+          if (Boolean(b.mandatory) !== Boolean(a.mandatory))
+            return Number(Boolean(b.mandatory)) - Number(Boolean(a.mandatory));
+          const ra = num(a.value) / Math.max(0.1, num(a.effort, 1));
+          const rb = num(b.value) / Math.max(0.1, num(b.effort, 1));
+          return rb - ra;
+        });
 
     for (const i of eligible()) {
       const effort = Math.max(0, num(i.effort, 1));
-      if (used + effort > CAP) continue;         // try the next, smaller item
+      if (used + effort > CAP) continue; // try the next, smaller item
       used += effort;
       const depBound = deps(i.id).some((d) => (completedBy.get(d) ?? 0) === p - 1);
       const item = {
-        id: i.id, name: i.name.trim(), period: p,
-        value: num(i.value), effort,
+        id: i.id,
+        name: i.name.trim(),
+        period: p,
+        value: num(i.value),
+        effort,
         ratio: r1(num(i.value) / Math.max(0.1, effort)),
         mandatory: Boolean(i.mandatory),
         dependencyBound: depBound,
@@ -227,7 +251,10 @@ export function computeRoadmap(
     for (const i of placed) completedBy.set(i.id, p);
 
     plans.push({
-      period: p, items: placed, effortUsed: r1(used), capacity: CAP,
+      period: p,
+      items: placed,
+      effortUsed: r1(used),
+      capacity: CAP,
       utilisationPct: r1((used / CAP) * 100),
       valueDelivered: r1(placed.reduce((s, x) => s + x.value, 0)),
     });
@@ -240,17 +267,23 @@ export function computeRoadmap(
     const unmet = deps(id).filter((d) => !completedBy.has(d));
     const effort = Math.max(0, num(i.effort, 1));
     unscheduled.push({
-      id, name: i.name,
-      why: effort > CAP
-        ? `Needs ${effort} effort but a ${periodLabel.toLowerCase()} only holds ${CAP}. Split it or raise capacity.`
-        : unmet.length > 0
-          ? `Blocked — ${unmet.map((d) => byId.get(d)?.name ?? d).join(', ')} never got scheduled.`
-          : `No capacity left across the ${P} ${periodLabel.toLowerCase()}s planned.`,
+      id,
+      name: i.name,
+      why:
+        effort > CAP
+          ? `Needs ${effort} effort but a ${periodLabel.toLowerCase()} only holds ${CAP}. Split it or raise capacity.`
+          : unmet.length > 0
+            ? `Blocked — ${unmet.map((d) => byId.get(d)?.name ?? d).join(', ')} never got scheduled.`
+            : `No capacity left across the ${P} ${periodLabel.toLowerCase()}s planned.`,
     });
   }
   for (const id of cyclic) {
     const i = byId.get(id);
-    unscheduled.push({ id, name: i.name, why: 'Part of a circular dependency — cannot be ordered.' });
+    unscheduled.push({
+      id,
+      name: i.name,
+      why: 'Part of a circular dependency — cannot be ordered.',
+    });
   }
 
   const totalValue = r1(items.reduce((s, i) => s + num(i.value), 0));
@@ -270,32 +303,49 @@ export function computeRoadmap(
 
   /* ── Guidance ── */
   if (criticalPathLength > P) {
-    guidance.push(`The dependency chain is ${criticalPathLength} ${periodLabel.toLowerCase()}s long but only ${P} are planned. No amount of extra capacity compresses this — the chain is the floor. Break a dependency or extend the horizon.`);
+    guidance.push(
+      `The dependency chain is ${criticalPathLength} ${periodLabel.toLowerCase()}s long but only ${P} are planned. No amount of extra capacity compresses this — the chain is the floor. Break a dependency or extend the horizon.`,
+    );
   }
   const avgUtil = plans.length ? plans.reduce((s, p) => s + p.utilisationPct, 0) / plans.length : 0;
   if (avgUtil > 95) {
-    guidance.push(`Average utilisation is ${r1(avgUtil)}%. A plan with no slack absorbs no surprises — the first delay cascades through everything behind it.`);
+    guidance.push(
+      `Average utilisation is ${r1(avgUtil)}%. A plan with no slack absorbs no surprises — the first delay cascades through everything behind it.`,
+    );
   } else if (avgUtil < 45 && unscheduled.length === 0) {
-    guidance.push(`Average utilisation is only ${r1(avgUtil)}%. There is room for more, or the horizon can be shortened.`);
+    guidance.push(
+      `Average utilisation is only ${r1(avgUtil)}%. There is room for more, or the horizon can be shortened.`,
+    );
   }
   if (valueMedianPeriod !== null && valueMedianPeriod > Math.ceil(P / 2)) {
-    guidance.push(`Half the value does not land until ${periodLabel.toLowerCase()} ${valueMedianPeriod} of ${P}. The plan is back-loaded — check whether anything valuable can be pulled forward.`);
+    guidance.push(
+      `Half the value does not land until ${periodLabel.toLowerCase()} ${valueMedianPeriod} of ${P}. The plan is back-loaded — check whether anything valuable can be pulled forward.`,
+    );
   }
   const firstEmpty = plans.find((p) => p.items.length === 0);
   if (firstEmpty && scheduled.length > 0) {
-    guidance.push(`${periodLabel} ${firstEmpty.period} is empty while work remains unscheduled — usually a dependency stall rather than a capacity one.`);
+    guidance.push(
+      `${periodLabel} ${firstEmpty.period} is empty while work remains unscheduled — usually a dependency stall rather than a capacity one.`,
+    );
   }
 
-  const headline = scheduled.length === 0
-    ? 'Nothing could be scheduled — every item is blocked, oversized or out of capacity.'
-    : `${scheduled.length} of ${items.length} initiatives scheduled across ${P} ${periodLabel.toLowerCase()}s, capturing ${totalValue > 0 ? r1((scheduledValue / totalValue) * 100) : 0}% of available value.`;
+  const headline =
+    scheduled.length === 0
+      ? 'Nothing could be scheduled — every item is blocked, oversized or out of capacity.'
+      : `${scheduled.length} of ${items.length} initiatives scheduled across ${P} ${periodLabel.toLowerCase()}s, capturing ${totalValue > 0 ? r1((scheduledValue / totalValue) * 100) : 0}% of available value.`;
 
   return {
-    periods: plans, unscheduled,
-    criticalPathLength, criticalPath,
-    totalValue, scheduledValue,
+    periods: plans,
+    unscheduled,
+    criticalPathLength,
+    criticalPath,
+    totalValue,
+    scheduledValue,
     valueCapturedPct: totalValue > 0 ? r1((scheduledValue / totalValue) * 100) : 0,
-    valueMedianPeriod, headline, guidance, warnings,
+    valueMedianPeriod,
+    headline,
+    guidance,
+    warnings,
   };
 }
 
@@ -303,9 +353,14 @@ export function computeRoadmap(
 export function roadmapToPrompt(r) {
   const lines = [`• ${r.headline}`];
   for (const p of r.periods) {
-    lines.push(`• Period ${p.period} (${p.utilisationPct}% used): ${p.items.map((i) => i.name).join(', ') || 'nothing scheduled'}`);
+    lines.push(
+      `• Period ${p.period} (${p.utilisationPct}% used): ${p.items.map((i) => i.name).join(', ') || 'nothing scheduled'}`,
+    );
   }
-  if (r.criticalPathLength) lines.push(`• Critical path: ${r.criticalPath.join(' → ')} (${r.criticalPathLength} periods minimum)`);
+  if (r.criticalPathLength)
+    lines.push(
+      `• Critical path: ${r.criticalPath.join(' → ')} (${r.criticalPathLength} periods minimum)`,
+    );
   for (const u of r.unscheduled) lines.push(`• NOT SCHEDULED: ${u.name} — ${u.why}`);
   for (const g of r.guidance) lines.push(`• ${g}`);
   return lines.join('\n');

@@ -10,18 +10,18 @@ These are ten automated regional profiles, not ten recruited people — same Chr
 
 ## Results by profile
 
-| Profile | Locale / viewport | Goal | Outcome |
-| --- | --- | --- | --- |
-| Lagos | en-NG / 360×800 | Plan my first client project | Full journey completed. Free worksheet delivered, balance unchanged (100→100). |
-| Nairobi | en-KE / 390×844 | Build my professional skills | Full journey completed. Free worksheet delivered, balance unchanged. |
-| London | en-GB / 1440×900 | Prepare a client proposal | Full journey completed. Free worksheet delivered, balance unchanged. |
-| New York | en-US / 1366×768 | Plan a career transition | Full journey completed. Free worksheet delivered, balance unchanged. |
-| Toronto | en-CA / 768×1024 | Launch a weekly content series | Full journey completed. Free worksheet delivered, balance unchanged. |
-| Berlin | de-DE / 1280×800 | Grow my consulting business | Full journey completed. Free worksheet delivered, balance unchanged. Interface remained English. |
-| Mumbai | en-IN / 360×740 | Make progress on my learning goal | Full journey completed. Free worksheet delivered, balance unchanged. |
-| Dubai | ar-AE / 390×844 | Plan a new service launch | Full journey completed. Free worksheet delivered, balance unchanged. Document language remained English. |
-| Sao Paulo | pt-BR / 375×812 | Prepare a creative project | Full journey completed. Free worksheet delivered, balance unchanged. Document language remained English. |
-| Sydney | en-AU / 1440×900 | Improve my weekly planning | Full journey completed. Free worksheet delivered, balance unchanged. |
+| Profile   | Locale / viewport | Goal                              | Outcome                                                                                                  |
+| --------- | ----------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Lagos     | en-NG / 360×800   | Plan my first client project      | Full journey completed. Free worksheet delivered, balance unchanged (100→100).                           |
+| Nairobi   | en-KE / 390×844   | Build my professional skills      | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
+| London    | en-GB / 1440×900  | Prepare a client proposal         | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
+| New York  | en-US / 1366×768  | Plan a career transition          | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
+| Toronto   | en-CA / 768×1024  | Launch a weekly content series    | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
+| Berlin    | de-DE / 1280×800  | Grow my consulting business       | Full journey completed. Free worksheet delivered, balance unchanged. Interface remained English.         |
+| Mumbai    | en-IN / 360×740   | Make progress on my learning goal | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
+| Dubai     | ar-AE / 390×844   | Plan a new service launch         | Full journey completed. Free worksheet delivered, balance unchanged. Document language remained English. |
+| Sao Paulo | pt-BR / 375×812   | Prepare a creative project        | Full journey completed. Free worksheet delivered, balance unchanged. Document language remained English. |
+| Sydney    | en-AU / 1440×900  | Improve my weekly planning        | Full journey completed. Free worksheet delivered, balance unchanged.                                     |
 
 ### Counts
 
@@ -36,7 +36,7 @@ These are ten automated regional profiles, not ten recruited people — same Chr
 
 ## Point-by-point against the first study's findings
 
-**1. "Users can pay without receiving the requested deliverable" — fixed.** Root cause was two-fold: (a) points were charged before a specialist ran, so a tool that bounced back "which job ID?" still got marked complete and paid for; (b) the free-text goal-coordination flow was assigning job-specific document builders (client brief, scope of work, etc.) that structurally can never receive a job ID in that flow. Both are corrected: prerequisites are now validated *before* any charge (a missing job/proposal/milestone ID, or an unavailable AI provider, is rejected up front with an explicit "no points have been charged" message), and the default coordinated-task flow now uses a free, always-available Starter Plan step instead of specialists that could never succeed there. Reverified independently with a direct backend test (missing-jobId request → 422, balance unchanged) in addition to this browser retest.
+**1. "Users can pay without receiving the requested deliverable" — fixed.** Root cause was two-fold: (a) points were charged before a specialist ran, so a tool that bounced back "which job ID?" still got marked complete and paid for; (b) the free-text goal-coordination flow was assigning job-specific document builders (client brief, scope of work, etc.) that structurally can never receive a job ID in that flow. Both are corrected: prerequisites are now validated _before_ any charge (a missing job/proposal/milestone ID, or an unavailable AI provider, is rejected up front with an explicit "no points have been charged" message), and the default coordinated-task flow now uses a free, always-available Starter Plan step instead of specialists that could never succeed there. Reverified independently with a direct backend test (missing-jobId request → 422, balance unchanged) in addition to this browser retest.
 
 **2. "Goal creation can look unsuccessful after a successful write" — appears fixed, not exercised under adversarial timing here.** Code inspection confirms the specific bug (a superseded background refresh throwing an error into the objective form, keeping the modal open after a successful save) is corrected — the modal now closes immediately on a successful save, and a stale/failed background refresh is silently discarded instead of surfacing as a form error. All 10 profiles' goal-creation steps completed without the modal sticking, but this retest doesn't deliberately race a background poll against form submission the way real concurrent usage might — worth a dedicated timing test before calling this fully closed.
 
@@ -52,7 +52,7 @@ Same limitation as the original study, worth repeating rather than letting it fa
 
 ## Honest assessment
 
-This is a materially better first-run experience than the first study found. The single biggest trust-breaker — "the app charged me points for asking me a question back" — is gone, and replaced with an experience that gives something real for free before ever asking for money. I would be comfortable letting a real prospect go through this exact flow today. I still wouldn't call the *paid* path validated — that's genuinely untested by both studies — and the English-only limitation is real if this product is being pitched as usable outside English-speaking markets.
+This is a materially better first-run experience than the first study found. The single biggest trust-breaker — "the app charged me points for asking me a question back" — is gone, and replaced with an experience that gives something real for free before ever asking for money. I would be comfortable letting a real prospect go through this exact flow today. I still wouldn't call the _paid_ path validated — that's genuinely untested by both studies — and the English-only limitation is real if this product is being pitched as usable outside English-speaking markets.
 
 ## Reproduction and evidence
 

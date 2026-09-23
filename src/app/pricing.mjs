@@ -8,7 +8,10 @@ const bundleSchema = z
     name: z.string().trim().min(1).max(120),
     description: z.string().trim().max(2000).default(''),
     priceMinor: z.number().int().positive(),
-    currency: z.string().regex(/^[A-Z]{3}$/).default('USD'),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/)
+      .default('USD'),
     pointsIncluded: z.number().int().min(0).default(0),
     billingCycle: z.enum(['one_time', 'monthly']).default('one_time'),
     agentIds: z.array(z.string().trim().min(1)).max(200).default([]),
@@ -48,7 +51,7 @@ export function mountPublicPricing(app, store) {
       .all();
     const learningPaths = await db
       .prepare(
-        "SELECT id, title AS name, points_cost FROM learning_paths WHERE points_cost IS NOT NULL AND points_cost > 0 ORDER BY title",
+        'SELECT id, title AS name, points_cost FROM learning_paths WHERE points_cost IS NOT NULL AND points_cost > 0 ORDER BY title',
       )
       .all();
     res.json({
@@ -58,14 +61,17 @@ export function mountPublicPricing(app, store) {
       learningPaths,
       deepReview: {
         name: 'AI Deep Review',
-        description: 'A thorough, evidence-grounded objective review — heavier than a Companion tool call.',
+        description:
+          'A thorough, evidence-grounded objective review — heavier than a Companion tool call.',
         pointsCost: engineReviewCost,
       },
     });
   });
 
   app.get('/api/bundles', async (req, res) => {
-    const bundles = await db.prepare("SELECT * FROM bundles WHERE status = 'active' ORDER BY price_minor").all();
+    const bundles = await db
+      .prepare("SELECT * FROM bundles WHERE status = 'active' ORDER BY price_minor")
+      .all();
     res.json(await Promise.all(bundles.map((bundle) => bundleWithItems(db, bundle.id))));
   });
 }
@@ -75,90 +81,119 @@ export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
   const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
 
   app.get('/api/admin/bundles', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can manage bundles.' });
+    if (!isAdmin(req))
+      return res.status(403).json({ error: 'Only an ecosystem administrator can manage bundles.' });
     const bundles = await db.prepare('SELECT * FROM bundles ORDER BY created_at DESC').all();
     res.json(await Promise.all(bundles.map((bundle) => bundleWithItems(db, bundle.id))));
   });
 
   app.post('/api/admin/bundles', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can create bundles.' });
+    if (!isAdmin(req))
+      return res.status(403).json({ error: 'Only an ecosystem administrator can create bundles.' });
     const input = bundleSchema.parse(req.body);
     const validAgentIds = input.agentIds.length
-      ? (await db
-          .prepare(`SELECT id FROM agent_manifests WHERE id IN (${input.agentIds.map(() => '?').join(',')})`)
-          .all(...input.agentIds))
-          .map((row) => row.id)
+      ? (
+          await db
+            .prepare(
+              `SELECT id FROM agent_manifests WHERE id IN (${input.agentIds.map(() => '?').join(',')})`,
+            )
+            .all(...input.agentIds)
+        ).map((row) => row.id)
       : [];
     if (validAgentIds.length !== input.agentIds.length)
       return res.status(400).json({ error: 'One or more selected tools do not exist.' });
     const id = randomUUID();
     const now = new Date().toISOString();
     await transaction(async () => {
-      await db.prepare(
-        `INSERT INTO bundles (id, name, description, price_minor, currency, points_included, billing_cycle, status, created_by, created_at, updated_at)
+      await db
+        .prepare(
+          `INSERT INTO bundles (id, name, description, price_minor, currency, points_included, billing_cycle, status, created_by, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?)`,
-      ).run(id, input.name, input.description, input.priceMinor, input.currency, input.pointsIncluded, input.billingCycle, req.user.id, now, now);
-      for (const agentId of validAgentIds)
-        await db.prepare('INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES (?, ?, ?, ?)').run(
-          randomUUID(),
+        )
+        .run(
           id,
-          agentId,
+          input.name,
+          input.description,
+          input.priceMinor,
+          input.currency,
+          input.pointsIncluded,
+          input.billingCycle,
+          req.user.id,
+          now,
           now,
         );
+      for (const agentId of validAgentIds)
+        await db
+          .prepare(
+            'INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES (?, ?, ?, ?)',
+          )
+          .run(randomUUID(), id, agentId, now);
       await log(req.workspace.id, req.user.name, 'Bundle created', id, input.name);
     });
     res.status(201).json(await bundleWithItems(db, id));
   });
 
   app.patch('/api/admin/bundles/:id', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can edit bundles.' });
+    if (!isAdmin(req))
+      return res.status(403).json({ error: 'Only an ecosystem administrator can edit bundles.' });
     const existing = await db.prepare('SELECT * FROM bundles WHERE id = ?').get(req.params.id);
     if (!existing) return res.status(404).json({ error: 'Bundle not found.' });
     const input = bundleUpdateSchema.parse(req.body);
     let validAgentIds = null;
     if (input.agentIds) {
       validAgentIds = input.agentIds.length
-        ? (await db
-            .prepare(`SELECT id FROM agent_manifests WHERE id IN (${input.agentIds.map(() => '?').join(',')})`)
-            .all(...input.agentIds))
-            .map((row) => row.id)
+        ? (
+            await db
+              .prepare(
+                `SELECT id FROM agent_manifests WHERE id IN (${input.agentIds.map(() => '?').join(',')})`,
+              )
+              .all(...input.agentIds)
+          ).map((row) => row.id)
         : [];
       if (validAgentIds.length !== input.agentIds.length)
         return res.status(400).json({ error: 'One or more selected tools do not exist.' });
     }
     const now = new Date().toISOString();
     await transaction(async () => {
-      await db.prepare(
-        `UPDATE bundles SET name = ?, description = ?, price_minor = ?, currency = ?, points_included = ?, billing_cycle = ?, status = ?, updated_at = ?
+      await db
+        .prepare(
+          `UPDATE bundles SET name = ?, description = ?, price_minor = ?, currency = ?, points_included = ?, billing_cycle = ?, status = ?, updated_at = ?
          WHERE id = ?`,
-      ).run(
-        input.name ?? existing.name,
-        input.description ?? existing.description,
-        input.priceMinor ?? existing.price_minor,
-        input.currency ?? existing.currency,
-        input.pointsIncluded ?? existing.points_included,
-        input.billingCycle ?? existing.billing_cycle,
-        input.status ?? existing.status,
-        now,
-        req.params.id,
-      );
+        )
+        .run(
+          input.name ?? existing.name,
+          input.description ?? existing.description,
+          input.priceMinor ?? existing.price_minor,
+          input.currency ?? existing.currency,
+          input.pointsIncluded ?? existing.points_included,
+          input.billingCycle ?? existing.billing_cycle,
+          input.status ?? existing.status,
+          now,
+          req.params.id,
+        );
       if (validAgentIds) {
         await db.prepare('DELETE FROM bundle_items WHERE bundle_id = ?').run(req.params.id);
         for (const agentId of validAgentIds)
-          await db.prepare('INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES (?, ?, ?, ?)').run(
-            randomUUID(),
-            req.params.id,
-            agentId,
-            now,
-          );
+          await db
+            .prepare(
+              'INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES (?, ?, ?, ?)',
+            )
+            .run(randomUUID(), req.params.id, agentId, now);
       }
-      await log(req.workspace.id, req.user.name, 'Bundle updated', req.params.id, input.name ?? existing.name);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Bundle updated',
+        req.params.id,
+        input.name ?? existing.name,
+      );
     });
     res.json(await bundleWithItems(db, req.params.id));
   });
 
   app.delete('/api/admin/bundles/:id', async (req, res) => {
-    if (!isAdmin(req)) return res.status(403).json({ error: 'Only an ecosystem administrator can delete bundles.' });
+    if (!isAdmin(req))
+      return res.status(403).json({ error: 'Only an ecosystem administrator can delete bundles.' });
     const existing = await db.prepare('SELECT * FROM bundles WHERE id = ?').get(req.params.id);
     if (!existing) return res.status(404).json({ error: 'Bundle not found.' });
     await transaction(async () => {

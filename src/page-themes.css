@@ -237,7 +237,9 @@
   padding: 44px 0 44px 40px;
 }
 .content-page[data-page-theme='product'] .showcase-copy .editorial-section:not(.dark-section):hover,
-.content-page[data-page-theme='product'] .showcase-copy .editorial-section:not(.dark-section):focus-within {
+.content-page[data-page-theme='product']
+  .showcase-copy
+  .editorial-section:not(.dark-section):focus-within {
   border-color: var(--page-accent);
   box-shadow: none;
   background: transparent;

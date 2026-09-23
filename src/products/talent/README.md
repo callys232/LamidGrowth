@@ -6,6 +6,6 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route      | Page composition                                                   | Copy                                           |
+| ---------- | ------------------------------------------------------------------ | ---------------------------------------------- |
 | /os/people | [OsPeopleDocumentPage](./pages/os-people/OsPeopleDocumentPage.tsx) | [content.json](./pages/os-people/content.json) |

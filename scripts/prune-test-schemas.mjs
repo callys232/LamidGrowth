@@ -6,7 +6,13 @@ import { dirname, join } from 'node:path';
 
 // See the identical comment in server/store.mjs — Supabase's pooler needs its own root CA pinned
 // for real certificate verification, not rejectUnauthorized: false.
-const sslConfig = { rejectUnauthorized: true, ca: readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../server/supabase-ca.pem'), 'utf8') };
+const sslConfig = {
+  rejectUnauthorized: true,
+  ca: readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), '../server/supabase-ca.pem'),
+    'utf8',
+  ),
+};
 
 // Safety net, not the primary cleanup mechanism: every test file's own after()/t.after() hook
 // drops its disposable schema when it exits normally. This exists for the case that mechanism
@@ -20,7 +26,22 @@ if (!connectionString) {
   process.exit(1);
 }
 
-const KEEP = new Set(['public', 'information_schema', 'realtime', 'extensions', 'vault', 'graphql_public', 'graphql', 'auth', 'storage', 'pgsodium', 'pgsodium_masks', 'pgbouncer', 'cron', 'net']);
+const KEEP = new Set([
+  'public',
+  'information_schema',
+  'realtime',
+  'extensions',
+  'vault',
+  'graphql_public',
+  'graphql',
+  'auth',
+  'storage',
+  'pgsodium',
+  'pgsodium_masks',
+  'pgbouncer',
+  'cron',
+  'net',
+]);
 const olderThanMs = Number(process.argv[2]) || 60 * 60 * 1000; // default: 1 hour
 
 const pool = new pg.Pool({ connectionString, ssl: sslConfig, max: 1 });
@@ -36,7 +57,9 @@ try {
     if (KEEP.has(schema)) continue;
     let appliedAt = null;
     try {
-      const result = await pool.query(`SELECT applied_at FROM "${schema}".migrations WHERE version = 1`);
+      const result = await pool.query(
+        `SELECT applied_at FROM "${schema}".migrations WHERE version = 1`,
+      );
       appliedAt = result.rows[0]?.applied_at ? Date.parse(result.rows[0].applied_at) : null;
     } catch {
       // No migrations table (schema creation failed mid-way, or predates this scheme) — treat as

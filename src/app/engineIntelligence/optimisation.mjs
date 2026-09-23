@@ -97,20 +97,31 @@ export function computeOptimisation(stepsIn) {
   const raw = (stepsIn ?? []).filter((s) => s?.name?.trim());
   if (raw.length === 0) {
     return {
-      steps: [], throughput: 0, constraint: null, nextConstraint: null,
-      upliftOptions: [], wastedImprovements: [], totalCost: null, costPerUnit: null,
-      totalIdleCapacity: 0, idleCostEstimate: null,
+      steps: [],
+      throughput: 0,
+      constraint: null,
+      nextConstraint: null,
+      upliftOptions: [],
+      wastedImprovements: [],
+      totalCost: null,
+      costPerUnit: null,
+      totalIdleCapacity: 0,
+      idleCostEstimate: null,
       headline: 'No process steps to analyse.',
-      guidance: [], warnings: ['Add the steps of the process, in order, with the capacity of each.'],
+      guidance: [],
+      warnings: ['Add the steps of the process, in order, with the capacity of each.'],
     };
   }
   if (raw.length === 1) {
-    warnings.push('A single step cannot have a constraint relative to anything else. Add the steps around it.');
+    warnings.push(
+      'A single step cannot have a constraint relative to anything else. Add the steps around it.',
+    );
   }
 
   const effective = raw.map((s) => ({
     ...s,
-    eff: Math.max(0, num(s.capacity)) * (Math.min(100, Math.max(0, num(s.efficiencyPct, 100))) / 100),
+    eff:
+      Math.max(0, num(s.capacity)) * (Math.min(100, Math.max(0, num(s.efficiencyPct, 100))) / 100),
   }));
 
   /* Throughput of a series process is the minimum effective capacity.
@@ -122,7 +133,8 @@ export function computeOptimisation(stepsIn) {
     const isConstraint = Math.abs(s.eff - throughput) < 1e-9;
     const cost = s.cost !== undefined ? num(s.cost) : null;
     return {
-      id: s.id, name: s.name.trim(),
+      id: s.id,
+      name: s.name.trim(),
       capacity: r1(num(s.capacity)),
       efficiencyPct: r1(num(s.efficiencyPct, 100)),
       effectiveCapacity: r1(s.eff),
@@ -153,14 +165,16 @@ export function computeOptimisation(stepsIn) {
       const src = raw.find((x) => x.id === s.id);
       const cpu = src?.costPerUnitUplift !== undefined ? num(src.costPerUnitUplift) : null;
       upliftOptions.push({
-        stepId: s.id, name: s.name,
+        stepId: s.id,
+        name: s.name,
         maxUsefulUplift: gain,
         newThroughput: r1(ceiling),
         cost: cpu !== null ? r2(cpu * gain) : null,
         costPerUnitGained: cpu,
-        note: gain > 0
-          ? `Relieving this lifts system output to ${r1(ceiling)} — at which point ${nextConstraint?.name ?? 'another step'} becomes the constraint. Buying capacity beyond that is wasted.`
-          : `Every step has the same effective capacity, so relieving this alone gains nothing. Lift them together or not at all.`,
+        note:
+          gain > 0
+            ? `Relieving this lifts system output to ${r1(ceiling)} — at which point ${nextConstraint?.name ?? 'another step'} becomes the constraint. Buying capacity beyond that is wasted.`
+            : `Every step has the same effective capacity, so relieving this alone gains nothing. Lift them together or not at all.`,
       });
     } else {
       wastedImprovements.push({
@@ -171,7 +185,8 @@ export function computeOptimisation(stepsIn) {
   }
 
   upliftOptions.sort((a, b) => {
-    if (a.costPerUnitGained !== null && b.costPerUnitGained !== null) return a.costPerUnitGained - b.costPerUnitGained;
+    if (a.costPerUnitGained !== null && b.costPerUnitGained !== null)
+      return a.costPerUnitGained - b.costPerUnitGained;
     return b.maxUsefulUplift - a.maxUsefulUplift;
   });
 
@@ -186,42 +201,62 @@ export function computeOptimisation(stepsIn) {
      holds — usually the most persuasive number in the whole analysis. */
   let idleCostEstimate = null;
   if (costed.length === raw.length && throughput > 0) {
-    idleCostEstimate = r2(steps.reduce((sum, s) => {
-      const c = num(raw.find((x) => x.id === s.id)?.cost);
-      const idleShare = s.effectiveCapacity > 0 ? s.idleCapacity / s.effectiveCapacity : 0;
-      return sum + c * idleShare;
-    }, 0));
+    idleCostEstimate = r2(
+      steps.reduce((sum, s) => {
+        const c = num(raw.find((x) => x.id === s.id)?.cost);
+        const idleShare = s.effectiveCapacity > 0 ? s.idleCapacity / s.effectiveCapacity : 0;
+        return sum + c * idleShare;
+      }, 0),
+    );
   }
 
   /* ── Guidance ── */
   if (constraint) {
-    guidance.push(`${constraint.name} sets system output at ${throughput} units. Nothing else changes that number.`);
+    guidance.push(
+      `${constraint.name} sets system output at ${throughput} units. Nothing else changes that number.`,
+    );
     if (nextConstraint) {
-      guidance.push(`Relieving it is worth doing only up to ${r1(ceiling)} units — beyond that ${nextConstraint.name} binds instead, and further spend on ${constraint.name} buys nothing.`);
+      guidance.push(
+        `Relieving it is worth doing only up to ${r1(ceiling)} units — beyond that ${nextConstraint.name} binds instead, and further spend on ${constraint.name} buys nothing.`,
+      );
     }
   }
   if (wastedImprovements.length > 0) {
-    guidance.push(`${wastedImprovements.length} step${wastedImprovements.length > 1 ? 's are' : ' is'} already faster than the system can use. Effort spent there produces queue, not output.`);
+    guidance.push(
+      `${wastedImprovements.length} step${wastedImprovements.length > 1 ? 's are' : ' is'} already faster than the system can use. Effort spent there produces queue, not output.`,
+    );
   }
   if (idleCostEstimate !== null && idleCostEstimate > 0) {
-    guidance.push(`Roughly ${idleCostEstimate} per period is spent on capacity the constraint prevents you from using.`);
+    guidance.push(
+      `Roughly ${idleCostEstimate} per period is spent on capacity the constraint prevents you from using.`,
+    );
   }
 
   const lowEff = steps.filter((s) => s.efficiencyPct < 70);
   if (lowEff.length > 0) {
-    guidance.push(`${lowEff.map((s) => s.name).join(', ')} run below 70% effectiveness. Recovering lost efficiency is usually far cheaper than buying capacity, and on the constraint it has the same effect.`);
+    guidance.push(
+      `${lowEff.map((s) => s.name).join(', ')} run below 70% effectiveness. Recovering lost efficiency is usually far cheaper than buying capacity, and on the constraint it has the same effect.`,
+    );
   }
   if (constraint && constraint.efficiencyPct < 90) {
-    guidance.push(`The constraint itself runs at ${constraint.efficiencyPct}% effectiveness — fix that before buying more of it. You are already paying for capacity you are not getting.`);
+    guidance.push(
+      `The constraint itself runs at ${constraint.efficiencyPct}% effectiveness — fix that before buying more of it. You are already paying for capacity you are not getting.`,
+    );
   }
 
-  const spread = sortedEff.length > 1
-    ? sortedEff[sortedEff.length - 1].effectiveCapacity - sortedEff[0].effectiveCapacity : 0;
+  const spread =
+    sortedEff.length > 1
+      ? sortedEff[sortedEff.length - 1].effectiveCapacity - sortedEff[0].effectiveCapacity
+      : 0;
   if (spread === 0 && steps.length > 1) {
-    warnings.push('Every step has identical effective capacity — a balanced line. It maximises utilisation but has no absorption for variability, so any disruption stops output immediately.');
+    warnings.push(
+      'Every step has identical effective capacity — a balanced line. It maximises utilisation but has no absorption for variability, so any disruption stops output immediately.',
+    );
   }
   if (steps.some((s) => s.capacity <= 0)) {
-    warnings.push('At least one step has zero capacity, which stops the process entirely. Check the inputs.');
+    warnings.push(
+      'At least one step has zero capacity, which stops the process entirely. Check the inputs.',
+    );
   }
 
   const headline = constraint
@@ -229,10 +264,19 @@ export function computeOptimisation(stepsIn) {
     : 'No constraint identified.';
 
   return {
-    steps, throughput, constraint, nextConstraint,
-    upliftOptions, wastedImprovements,
-    totalCost, costPerUnit, totalIdleCapacity, idleCostEstimate,
-    headline, guidance, warnings,
+    steps,
+    throughput,
+    constraint,
+    nextConstraint,
+    upliftOptions,
+    wastedImprovements,
+    totalCost,
+    costPerUnit,
+    totalIdleCapacity,
+    idleCostEstimate,
+    headline,
+    guidance,
+    warnings,
   };
 }
 
@@ -240,9 +284,12 @@ export function computeOptimisation(stepsIn) {
 export function optimisationToPrompt(r) {
   const lines = [`• ${r.headline}`];
   for (const s of r.steps) {
-    lines.push(`• ${s.name}: effective ${s.effectiveCapacity}, utilisation ${s.utilisationPct}%${s.isConstraint ? ' ← CONSTRAINT' : `, idle ${s.idleCapacity}`}`);
+    lines.push(
+      `• ${s.name}: effective ${s.effectiveCapacity}, utilisation ${s.utilisationPct}%${s.isConstraint ? ' ← CONSTRAINT' : `, idle ${s.idleCapacity}`}`,
+    );
   }
-  for (const u of r.upliftOptions) lines.push(`• UPLIFT ${u.name}: +${u.maxUsefulUplift} useful, ${u.note}`);
+  for (const u of r.upliftOptions)
+    lines.push(`• UPLIFT ${u.name}: +${u.maxUsefulUplift} useful, ${u.note}`);
   for (const w of r.wastedImprovements) lines.push(`• WASTED IF IMPROVED: ${w.name} — ${w.why}`);
   for (const g of r.guidance) lines.push(`• ${g}`);
   return lines.join('\n');

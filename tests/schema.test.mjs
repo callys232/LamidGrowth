@@ -41,7 +41,9 @@ test('the consolidated migration creates all domain tables', async () => {
   try {
     for (const table of expectedTables) {
       const columns = await store.db
-        .prepare('SELECT column_name FROM information_schema.columns WHERE table_schema = ? AND table_name = ?')
+        .prepare(
+          'SELECT column_name FROM information_schema.columns WHERE table_schema = ? AND table_name = ?',
+        )
         .all(store.schema, table);
       assert.ok(columns.length > 0, `expected table "${table}" to exist with columns`);
     }
@@ -91,7 +93,9 @@ test('domain tables support a basic insert/select roundtrip', async () => {
 
     const profileId = randomUUID();
     await store.db
-      .prepare('INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .prepare(
+        'INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      )
       .run(
         profileId,
         user,
@@ -121,12 +125,33 @@ test('domain tables support a basic insert/select roundtrip', async () => {
     const projectId = randomUUID();
     await store.db
       .prepare('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(projectId, workspace, null, 'Test project', 'active', new Date().toISOString(), null, null);
+      .run(
+        projectId,
+        workspace,
+        null,
+        'Test project',
+        'active',
+        new Date().toISOString(),
+        null,
+        null,
+      );
     const milestoneId = randomUUID();
     await store.db
       .prepare('INSERT INTO milestones VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(milestoneId, projectId, 'Kickoff', '', 500, 'USD', null, 'planned', new Date().toISOString());
-    const milestone = await store.db.prepare('SELECT * FROM milestones WHERE id = ?').get(milestoneId);
+      .run(
+        milestoneId,
+        projectId,
+        'Kickoff',
+        '',
+        500,
+        'USD',
+        null,
+        'planned',
+        new Date().toISOString(),
+      );
+    const milestone = await store.db
+      .prepare('SELECT * FROM milestones WHERE id = ?')
+      .get(milestoneId);
     assert.equal(milestone.project_id, projectId);
   } finally {
     await store.dropSchema();

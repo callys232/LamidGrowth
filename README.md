@@ -27,9 +27,11 @@ Each sample session gets separate data. Creating another sample creates another 
 npm run build        # TypeScript checks and production assets
 npm start            # Serves built assets and API on localhost:3000
 npm test             # API authorization and behavior tests
-npm run test:e2e     # Browser journeys; install Chromium first if required
+npm run test:e2e     # Standard browser journeys; install Chromium first if required
 npm run format:check
 ```
+
+`npm test` and `npm run test:e2e` are the fast checks and are what CI runs. Five longer, exploratory Playwright suites (regional usability, paid specialist demos, deep marketplace coverage, a human-paced first visit, and a full public-page link/button sweep) are excluded from `test:e2e`'s default config and are not run in CI. Run them with `npm run test:exploratory`, or everything (build, unit/API tests, standard browser tests, exploratory suites, and formatting) with `npm run test:full`. Both require a real local Postgres reachable via `TEST_DATABASE_URL` — see [`audit-results/environment.cjs`](audit-results/environment.cjs) for a disposable-container example — and the exploratory suites must run sequentially (as the script does), since the paid-path and deep-coverage configs share a fixed schema.
 
 On Windows, an installed Edge browser can be used instead of downloading Chromium:
 

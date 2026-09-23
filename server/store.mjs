@@ -5,7 +5,11 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { acquireDatabaseClient, isDatabaseConnectionError, markDatabaseError } from './databaseErrors.mjs';
+import {
+  acquireDatabaseClient,
+  isDatabaseConnectionError,
+  markDatabaseError,
+} from './databaseErrors.mjs';
 
 // This module is the one common dependency of every entry point that needs DATABASE_URL
 // (the production server, the e2e server, and every test file run directly via `node --test`,
@@ -19,7 +23,10 @@ if (existsSync('.env')) process.loadEnvFile('.env');
 // actual public root CA here restores real verification. This is Supabase-specific by design —
 // this codebase is built around Supabase's Session Pooler throughout — so migrating to a
 // different Postgres host later means swapping this file, not just the connection string.
-const SUPABASE_CA = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'supabase-ca.pem'), 'utf8');
+const SUPABASE_CA = readFileSync(
+  join(dirname(fileURLToPath(import.meta.url)), 'supabase-ca.pem'),
+  'utf8',
+);
 const sslConfig = { rejectUnauthorized: true, ca: SUPABASE_CA };
 
 // pg returns BIGINT (OID 20) as strings by default, to avoid silently losing precision beyond
@@ -82,7 +89,10 @@ export async function withClient(pool, schema, work) {
   // so it must come off again before release, symmetric with the add.
   let discard = false;
   let workStarted = false;
-  const onError = (error) => { discard = true; console.error('Postgres client connection error:', error.message); };
+  const onError = (error) => {
+    discard = true;
+    console.error('Postgres client connection error:', error.message);
+  };
   client.on('error', onError);
   try {
     await client.query(`SET search_path TO "${schema}"`);
@@ -101,7 +111,11 @@ export async function withClient(pool, schema, work) {
 function createDb(pool, schema) {
   const run = (fn) => {
     const active = als.getStore();
-    return active ? fn(active).catch(error => { throw markDatabaseError(error, pool); }) : withClient(pool, schema, fn);
+    return active
+      ? fn(active).catch((error) => {
+          throw markDatabaseError(error, pool);
+        })
+      : withClient(pool, schema, fn);
   };
   return {
     prepare(sql) {
@@ -135,14 +149,19 @@ function createDb(pool, schema) {
 export function createTransaction(pool, schema) {
   return async function transaction(work) {
     if (als.getStore())
-      throw new Error('Nested transactions are not supported: a transaction() call was made while one was already active.');
+      throw new Error(
+        'Nested transactions are not supported: a transaction() call was made while one was already active.',
+      );
     const client = await acquireDatabaseClient(pool);
     // See the identical comment in withClient above — a checked-out client needs its own error
     // listener, not just the pool's, and it must come off again before release (pg reuses the
     // same Client object across checkouts, so an unpaired add leaks listeners indefinitely).
     let discard = false;
     let phase = 'begin';
-    const onError = (error) => { discard = true; console.error('Postgres client connection error:', error.message); };
+    const onError = (error) => {
+      discard = true;
+      console.error('Postgres client connection error:', error.message);
+    };
     client.on('error', onError);
     try {
       await client.query(`SET search_path TO "${schema}"`);
@@ -156,7 +175,13 @@ export function createTransaction(pool, schema) {
       if (phase !== 'work') markDatabaseError(error, pool);
       if (phase === 'commit' && isDatabaseConnectionError(error)) error.commitOutcomeUnknown = true;
       discard ||= isDatabaseConnectionError(error);
-      if (!discard) { try { await client.query('ROLLBACK'); } catch { discard = true; } }
+      if (!discard) {
+        try {
+          await client.query('ROLLBACK');
+        } catch {
+          discard = true;
+        }
+      }
       throw error;
     } finally {
       client.off('error', onError);
@@ -166,7 +191,12 @@ export function createTransaction(pool, schema) {
 }
 
 function sanitizeSchemaName(name) {
-  return name.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 60) || 'public';
+  return (
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '_')
+      .slice(0, 60) || 'public'
+  );
 }
 
 // The single consolidated schema (replaces 31 sequential SQLite migrations). There is no
@@ -795,7 +825,9 @@ INSERT INTO fx_rates (pair, rate, updated_at) VALUES
  */
 export async function openStore(filename, { poolMax } = {}) {
   const disposable = filename === ':memory:';
-  const schema = disposable ? `test_${randomBytes(6).toString('hex')}` : sanitizeSchemaName(filename || 'public');
+  const schema = disposable
+    ? `test_${randomBytes(6).toString('hex')}`
+    : sanitizeSchemaName(filename || 'public');
 
   // Any explicit `filename` (':memory:' or a named schema) only ever comes from test code —
   // server/index.mjs's real production boot never passes one. Routing every test call through a
@@ -806,11 +838,19 @@ export async function openStore(filename, { poolMax } = {}) {
   const isTestContext = filename !== undefined;
   if (isTestContext && !process.env.TEST_DATABASE_URL)
     throw new Error(
-      'TEST_DATABASE_URL is not set. Tests must run against a separate Supabase project from production — set TEST_DATABASE_URL in .env to that project\'s connection string.',
+      "TEST_DATABASE_URL is not set. Tests must run against a separate Supabase project from production — set TEST_DATABASE_URL in .env to that project's connection string.",
     );
   const connectionString = isTestContext ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
-  const bootstrap = new pg.Pool({ connectionString, ssl: sslConfig, max: 1, connectionTimeoutMillis: 15000, statement_timeout: 30000, query_timeout: 35000, lock_timeout: 10000 });
+  const bootstrap = new pg.Pool({
+    connectionString,
+    ssl: sslConfig,
+    max: 1,
+    connectionTimeoutMillis: 15000,
+    statement_timeout: 30000,
+    query_timeout: 35000,
+    lock_timeout: 10000,
+  });
   // node-postgres emits 'error' on the POOL (not the individual client) when an idle pooled
   // connection is severed — a network blip, Supabase recycling a connection, anything that
   // doesn't happen while the client is actively mid-query. With no listener, Node's default
@@ -818,9 +858,12 @@ export async function openStore(filename, { poolMax } = {}) {
   // confirmed by reproducing exactly this crash during manual testing. A query in flight on that
   // connection still rejects normally to its caller; this only stops the *idle*-connection case
   // from taking down every other request the process is serving.
-  bootstrap.on('error', (error) => console.error('Idle Postgres connection error (bootstrap pool):', error.message));
+  bootstrap.on('error', (error) =>
+    console.error('Idle Postgres connection error (bootstrap pool):', error.message),
+  );
   let bootstrapClient;
-  const onBootstrapClientError = error => console.error('Postgres bootstrap connection error:', error.message);
+  const onBootstrapClientError = (error) =>
+    console.error('Postgres bootstrap connection error:', error.message);
   try {
     bootstrapClient = await acquireDatabaseClient(bootstrap, { attempts: 2 });
     bootstrapClient.on('error', onBootstrapClientError);
@@ -838,7 +881,10 @@ export async function openStore(filename, { poolMax } = {}) {
     await bootstrap.end();
   }
 
-  const configuredPoolMax = Math.max(1, Math.floor(Number(poolMax) || Number(process.env.PG_POOL_MAX) || 10));
+  const configuredPoolMax = Math.max(
+    1,
+    Math.floor(Number(poolMax) || Number(process.env.PG_POOL_MAX) || 10),
+  );
   // Named reopen/shared-schema tests also use TEST_DATABASE_URL and must share its small budget.
   const resolvedPoolMax = isTestContext ? Math.min(3, configuredPoolMax) : configuredPoolMax;
   const pool = new pg.Pool({
@@ -858,12 +904,17 @@ export async function openStore(filename, { poolMax } = {}) {
   pool.on('error', (error) => console.error('Idle Postgres connection error:', error.message));
 
   let client;
-  try { client = await acquireDatabaseClient(pool, { attempts: 2 }); }
-  catch (error) { await pool.end().catch(() => {}); throw error; }
+  try {
+    client = await acquireDatabaseClient(pool, { attempts: 2 });
+  } catch (error) {
+    await pool.end().catch(() => {});
+    throw error;
+  }
   // Symmetric add/remove — see the comment in withClient for why an unpaired add leaks listeners
   // on this pool's connections, which withClient/transaction go on to reuse for this store's
   // entire lifetime.
-  const onClientError = (error) => console.error('Postgres client connection error:', error.message);
+  const onClientError = (error) =>
+    console.error('Postgres client connection error:', error.message);
   client.on('error', onClientError);
   try {
     await client.query(`SET search_path TO "${schema}"`);
@@ -875,7 +926,9 @@ export async function openStore(filename, { poolMax } = {}) {
     // workers could race on CREATE TABLE / the seed INSERTs simultaneously at startup. Transaction-
     // scoped, so the lock releases automatically at COMMIT/ROLLBACK below — no separate unlock.
     await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [schema]);
-    await client.query('CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)');
+    await client.query(
+      'CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)',
+    );
     const already = await client.query('SELECT 1 FROM migrations WHERE version = 1');
     if (already.rowCount === 0) {
       await client.query(SCHEMA_SQL);
@@ -891,29 +944,39 @@ export async function openStore(filename, { poolMax } = {}) {
       GROUP BY reference_id, reason ON CONFLICT DO NOTHING;
     CREATE INDEX IF NOT EXISTS agent_history_owner ON agent_runs(workspace_id, principal_id, created_at);
     CREATE INDEX IF NOT EXISTS companion_task_owner ON records(workspace_id, (data::jsonb->>'ownerId'), seq) WHERE kind = 'companion_task';`);
-    await client.query(`INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+    await client.query(
+      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),
       ('onboarding', 'Onboarding Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('support', 'Support Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('pricing', 'Pricing Guide', 'Shared', 'A1', 'none', '[]', $1, 0)
-      ON CONFLICT (id) DO NOTHING`, [new Date().toISOString()]);
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
     // Added after the v1 seed migration — same idempotent unconditional-insert pattern as the
     // starter-planner block above, so these rows reach databases that already ran migration 1
     // (this project's real dev/production schema included) without a new migration version.
-    await client.query(`INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+    await client.query(
+      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('opportunity-signals', 'Opportunity Signals Engine', 'Growth', 'A1', 'none', '[]', $1, 65),
       ('experiment-builder', 'Experiment Builder', 'Growth', 'A1', 'none', '[]', $1, 65)
-      ON CONFLICT (id) DO NOTHING`, [new Date().toISOString()]);
-    await client.query(`INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
+    await client.query(
+      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
       ('companion-opportunity-signals-v1', 'openai', 'companion.opportunity-signals', 'approved', $1),
       ('companion-experiment-builder-v1', 'openai', 'companion.experiment-builder', 'approved', $1)
-      ON CONFLICT (id) DO NOTHING`, [new Date().toISOString()]);
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
     // Intelligence Engine layer -- ported from LamidOne's src/lib/intelligence + src/lib/engines.ts
     // (see src/app/engineRegistry.mjs, src/app/engines.mjs). Same idempotent unconditional-insert
     // pattern as the blocks above: 248 diagnostic-tool manifests, flat 35-point cost per run (see
     // ENGINE_POINTS_COST in engines.mjs), no model_registry rows needed since these are
     // deterministic compute with zero AI calls.
-    await client.query(`INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+    await client.query(
+      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('s01', 'Strategic Identity Statement', 'Clarity', 'A1', 'none', '[]', $1, 35),
       ('s02', 'Strategic Direction Setter', 'Clarity', 'A1', 'none', '[]', $1, 35),
       ('s03', 'Strategy Consistency Check', 'Clarity', 'A1', 'none', '[]', $1, 35),
@@ -1162,7 +1225,9 @@ export async function openStore(filename, { poolMax } = {}) {
       ('f05', 'Enterprise Value', 'Finance', 'A1', 'none', '[]', $1, 35),
       ('f06', 'Financial Governance', 'Finance', 'A1', 'none', '[]', $1, 35),
       ('f07', 'CFO Transformation', 'Finance', 'A1', 'none', '[]', $1, 35)
-      ON CONFLICT (id) DO NOTHING`, [new Date().toISOString()]);
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
     // Real entitlement gating (see src/app/entitlements.mjs): a workspace's access to a paid
     // tool comes from either enterprise tier or an actually-purchased bundle, not just points.
     // `source` records which bundle purchase granted the row (composite PK lets more than one
@@ -1176,7 +1241,11 @@ export async function openStore(filename, { poolMax } = {}) {
     )`);
     await client.query('COMMIT');
   } catch (error) {
-    try { await client.query('ROLLBACK'); } catch { /* Preserve the original startup error. */ }
+    try {
+      await client.query('ROLLBACK');
+    } catch {
+      /* Preserve the original startup error. */
+    }
     client.off('error', onClientError);
     client.release(true);
     await pool.end().catch(() => {});
@@ -1189,19 +1258,25 @@ export async function openStore(filename, { poolMax } = {}) {
   const transaction = createTransaction(pool, schema);
   const log = async (workspace, actor, action, object, detail) =>
     db
-      .prepare('INSERT INTO audit (id, workspace_id, actor, action, object_id, detail, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .prepare(
+        'INSERT INTO audit (id, workspace_id, actor, action, object_id, detail, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      )
       .run(randomUUID(), workspace, actor, action, object, detail, new Date().toISOString());
   const insert = async (workspace, kind, data) => {
     const id = randomUUID();
     const createdAt = new Date().toISOString();
     await db
-      .prepare('INSERT INTO records (id, workspace_id, kind, data, version, created_at) VALUES (?, ?, ?, ?, 1, ?)')
+      .prepare(
+        'INSERT INTO records (id, workspace_id, kind, data, version, created_at) VALUES (?, ?, ?, ?, 1, ?)',
+      )
       .run(id, workspace, kind, JSON.stringify(data), createdAt);
     return { ...data, id, version: 1, createdAt };
   };
   const records = async (workspace, kind) => {
     const rows = await db
-      .prepare('SELECT * FROM records WHERE workspace_id = ? AND kind = ? ORDER BY created_at DESC, seq DESC')
+      .prepare(
+        'SELECT * FROM records WHERE workspace_id = ? AND kind = ? ORDER BY created_at DESC, seq DESC',
+      )
       .all(workspace, kind);
     return rows.map((row) => ({
       ...JSON.parse(row.data),
@@ -1212,9 +1287,13 @@ export async function openStore(filename, { poolMax } = {}) {
   };
   // Includes named test schemas used by reconnect tests, never the public schema or production.
   const dropSchema = async () => {
-    if (!isTestContext || schema === 'public') throw new Error('Only isolated test database schemas can be dropped.');
-    try { await pool.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`); }
-    finally { await pool.end(); }
+    if (!isTestContext || schema === 'public')
+      throw new Error('Only isolated test database schemas can be dropped.');
+    try {
+      await pool.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`);
+    } finally {
+      await pool.end();
+    }
   };
 
   return { db, transaction, log, insert, records, schema, disposable, dropSchema };

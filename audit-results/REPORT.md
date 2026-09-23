@@ -4,20 +4,20 @@ The current suite is **not green**. The production build succeeds. The complete 
 
 ## Results
 
-| Check | Passed | Failed | Notes |
-| --- | ---: | ---: | --- |
-| Production TypeScript/Vite build | Yes | — | Large bundle warnings; no compile errors |
-| Backend: 50 files | 209 | 22 | 231 tests, no skips/cancellations; 192.7 seconds on local PostgreSQL |
-| Standard browser: 19 files | 24 | 9 | 33 tests; 10.4 minutes |
-| Regional usability | 9 | 1 | 10 simulated locale/viewport profiles |
-| Paid specialist demonstrations | 0 | 3 | All blocked by an outdated AI-settings checkbox label |
-| Deep marketplace studies | 0 | 2 | Same outdated AI-settings checkbox label |
-| Human-paced first visit | 0 | 1 | Ambiguous Companion link selector |
-| Public link/button sweep | 1 | 0 | 25 pages; generated summary has no broken links, failed buttons, or console errors |
-| Worker race probes | 15 | 0 | Refunds, scheduler ownership, and mail claims |
-| Welcome-reward race probes | 3 | 0 | Concurrent OTP verification/reward grants |
-| Spending race probes | 0 | 6 | Every request gets 403 before any deduction; concurrency behavior remains untested by this probe |
-| Repository formatting | — | Failed | 239 files reported before audit artifacts were added |
+| Check                            | Passed | Failed | Notes                                                                                            |
+| -------------------------------- | -----: | -----: | ------------------------------------------------------------------------------------------------ |
+| Production TypeScript/Vite build |    Yes |      — | Large bundle warnings; no compile errors                                                         |
+| Backend: 50 files                |    209 |     22 | 231 tests, no skips/cancellations; 192.7 seconds on local PostgreSQL                             |
+| Standard browser: 19 files       |     24 |      9 | 33 tests; 10.4 minutes                                                                           |
+| Regional usability               |      9 |      1 | 10 simulated locale/viewport profiles                                                            |
+| Paid specialist demonstrations   |      0 |      3 | All blocked by an outdated AI-settings checkbox label                                            |
+| Deep marketplace studies         |      0 |      2 | Same outdated AI-settings checkbox label                                                         |
+| Human-paced first visit          |      0 |      1 | Ambiguous Companion link selector                                                                |
+| Public link/button sweep         |      1 |      0 | 25 pages; generated summary has no broken links, failed buttons, or console errors               |
+| Worker race probes               |     15 |      0 | Refunds, scheduler ownership, and mail claims                                                    |
+| Welcome-reward race probes       |      3 |      0 | Concurrent OTP verification/reward grants                                                        |
+| Spending race probes             |      0 |      6 | Every request gets 403 before any deduction; concurrency behavior remains untested by this probe |
+| Repository formatting            |      — | Failed | 239 files reported before audit artifacts were added                                             |
 
 Race probes are counted separately from the 281 test cases. A passing mock-provider test does not demonstrate a live provider connection.
 
@@ -46,37 +46,37 @@ The complete per-test pass/fail inventory is in [test-inventory.md](test-invento
 
 ## Backend failures and what they mean
 
-| File / failed cases | Observed failure | Diagnosis / necessary follow-up |
-| --- | --- | --- |
-| `activity.test.mjs` — 1 | Companion returns 403 instead of 201 | Demo fixture does not provide the required specialist entitlement. The feed assertions are never reached. Use an explicitly authorized fixture or a free event producer. |
-| `billing.test.mjs` — 1 | Expected 65 points spent, got 0 | Companion request has no configured AI provider; test ignores its response and then checks billing. Assert successful setup and supply a mock provider with explicit permissions. |
-| `enterprise.test.mjs` — 1 | Expected 403, got 409 | Test claims to use an individual workspace, but the shared funded helper promotes all workspaces to Enterprise. Make tier an explicit fixture parameter; preserve the negative permission test. |
-| `expertNetworkExtensions.test.mjs` — 1 | Companion returns 503 instead of 201 | No configured AI provider. Automatic handoff assertions are not reached. Supply an appropriate mock and authorized fixture. |
-| `launch-hardening.test.mjs` — 2 | 403 before mock provider starts | Opt-in/consent/idempotency and in-flight revocation scenarios lack the specialist entitlement needed to reach their mock. Do not remove the real permission gate. |
-| `models.test.mjs` — 3 | Registry list mismatch; 403 instead of 201/503 | Expected registry omits `experiment-builder` and `opportunity-signals`. Two execution cases are blocked by entitlement before registry behavior can be asserted. |
-| `ratelimit.test.mjs` — 1 | Expected 201, got 503 | Missing provider prevents the spend-limit scenario from reaching its intended successful request. |
-| `security-points.test.mjs` — 1 | Expected cached 201, got 503 | Missing provider prevents a successful result from being cached; this test does not currently prove paid-request replay. |
-| `stress-concurrency.test.mjs` — 1 | Not all ten requests return 201 | Missing provider blocks the Companion requests. Dedicated successful debit/refund tests pass, but this burst test does not reach deductions. |
-| `system-sweep.test.mjs` — 3 | Proposal calls return 503; routing returns 422/503; adversarial message gets 503 | Provider fixtures are missing; document requests also omit required job/proposal context. The sweep labels an intentional provider-unavailable response a “crash.” Distinguish routing from valid execution and distinguish service unavailability from an unhandled exception. |
-| `task-recovery.test.mjs` — 1 | Expected one charge, got zero | It now creates the default **free starter** task. Earlier assertions verify recovered completion and a single execution; the later ledger expectation is stale. Keep a free no-charge case and add a separately authorized paid recovery case. |
-| `user-acceptance.test.mjs` — 6 | Five industry journeys stop at Companion 503; aggregate summary fails | Manufacturing, wedding planning, software, marketing, and legal scenarios have no provider fixture. The sixth failure is the dependent summary, not a sixth independent product defect. Later journey stages remain unverified by these scenarios. |
+| File / failed cases                    | Observed failure                                                                 | Diagnosis / necessary follow-up                                                                                                                                                                                                                                                 |
+| -------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `activity.test.mjs` — 1                | Companion returns 403 instead of 201                                             | Demo fixture does not provide the required specialist entitlement. The feed assertions are never reached. Use an explicitly authorized fixture or a free event producer.                                                                                                        |
+| `billing.test.mjs` — 1                 | Expected 65 points spent, got 0                                                  | Companion request has no configured AI provider; test ignores its response and then checks billing. Assert successful setup and supply a mock provider with explicit permissions.                                                                                               |
+| `enterprise.test.mjs` — 1              | Expected 403, got 409                                                            | Test claims to use an individual workspace, but the shared funded helper promotes all workspaces to Enterprise. Make tier an explicit fixture parameter; preserve the negative permission test.                                                                                 |
+| `expertNetworkExtensions.test.mjs` — 1 | Companion returns 503 instead of 201                                             | No configured AI provider. Automatic handoff assertions are not reached. Supply an appropriate mock and authorized fixture.                                                                                                                                                     |
+| `launch-hardening.test.mjs` — 2        | 403 before mock provider starts                                                  | Opt-in/consent/idempotency and in-flight revocation scenarios lack the specialist entitlement needed to reach their mock. Do not remove the real permission gate.                                                                                                               |
+| `models.test.mjs` — 3                  | Registry list mismatch; 403 instead of 201/503                                   | Expected registry omits `experiment-builder` and `opportunity-signals`. Two execution cases are blocked by entitlement before registry behavior can be asserted.                                                                                                                |
+| `ratelimit.test.mjs` — 1               | Expected 201, got 503                                                            | Missing provider prevents the spend-limit scenario from reaching its intended successful request.                                                                                                                                                                               |
+| `security-points.test.mjs` — 1         | Expected cached 201, got 503                                                     | Missing provider prevents a successful result from being cached; this test does not currently prove paid-request replay.                                                                                                                                                        |
+| `stress-concurrency.test.mjs` — 1      | Not all ten requests return 201                                                  | Missing provider blocks the Companion requests. Dedicated successful debit/refund tests pass, but this burst test does not reach deductions.                                                                                                                                    |
+| `system-sweep.test.mjs` — 3            | Proposal calls return 503; routing returns 422/503; adversarial message gets 503 | Provider fixtures are missing; document requests also omit required job/proposal context. The sweep labels an intentional provider-unavailable response a “crash.” Distinguish routing from valid execution and distinguish service unavailability from an unhandled exception. |
+| `task-recovery.test.mjs` — 1           | Expected one charge, got zero                                                    | It now creates the default **free starter** task. Earlier assertions verify recovered completion and a single execution; the later ledger expectation is stale. Keep a free no-charge case and add a separately authorized paid recovery case.                                  |
+| `user-acceptance.test.mjs` — 6         | Five industry journeys stop at Companion 503; aggregate summary fails            | Manufacturing, wedding planning, software, marketing, and legal scenarios have no provider fixture. The sixth failure is the dependent summary, not a sixth independent product defect. Later journey stages remain unverified by these scenarios.                              |
 
 These diagnoses explain the observed first failure. Correcting fixtures may reveal additional failures farther into a journey; this audit does not assume those unexecuted stages work.
 
 ## Browser failures and product defects
 
-| Area | Finding | Next action |
-| --- | --- | --- |
-| Public-page accessibility | Axe reports insufficient contrast on `.tag` and `.judgment-panel > p` in the keyboard/accessibility journey. | Fix the actual foreground/background combinations and rerun accessibility checks. |
-| Pricing, light theme | Text contrast includes 2.02:1, 3.33:1, and 3.01:1 where the executed check requires 4.5:1. | Correct muted text/status colors, including table content. |
-| Pricing, dark theme | Red text `#c12129` against `#1a2029` measures 2.74:1 where 4.5:1 is required. | Use a readable dark-theme status color. |
-| Expert page | Test assumes `.experts-group-header`; current page still contains group text but uses a different structure. | Assert the intended accessible page structure rather than an obsolete CSS class; confirm semantic headings separately. |
-| Expert navigation | Tests require every link to equal `/experts`; current links include section anchors. | Assert the intended anchor targets and that each target exists. |
-| Product preview | Mobile test expects a button named `Explore the workspace`; the current preview is a region with that accessible label. | Test the current interactive controls and destination, rather than the removed button. |
-| Consulting and mobile Companion | Both expect the old single-action flow and `Choose the next step`. | Update to the pathway preview/edit/select/save flow already exercised by `goal-pathway.spec.ts`. |
-| Broad onboarding | All-context and Sao Paulo failures disappear on fresh reruns. | Inspect retained traces; isolate profiles and wait on explicit page/response state. Do not just raise every timeout. |
-| Paid/deep exploratory studies | Five tests search for `Allow members to request external AI reviews`; UI now uses `Allow external AI in this workspace`. | Update shared AI-settings helper, then rerun the paid journey. These tests currently prove nothing about later marketplace stages. |
-| Human-paced study | `getByRole('link', { name: 'Companion' })` resolves to both sidebar and content links. | Scope to `Workspace navigation` and the intended link. |
+| Area                            | Finding                                                                                                                  | Next action                                                                                                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Public-page accessibility       | Axe reports insufficient contrast on `.tag` and `.judgment-panel > p` in the keyboard/accessibility journey.             | Fix the actual foreground/background combinations and rerun accessibility checks.                                                  |
+| Pricing, light theme            | Text contrast includes 2.02:1, 3.33:1, and 3.01:1 where the executed check requires 4.5:1.                               | Correct muted text/status colors, including table content.                                                                         |
+| Pricing, dark theme             | Red text `#c12129` against `#1a2029` measures 2.74:1 where 4.5:1 is required.                                            | Use a readable dark-theme status color.                                                                                            |
+| Expert page                     | Test assumes `.experts-group-header`; current page still contains group text but uses a different structure.             | Assert the intended accessible page structure rather than an obsolete CSS class; confirm semantic headings separately.             |
+| Expert navigation               | Tests require every link to equal `/experts`; current links include section anchors.                                     | Assert the intended anchor targets and that each target exists.                                                                    |
+| Product preview                 | Mobile test expects a button named `Explore the workspace`; the current preview is a region with that accessible label.  | Test the current interactive controls and destination, rather than the removed button.                                             |
+| Consulting and mobile Companion | Both expect the old single-action flow and `Choose the next step`.                                                       | Update to the pathway preview/edit/select/save flow already exercised by `goal-pathway.spec.ts`.                                   |
+| Broad onboarding                | All-context and Sao Paulo failures disappear on fresh reruns.                                                            | Inspect retained traces; isolate profiles and wait on explicit page/response state. Do not just raise every timeout.               |
+| Paid/deep exploratory studies   | Five tests search for `Allow members to request external AI reviews`; UI now uses `Allow external AI in this workspace`. | Update shared AI-settings helper, then rerun the paid journey. These tests currently prove nothing about later marketplace stages. |
+| Human-paced study               | `getByRole('link', { name: 'Companion' })` resolves to both sidebar and content links.                                   | Scope to `Workspace navigation` and the intended link.                                                                             |
 
 Failure screenshots, DOM snapshots, and traces are retained in the corresponding `*-artifacts` folders. For example, open a trace with `npx playwright show-trace <path-to-trace.zip>`.
 

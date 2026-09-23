@@ -103,7 +103,10 @@ test('every documented route renders every original copy paragraph', async ({
           .filter(Boolean)
           .filter((word) => word !== 'and');
         for (const word of expectedWords)
-          expect(actualWords.has(word), `${path} paragraph ${paragraph.sourceParagraph} missing word "${word}" (exact text also didn't match)`).toBe(true);
+          expect(
+            actualWords.has(word),
+            `${path} paragraph ${paragraph.sourceParagraph} missing word "${word}" (exact text also didn't match)`,
+          ).toBe(true);
       }
     await page.close();
   }

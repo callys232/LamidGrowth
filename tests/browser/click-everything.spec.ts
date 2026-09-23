@@ -6,33 +6,84 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 // errors — the class of bug a scripted happy-path test never exercises, since it only ever
 // clicks the buttons the script author already expected to be there.
 const pagesToSweep = [
-  '/', '/product', '/how-it-works', '/pricing', '/about', '/about/story', '/about/leadership',
-  '/contact', '/help', '/security', '/responsible-ai', '/developers', '/careers', '/press',
-  '/insights', '/case-studies', '/resources', '/guides', '/research', '/integrations',
-  '/who-its-for', '/accessibility', '/support', '/legal/privacy', '/legal/terms',
+  '/',
+  '/product',
+  '/how-it-works',
+  '/pricing',
+  '/about',
+  '/about/story',
+  '/about/leadership',
+  '/contact',
+  '/help',
+  '/security',
+  '/responsible-ai',
+  '/developers',
+  '/careers',
+  '/press',
+  '/insights',
+  '/case-studies',
+  '/resources',
+  '/guides',
+  '/research',
+  '/integrations',
+  '/who-its-for',
+  '/accessibility',
+  '/support',
+  '/legal/privacy',
+  '/legal/terms',
 ];
 
 // Buttons whose visible text signals a destructive/consequential or non-idempotent action —
 // never auto-clicked, only logged as skipped.
 const skipPatterns = [
-  /sign out/i, /delete/i, /remove/i, /cancel/i, /disconnect/i, /revoke/i, /buy\b/i, /pay\b/i,
-  /purchase/i, /subscribe/i, /submit/i, /send\b/i, /post\b/i, /create/i, /save\b/i, /approve/i,
-  /dispute/i, /refund/i, /release/i, /award/i,
+  /sign out/i,
+  /delete/i,
+  /remove/i,
+  /cancel/i,
+  /disconnect/i,
+  /revoke/i,
+  /buy\b/i,
+  /pay\b/i,
+  /purchase/i,
+  /subscribe/i,
+  /submit/i,
+  /send\b/i,
+  /post\b/i,
+  /create/i,
+  /save\b/i,
+  /approve/i,
+  /dispute/i,
+  /refund/i,
+  /release/i,
+  /award/i,
 ];
 
-test('sweep every public page: click every internal link and safe button, report what breaks', async ({ page }) => {
+test('sweep every public page: click every internal link and safe button, report what breaks', async ({
+  page,
+}) => {
   const results: Array<Record<string, unknown>> = [];
   const consoleErrors: string[] = [];
   page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
   page.on('console', (msg) => {
-    if (msg.type() === 'error') consoleErrors.push(`console.error: ${msg.text()}`);
+    const text = msg.text();
+    // Chromium's own connection pool can run dry deep into one long-lived page/context that has
+    // already fired hundreds of sequential link checks and button clicks across many pages — not
+    // caused by any page's own behavior. Confirmed by loading affected pages in isolation, where
+    // they produce zero console errors. Filtered here so a genuine regression on a page still
+    // fails this test instead of being buried under harness noise.
+    if (msg.type() === 'error' && !text.includes('ERR_INSUFFICIENT_RESOURCES'))
+      consoleErrors.push(`console.error: ${text}`);
   });
   const out = 'artifacts/click-everything';
   mkdirSync(out, { recursive: true });
   const visited = new Set<string>();
 
   for (const path of pagesToSweep) {
-    const pageResult: Record<string, unknown> = { page: path, links: [] as unknown[], buttons: [] as unknown[] };
+    const pageResult: Record<string, unknown> = {
+      page: path,
+      links: [] as unknown[],
+      buttons: [] as unknown[],
+    };
     const linkResults = pageResult.links as Array<Record<string, unknown>>;
     const buttonResults = pageResult.buttons as Array<Record<string, unknown>>;
     const errorsBefore = consoleErrors.length;
@@ -52,9 +103,11 @@ test('sweep every public page: click every internal link and safe button, report
     }
 
     // Every internal link on the page: follow it, check it loads, come back.
-    const hrefs = await page.locator('a[href]').evaluateAll((links) =>
-      links.map((l) => (l as HTMLAnchorElement).getAttribute('href')).filter(Boolean),
-    );
+    const hrefs = await page
+      .locator('a[href]')
+      .evaluateAll((links) =>
+        links.map((l) => (l as HTMLAnchorElement).getAttribute('href')).filter(Boolean),
+      );
     const internalHrefs = [...new Set(hrefs)].filter(
       (h): h is string => Boolean(h) && h.startsWith('/') && !h.startsWith('//'),
     );
@@ -121,11 +174,29 @@ test('sweep every public page: click every internal link and safe button, report
       .filter((b) => b.clicked === false)
       .map((b) => ({ page: r.page, ...b })),
   );
-  const pagesWithErrors = results.filter((r) => ((r.newConsoleErrors as string[]) || []).length > 0);
+  const pagesWithErrors = results.filter(
+    (r) => ((r.newConsoleErrors as string[]) || []).length > 0,
+  );
   writeFileSync(
     `${out}/summary.json`,
-    JSON.stringify({ brokenLinks, failedButtons, pagesWithErrors, pagesSwept: results.length }, null, 2),
+    JSON.stringify(
+      { brokenLinks, failedButtons, pagesWithErrors, pagesSwept: results.length },
+      null,
+      2,
+    ),
   );
 
   expect(results.length).toBeGreaterThan(0);
+  // The report used to be generated but never actually checked — a page with a dead link, a
+  // failed button click, or a fresh console error could still leave this test green. Assert the
+  // collections themselves so a real regression fails the run, not just the JSON on disk.
+  expect(brokenLinks, `Broken links found:\n${JSON.stringify(brokenLinks, null, 2)}`).toEqual([]);
+  expect(
+    failedButtons,
+    `Buttons that failed to click:\n${JSON.stringify(failedButtons, null, 2)}`,
+  ).toEqual([]);
+  expect(
+    pagesWithErrors,
+    `Pages with new console errors:\n${JSON.stringify(pagesWithErrors, null, 2)}`,
+  ).toEqual([]);
 });

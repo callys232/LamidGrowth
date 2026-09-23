@@ -17,14 +17,22 @@ async function humanType(locator: import('@playwright/test').Locator, text: stri
   await locator.pressSequentially(text, { delay: 55 + Math.random() * 70 });
 }
 
-test('a real first-time visitor: homepage, signup, first goal, first free outcome', async ({ page }) => {
-  const result: Record<string, unknown> = { stage: 'homepage', completed: [] as string[], timings: {} as Record<string, number> };
+test('a real first-time visitor: homepage, signup, first goal, first free outcome', async ({
+  page,
+}) => {
+  const result: Record<string, unknown> = {
+    stage: 'homepage',
+    completed: [] as string[],
+    timings: {} as Record<string, number>,
+  };
   const completed = result.completed as string[];
   const timings = result.timings as Record<string, number>;
   const out = 'artifacts/human-pace';
   mkdirSync(out, { recursive: true });
   const started = Date.now();
-  const mark = (label: string) => { timings[label] = Math.round((Date.now() - started) / 1000); };
+  const mark = (label: string) => {
+    timings[label] = Math.round((Date.now() - started) / 1000);
+  };
 
   try {
     // Arrive at the actual homepage, not /start — a real visitor doesn't know the shortcut URL.
@@ -88,11 +96,20 @@ test('a real first-time visitor: homepage, signup, first goal, first free outcom
     result.stage = 'first goal';
     await page.getByRole('button', { name: 'New objective', exact: true }).click();
     await page.waitForTimeout(pause(READ.medium)); // reading the form before starting to type
-    await humanType(page.getByLabel('Your objective', { exact: true }), 'Get my freelance design business off the ground');
+    await humanType(
+      page.getByLabel('Your objective', { exact: true }),
+      'Get my freelance design business off the ground',
+    );
     await page.waitForTimeout(pause(READ.short));
-    await humanType(page.getByLabel('Why it matters'), 'I want steady income doing work I actually like.');
+    await humanType(
+      page.getByLabel('Why it matters'),
+      'I want steady income doing work I actually like.',
+    );
     await page.waitForTimeout(pause(READ.short));
-    await humanType(page.getByLabel('What does success look like?'), 'Three paying clients within two months.');
+    await humanType(
+      page.getByLabel('What does success look like?'),
+      'Three paying clients within two months.',
+    );
     await page.waitForTimeout(pause(READ.medium)); // reviewing before submitting
     await page.getByRole('button', { name: 'Create objective', exact: true }).click();
     await expect(page.getByRole('dialog')).toHaveCount(0, { timeout: 30000 });
@@ -114,12 +131,17 @@ test('a real first-time visitor: homepage, signup, first goal, first free outcom
 
     // Find and try the free coordinated task — a real user reads the copy first.
     result.stage = 'first free outcome';
-    const coordinateSection = page.getByText('Coordinate a task across specialists', { exact: true });
+    const coordinateSection = page.getByText('Coordinate a task across specialists', {
+      exact: true,
+    });
     await coordinateSection.scrollIntoViewIfNeeded();
     await page.waitForTimeout(pause(READ.medium));
     await coordinateSection.click();
     await page.waitForTimeout(pause(READ.short));
-    await humanType(page.getByLabel('Task description'), 'Get my freelance design business off the ground');
+    await humanType(
+      page.getByLabel('Task description'),
+      'Get my freelance design business off the ground',
+    );
     await page.waitForTimeout(pause(READ.short));
     await page.getByRole('button', { name: 'Preview specialist plan' }).click();
     await page.waitForTimeout(pause(READ.medium)); // reading the plan before approving anything

@@ -25,9 +25,18 @@ test('product-owned pages preserve every original paragraph without clipping or 
     const actual = [page.hero, ...page.sections].flatMap((b) => b.paragraphs);
     let cursor = 0;
     for (const line of expected) {
-      while (cursor < actual.length && !(actual[cursor].text === line.text && actual[cursor].sourceParagraph === line.sourceParagraph))
+      while (
+        cursor < actual.length &&
+        !(
+          actual[cursor].text === line.text &&
+          actual[cursor].sourceParagraph === line.sourceParagraph
+        )
+      )
         cursor += 1;
-      assert.ok(cursor < actual.length, `${page.route}: missing original paragraph ${JSON.stringify(line)}`);
+      assert.ok(
+        cursor < actual.length,
+        `${page.route}: missing original paragraph ${JSON.stringify(line)}`,
+      );
       cursor += 1;
     }
     assert.equal(page.seo_title, block.find((p) => p.text.startsWith('SEO: ')).text.slice(5));

@@ -34,7 +34,12 @@ export function RememberedContextSlide2({ embedded = false }: DocumentPageProps)
 /** Explanation Preferences */
 export function ExplanationPreferencesSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[2]}
+      index={2}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

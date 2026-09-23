@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -15,7 +20,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -68,7 +73,11 @@ async function postJob(user, overrides = {}) {
 
 test('with no historical data, the estimate is honestly unavailable rather than invented', async () => {
   const user = await signup('No History');
-  const result = await request('/jobs/estimate', { category: 'Legal and compliance', tags: [] }, user);
+  const result = await request(
+    '/jobs/estimate',
+    { category: 'Legal and compliance', tags: [] },
+    user,
+  );
   assert.equal(result.status, 200);
   assert.equal(result.data.available, false);
   assert.equal(result.data.sampleSize, 0);
@@ -81,7 +90,11 @@ test('once enough real jobs exist in a category, the estimate reflects their act
   await postJob(user, { category: 'Data and analytics', budgetMin: 2000, budgetMax: 3000 });
   await postJob(user, { category: 'Data and analytics', budgetMin: 3000, budgetMax: 4000 });
 
-  const result = await request('/jobs/estimate', { category: 'Data and analytics', tags: [] }, user);
+  const result = await request(
+    '/jobs/estimate',
+    { category: 'Data and analytics', tags: [] },
+    user,
+  );
   assert.equal(result.status, 200);
   assert.equal(result.data.available, true);
   assert.equal(result.data.basis, 'category-wide-history');
@@ -93,13 +106,43 @@ test('once enough real jobs exist in a category, the estimate reflects their act
 test('smart tags narrow the estimate to a more specific match within a broad category', async () => {
   const user = await signup('Tag History');
   // Broad-category jobs with no matching tags.
-  await postJob(user, { category: 'Software engineering', budgetMin: 500, budgetMax: 1000, tags: ['backend'] });
-  await postJob(user, { category: 'Software engineering', budgetMin: 500, budgetMax: 1000, tags: ['backend'] });
-  await postJob(user, { category: 'Software engineering', budgetMin: 500, budgetMax: 1000, tags: ['backend'] });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 500,
+    budgetMax: 1000,
+    tags: ['backend'],
+  });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 500,
+    budgetMax: 1000,
+    tags: ['backend'],
+  });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 500,
+    budgetMax: 1000,
+    tags: ['backend'],
+  });
   // Tag-matched jobs with a distinctly different (higher) budget.
-  await postJob(user, { category: 'Software engineering', budgetMin: 5000, budgetMax: 8000, tags: ['mobile-app', 'react-native'] });
-  await postJob(user, { category: 'Software engineering', budgetMin: 6000, budgetMax: 9000, tags: ['mobile-app'] });
-  await postJob(user, { category: 'Software engineering', budgetMin: 7000, budgetMax: 10000, tags: ['mobile-app'] });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 5000,
+    budgetMax: 8000,
+    tags: ['mobile-app', 'react-native'],
+  });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 6000,
+    budgetMax: 9000,
+    tags: ['mobile-app'],
+  });
+  await postJob(user, {
+    category: 'Software engineering',
+    budgetMin: 7000,
+    budgetMax: 10000,
+    tags: ['mobile-app'],
+  });
 
   const result = await request(
     '/jobs/estimate',
@@ -115,10 +158,30 @@ test('smart tags narrow the estimate to a more specific match within a broad cat
 
 test('too few tag matches falls back to category-wide history with an honest note, not a fabricated tag estimate', async () => {
   const user = await signup('Sparse Tag History');
-  await postJob(user, { category: 'Marketing and growth', budgetMin: 1000, budgetMax: 2000, tags: [] });
-  await postJob(user, { category: 'Marketing and growth', budgetMin: 1000, budgetMax: 2000, tags: [] });
-  await postJob(user, { category: 'Marketing and growth', budgetMin: 1000, budgetMax: 2000, tags: [] });
-  await postJob(user, { category: 'Marketing and growth', budgetMin: 9000, budgetMax: 9000, tags: ['tiktok-ads'] }); // only 1 match
+  await postJob(user, {
+    category: 'Marketing and growth',
+    budgetMin: 1000,
+    budgetMax: 2000,
+    tags: [],
+  });
+  await postJob(user, {
+    category: 'Marketing and growth',
+    budgetMin: 1000,
+    budgetMax: 2000,
+    tags: [],
+  });
+  await postJob(user, {
+    category: 'Marketing and growth',
+    budgetMin: 1000,
+    budgetMax: 2000,
+    tags: [],
+  });
+  await postJob(user, {
+    category: 'Marketing and growth',
+    budgetMin: 9000,
+    budgetMax: 9000,
+    tags: ['tiktok-ads'],
+  }); // only 1 match
 
   const result = await request(
     '/jobs/estimate',
@@ -132,6 +195,10 @@ test('too few tag matches falls back to category-wide history with an honest not
 
 test('an invalid category is rejected, matching job-posting validation', async () => {
   const user = await signup('Invalid Category');
-  const result = await request('/jobs/estimate', { category: 'Not a real category', tags: [] }, user);
+  const result = await request(
+    '/jobs/estimate',
+    { category: 'Not a real category', tags: [] },
+    user,
+  );
   assert.equal(result.status, 400);
 });

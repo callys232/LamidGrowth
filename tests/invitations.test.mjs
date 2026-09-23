@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -15,7 +20,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -72,7 +77,10 @@ test('inviting, accepting, then creating a project without ever submitting a bid
 
   const invite = await request(
     `/jobs/${job.id}/invitations`,
-    { freelancerUserId: freelancerState.user.id, message: 'We would love to have you on this project.' },
+    {
+      freelancerUserId: freelancerState.user.id,
+      message: 'We would love to have you on this project.',
+    },
     client,
   );
   assert.equal(invite.status, 201);
@@ -82,7 +90,11 @@ test('inviting, accepting, then creating a project without ever submitting a bid
   assert.equal(mine.data.length, 1);
   assert.equal(mine.data[0].jobTitle, 'Invitation test job');
 
-  const accept = await request(`/invitations/${invite.data.id}/respond`, { decision: 'accept' }, freelancer);
+  const accept = await request(
+    `/invitations/${invite.data.id}/respond`,
+    { decision: 'accept' },
+    freelancer,
+  );
   assert.equal(accept.status, 200);
   assert.equal(accept.data.status, 'accepted');
 
@@ -104,8 +116,16 @@ test('rejecting an invitation still leaves project creation blocked without a re
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
   const job = await postJob(client, 'Rejected invite job');
 
-  const invite = await request('/jobs/' + job.id + '/invitations', { freelancerUserId: freelancerState.user.id }, client);
-  const reject = await request(`/invitations/${invite.data.id}/respond`, { decision: 'reject' }, freelancer);
+  const invite = await request(
+    '/jobs/' + job.id + '/invitations',
+    { freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const reject = await request(
+    `/invitations/${invite.data.id}/respond`,
+    { decision: 'reject' },
+    freelancer,
+  );
   assert.equal(reject.status, 200);
   assert.equal(reject.data.status, 'rejected');
 
@@ -125,35 +145,69 @@ test('only the job owner can invite; only the invited freelancer can respond; du
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
   const job = await postJob(client, 'Auth invite job');
 
-  const strangerInvite = await request(`/jobs/${job.id}/invitations`, { freelancerUserId: freelancerState.user.id }, stranger);
+  const strangerInvite = await request(
+    `/jobs/${job.id}/invitations`,
+    { freelancerUserId: freelancerState.user.id },
+    stranger,
+  );
   assert.equal(strangerInvite.status, 403);
 
-  const invite = await request(`/jobs/${job.id}/invitations`, { freelancerUserId: freelancerState.user.id }, client);
+  const invite = await request(
+    `/jobs/${job.id}/invitations`,
+    { freelancerUserId: freelancerState.user.id },
+    client,
+  );
   assert.equal(invite.status, 201);
 
-  const duplicate = await request(`/jobs/${job.id}/invitations`, { freelancerUserId: freelancerState.user.id }, client);
+  const duplicate = await request(
+    `/jobs/${job.id}/invitations`,
+    { freelancerUserId: freelancerState.user.id },
+    client,
+  );
   assert.equal(duplicate.status, 409);
 
-  const wrongResponder = await request(`/invitations/${invite.data.id}/respond`, { decision: 'accept' }, otherFreelancer);
+  const wrongResponder = await request(
+    `/invitations/${invite.data.id}/respond`,
+    { decision: 'accept' },
+    otherFreelancer,
+  );
   assert.equal(wrongResponder.status, 403);
 
-  const decided = await request(`/invitations/${invite.data.id}/respond`, { decision: 'accept' }, freelancer);
+  const decided = await request(
+    `/invitations/${invite.data.id}/respond`,
+    { decision: 'accept' },
+    freelancer,
+  );
   assert.equal(decided.status, 200);
-  const redecide = await request(`/invitations/${invite.data.id}/respond`, { decision: 'reject' }, freelancer);
+  const redecide = await request(
+    `/invitations/${invite.data.id}/respond`,
+    { decision: 'reject' },
+    freelancer,
+  );
   assert.equal(redecide.status, 409);
 });
 
-test('an accepted/rejected invitation shows up in both parties\' activity feeds', async () => {
+test("an accepted/rejected invitation shows up in both parties' activity feeds", async () => {
   const client = await signup('Activity Client');
   const freelancer = await signup('Activity Freelancer');
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
   const job = await postJob(client, 'Activity feed job');
-  const invite = await request(`/jobs/${job.id}/invitations`, { freelancerUserId: freelancerState.user.id }, client);
+  const invite = await request(
+    `/jobs/${job.id}/invitations`,
+    { freelancerUserId: freelancerState.user.id },
+    client,
+  );
   await request(`/invitations/${invite.data.id}/respond`, { decision: 'accept' }, freelancer);
 
   const clientActivity = await request('/activity', undefined, client, 'GET');
-  assert.ok(clientActivity.data.some((item) => item.type === 'invitation' && item.title.includes('sent')));
+  assert.ok(
+    clientActivity.data.some((item) => item.type === 'invitation' && item.title.includes('sent')),
+  );
 
   const freelancerActivity = await request('/activity', undefined, freelancer, 'GET');
-  assert.ok(freelancerActivity.data.some((item) => item.type === 'invitation' && item.title.includes('received')));
+  assert.ok(
+    freelancerActivity.data.some(
+      (item) => item.type === 'invitation' && item.title.includes('received'),
+    ),
+  );
 });

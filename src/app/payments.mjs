@@ -44,7 +44,10 @@ export function paystackProvider({
       const body = await response.json();
       if (!response.ok || !body.status)
         throw new Error(body.message || 'Paystack could not initiate this transfer.');
-      return { providerReference: String(body.data.reference || reference), status: body.data.status };
+      return {
+        providerReference: String(body.data.reference || reference),
+        status: body.data.status,
+      };
     },
     async initializeTransaction({ amountMinor, currency, email, reference }) {
       const response = await fetchImpl('https://api.paystack.co/transaction/initialize', {
@@ -66,7 +69,10 @@ export function paystackProvider({
       const body = await response.json();
       if (!response.ok || !body.status)
         throw new Error(body.message || 'Paystack could not process this refund.');
-      return { refundReference: String(body.data.transaction_reference || reference), status: body.data.status };
+      return {
+        refundReference: String(body.data.transaction_reference || reference),
+        status: body.data.status,
+      };
     },
     verifyWebhookSignature(rawBody, signatureHeader) {
       if (!signatureHeader || !rawBody) return false;
@@ -96,7 +102,10 @@ const accountSchema = z
   .strict();
 const releaseSchema = z.object({ provider: z.enum(['paystack', 'crypto_usdt']) }).strict();
 const purchaseSchema = z
-  .object({ points: z.number().int().min(1).max(100000).optional(), bundleId: z.string().trim().min(1).optional() })
+  .object({
+    points: z.number().int().min(1).max(100000).optional(),
+    bundleId: z.string().trim().min(1).optional(),
+  })
   .strict()
   .refine((value) => (value.points == null) !== (value.bundleId == null), {
     message: 'Provide exactly one of points or bundleId.',
@@ -143,16 +152,18 @@ export function mountPayments(app, store, deps) {
       }
       const id = randomUUID();
       await transaction(async () => {
-        await db.prepare('INSERT INTO payment_accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
-          id,
-          req.user.id,
-          input.provider,
-          input.accountName,
-          input.accountNumber,
-          input.bankCode || null,
-          recipientCode,
-          new Date().toISOString(),
-        );
+        await db
+          .prepare('INSERT INTO payment_accounts VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            id,
+            req.user.id,
+            input.provider,
+            input.accountName,
+            input.accountNumber,
+            input.bankCode || null,
+            recipientCode,
+            new Date().toISOString(),
+          );
         await log(
           req.workspace.id,
           req.user.name,
@@ -197,11 +208,14 @@ export function mountPayments(app, store, deps) {
         )
         .get(milestone.id);
       if (existing)
-        return res.status(409).json({ error: 'This milestone already has a pending or held funding.' });
+        return res
+          .status(409)
+          .json({ error: 'This milestone already has a pending or held funding.' });
       const provider = providerFor('paystack');
       if (!provider)
         return res.status(503).json({
-          error: 'The paystack payment provider is not configured on this server. No funds have been held.',
+          error:
+            'The paystack payment provider is not configured on this server. No funds have been held.',
         });
       const fundingId = randomUUID();
       const reference = `LMD-FUND-${fundingId.slice(0, 8)}`;
@@ -213,23 +227,36 @@ export function mountPayments(app, store, deps) {
         reference,
       });
       await transaction(async () => {
-        await db.prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-          fundingId,
-          milestone.id,
+        await db
+          .prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            fundingId,
+            milestone.id,
+            project.workspace_id,
+            'paystack',
+            amountMinor,
+            milestone.currency,
+            reference,
+            'pending',
+            new Date().toISOString(),
+            null,
+            null,
+            null,
+          );
+        await log(
           project.workspace_id,
-          'paystack',
-          amountMinor,
-          milestone.currency,
-          reference,
-          'pending',
-          new Date().toISOString(),
-          null,
-          null,
-          null,
+          req.user.name,
+          'Milestone funding initiated',
+          fundingId,
+          milestone.title,
         );
-        await log(project.workspace_id, req.user.name, 'Milestone funding initiated', fundingId, milestone.title);
       });
-      res.status(201).json({ authorizationUrl: init.authorizationUrl, reference, amountMinor, currency: milestone.currency });
+      res.status(201).json({
+        authorizationUrl: init.authorizationUrl,
+        reference,
+        amountMinor,
+        currency: milestone.currency,
+      });
     } catch (error) {
       next(error);
     }
@@ -259,7 +286,8 @@ export function mountPayments(app, store, deps) {
       const provider = providerFor('paystack');
       if (!provider)
         return res.status(503).json({
-          error: 'The paystack payment provider is not configured on this server. No refund has been made.',
+          error:
+            'The paystack payment provider is not configured on this server. No refund has been made.',
         });
       // Atomically claim the funding for refunding (held -> refunding) before calling the
       // provider — a plain SELECT-then-UPDATE would let two concurrent refund requests both see
@@ -267,25 +295,46 @@ export function mountPayments(app, store, deps) {
       // whose UPDATE actually flips the row proceeds; a losing concurrent request affects no rows
       // and is rejected here instead of ever reaching provider.refundTransaction().
       const funding = await db
-        .prepare("UPDATE milestone_fundings SET status = 'refunding' WHERE milestone_id = ? AND status = 'held' RETURNING *")
+        .prepare(
+          "UPDATE milestone_fundings SET status = 'refunding' WHERE milestone_id = ? AND status = 'held' RETURNING *",
+        )
         .get(milestone.id);
       if (!funding)
-        return res.status(400).json({ error: 'This milestone has no funds held in escrow to refund.' });
+        return res
+          .status(400)
+          .json({ error: 'This milestone has no funds held in escrow to refund.' });
 
       try {
-        await provider.refundTransaction({ reference: funding.provider_reference, amountMinor: funding.amount_minor });
+        await provider.refundTransaction({
+          reference: funding.provider_reference,
+          amountMinor: funding.amount_minor,
+        });
         await transaction(async () => {
-          await db.prepare("UPDATE milestone_fundings SET status = 'refund_pending' WHERE id = ?").run(funding.id);
-          await log(project.workspace_id, req.user.name, 'Milestone refund requested', funding.id, milestone.title);
+          await db
+            .prepare("UPDATE milestone_fundings SET status = 'refund_pending' WHERE id = ?")
+            .run(funding.id);
+          await log(
+            project.workspace_id,
+            req.user.name,
+            'Milestone refund requested',
+            funding.id,
+            milestone.title,
+          );
         });
       } catch (error) {
         logHandledError(req, res, 'payment_refund_error', error);
         await transaction(async () => {
-          await db.prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?").run(funding.id);
+          await db
+            .prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?")
+            .run(funding.id);
         });
-        return res.status(502).json({ error: 'The payment provider could not process this refund.' });
+        return res
+          .status(502)
+          .json({ error: 'The payment provider could not process this refund.' });
       }
-      res.status(201).json(await db.prepare('SELECT * FROM milestone_fundings WHERE id = ?').get(funding.id));
+      res
+        .status(201)
+        .json(await db.prepare('SELECT * FROM milestone_fundings WHERE id = ?').get(funding.id));
     } catch (error) {
       next(error);
     }
@@ -298,16 +347,20 @@ export function mountPayments(app, store, deps) {
       const project = await projectFor(milestone.project_id);
       const { isClient } = await requireParty(project, req.user.id);
       if (!isClient)
-        return res.status(403).json({ error: 'Only the project owner can release milestone payment.' });
-      if (milestone.status !== 'approved')
         return res
-          .status(400)
-          .json({ error: `Milestone "${milestone.title}" is not yet approved (current status: ${milestone.status}).` });
+          .status(403)
+          .json({ error: 'Only the project owner can release milestone payment.' });
+      if (milestone.status !== 'approved')
+        return res.status(400).json({
+          error: `Milestone "${milestone.title}" is not yet approved (current status: ${milestone.status}).`,
+        });
       const funding = await db
         .prepare("SELECT * FROM milestone_fundings WHERE milestone_id = ? AND status = 'held'")
         .get(milestone.id);
       if (!funding)
-        return res.status(400).json({ error: 'This milestone has no funds held in escrow to release.' });
+        return res
+          .status(400)
+          .json({ error: 'This milestone has no funds held in escrow to release.' });
 
       const account = await db
         .prepare(
@@ -330,28 +383,34 @@ export function mountPayments(app, store, deps) {
       // transfer) and both paying the freelancer. A losing concurrent request's UPDATE affects no
       // rows and is rejected here instead of ever reaching provider.initiateTransfer().
       const claimed = await db
-        .prepare("UPDATE milestones SET status = 'releasing' WHERE id = ? AND status = 'approved' RETURNING id")
+        .prepare(
+          "UPDATE milestones SET status = 'releasing' WHERE id = ? AND status = 'approved' RETURNING id",
+        )
         .get(milestone.id);
       if (!claimed)
-        return res.status(409).json({ error: 'This milestone payment is already being processed.' });
+        return res
+          .status(409)
+          .json({ error: 'This milestone payment is already being processed.' });
 
       const transferId = randomUUID();
       const reference = `LMD-${transferId.slice(0, 8)}`;
       await transaction(async () => {
-        await db.prepare('INSERT INTO payment_transfers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-          transferId,
-          project.workspace_id,
-          milestone.id,
-          input.provider,
-          milestone.amount * 100,
-          milestone.currency,
-          account.recipient_code,
-          'pending',
-          null,
-          null,
-          new Date().toISOString(),
-          new Date().toISOString(),
-        );
+        await db
+          .prepare('INSERT INTO payment_transfers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            transferId,
+            project.workspace_id,
+            milestone.id,
+            input.provider,
+            milestone.amount * 100,
+            milestone.currency,
+            account.recipient_code,
+            'pending',
+            null,
+            null,
+            new Date().toISOString(),
+            new Date().toISOString(),
+          );
       });
 
       try {
@@ -363,24 +422,42 @@ export function mountPayments(app, store, deps) {
           reason: `Milestone payment: ${milestone.title}`,
         });
         await transaction(async () => {
-          await db.prepare(
-            "UPDATE payment_transfers SET status = 'processing', provider_reference = ?, updated_at = ? WHERE id = ?",
-          ).run(result.providerReference, new Date().toISOString(), transferId);
-          await log(project.workspace_id, req.user.name, 'Milestone payment initiated', transferId, milestone.title);
+          await db
+            .prepare(
+              "UPDATE payment_transfers SET status = 'processing', provider_reference = ?, updated_at = ? WHERE id = ?",
+            )
+            .run(result.providerReference, new Date().toISOString(), transferId);
+          await log(
+            project.workspace_id,
+            req.user.name,
+            'Milestone payment initiated',
+            transferId,
+            milestone.title,
+          );
         });
       } catch (error) {
         logHandledError(req, res, 'payment_transfer_error', error);
         await transaction(async () => {
-          await db.prepare(
-            "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
-          ).run(error.message, new Date().toISOString(), transferId);
+          await db
+            .prepare(
+              "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
+            )
+            .run(error.message, new Date().toISOString(), transferId);
           // Release the claim so a genuine retry is possible — the provider call itself failed,
           // nothing was paid, so this milestone should not be stuck in 'releasing' forever.
-          await db.prepare("UPDATE milestones SET status = 'approved' WHERE id = ? AND status = 'releasing'").run(milestone.id);
+          await db
+            .prepare(
+              "UPDATE milestones SET status = 'approved' WHERE id = ? AND status = 'releasing'",
+            )
+            .run(milestone.id);
         });
-        return res.status(502).json({ error: 'The payment provider could not initiate this transfer.' });
+        return res
+          .status(502)
+          .json({ error: 'The payment provider could not initiate this transfer.' });
       }
-      res.status(201).json(await db.prepare('SELECT * FROM payment_transfers WHERE id = ?').get(transferId));
+      res
+        .status(201)
+        .json(await db.prepare('SELECT * FROM payment_transfers WHERE id = ?').get(transferId));
     } catch (error) {
       next(error);
     }
@@ -398,8 +475,11 @@ export function mountPointsPurchase(app, store, deps) {
       let currency = 'USD';
       let bundleId = null;
       if (input.bundleId) {
-        const bundle = await db.prepare("SELECT * FROM bundles WHERE id = ? AND status = 'active'").get(input.bundleId);
-        if (!bundle) return res.status(404).json({ error: 'This bundle is not available for purchase.' });
+        const bundle = await db
+          .prepare("SELECT * FROM bundles WHERE id = ? AND status = 'active'")
+          .get(input.bundleId);
+        if (!bundle)
+          return res.status(404).json({ error: 'This bundle is not available for purchase.' });
         points = bundle.points_included;
         amountMinor = bundle.price_minor;
         currency = bundle.currency;
@@ -407,7 +487,9 @@ export function mountPointsPurchase(app, store, deps) {
       }
       const provider = deps.paymentProvider('paystack');
       if (!provider)
-        return res.status(503).json({ error: 'Paystack is not configured on this server. No purchase has been made.' });
+        return res
+          .status(503)
+          .json({ error: 'Paystack is not configured on this server. No purchase has been made.' });
       // Points/bundles are priced in USD internally (POINTS_UNIT_PRICE_MINOR, bundle.currency),
       // but this merchant's Paystack account only settles in NGN — convert only the amount sent
       // to Paystack, using the same fx_rates table /api/fx/convert reads. The stored purchase
@@ -417,11 +499,13 @@ export function mountPointsPurchase(app, store, deps) {
       let paystackAmountMinor = amountMinor;
       let paystackCurrency = currency;
       if (currency !== 'NGN') {
-        const fxRow = await db.prepare('SELECT * FROM fx_rates WHERE pair = ?').get(`${currency}_NGN`);
+        const fxRow = await db
+          .prepare('SELECT * FROM fx_rates WHERE pair = ?')
+          .get(`${currency}_NGN`);
         if (!fxRow)
-          return res
-            .status(503)
-            .json({ error: `No ${currency} to NGN exchange rate is configured. No purchase has been made.` });
+          return res.status(503).json({
+            error: `No ${currency} to NGN exchange rate is configured. No purchase has been made.`,
+          });
         paystackAmountMinor = Math.round(amountMinor * fxRow.rate);
         paystackCurrency = 'NGN';
       }
@@ -434,22 +518,32 @@ export function mountPointsPurchase(app, store, deps) {
         reference,
       });
       await transaction(async () => {
-        await db.prepare('INSERT INTO points_purchases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-          purchaseId,
-          req.user.id,
+        await db
+          .prepare('INSERT INTO points_purchases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(
+            purchaseId,
+            req.user.id,
+            req.workspace.id,
+            points,
+            amountMinor,
+            currency,
+            'paystack',
+            reference,
+            'pending',
+            new Date().toISOString(),
+            bundleId,
+          );
+        await log(
           req.workspace.id,
-          points,
-          amountMinor,
-          currency,
-          'paystack',
-          reference,
-          'pending',
-          new Date().toISOString(),
-          bundleId,
+          req.user.name,
+          'Points purchase initiated',
+          purchaseId,
+          bundleId ? `bundle ${bundleId}` : `${points} points`,
         );
-        await log(req.workspace.id, req.user.name, 'Points purchase initiated', purchaseId, bundleId ? `bundle ${bundleId}` : `${points} points`);
       });
-      res.status(201).json({ authorizationUrl: init.authorizationUrl, reference, points, amountMinor });
+      res
+        .status(201)
+        .json({ authorizationUrl: init.authorizationUrl, reference, points, amountMinor });
     } catch (error) {
       next(error);
     }
@@ -475,7 +569,8 @@ export function mountPaystackWebhook(app, store, deps) {
 
     const event = req.body || {};
     const eventId = String(event.data?.reference || event.data?.id || '');
-    if (!event.event || !eventId) return res.status(400).json({ error: 'Malformed webhook payload.' });
+    if (!event.event || !eventId)
+      return res.status(400).json({ error: 'Malformed webhook payload.' });
     // Paystack reuses the same transaction/transfer reference across related events (e.g. a
     // charge and its later refund can share a reference) — so the dedup key must include the
     // event type, or a genuinely new event on the same reference would be mistaken for a replay.
@@ -494,69 +589,97 @@ export function mountPaystackWebhook(app, store, deps) {
         .prepare(
           'INSERT INTO payment_webhook_events VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_event_id) DO NOTHING RETURNING *',
         )
-        .get(randomUUID(), 'paystack', event.event, dedupeKey, JSON.stringify(event), new Date().toISOString(), new Date().toISOString());
+        .get(
+          randomUUID(),
+          'paystack',
+          event.event,
+          dedupeKey,
+          JSON.stringify(event),
+          new Date().toISOString(),
+          new Date().toISOString(),
+        );
       if (!claimed) return true;
       const transfer = await db
         .prepare('SELECT * FROM payment_transfers WHERE provider_reference = ?')
         .get(eventId);
       if (transfer) {
         if (event.event === 'transfer.success') {
-          await db.prepare(
-            "UPDATE payment_transfers SET status = 'succeeded', updated_at = ? WHERE id = ?",
-          ).run(new Date().toISOString(), transfer.id);
-          await db.prepare("UPDATE milestones SET status = 'paid' WHERE id = ?").run(transfer.milestone_id);
-          await db.prepare("UPDATE milestone_fundings SET status = 'released', released_at = ? WHERE milestone_id = ? AND status = 'held'").run(
-            new Date().toISOString(),
-            transfer.milestone_id,
-          );
+          await db
+            .prepare(
+              "UPDATE payment_transfers SET status = 'succeeded', updated_at = ? WHERE id = ?",
+            )
+            .run(new Date().toISOString(), transfer.id);
+          await db
+            .prepare("UPDATE milestones SET status = 'paid' WHERE id = ?")
+            .run(transfer.milestone_id);
+          await db
+            .prepare(
+              "UPDATE milestone_fundings SET status = 'released', released_at = ? WHERE milestone_id = ? AND status = 'held'",
+            )
+            .run(new Date().toISOString(), transfer.milestone_id);
         } else if (event.event === 'transfer.failed') {
-          await db.prepare(
-            "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
-          ).run('Reported failed by provider webhook.', new Date().toISOString(), transfer.id);
+          await db
+            .prepare(
+              "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
+            )
+            .run('Reported failed by provider webhook.', new Date().toISOString(), transfer.id);
         }
       }
       if (event.event === 'charge.success') {
         const purchase = await db
-          .prepare("SELECT * FROM points_purchases WHERE provider_reference = ? AND status = 'pending'")
+          .prepare(
+            "SELECT * FROM points_purchases WHERE provider_reference = ? AND status = 'pending'",
+          )
           .get(eventId);
         if (purchase) {
-          await db.prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?").run(purchase.id);
-          await db.prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?').run(
-            purchase.points,
-            purchase.user_id,
-          );
-          await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-            randomUUID(),
-            purchase.user_id,
-            purchase.workspace_id,
-            purchase.points,
-            'purchase',
-            purchase.id,
-            Date.now(),
-          );
+          await db
+            .prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?")
+            .run(purchase.id);
+          await db
+            .prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?')
+            .run(purchase.points, purchase.user_id);
+          await db
+            .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+            .run(
+              randomUUID(),
+              purchase.user_id,
+              purchase.workspace_id,
+              purchase.points,
+              'purchase',
+              purchase.id,
+              Date.now(),
+            );
           // Only a CONFIRMED purchase grants real tool access — never at initiation, since an
           // unpaid/pending purchase must not unlock anything. See src/app/entitlements.mjs.
-          if (purchase.bundle_id) await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
+          if (purchase.bundle_id)
+            await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
         }
         const funding = await db
-          .prepare("SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'pending'")
+          .prepare(
+            "SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'pending'",
+          )
           .get(eventId);
         if (funding) {
-          await db.prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?").run(
-            new Date().toISOString(),
-            funding.id,
-          );
+          await db
+            .prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?")
+            .run(new Date().toISOString(), funding.id);
         }
       }
       if (event.event === 'refund.processed' || event.event === 'refund.failed') {
         const funding = await db
-          .prepare("SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'refund_pending'")
+          .prepare(
+            "SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'refund_pending'",
+          )
           .get(eventId);
         if (funding) {
           const status = event.event === 'refund.processed' ? 'refunded' : 'refund_failed';
-          await db.prepare(
-            "UPDATE milestone_fundings SET status = ?, refunded_at = ? WHERE id = ?",
-          ).run(status, event.event === 'refund.processed' ? new Date().toISOString() : null, funding.id);
+          await db
+            .prepare('UPDATE milestone_fundings SET status = ?, refunded_at = ? WHERE id = ?')
+            .run(
+              status,
+              event.event === 'refund.processed' ? new Date().toISOString() : null,
+              funding.id,
+            );
         }
       }
       return false;

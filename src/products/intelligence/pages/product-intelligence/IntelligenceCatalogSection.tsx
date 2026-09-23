@@ -2,7 +2,14 @@ import { useMemo } from 'react';
 import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
 import './intelligence-catalog.css';
 
-const HOME_ENGINES = ['Clarity', 'Capability', 'Consistency', 'Growth', 'Finance', 'Shared'] as const;
+const HOME_ENGINES = [
+  'Clarity',
+  'Capability',
+  'Consistency',
+  'Growth',
+  'Finance',
+  'Shared',
+] as const;
 
 /** Public, logged-out, purely informational — no buttons, tabs, or forms. Public/audience pages
  * only educate; running a diagnostic is a signed-in workspace action (POST /api/engines/:code/run
@@ -33,8 +40,9 @@ export function IntelligenceCatalogSection() {
         <div className="engine-catalog-head">
           <h2>248 Diagnostic Engines. Real Arithmetic, Not Guessed Scores.</h2>
           <p>
-            Every module computes from what you enter — margins, coverage, sequencing, sensitivity — the model
-            never invents a number. Running one is a signed-in workspace action; this is the catalog.
+            Every module computes from what you enter — margins, coverage, sequencing, sensitivity —
+            the model never invents a number. Running one is a signed-in workspace action; this is
+            the catalog.
           </p>
         </div>
 

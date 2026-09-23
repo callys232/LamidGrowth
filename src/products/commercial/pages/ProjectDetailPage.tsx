@@ -87,7 +87,11 @@ export function ProjectDetailPage() {
 
       {isClient && (
         <div className="theme-toggle">
-          <input placeholder="Milestone title" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <input
+            placeholder="Milestone title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
           <input
             placeholder="Amount"
             type="number"
@@ -98,7 +102,12 @@ export function ProjectDetailPage() {
           <Button
             disabled={busy || !title.trim() || !amount}
             onClick={() => {
-              void addMilestone({ title, description: '', amount: Number(amount), currency: 'USD' });
+              void addMilestone({
+                title,
+                description: '',
+                amount: Number(amount),
+                currency: 'USD',
+              });
               setTitle('');
               setAmount('');
             }}
@@ -111,14 +120,18 @@ export function ProjectDetailPage() {
       {isClient && (
         <section className="panel settings-card">
           <h3>Expert team</h3>
-          <p>Assign the whole team — led by the expert already engaged here — instead of adding specialists one at a time.</p>
+          <p>
+            Assign the whole team — led by the expert already engaged here — instead of adding
+            specialists one at a time.
+          </p>
           {project.assignedTeam ? (
             <div className="activity-feed-row">
               <span className="activity-feed-title">
                 <strong>{project.assignedTeam.name}</strong>
                 <br />
                 <small>
-                  {project.assignedTeam.members.length} member{project.assignedTeam.members.length === 1 ? '' : 's'}
+                  {project.assignedTeam.members.length} member
+                  {project.assignedTeam.members.length === 1 ? '' : 's'}
                 </small>
               </span>
               <Button variant="secondary" disabled={busy} onClick={() => void assignTeam(null)}>
@@ -165,7 +178,12 @@ export function ProjectDetailPage() {
           </ol>
         )}
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <input placeholder="Write a message" value={draft} onChange={(e) => setDraft(e.target.value)} style={{ flex: 1 }} />
+          <input
+            placeholder="Write a message"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            style={{ flex: 1 }}
+          />
           <Button
             disabled={busy || !draft.trim()}
             onClick={async () => {
@@ -197,7 +215,12 @@ export function ProjectDetailPage() {
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <select
                         value={reviewRating[milestone.id] ?? 5}
-                        onChange={(e) => setReviewRating((prev) => ({ ...prev, [milestone.id]: Number(e.target.value) }))}
+                        onChange={(e) =>
+                          setReviewRating((prev) => ({
+                            ...prev,
+                            [milestone.id]: Number(e.target.value),
+                          }))
+                        }
                       >
                         {[5, 4, 3, 2, 1].map((n) => (
                           <option key={n} value={n}>
@@ -208,12 +231,18 @@ export function ProjectDetailPage() {
                       <input
                         placeholder="Comment (optional)"
                         value={reviewComment[milestone.id] ?? ''}
-                        onChange={(e) => setReviewComment((prev) => ({ ...prev, [milestone.id]: e.target.value }))}
+                        onChange={(e) =>
+                          setReviewComment((prev) => ({ ...prev, [milestone.id]: e.target.value }))
+                        }
                       />
                       <Button
                         disabled={busy}
                         onClick={async () => {
-                          const ok = await submitReview(milestone.id, reviewRating[milestone.id] ?? 5, reviewComment[milestone.id] ?? '');
+                          const ok = await submitReview(
+                            milestone.id,
+                            reviewRating[milestone.id] ?? 5,
+                            reviewComment[milestone.id] ?? '',
+                          );
                           if (ok) setReviewedMilestoneIds((prev) => [...prev, milestone.id]);
                         }}
                       >

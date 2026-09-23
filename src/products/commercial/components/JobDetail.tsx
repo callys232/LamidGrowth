@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calculator, ClipboardList, FileEdit, FileText, ListChecks, NotebookText } from 'lucide-react';
+import {
+  Calculator,
+  ClipboardList,
+  FileEdit,
+  FileText,
+  ListChecks,
+  NotebookText,
+} from 'lucide-react';
 import { api } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
@@ -11,11 +18,41 @@ import { ChangeOrderCard } from './ChangeOrderCard';
 import type { Bid, Job, Proposal } from '../types';
 
 const documentTools = [
-  { agentId: 'scope-builder', label: 'Scope of Work', message: 'draft the scope of work', icon: ClipboardList, kind: 'document' as const },
-  { agentId: 'sow-builder', label: 'Statement of Work', message: 'draft a statement of work', icon: FileText, kind: 'document' as const },
-  { agentId: 'brief-builder', label: 'Client Brief', message: 'write a client brief', icon: NotebookText, kind: 'document' as const },
-  { agentId: 'deliverable-builder', label: 'Deliverables Checklist', message: 'list the deliverables', icon: ListChecks, kind: 'checklist' as const },
-  { agentId: 'acceptance-builder', label: 'Acceptance Criteria', message: 'what should the acceptance criteria be?', icon: ListChecks, kind: 'checklist' as const },
+  {
+    agentId: 'scope-builder',
+    label: 'Scope of Work',
+    message: 'draft the scope of work',
+    icon: ClipboardList,
+    kind: 'document' as const,
+  },
+  {
+    agentId: 'sow-builder',
+    label: 'Statement of Work',
+    message: 'draft a statement of work',
+    icon: FileText,
+    kind: 'document' as const,
+  },
+  {
+    agentId: 'brief-builder',
+    label: 'Client Brief',
+    message: 'write a client brief',
+    icon: NotebookText,
+    kind: 'document' as const,
+  },
+  {
+    agentId: 'deliverable-builder',
+    label: 'Deliverables Checklist',
+    message: 'list the deliverables',
+    icon: ListChecks,
+    kind: 'checklist' as const,
+  },
+  {
+    agentId: 'acceptance-builder',
+    label: 'Acceptance Criteria',
+    message: 'what should the acceptance criteria be?',
+    icon: ListChecks,
+    kind: 'checklist' as const,
+  },
 ] as const;
 export function JobDetail({
   job,
@@ -46,7 +83,9 @@ export function JobDetail({
     response: string;
     runId: string;
   } | null>(null);
-  const [changeOrder, setChangeOrder] = useState<{ proposalId: string; response: string } | null>(null);
+  const [changeOrder, setChangeOrder] = useState<{ proposalId: string; response: string } | null>(
+    null,
+  );
   const [requestingChange, setRequestingChange] = useState('');
   const bidKey = useRef(crypto.randomUUID()),
     proposalKey = useRef(crypto.randomUUID());
@@ -134,7 +173,12 @@ export function JobDetail({
       setAwarding('');
     }
   }
-  async function runTool(agentId: string, label: string, message: string, kind: 'calc' | 'document' | 'checklist') {
+  async function runTool(
+    agentId: string,
+    label: string,
+    message: string,
+    kind: 'calc' | 'document' | 'checklist',
+  ) {
     setRunningTool(agentId);
     setToolResult(null);
     setError('');
@@ -182,14 +226,18 @@ export function JobDetail({
           disabled={Boolean(runningTool)}
           onClick={() => void runTool('quote-generator', 'Quote', 'generate a quote', 'calc')}
         >
-          <Calculator size={14} /> {runningTool === 'quote-generator' ? 'Computing…' : 'Get a quote'}
+          <Calculator size={14} />{' '}
+          {runningTool === 'quote-generator' ? 'Computing…' : 'Get a quote'}
         </Button>
         <Button
           variant="secondary"
           disabled={Boolean(runningTool)}
-          onClick={() => void runTool('estimate-generator', 'Estimate', 'give me an estimate', 'calc')}
+          onClick={() =>
+            void runTool('estimate-generator', 'Estimate', 'give me an estimate', 'calc')
+          }
         >
-          <Calculator size={14} /> {runningTool === 'estimate-generator' ? 'Computing…' : 'Get a budget estimate'}
+          <Calculator size={14} />{' '}
+          {runningTool === 'estimate-generator' ? 'Computing…' : 'Get a budget estimate'}
         </Button>
         {documentTools.map((tool) => {
           const Icon = tool.icon;
@@ -214,7 +262,11 @@ export function JobDetail({
             runId={toolResult.runId}
           />
         ) : toolResult.kind === 'checklist' ? (
-          <ChecklistCard kind={toolResult.label} text={toolResult.response} runId={toolResult.runId} />
+          <ChecklistCard
+            kind={toolResult.label}
+            text={toolResult.response}
+            runId={toolResult.runId}
+          />
         ) : (
           <div className="job-pricing-result">
             <p>{toolResult.response}</p>
@@ -327,18 +379,31 @@ export function JobDetail({
                 onSubmit={(e) => {
                   e.preventDefault();
                   const change = new FormData(e.currentTarget).get('change');
-                  if (typeof change === 'string' && change.trim()) void requestChangeOrder(p, change);
+                  if (typeof change === 'string' && change.trim())
+                    void requestChangeOrder(p, change);
                 }}
               >
                 <Field label="Request a change to this proposal">
-                  <input name="change" required minLength={5} maxLength={2000} placeholder="e.g. Add a second revision round" />
+                  <input
+                    name="change"
+                    required
+                    minLength={5}
+                    maxLength={2000}
+                    placeholder="e.g. Add a second revision round"
+                  />
                 </Field>
                 <Button type="submit" variant="secondary" disabled={requestingChange === p.id}>
-                  <FileEdit size={14} /> {requestingChange === p.id ? 'Drafting…' : 'Draft change order'}
+                  <FileEdit size={14} />{' '}
+                  {requestingChange === p.id ? 'Drafting…' : 'Draft change order'}
                 </Button>
               </form>
               {changeOrder?.proposalId === p.id && (
-                <ChangeOrderCard originalScope={p.scope} originalAmount={p.amount} currency={p.currency} text={changeOrder.response} />
+                <ChangeOrderCard
+                  originalScope={p.scope}
+                  originalAmount={p.amount}
+                  currency={p.currency}
+                  text={changeOrder.response}
+                />
               )}
             </article>
           ))}

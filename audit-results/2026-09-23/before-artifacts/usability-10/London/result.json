@@ -7,12 +7,7 @@
   "goal": "Prepare a client proposal",
   "simulated": true,
   "stage": "completed evaluation",
-  "completed": [
-    "homepage",
-    "signup and development OTP",
-    "goal creation",
-    "first specialist step"
-  ],
+  "completed": ["homepage", "signup and development OTP", "goal creation", "first specialist step"],
   "homeOverflow": false,
   "documentLanguage": "en",
   "accessibility": [],

@@ -78,7 +78,9 @@ export function useLearningPage() {
 
   async function loadEnrollments() {
     try {
-      setEnrollments(await api<LearningEnrollment[]>('/learning/enrollments/mine', undefined, 'GET'));
+      setEnrollments(
+        await api<LearningEnrollment[]>('/learning/enrollments/mine', undefined, 'GET'),
+      );
     } catch (e) {
       setError((e as Error).message);
     }
@@ -100,7 +102,9 @@ export function useLearningPage() {
 
   async function loadAttention() {
     try {
-      setAttention(await api<AttentionResponse>('/learning/enrollments/attention', undefined, 'GET'));
+      setAttention(
+        await api<AttentionResponse>('/learning/enrollments/attention', undefined, 'GET'),
+      );
     } catch (e) {
       setError((e as Error).message);
     }

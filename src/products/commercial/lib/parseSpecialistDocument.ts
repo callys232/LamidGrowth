@@ -15,10 +15,17 @@ const fieldLine = /^([A-Za-z][A-Za-z ]{1,30}):\s?(.+)$/;
  * the UI never breaks, it just renders less structured.
  */
 export function parseSpecialistDocument(text: string): ParsedDocument {
-  const blocks = text.split('\n\n').map((b) => b.trim()).filter(Boolean);
+  const blocks = text
+    .split('\n\n')
+    .map((b) => b.trim())
+    .filter(Boolean);
   const heading = blocks.shift() || '';
   let note: string | undefined;
-  if (blocks.length && blocks[blocks.length - 1].startsWith('(') && blocks[blocks.length - 1].endsWith(')')) {
+  if (
+    blocks.length &&
+    blocks[blocks.length - 1].startsWith('(') &&
+    blocks[blocks.length - 1].endsWith(')')
+  ) {
     note = blocks.pop()!.slice(1, -1);
   }
   const fields: Array<{ label: string; value: string }> = [];

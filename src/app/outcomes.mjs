@@ -17,33 +17,45 @@ export function mountOutcomes(app, store) {
   app.post('/api/projects/:id/outcome', async (req, res) => {
     const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     if (!project) return res.status(404).json({ error: 'Project not found.' });
-    if (project.workspace_id !== req.workspace.id) return res.status(403).json({ error: 'This project does not belong to your workspace.' });
+    if (project.workspace_id !== req.workspace.id)
+      return res.status(403).json({ error: 'This project does not belong to your workspace.' });
     if (await db.prepare('SELECT 1 FROM engagement_outcomes WHERE project_id = ?').get(project.id))
-      return res.status(400).json({ error: 'An outcome has already been recorded for this project.' });
+      return res
+        .status(400)
+        .json({ error: 'An outcome has already been recorded for this project.' });
     const input = createSchema.parse(req.body);
     const id = randomUUID();
     const now = new Date().toISOString();
     await transaction(async () => {
-      await db.prepare('INSERT INTO engagement_outcomes VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        project.id,
-        req.workspace.id,
-        req.user.id,
-        input.summary,
-        input.learnings,
-        input.reusableContext,
-        now,
-      );
+      await db
+        .prepare('INSERT INTO engagement_outcomes VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          id,
+          project.id,
+          req.workspace.id,
+          req.user.id,
+          input.summary,
+          input.learnings,
+          input.reusableContext,
+          now,
+        );
       await log(req.workspace.id, req.user.name, 'Engagement outcome recorded', id, project.title);
     });
-    res.status(201).json(await db.prepare('SELECT * FROM engagement_outcomes WHERE id = ?').get(id));
+    res
+      .status(201)
+      .json(await db.prepare('SELECT * FROM engagement_outcomes WHERE id = ?').get(id));
   });
 
   app.get('/api/projects/:id/outcome', async (req, res) => {
     const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     if (!project) return res.status(404).json({ error: 'Project not found.' });
-    if (project.workspace_id !== req.workspace.id) return res.status(403).json({ error: 'This project does not belong to your workspace.' });
-    res.json((await db.prepare('SELECT * FROM engagement_outcomes WHERE project_id = ?').get(project.id)) ?? null);
+    if (project.workspace_id !== req.workspace.id)
+      return res.status(403).json({ error: 'This project does not belong to your workspace.' });
+    res.json(
+      (await db
+        .prepare('SELECT * FROM engagement_outcomes WHERE project_id = ?')
+        .get(project.id)) ?? null,
+    );
   });
 
   // The workspace-level feed a returning OS context view can read from — every recorded

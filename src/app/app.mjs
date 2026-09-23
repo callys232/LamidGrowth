@@ -138,7 +138,8 @@ const jobPostCost = 40;
 const bidCost = 20;
 
 export async function createApp({
-  errorLogger = (event, fields) => console.error(JSON.stringify({ timestamp: new Date().toISOString(), event, ...fields })),
+  errorLogger = (event, fields) =>
+    console.error(JSON.stringify({ timestamp: new Date().toISOString(), event, ...fields })),
   filename,
   poolMax,
   production = false,
@@ -192,15 +193,18 @@ export async function createApp({
     mutation: { windowMs: 60_000, max: 60, ...rateLimits.mutation },
   };
   const apiLimiter = createRateLimiter(store, {
-    ...limits.api, namespace: 'api',
+    ...limits.api,
+    namespace: 'api',
     message: 'Too many requests. Please wait a minute and try again.',
   });
   const authLimiter = createRateLimiter(store, {
-    ...limits.auth, namespace: 'auth',
+    ...limits.auth,
+    namespace: 'auth',
     message: 'Too many sign-in attempts. Please wait a minute and try again.',
   });
   const mutationLimiter = createRateLimiter(store, {
-    ...limits.mutation, namespace: 'mutation',
+    ...limits.mutation,
+    namespace: 'mutation',
     message: 'Too many changes. Please wait a minute and try again.',
   });
   // Applied only on routes mounted after the session middleware below, so
@@ -211,7 +215,8 @@ export async function createApp({
   const spendLimiter = createRateLimiter(store, {
     windowMs: 60_000,
     max: 20,
-    ...rateLimits.spend, namespace: 'spend',
+    ...rateLimits.spend,
+    namespace: 'spend',
     message: 'Too many spending actions. Please wait a minute and try again.',
     key: (req) => (req.user ? `user:${req.user.id}` : `ip:${req.ip}`),
   });
@@ -225,7 +230,10 @@ export async function createApp({
     // A split frontend/backend deployment needs the frontend's origin to be able to read API
     // responses at all — CORP applies independently of the CORS allow-origin check below, so
     // 'same-origin' would silently block every request even from an explicitly trusted origin.
-    res.setHeader('Cross-Origin-Resource-Policy', allowedOrigins.length ? 'cross-origin' : 'same-origin');
+    res.setHeader(
+      'Cross-Origin-Resource-Policy',
+      allowedOrigins.length ? 'cross-origin' : 'same-origin',
+    );
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     if (production)
       res.setHeader(
@@ -249,7 +257,10 @@ export async function createApp({
       res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
       // Must list every non-simple header src/api.ts sends, or the browser blocks the actual
       // request at the preflight stage before it ever reaches this server.
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Workspace-Id, Idempotency-Key');
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type, X-Workspace-Id, Idempotency-Key',
+      );
       return res.status(204).end();
     }
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
@@ -285,9 +296,11 @@ export async function createApp({
   const session = async (res, userId, workspaceId = null) => {
     const token = randomBytes(32).toString('hex');
     await db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
-    await db.prepare(
-      'INSERT INTO sessions (token, user_id, expires_at, workspace_id) VALUES (?, ?, ?, ?)',
-    ).run(digest(token), userId, Date.now() + 86400000 * 7, workspaceId);
+    await db
+      .prepare(
+        'INSERT INTO sessions (token, user_id, expires_at, workspace_id) VALUES (?, ?, ?, ?)',
+      )
+      .run(digest(token), userId, Date.now() + 86400000 * 7, workspaceId);
     res.cookie('lamid_session', token, {
       httpOnly: true,
       // 'None' is required for the cookie to be sent on cross-site requests (a split
@@ -301,8 +314,20 @@ export async function createApp({
   };
   app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
   app.post('/api/client-errors', (req, res) => {
-    const input = z.object({ type: z.enum(['render', 'error', 'rejection']), name: z.string().max(100), message: z.string().max(500) }).strict().parse(req.body);
-    errorLogger('client_error', { requestId: req.requestId, type: input.type, name: input.name, message: input.message });
+    const input = z
+      .object({
+        type: z.enum(['render', 'error', 'rejection']),
+        name: z.string().max(100),
+        message: z.string().max(500),
+      })
+      .strict()
+      .parse(req.body);
+    errorLogger('client_error', {
+      requestId: req.requestId,
+      type: input.type,
+      name: input.name,
+      message: input.message,
+    });
     res.status(204).end();
   });
   const checkReadiness = createReadinessCheck(store);
@@ -310,7 +335,17 @@ export async function createApp({
     const ready = await checkReadiness();
     res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'unavailable' });
   });
-  const accounts = await mountAccounts(app, store, { production, session, contexts, enterpriseMemberLimit, mailProvider, securityKey, publicOrigin, welcomeIpVelocityLimit, errorLogger });
+  const accounts = await mountAccounts(app, store, {
+    production,
+    session,
+    contexts,
+    enterpriseMemberLimit,
+    mailProvider,
+    securityKey,
+    publicOrigin,
+    welcomeIpVelocityLimit,
+    errorLogger,
+  });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
   mountPublicEngines(app);
@@ -337,7 +372,9 @@ export async function createApp({
       )
       .get(user.id, user.sessionWorkspaceId, user.sessionWorkspaceId);
     if (!req.workspace && user.sessionWorkspaceId) {
-      await db.prepare('UPDATE sessions SET workspace_id = NULL WHERE token = ?').run(digest(token));
+      await db
+        .prepare('UPDATE sessions SET workspace_id = NULL WHERE token = ?')
+        .run(digest(token));
       req.workspace = await db
         .prepare(
           "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' ORDER BY workspace_members.role = 'owner' DESC LIMIT 1",
@@ -345,9 +382,11 @@ export async function createApp({
         .get(user.id);
     }
     if (!req.workspace) return res.status(403).json({ error: 'No active workspace membership.' });
-    req.workspace.role = (await db
-      .prepare('SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ?')
-      .get(req.workspace.id, user.id)).role;
+    req.workspace.role = (
+      await db
+        .prepare('SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ?')
+        .get(req.workspace.id, user.id)
+    ).role;
     if (!permissionsFor(req.workspace.role).includes('workspace:read'))
       return res.status(403).json({ error: 'This workspace role is not supported.' });
     const expectedWorkspace = req.get('X-Workspace-Id');
@@ -369,40 +408,103 @@ export async function createApp({
     res.json({ ok: true });
   });
   app.get('/api/admin/welcome-rewards', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email)) return res.status(403).json({ error: 'Ecosystem administrator access required.' });
-    res.json(await db.prepare('SELECT user_id AS "userId", status, reason, created_at AS "createdAt" FROM welcome_claims WHERE status = \'review\' ORDER BY created_at LIMIT 100').all());
+    if (!ecosystemAdminEmails.includes(req.user.email))
+      return res.status(403).json({ error: 'Ecosystem administrator access required.' });
+    res.json(
+      await db
+        .prepare(
+          'SELECT user_id AS "userId", status, reason, created_at AS "createdAt" FROM welcome_claims WHERE status = \'review\' ORDER BY created_at LIMIT 100',
+        )
+        .all(),
+    );
   });
   app.post('/api/admin/welcome-rewards/:id', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email)) return res.status(403).json({ error: 'Ecosystem administrator access required.' });
-    const input = z.object({ decision: z.enum(['approve', 'deny']), reason: text.max(500) }).strict().parse(req.body);
+    if (!ecosystemAdminEmails.includes(req.user.email))
+      return res.status(403).json({ error: 'Ecosystem administrator access required.' });
+    const input = z
+      .object({ decision: z.enum(['approve', 'deny']), reason: text.max(500) })
+      .strict()
+      .parse(req.body);
     await transaction(async () => {
-      const claim = await db.prepare("SELECT * FROM welcome_claims WHERE user_id = ? AND status = 'review'").get(req.params.id);
-      if (!claim || !(await db.prepare('SELECT 1 FROM users WHERE id = ? AND verified_at IS NOT NULL AND disabled_at IS NULL').get(req.params.id))) throw Object.assign(new Error('No eligible pending claim.'), { status: 409 });
-      if (input.decision === 'approve' && (await db.prepare("SELECT 1 FROM welcome_claims WHERE device_hash = ? AND status = 'granted'").get(claim.device_hash))) throw Object.assign(new Error('This device already received a welcome reward.'), { status: 409 });
+      const claim = await db
+        .prepare("SELECT * FROM welcome_claims WHERE user_id = ? AND status = 'review'")
+        .get(req.params.id);
+      if (
+        !claim ||
+        !(await db
+          .prepare(
+            'SELECT 1 FROM users WHERE id = ? AND verified_at IS NOT NULL AND disabled_at IS NULL',
+          )
+          .get(req.params.id))
+      )
+        throw Object.assign(new Error('No eligible pending claim.'), { status: 409 });
+      if (
+        input.decision === 'approve' &&
+        (await db
+          .prepare("SELECT 1 FROM welcome_claims WHERE device_hash = ? AND status = 'granted'")
+          .get(claim.device_hash))
+      )
+        throw Object.assign(new Error('This device already received a welcome reward.'), {
+          status: 409,
+        });
       // The claim itself is the atomic UPDATE (guarded by AND status = 'review'), not the SELECT
       // above deciding unconditionally — an admin double-clicking approve, or two admins acting on
       // the same claim at once, would otherwise both pass the SELECT before either commits, both
       // crediting the welcome bonus.
       const claimed = await db
-        .prepare("UPDATE welcome_claims SET status = ?, reason = ? WHERE user_id = ? AND status = 'review' RETURNING *")
+        .prepare(
+          "UPDATE welcome_claims SET status = ?, reason = ? WHERE user_id = ? AND status = 'review' RETURNING *",
+        )
         .get(input.decision === 'approve' ? 'granted' : 'ineligible', input.reason, req.params.id);
       if (!claimed) throw Object.assign(new Error('No eligible pending claim.'), { status: 409 });
       if (input.decision === 'approve') await accounts.credit(req.params.id);
-      await db.prepare('INSERT INTO administration_audit VALUES (?, ?, ?, ?, ?)').run(randomUUID(), req.user.id, `Welcome reward ${input.decision}: ${input.reason}`, req.params.id, new Date().toISOString());
+      await db
+        .prepare('INSERT INTO administration_audit VALUES (?, ?, ?, ?, ?)')
+        .run(
+          randomUUID(),
+          req.user.id,
+          `Welcome reward ${input.decision}: ${input.reason}`,
+          req.params.id,
+          new Date().toISOString(),
+        );
     });
     res.json({ ok: true });
   });
   app.get('/api/admin/operations', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email)) return res.status(403).json({ error: 'Ecosystem administrator access required.' });
-    const [mail, scheduler, agents, duplicateRefunds, balanceMismatches, stuckRuns] = await Promise.all([
-      db.prepare('SELECT status, COUNT(*) AS count FROM mail_outbox GROUP BY status').all(),
-      db.prepare('SELECT name, expires_at AS "expiresAt" FROM service_leases').all(),
-      db.prepare('SELECT status, COUNT(*) AS count FROM agent_runs GROUP BY status').all(),
-      db.prepare("SELECT reference_id, reason, COUNT(*) AS count, SUM(amount) AS points FROM points_ledger WHERE reason IN ('agent_run_refund', 'ai_review_refund') GROUP BY reference_id, reason HAVING COUNT(*) > 1 LIMIT 50").all(),
-      db.prepare('SELECT u.id AS user_id, u.points_balance, COALESCE(SUM(l.amount), 0) AS ledger_balance FROM users u LEFT JOIN points_ledger l ON l.user_id = u.id WHERE u.demo = 0 GROUP BY u.id HAVING u.points_balance <> COALESCE(SUM(l.amount), 0) OR u.points_balance < 0 LIMIT 50').all(),
-      db.prepare("SELECT id, workspace_id, created_at FROM agent_runs WHERE status = 'running' AND created_at < ? ORDER BY created_at LIMIT 50").all(new Date(Date.now() - 120000).toISOString()),
-    ]);
-    res.json({ mail, scheduler, agents, ledger: { duplicateRefunds, balanceMismatches, requiresReview: duplicateRefunds.length > 0 || balanceMismatches.length > 0 }, stuckRuns });
+    if (!ecosystemAdminEmails.includes(req.user.email))
+      return res.status(403).json({ error: 'Ecosystem administrator access required.' });
+    const [mail, scheduler, agents, duplicateRefunds, balanceMismatches, stuckRuns] =
+      await Promise.all([
+        db.prepare('SELECT status, COUNT(*) AS count FROM mail_outbox GROUP BY status').all(),
+        db.prepare('SELECT name, expires_at AS "expiresAt" FROM service_leases').all(),
+        db.prepare('SELECT status, COUNT(*) AS count FROM agent_runs GROUP BY status').all(),
+        db
+          .prepare(
+            "SELECT reference_id, reason, COUNT(*) AS count, SUM(amount) AS points FROM points_ledger WHERE reason IN ('agent_run_refund', 'ai_review_refund') GROUP BY reference_id, reason HAVING COUNT(*) > 1 LIMIT 50",
+          )
+          .all(),
+        db
+          .prepare(
+            'SELECT u.id AS user_id, u.points_balance, COALESCE(SUM(l.amount), 0) AS ledger_balance FROM users u LEFT JOIN points_ledger l ON l.user_id = u.id WHERE u.demo = 0 GROUP BY u.id HAVING u.points_balance <> COALESCE(SUM(l.amount), 0) OR u.points_balance < 0 LIMIT 50',
+          )
+          .all(),
+        db
+          .prepare(
+            "SELECT id, workspace_id, created_at FROM agent_runs WHERE status = 'running' AND created_at < ? ORDER BY created_at LIMIT 50",
+          )
+          .all(new Date(Date.now() - 120000).toISOString()),
+      ]);
+    res.json({
+      mail,
+      scheduler,
+      agents,
+      ledger: {
+        duplicateRefunds,
+        balanceMismatches,
+        requiresReview: duplicateRefunds.length > 0 || balanceMismatches.length > 0,
+      },
+      stuckRuns,
+    });
   });
   app.get('/api/workspaces', async (req, res) => {
     res.json(
@@ -422,10 +524,9 @@ export async function createApp({
       .get(input.workspaceId, req.user.id);
     if (!membership)
       return res.status(403).json({ error: 'You are not an active member of that workspace.' });
-    await db.prepare('UPDATE sessions SET workspace_id = ? WHERE token = ?').run(
-      input.workspaceId,
-      digest(req.token),
-    );
+    await db
+      .prepare('UPDATE sessions SET workspace_id = ? WHERE token = ?')
+      .run(input.workspaceId, digest(req.token));
     res.json({ ok: true, workspaceId: input.workspaceId });
   });
   const replayable = (req, operation, input, work) =>
@@ -452,7 +553,9 @@ export async function createApp({
           operation,
           key,
           fingerprint,
-          JSON.stringify({ error: 'This request is still processing. Retry with the same key shortly.' }),
+          JSON.stringify({
+            error: 'This request is still processing. Retry with the same key shortly.',
+          }),
           Date.now(),
         );
       if (!claimed) {
@@ -545,32 +648,28 @@ export async function createApp({
         .run(jobPostCost, req.user.id, jobPostCost);
       if (changed.changes !== 1)
         throw Object.assign(new Error('Not enough points to post this job.'), { status: 402 });
-      await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        req.user.id,
-        req.workspace.id,
-        -jobPostCost,
-        'job_post',
-        id,
-        Date.now(),
-      );
-      await db.prepare('INSERT INTO job_posts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        req.workspace.id,
-        req.user.id,
-        input.title,
-        input.category,
-        input.projectType,
-        input.description,
-        input.deliverables,
-        input.budgetMin,
-        input.budgetMax,
-        input.currency,
-        input.timeline,
-        'open',
-        Date.now(),
-        JSON.stringify(input.tags),
-      );
+      await db
+        .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(randomUUID(), req.user.id, req.workspace.id, -jobPostCost, 'job_post', id, Date.now());
+      await db
+        .prepare('INSERT INTO job_posts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          id,
+          req.workspace.id,
+          req.user.id,
+          input.title,
+          input.category,
+          input.projectType,
+          input.description,
+          input.deliverables,
+          input.budgetMin,
+          input.budgetMax,
+          input.currency,
+          input.timeline,
+          'open',
+          Date.now(),
+          JSON.stringify(input.tags),
+        );
       await log(req.workspace.id, req.user.name, 'Job post created', id, input.title);
       return { id, ...input, status: 'open', pointsCharged: jobPostCost };
     });
@@ -630,27 +729,31 @@ export async function createApp({
         .run(bidCost, req.user.id, bidCost);
       if (changed.changes !== 1)
         throw Object.assign(new Error('Not enough points to submit this bid.'), { status: 402 });
-      await db.prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        req.user.id,
-        job.workspace_id,
-        -bidCost,
-        'bid_submission',
-        id,
-        Date.now(),
-      );
-      await db.prepare('INSERT INTO bids VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        job.id,
-        job.workspace_id,
-        req.user.id,
-        input.coverLetter,
-        input.proposedAmount,
-        input.currency,
-        input.timeline,
-        'submitted',
-        Date.now(),
-      );
+      await db
+        .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          randomUUID(),
+          req.user.id,
+          job.workspace_id,
+          -bidCost,
+          'bid_submission',
+          id,
+          Date.now(),
+        );
+      await db
+        .prepare('INSERT INTO bids VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          id,
+          job.id,
+          job.workspace_id,
+          req.user.id,
+          input.coverLetter,
+          input.proposedAmount,
+          input.currency,
+          input.timeline,
+          'submitted',
+          Date.now(),
+        );
       await log(job.workspace_id, req.user.name, 'Bid submitted', id, `Job ${job.id}`);
       return { id, jobId: job.id, ...input, status: 'submitted', pointsCharged: bidCost };
     });
@@ -669,7 +772,9 @@ export async function createApp({
         .status(403)
         .json({ error: 'Sample workspaces cannot participate in shared commercial work.' });
     const bid = req.body.bidId
-      ? await db.prepare('SELECT * FROM bids WHERE id = ? AND job_id = ?').get(req.body.bidId, job.id)
+      ? await db
+          .prepare('SELECT * FROM bids WHERE id = ? AND job_id = ?')
+          .get(req.body.bidId, job.id)
       : null;
     if (job.client_user_id !== req.user.id && (!bid || bid.freelancer_user_id !== req.user.id))
       return res
@@ -680,22 +785,24 @@ export async function createApp({
     const sourceType = job.client_user_id === req.user.id ? 'client' : 'freelancer';
     const id = randomUUID();
     const result = await replayable(req, `proposal.create:${job.id}`, input, async () => {
-      await db.prepare('INSERT INTO proposals VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        job.workspace_id,
-        job.id,
-        bid?.id || null,
-        req.user.id,
-        sourceType,
-        input.title,
-        input.scope,
-        input.deliverables,
-        input.amount,
-        input.currency,
-        input.timeline,
-        'draft',
-        Date.now(),
-      );
+      await db
+        .prepare('INSERT INTO proposals VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          id,
+          job.workspace_id,
+          job.id,
+          bid?.id || null,
+          req.user.id,
+          sourceType,
+          input.title,
+          input.scope,
+          input.deliverables,
+          input.amount,
+          input.currency,
+          input.timeline,
+          'draft',
+          Date.now(),
+        );
       await log(job.workspace_id, req.user.name, 'Proposal drafted', id, input.title);
       return { id, jobId: job.id, ...input, bidId: bid?.id || null, sourceType, status: 'draft' };
     });
@@ -720,16 +827,20 @@ export async function createApp({
       return res.json(authored);
     }
     res.json(
-      await db.prepare('SELECT * FROM proposals WHERE job_id = ? ORDER BY created_at DESC').all(job.id),
+      await db
+        .prepare('SELECT * FROM proposals WHERE job_id = ? ORDER BY created_at DESC')
+        .all(job.id),
     );
   });
   const deleteUser = async (userId, actorId) => {
     const workspaces = await db.prepare('SELECT id FROM workspaces WHERE user_id = ?').all(userId);
     await transaction(async () => {
       // Remove the account's draft commercial work; preserve other users' point history.
-      await db.prepare(
-        'DELETE FROM workflow_runs WHERE principal_id = ? OR workspace_id IN (SELECT id FROM workspaces WHERE user_id = ?)',
-      ).run(userId, userId);
+      await db
+        .prepare(
+          'DELETE FROM workflow_runs WHERE principal_id = ? OR workspace_id IN (SELECT id FROM workspaces WHERE user_id = ?)',
+        )
+        .run(userId, userId);
       const doomedJobs = await db
         .prepare(
           `SELECT id FROM job_posts WHERE client_user_id = ?
@@ -742,9 +853,11 @@ export async function createApp({
         await db.prepare('DELETE FROM job_posts WHERE id = ?').run(job.id);
       }
       await db.prepare('DELETE FROM proposals WHERE author_user_id = ?').run(userId);
-      await db.prepare(
-        'UPDATE proposals SET bid_id = NULL WHERE bid_id IN (SELECT id FROM bids WHERE freelancer_user_id = ?)',
-      ).run(userId);
+      await db
+        .prepare(
+          'UPDATE proposals SET bid_id = NULL WHERE bid_id IN (SELECT id FROM bids WHERE freelancer_user_id = ?)',
+        )
+        .run(userId);
       await db.prepare('DELETE FROM bids WHERE freelancer_user_id = ?').run(userId);
       await db.prepare('DELETE FROM points_ledger WHERE user_id = ?').run(userId);
       await db.prepare('DELETE FROM idempotency WHERE user_id = ?').run(userId);
@@ -754,25 +867,21 @@ export async function createApp({
       for (const workspace of workspaces) {
         await db.prepare('DELETE FROM ai_usage WHERE workspace_id = ?').run(workspace.id);
         await db.prepare('DELETE FROM idempotency WHERE workspace_id = ?').run(workspace.id);
-        await db.prepare('UPDATE sessions SET workspace_id = NULL WHERE workspace_id = ?').run(
-          workspace.id,
-        );
-        await db.prepare('UPDATE points_ledger SET workspace_id = NULL WHERE workspace_id = ?').run(
-          workspace.id,
-        );
+        await db
+          .prepare('UPDATE sessions SET workspace_id = NULL WHERE workspace_id = ?')
+          .run(workspace.id);
+        await db
+          .prepare('UPDATE points_ledger SET workspace_id = NULL WHERE workspace_id = ?')
+          .run(workspace.id);
         await db.prepare('DELETE FROM workspace_members WHERE workspace_id = ?').run(workspace.id);
         await db.prepare('DELETE FROM audit WHERE workspace_id = ?').run(workspace.id);
         await db.prepare('DELETE FROM records WHERE workspace_id = ?').run(workspace.id);
         await db.prepare('DELETE FROM workspaces WHERE id = ?').run(workspace.id);
       }
       await db.prepare('DELETE FROM users WHERE id = ?').run(userId);
-      await db.prepare('INSERT INTO administration_audit VALUES (?, ?, ?, ?, ?)').run(
-        randomUUID(),
-        actorId,
-        'Account deleted',
-        userId,
-        new Date().toISOString(),
-      );
+      await db
+        .prepare('INSERT INTO administration_audit VALUES (?, ?, ?, ?, ?)')
+        .run(randomUUID(), actorId, 'Account deleted', userId, new Date().toISOString());
     });
   };
   const verifyCurrentPassword = async (req, password) => {
@@ -850,24 +959,26 @@ export async function createApp({
         .get(req.workspace.id, member.userId);
       if (current.status === input.status) return;
       if (input.status === 'active') {
-        const count = (await db
-          .prepare(
-            "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
-          )
-          .get(req.workspace.id)).count;
+        const count = (
+          await db
+            .prepare(
+              "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
+            )
+            .get(req.workspace.id)
+        ).count;
         if (count >= req.workspace.member_limit)
           throw Object.assign(
             new Error('This enterprise workspace has reached its member limit.'),
             { status: 409 },
           );
       }
-      await db.prepare(
-        'UPDATE workspace_members SET status = ? WHERE workspace_id = ? AND user_id = ?',
-      ).run(input.status, req.workspace.id, member.userId);
+      await db
+        .prepare('UPDATE workspace_members SET status = ? WHERE workspace_id = ? AND user_id = ?')
+        .run(input.status, req.workspace.id, member.userId);
       if (input.status === 'disabled')
-        await db.prepare(
-          'UPDATE sessions SET workspace_id = NULL WHERE user_id = ? AND workspace_id = ?',
-        ).run(member.userId, req.workspace.id);
+        await db
+          .prepare('UPDATE sessions SET workspace_id = NULL WHERE user_id = ? AND workspace_id = ?')
+          .run(member.userId, req.workspace.id);
       await log(req.workspace.id, req.user.name, 'Membership updated', member.userId, input.status);
     });
     res.json({ ok: true, status: input.status });
@@ -893,11 +1004,13 @@ export async function createApp({
       return res
         .status(403)
         .json({ error: 'Only an enterprise workspace administrator can add members.' });
-    const count = (await db
-      .prepare(
-        "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
-      )
-      .get(req.workspace.id)).count;
+    const count = (
+      await db
+        .prepare(
+          "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
+        )
+        .get(req.workspace.id)
+    ).count;
     if (count >= req.workspace.member_limit)
       return res
         .status(409)
@@ -910,11 +1023,13 @@ export async function createApp({
       return res.status(409).json({ error: 'This user account is disabled.' });
     try {
       await transaction(async () => {
-        const active = (await db
-          .prepare(
-            "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
-          )
-          .get(req.workspace.id)).count;
+        const active = (
+          await db
+            .prepare(
+              "SELECT COUNT(*) AS count FROM workspace_members WHERE workspace_id = ? AND status = 'active'",
+            )
+            .get(req.workspace.id)
+        ).count;
         if (active >= req.workspace.member_limit)
           throw Object.assign(
             new Error('This enterprise workspace has reached its member limit.'),
@@ -928,13 +1043,9 @@ export async function createApp({
           throw Object.assign(new Error('This user is already a workspace member.'), {
             status: 409,
           });
-        await db.prepare('INSERT INTO workspace_members VALUES (?, ?, ?, ?, ?)').run(
-          req.workspace.id,
-          member.id,
-          input.role,
-          'active',
-          Date.now(),
-        );
+        await db
+          .prepare('INSERT INTO workspace_members VALUES (?, ?, ?, ?, ?)')
+          .run(req.workspace.id, member.id, input.role, 'active', Date.now());
         await log(req.workspace.id, req.user.name, 'Member added', member.id, input.role);
       });
     } catch (error) {
@@ -980,17 +1091,22 @@ export async function createApp({
   app.get('/api/state', async (req, res) => res.json(await state(req)));
   app.get('/api/activity', async (req, res) => {
     const agentName = (agentId) => agentManifests.find((a) => a.id === agentId)?.name || agentId;
-    const [objectives, actions, jobs, bids, proposals, agentRuns, points, invitations, workflows] = await Promise.all([
-      records(req.workspace.id, 'objective'),
-      records(req.workspace.id, 'action'),
-      db.prepare('SELECT * FROM job_posts WHERE workspace_id = ?').all(req.workspace.id),
-      db.prepare('SELECT * FROM bids WHERE freelancer_user_id = ?').all(req.user.id),
-      db.prepare('SELECT * FROM proposals WHERE author_user_id = ?').all(req.user.id),
-      db.prepare('SELECT * FROM agent_runs WHERE workspace_id = ? AND principal_id = ?').all(req.workspace.id, req.user.id),
-      db.prepare('SELECT * FROM points_ledger WHERE user_id = ?').all(req.user.id),
-      db.prepare('SELECT * FROM job_invitations WHERE invited_by = ? OR freelancer_user_id = ?').all(req.user.id, req.user.id),
-      runtime.list(req.workspace.id),
-    ]);
+    const [objectives, actions, jobs, bids, proposals, agentRuns, points, invitations, workflows] =
+      await Promise.all([
+        records(req.workspace.id, 'objective'),
+        records(req.workspace.id, 'action'),
+        db.prepare('SELECT * FROM job_posts WHERE workspace_id = ?').all(req.workspace.id),
+        db.prepare('SELECT * FROM bids WHERE freelancer_user_id = ?').all(req.user.id),
+        db.prepare('SELECT * FROM proposals WHERE author_user_id = ?').all(req.user.id),
+        db
+          .prepare('SELECT * FROM agent_runs WHERE workspace_id = ? AND principal_id = ?')
+          .all(req.workspace.id, req.user.id),
+        db.prepare('SELECT * FROM points_ledger WHERE user_id = ?').all(req.user.id),
+        db
+          .prepare('SELECT * FROM job_invitations WHERE invited_by = ? OR freelancer_user_id = ?')
+          .all(req.user.id, req.user.id),
+        runtime.list(req.workspace.id),
+      ]);
     const items = [
       ...objectives.map((o) => ({
         id: o.id,
@@ -1068,23 +1184,37 @@ export async function createApp({
       const snapshot = await state(req);
       const scoped = (table) =>
         db.prepare(`SELECT * FROM ${table} WHERE workspace_id = ?`).all(req.workspace.id);
-      const [audit, members, jobs, bids, proposals, pointsLedger, invocations, progress, notifications, knowledge, aiPolicy, aiReviews, aiUsage, workflowList] =
-        await Promise.all([
-          scoped('audit'),
-          scoped('workspace_members'),
-          scoped('job_posts'),
-          scoped('bids'),
-          scoped('proposals'),
-          scoped('points_ledger'),
-          scoped('tool_invocations'),
-          records(req.workspace.id, 'progress'),
-          records(req.workspace.id, 'notification'),
-          records(req.workspace.id, 'knowledge'),
-          records(req.workspace.id, 'ai_policy'),
-          records(req.workspace.id, 'ai_review'),
-          scoped('ai_usage'),
-          runtime.list(req.workspace.id),
-        ]);
+      const [
+        audit,
+        members,
+        jobs,
+        bids,
+        proposals,
+        pointsLedger,
+        invocations,
+        progress,
+        notifications,
+        knowledge,
+        aiPolicy,
+        aiReviews,
+        aiUsage,
+        workflowList,
+      ] = await Promise.all([
+        scoped('audit'),
+        scoped('workspace_members'),
+        scoped('job_posts'),
+        scoped('bids'),
+        scoped('proposals'),
+        scoped('points_ledger'),
+        scoped('tool_invocations'),
+        records(req.workspace.id, 'progress'),
+        records(req.workspace.id, 'notification'),
+        records(req.workspace.id, 'knowledge'),
+        records(req.workspace.id, 'ai_policy'),
+        records(req.workspace.id, 'ai_review'),
+        scoped('ai_usage'),
+        runtime.list(req.workspace.id),
+      ]);
       return {
         schemaVersion: 1,
         scope: 'workspace',
@@ -1113,7 +1243,10 @@ export async function createApp({
   });
   // Context is fixed at signup and not editable afterward — only the name can change here.
   app.patch('/api/workspace', requirePermission('workspace:manage'), async (req, res) => {
-    const input = z.object({ name: text.max(100) }).strict().parse(req.body);
+    const input = z
+      .object({ name: text.max(100) })
+      .strict()
+      .parse(req.body);
     await transaction(async () => {
       await db
         .prepare('UPDATE workspaces SET name = ? WHERE id = ?')
@@ -1136,34 +1269,68 @@ export async function createApp({
     res.status(201).json(result);
   });
   app.post('/api/plans/preview', async (req, res) => {
-    const input = z.object({
-      objective: objectiveSchema,
-      mode: z.enum(['template', 'ai']).default('template'),
-      consent: z.boolean().default(false),
-      rulesVersion: z.number().int().nonnegative().optional(),
-    }).strict().parse(req.body);
+    const input = z
+      .object({
+        objective: objectiveSchema,
+        mode: z.enum(['template', 'ai']).default('template'),
+        consent: z.boolean().default(false),
+        rulesVersion: z.number().int().nonnegative().optional(),
+      })
+      .strict()
+      .parse(req.body);
     if (input.mode === 'template') return res.json(suggestGoalPathway(input.objective));
     const policy = await readAIRules(store, req.workspace.id);
     enforceFeature(policy, 'pathways');
-    if (input.rulesVersion !== policy.version) return res.status(409).json({ error: 'Your AI rules changed. Reload before requesting suggestions.' });
-    const provider = scopedProvider(store, aiProvider, req.workspace.id, req.user.id, input.consent, 'pathways');
-    if (!provider) return res.status(503).json({ error: 'AI is not configured. The free template remains available.' });
+    if (input.rulesVersion !== policy.version)
+      return res
+        .status(409)
+        .json({ error: 'Your AI rules changed. Reload before requesting suggestions.' });
+    const provider = scopedProvider(
+      store,
+      aiProvider,
+      req.workspace.id,
+      req.user.id,
+      input.consent,
+      'pathways',
+    );
+    if (!provider)
+      return res
+        .status(503)
+        .json({ error: 'AI is not configured. The free template remains available.' });
     const result = await provider.review({
-      question: 'Help clarify this goal and propose an ordered, feasible pathway of up to five concrete actions. Respect the stated constraints and success measure. Identify missing information as assumptions or questions; do not invent resources, dates, or results. Follow the user planningPreferences when drafting suggestions. Return advice only.',
+      question:
+        'Help clarify this goal and propose an ordered, feasible pathway of up to five concrete actions. Respect the stated constraints and success measure. Identify missing information as assumptions or questions; do not invent resources, dates, or results. Follow the user planningPreferences when drafting suggestions. Return advice only.',
       sources: [{ id: 'draft-goal', version: 1, kind: 'objective', data: input.objective }],
     });
     const review = aiReviewSchema.parse(result.review);
-    if (!review.suggestions.length) return res.status(422).json({ error: 'AI did not suggest any steps. Refine the goal or use the template.' });
-    await log(req.workspace.id, req.user.name, 'AI pathway suggested', req.workspace.id, `Rules version ${policy.version}; consent recorded; no goal or actions changed.`);
-    res.json({ source: 'ai', approach: review.summary, assumptions: review.assumptions, rulesVersion: policy.version,
-      steps: review.suggestions.map(item => ({ title: item.title, notes: item.rationale })) });
+    if (!review.suggestions.length)
+      return res
+        .status(422)
+        .json({ error: 'AI did not suggest any steps. Refine the goal or use the template.' });
+    await log(
+      req.workspace.id,
+      req.user.name,
+      'AI pathway suggested',
+      req.workspace.id,
+      `Rules version ${policy.version}; consent recorded; no goal or actions changed.`,
+    );
+    res.json({
+      source: 'ai',
+      approach: review.summary,
+      assumptions: review.assumptions,
+      rulesVersion: policy.version,
+      steps: review.suggestions.map((item) => ({ title: item.title, notes: item.rationale })),
+    });
   });
   app.post('/api/plans', async (req, res) => {
     const input = z
       .object({
         objective: objectiveSchema,
         nextAction: z.string().trim().max(500).default(''),
-        pathway: z.array(z.object({ title: text, notes: longText }).strict()).max(10).default([]),
+        pathway: z
+          .array(z.object({ title: text, notes: longText }).strict())
+          .max(10)
+          .default([]),
       })
       .strict()
       .parse(req.body);
@@ -1202,21 +1369,57 @@ export async function createApp({
     res.status(201).json(result);
   });
   app.delete('/api/objectives/:id', requirePermission('work:write'), async (req, res) => {
-    const input = z.object({ version: z.number().int().positive(), confirm: z.literal(true) }).strict().parse(req.body);
+    const input = z
+      .object({ version: z.number().int().positive(), confirm: z.literal(true) })
+      .strict()
+      .parse(req.body);
     await transaction(async () => {
       // Match the workflow worker's lock order before hiding its scoped objective.
-      const runs = await db.prepare('SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ? FOR UPDATE').all(req.params.id, req.workspace.id);
-      if (runs.some(run => !['completed', 'cancelled', 'expired'].includes(run.state)))
-        throw Object.assign(new Error('Cancel unfinished workflows for this goal before deleting it.'), { status: 409 });
-      const row = await db.prepare("SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE").get(req.params.id, req.workspace.id);
+      const runs = await db
+        .prepare(
+          'SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ? FOR UPDATE',
+        )
+        .all(req.params.id, req.workspace.id);
+      if (runs.some((run) => !['completed', 'cancelled', 'expired'].includes(run.state)))
+        throw Object.assign(
+          new Error('Cancel unfinished workflows for this goal before deleting it.'),
+          { status: 409 },
+        );
+      const row = await db
+        .prepare(
+          "SELECT * FROM records WHERE id = ? AND workspace_id = ? AND kind = 'objective' FOR UPDATE",
+        )
+        .get(req.params.id, req.workspace.id);
       if (!row) throw Object.assign(new Error('Goal not found.'), { status: 404 });
-      const concurrentRuns = await db.prepare('SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ?').all(row.id, req.workspace.id);
-      if (concurrentRuns.some(run => !['completed', 'cancelled', 'expired'].includes(run.state)))
-        throw Object.assign(new Error('Cancel unfinished workflows for this goal before deleting it.'), { status: 409 });
-      if (row.version !== input.version) throw Object.assign(new Error('This goal changed. Reload and review it before deleting.'), { status: 409 });
-      await db.prepare("UPDATE records SET kind = 'deleted_action', version = version + 1 WHERE workspace_id = ? AND kind = 'action' AND data::jsonb ->> 'objectiveId' = ?").run(req.workspace.id, row.id);
-      await db.prepare("UPDATE records SET kind = 'deleted_objective', version = version + 1 WHERE id = ?").run(row.id);
-      await log(req.workspace.id, req.user.name, 'Goal deleted', row.id, 'Goal and linked actions removed from active views; history retained.');
+      const concurrentRuns = await db
+        .prepare('SELECT state FROM workflow_runs WHERE objective_id = ? AND workspace_id = ?')
+        .all(row.id, req.workspace.id);
+      if (concurrentRuns.some((run) => !['completed', 'cancelled', 'expired'].includes(run.state)))
+        throw Object.assign(
+          new Error('Cancel unfinished workflows for this goal before deleting it.'),
+          { status: 409 },
+        );
+      if (row.version !== input.version)
+        throw Object.assign(new Error('This goal changed. Reload and review it before deleting.'), {
+          status: 409,
+        });
+      await db
+        .prepare(
+          "UPDATE records SET kind = 'deleted_action', version = version + 1 WHERE workspace_id = ? AND kind = 'action' AND data::jsonb ->> 'objectiveId' = ?",
+        )
+        .run(req.workspace.id, row.id);
+      await db
+        .prepare(
+          "UPDATE records SET kind = 'deleted_objective', version = version + 1 WHERE id = ?",
+        )
+        .run(row.id);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Goal deleted',
+        row.id,
+        'Goal and linked actions removed from active views; history retained.',
+      );
     });
     res.json({ ok: true });
   });
@@ -1247,10 +1450,9 @@ export async function createApp({
           error: 'Complete or review the remaining actions before completing this objective.',
         };
       const updated = objectiveSchema.parse({ ...JSON.parse(row.data), ...changes });
-      await db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
-        JSON.stringify(updated),
-        row.id,
-      );
+      await db
+        .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+        .run(JSON.stringify(updated), row.id);
       await log(
         req.workspace.id,
         req.user.name,
@@ -1337,10 +1539,9 @@ export async function createApp({
       )
         return { code: 400, error: 'Record a return decision for this review.' };
       const updated = { ...data, status: input.status };
-      await db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
-        JSON.stringify(updated),
-        row.id,
-      );
+      await db
+        .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+        .run(JSON.stringify(updated), row.id);
       await log(
         req.workspace.id,
         req.user.name,
@@ -1404,8 +1605,14 @@ export async function createApp({
       return res.status(400).json({ error: 'Invalid JSON.' });
     if (error.type === 'entity.too.large')
       return res.status(413).json({ error: 'Request is too large.' });
-    const databaseFailure = databaseFailureResponse(error, { readOnly: ['GET', 'HEAD'].includes(req.method) });
-    const status = databaseFailure?.status || (Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599 ? error.status : 500);
+    const databaseFailure = databaseFailureResponse(error, {
+      readOnly: ['GET', 'HEAD'].includes(req.method),
+    });
+    const status =
+      databaseFailure?.status ||
+      (Number.isInteger(error?.status) && error.status >= 400 && error.status <= 599
+        ? error.status
+        : 500);
     if (status < 500) return res.status(status).json({ error: error.message });
     errorLogger('http_error', {
       requestId: req.requestId,
@@ -1416,8 +1623,16 @@ export async function createApp({
       error: errorDetails(error),
     });
     res.locals.errorLogged = true;
-    if (databaseFailure) return res.set('Retry-After', String(databaseFailure.retryAfter)).status(status).json({ error: databaseFailure.message, code: databaseFailure.code, requestId: req.requestId });
-    res.status(status).json({ error: status === 500 ? 'Something went wrong. Please try again.' : error.message, requestId: req.requestId });
+    if (databaseFailure)
+      return res.set('Retry-After', String(databaseFailure.retryAfter)).status(status).json({
+        error: databaseFailure.message,
+        code: databaseFailure.code,
+        requestId: req.requestId,
+      });
+    res.status(status).json({
+      error: status === 500 ? 'Something went wrong. Please try again.' : error.message,
+      requestId: req.requestId,
+    });
   });
   return { app, store, runtime, agentRuntime, mail: accounts.mail };
 }

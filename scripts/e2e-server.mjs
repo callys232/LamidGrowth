@@ -17,7 +17,13 @@ const frontend = await mountFrontend(app, { hmrPort: process.env.E2E_PORT ? port
 const server = app.listen(port, '127.0.0.1');
 let ticking = null;
 const worker = setInterval(() => {
-  if (!ticking) ticking = runtime.tick().catch(error => console.error('Test workflow tick failed:', error.message)).finally(() => { ticking = null; });
+  if (!ticking)
+    ticking = runtime
+      .tick()
+      .catch((error) => console.error('Test workflow tick failed:', error.message))
+      .finally(() => {
+        ticking = null;
+      });
 }, 250);
 for (const signal of ['SIGTERM', 'SIGINT'])
   process.on(signal, () => {

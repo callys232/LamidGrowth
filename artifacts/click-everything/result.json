@@ -179,10 +179,6 @@
         "skipped": true
       },
       {
-        "label": "Explore the workspace",
-        "clicked": true
-      },
-      {
         "label": "",
         "skipped": true
       }
@@ -226,12 +222,12 @@
     "page": "/pricing",
     "links": [
       {
-        "href": "/os/pricing",
+        "href": "/enterprise/contact",
         "status": 200,
         "ok": true
       },
       {
-        "href": "/enterprise/contact",
+        "href": "/signup",
         "status": 200,
         "ok": true
       }
@@ -256,6 +252,46 @@
       {
         "label": "",
         "skipped": true
+      },
+      {
+        "label": "All billables",
+        "clicked": true
+      },
+      {
+        "label": "Free tools",
+        "clicked": true
+      },
+      {
+        "label": "Create a Bundle",
+        "skipped": true
+      },
+      {
+        "label": "Capability",
+        "clicked": true
+      },
+      {
+        "label": "Clarity",
+        "clicked": true
+      },
+      {
+        "label": "Consistency",
+        "clicked": true
+      },
+      {
+        "label": "Finance",
+        "clicked": true
+      },
+      {
+        "label": "Growth",
+        "clicked": true
+      },
+      {
+        "label": "Guidance",
+        "clicked": true
+      },
+      {
+        "label": "Shared",
+        "clicked": true
       },
       {
         "label": "",
@@ -473,7 +509,7 @@
     "page": "/responsible-ai",
     "links": [
       {
-        "href": "/responsible-ai",
+        "href": "/responsible-ai#section-553",
         "status": 200,
         "ok": true
       }

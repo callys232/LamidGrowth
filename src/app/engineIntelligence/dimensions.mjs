@@ -46,26 +46,27 @@ export function financialDimensions(s) {
 
   return [
     {
-      label:   'Gross Margin',
-      value:   clamp(s.grossMarginPct),
+      label: 'Gross Margin',
+      value: clamp(s.grossMarginPct),
       insight: `${c} ${money(s.grossProfit)} gross profit on ${c} ${money(s.totalRevenue)} revenue — ${s.grossMarginPct}%.`,
     },
     {
-      label:   'Operating Margin',
+      label: 'Operating Margin',
       // Losses floor at 0 rather than going negative; the insight carries the sign.
-      value:   clamp(s.operatingMarginPct),
-      insight: s.operatingProfit >= 0
-        ? `Operating profit of ${c} ${money(s.operatingProfit)} — ${s.operatingMarginPct}% of revenue.`
-        : `Operating loss of ${c} ${money(Math.abs(s.operatingProfit))} across the period.`,
+      value: clamp(s.operatingMarginPct),
+      insight:
+        s.operatingProfit >= 0
+          ? `Operating profit of ${c} ${money(s.operatingProfit)} — ${s.operatingMarginPct}% of revenue.`
+          : `Operating loss of ${c} ${money(Math.abs(s.operatingProfit))} across the period.`,
     },
     {
-      label:   'Revenue Growth',
-      value:   growthScore,
+      label: 'Revenue Growth',
+      value: growthScore,
       insight: `${s.revenueGrowthPct >= 0 ? 'Up' : 'Down'} ${Math.abs(s.revenueGrowthPct)}% from the first ${s.periodLabel.toLowerCase()} to the last.`,
     },
     {
-      label:   'Cost Efficiency',
-      value:   clamp(100 - s.opexRatioPct),
+      label: 'Cost Efficiency',
+      value: clamp(100 - s.opexRatioPct),
       insight: costLine,
     },
   ];
@@ -83,9 +84,10 @@ export function seriesDimensions(stats) {
     // the only honest score available when there is nothing to measure against.
     const value = s.attainment !== null ? clamp(s.attainment) : clamp(100 - s.volatility);
 
-    const insight = s.target !== null
-      ? `${s.last}${s.unit} against a ${s.target}${s.unit} target — ${s.onTarget ? 'met' : 'missed'}, ${s.trend}.`
-      : `${s.first}${s.unit} → ${s.last}${s.unit}, ${s.trend} (${s.volatility}% mean swing).`;
+    const insight =
+      s.target !== null
+        ? `${s.last}${s.unit} against a ${s.target}${s.unit} target — ${s.onTarget ? 'met' : 'missed'}, ${s.trend}.`
+        : `${s.first}${s.unit} → ${s.last}${s.unit}, ${s.trend} (${s.volatility}% mean swing).`;
 
     return { label: s.label, value, insight };
   });
@@ -97,8 +99,8 @@ export function seriesDimensions(stats) {
   const volatileCount = stats.filter((s) => s.trend === 'volatile').length;
 
   perMetric.push({
-    label:   'Signal Stability',
-    value:   clamp(100 - meanVolatility),
+    label: 'Signal Stability',
+    value: clamp(100 - meanVolatility),
     insight: volatileCount
       ? `${volatileCount} of ${stats.length} metrics swing too much to read as a trend.`
       : `Mean period-over-period swing of ${Math.round(meanVolatility)}% — steady enough to act on.`,
@@ -120,29 +122,30 @@ export function rosterDimensions(s) {
 
   return [
     {
-      label:   'Weighted Capability',
-      value:   clamp((s.weightedCapability / 5) * 100),
+      label: 'Weighted Capability',
+      value: clamp((s.weightedCapability / 5) * 100),
       insight: `${s.weightedCapability}/5 across ${s.totalHeadcount} people in ${s.roleCount} roles, weighted by headcount.`,
     },
     {
-      label:   'Capability Consistency',
-      value:   clamp(100 - (divergence / 5) * 100),
-      insight: divergence >= 0.5
-        ? `Role average is ${s.meanCapability}/5 but headcount-weighted is ${s.weightedCapability}/5 — capability is unevenly spread.`
-        : `Capability is consistent across roles regardless of team size.`,
+      label: 'Capability Consistency',
+      value: clamp(100 - (divergence / 5) * 100),
+      insight:
+        divergence >= 0.5
+          ? `Role average is ${s.meanCapability}/5 but headcount-weighted is ${s.weightedCapability}/5 — capability is unevenly spread.`
+          : `Capability is consistent across roles regardless of team size.`,
     },
     {
-      label:   'Bench Coverage',
-      value:   clamp(s.benchCoveragePct),
+      label: 'Bench Coverage',
+      value: clamp(s.benchCoveragePct),
       insight: s.singlePointRoles.length
         ? `${s.singlePointRoles.length} of ${s.criticalRoleCount} critical roles have no ready successor.`
         : s.criticalRoleCount > 0
-        ? `All ${s.criticalRoleCount} critical roles have at least one successor identified.`
-        : `No roles marked critical — succession cannot be assessed.`,
+          ? `All ${s.criticalRoleCount} critical roles have at least one successor identified.`
+          : `No roles marked critical — succession cannot be assessed.`,
     },
     {
-      label:   'Retention Stability',
-      value:   clamp(100 - s.atRiskPct),
+      label: 'Retention Stability',
+      value: clamp(100 - s.atRiskPct),
       insight: `${s.atRiskPct}% of headcount sits in high-attrition-risk roles.`,
     },
   ];
@@ -162,9 +165,7 @@ export function scenarioDimensions(s) {
   const returnScore = best ? clamp(50 + returnRatio * 25) : 0;
 
   // A wide spread relative to the expected value is exposure, not upside.
-  const spreadRatio = best && best.range > 0
-    ? Math.abs(best.netExpected) / best.range
-    : 0;
+  const spreadRatio = best && best.range > 0 ? Math.abs(best.netExpected) / best.range : 0;
 
   // Probabilities clustered at 50 are guesses; distance from 50 is conviction.
   const conviction = s.options.length
@@ -173,33 +174,35 @@ export function scenarioDimensions(s) {
 
   return [
     {
-      label:   'Expected Return',
-      value:   returnScore,
+      label: 'Expected Return',
+      value: returnScore,
       insight: best
         ? `${best.name} leads at ${money(best.netExpected)} net of a ${money(best.cost)} cost.`
         : `No options entered.`,
     },
     {
-      label:   'Risk Spread',
-      value:   clamp(spreadRatio * 100),
+      label: 'Risk Spread',
+      value: clamp(spreadRatio * 100),
       insight: best
         ? `${best.name} carries a ${money(best.range)} spread between best and worst case.`
         : `No options entered.`,
     },
     {
-      label:   'Ranking Robustness',
+      label: 'Ranking Robustness',
       // A wide breakeven margin means a bad probability estimate will not flip it.
-      value:   s.tightestMargin === null ? 50 : clamp(s.tightestMargin * 3),
-      insight: s.tightestMargin === null
-        ? `Only one option — nothing to test the ranking against.`
-        : `The ranking flips if the runner-up's probability moves ${s.tightestMargin} points.`,
+      value: s.tightestMargin === null ? 50 : clamp(s.tightestMargin * 3),
+      insight:
+        s.tightestMargin === null
+          ? `Only one option — nothing to test the ranking against.`
+          : `The ranking flips if the runner-up's probability moves ${s.tightestMargin} points.`,
     },
     {
-      label:   'Estimate Confidence',
-      value:   clamp(conviction * 2),
-      insight: conviction < 15
-        ? `Probabilities average ${Math.round(conviction)} points from 50% — mostly guesswork.`
-        : `Probabilities are ${Math.round(conviction)} points from 50% on average — considered estimates.`,
+      label: 'Estimate Confidence',
+      value: clamp(conviction * 2),
+      insight:
+        conviction < 15
+          ? `Probabilities average ${Math.round(conviction)} points from 50% — mostly guesswork.`
+          : `Probabilities are ${Math.round(conviction)} points from 50% on average — considered estimates.`,
     },
   ];
 }
@@ -222,34 +225,35 @@ export function budgetDimensions(b) {
 
   return [
     {
-      label:   'Contingency Cover',
-      value:   contingencyScore,
-      insight: settings.contingencyPct > 0
-        ? `${settings.contingencyPct}% contingency — ${money(totals.contingency)} held against overruns.`
-        : `No contingency held. Most projects carry 5–15%.`,
+      label: 'Contingency Cover',
+      value: contingencyScore,
+      insight:
+        settings.contingencyPct > 0
+          ? `${settings.contingencyPct}% contingency — ${money(totals.contingency)} held against overruns.`
+          : `No contingency held. Most projects carry 5–15%.`,
     },
     {
-      label:   'Cost Spread',
-      value:   clamp(100 - topShare),
+      label: 'Cost Spread',
+      value: clamp(100 - topShare),
       insight: categories.length
         ? `${categories[0].category} is ${topShare}% of direct cost across ${categories.length} categories.`
         : `No cost categories populated yet.`,
     },
     {
-      label:   'Phasing Coverage',
-      value:   clamp(phasingPct),
+      label: 'Phasing Coverage',
+      value: clamp(phasingPct),
       insight: `${phased} of ${lineItems.length} lines assigned to a ${settings.periodLabel.toLowerCase()} — the rest spread evenly.`,
     },
     variance.tracked
       ? {
-          label:   'Budget Adherence',
+          label: 'Budget Adherence',
           // On plan reads as 100; every point of overrun costs two.
-          value:   clamp(100 - Math.max(0, variance.variancePct) * 2),
+          value: clamp(100 - Math.max(0, variance.variancePct) * 2),
           insight: `${variance.linesTracked} lines tracked — ${money(variance.actualOnTracked)} spent against ${money(variance.budgetedOnTracked)} planned (${variance.variancePct >= 0 ? '+' : ''}${variance.variancePct}%).`,
         }
       : {
-          label:   'Budget Adherence',
-          value:   0,
+          label: 'Budget Adherence',
+          value: 0,
           insight: `No actuals entered yet — add spend against lines to track variance.`,
         },
   ];
@@ -271,8 +275,8 @@ export function assessmentDimensions(s) {
   const EV = ['no evidence', 'anecdotal evidence', 'documented'];
 
   return s.dimensions.map((d) => ({
-    label:   d.label,
-    value:   clamp(d.adjustedPct),
+    label: d.label,
+    value: clamp(d.adjustedPct),
     insight: d.unsupported
       ? `Rated ${d.scorePct}% with no evidence — discounted to ${d.adjustedPct}%.`
       : `${d.scorePct}% on ${EV[d.evidence]}, weight ${d.weight} of 3.`,

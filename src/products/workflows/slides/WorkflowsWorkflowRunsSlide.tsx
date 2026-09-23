@@ -11,7 +11,10 @@ export function WorkflowsWorkflowRunsSlide({
   busy,
   command,
   remove,
-}: Pick<ReturnType<typeof useWorkflowsPage>, 'runs' | 'state' | 'canManage' | 'busy' | 'command' | 'remove'>) {
+}: Pick<
+  ReturnType<typeof useWorkflowsPage>,
+  'runs' | 'state' | 'canManage' | 'busy' | 'command' | 'remove'
+>) {
   return (
     <>
       {!runs.length && (
@@ -105,7 +108,8 @@ export function WorkflowsWorkflowRunsSlide({
                   variant="secondary"
                   disabled={busy}
                   onClick={() => {
-                    if (window.confirm('Delete this workflow? This cannot be undone.')) void remove(run);
+                    if (window.confirm('Delete this workflow? This cannot be undone.'))
+                      void remove(run);
                   }}
                 >
                   Delete workflow

@@ -26,5 +26,7 @@ export function buildPagesCatalog() {
       2,
     ) + '\n',
   );
-  console.log('Rebuilt pages.json and routes.json from ' + content.length + ' product content.json files.');
+  console.log(
+    'Rebuilt pages.json and routes.json from ' + content.length + ' product content.json files.',
+  );
 }

@@ -7,13 +7,44 @@
 const GUIDANCE_RULES = [
   {
     topic: 'support',
-    phrases: ["can't log in", 'cannot log in', "can't sign in", 'forgot my password', 'reset my password', 'having trouble'],
-    keywords: ['password', 'login', 'sign in', 'verify', 'verification', 'code', 'otp', 'locked', 'issue', 'problem', 'broken', 'error', 'trouble'],
+    phrases: [
+      "can't log in",
+      'cannot log in',
+      "can't sign in",
+      'forgot my password',
+      'reset my password',
+      'having trouble',
+    ],
+    keywords: [
+      'password',
+      'login',
+      'sign in',
+      'verify',
+      'verification',
+      'code',
+      'otp',
+      'locked',
+      'issue',
+      'problem',
+      'broken',
+      'error',
+      'trouble',
+    ],
   },
   {
     topic: 'pricing',
     phrases: ['how much does it cost', 'how much is it', "what's included", 'what is included'],
-    keywords: ['price', 'pricing', 'cost', 'plan', 'points', 'subscription', 'billing', 'tier', 'discount'],
+    keywords: [
+      'price',
+      'pricing',
+      'cost',
+      'plan',
+      'points',
+      'subscription',
+      'billing',
+      'tier',
+      'discount',
+    ],
   },
   {
     topic: 'opportunities',
@@ -40,7 +71,13 @@ const GUIDANCE_RULES = [
     // description. Grounded in the app's real engine name and its actual marketing language, not
     // invented phrasing.
     topic: 'clarity',
-    phrases: ['set a goal', 'set an objective', 'define my objective', 'need clarity', 'need more clarity'],
+    phrases: [
+      'set a goal',
+      'set an objective',
+      'define my objective',
+      'need clarity',
+      'need more clarity',
+    ],
     keywords: ['clarity', 'objective', 'objectives'],
   },
   {
@@ -58,7 +95,14 @@ const GUIDANCE_RULES = [
   {
     // The flagship AI product — product/companion.
     topic: 'companion',
-    phrases: ['talk to the companion', 'chat with the ai', 'ai assistant', 'use the companion', 'ai chatbot', 'talk to an ai'],
+    phrases: [
+      'talk to the companion',
+      'chat with the ai',
+      'ai assistant',
+      'use the companion',
+      'ai chatbot',
+      'talk to an ai',
+    ],
     keywords: ['companion', 'chatbot'],
   },
   {
@@ -70,8 +114,23 @@ const GUIDANCE_RULES = [
   },
   {
     topic: 'onboarding',
-    phrases: ['how do i start', 'how do i sign up', 'get started', 'create an account', 'where do i begin'],
-    keywords: ['signup', 'sign up', 'account', 'start', 'begin', 'onboard', 'onboarding', 'new here'],
+    phrases: [
+      'how do i start',
+      'how do i sign up',
+      'get started',
+      'create an account',
+      'where do i begin',
+    ],
+    keywords: [
+      'signup',
+      'sign up',
+      'account',
+      'start',
+      'begin',
+      'onboard',
+      'onboarding',
+      'new here',
+    ],
   },
 ];
 const GUIDANCE_MIN_SCORE = 2;
@@ -83,7 +142,8 @@ export function chooseGuidanceTopic(message, previousTopic) {
   for (const rule of GUIDANCE_RULES) {
     let score = 0;
     for (const phrase of rule.phrases) if (text.includes(phrase)) score += 2;
-    for (const keyword of rule.keywords) if (new RegExp(`\\b${keyword}\\b`, 'i').test(text)) score += 1;
+    for (const keyword of rule.keywords)
+      if (new RegExp(`\\b${keyword}\\b`, 'i').test(text)) score += 1;
     if (score > bestScore) {
       bestScore = score;
       best = rule.topic;

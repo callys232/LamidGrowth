@@ -42,13 +42,16 @@ export function ProjectsListPage() {
       <div className="panel-heading" style={{ marginTop: 32 }}>
         <div>
           <h3>AI-to-human handoffs</h3>
-          <span>Where an agent asked for qualified human judgment, and what happened to that request.</span>
+          <span>
+            Where an agent asked for qualified human judgment, and what happened to that request.
+          </span>
         </div>
       </div>
       {handoffsList.loading && <p className="activity-feed-status">Loading…</p>}
       {!handoffsList.loading && handoffsList.handoffs.length === 0 && (
         <Empty title="No handoffs yet">
-          When an agent needs qualified human judgment mid-workflow, it can hand off the exact context here.
+          When an agent needs qualified human judgment mid-workflow, it can hand off the exact
+          context here.
         </Empty>
       )}
       {!handoffsList.loading && handoffsList.handoffs.length > 0 && (

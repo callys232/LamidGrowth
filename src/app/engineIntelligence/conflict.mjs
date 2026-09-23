@@ -118,15 +118,22 @@ export function computeConflicts(objectivesIn) {
 
   if (objectives.length === 0) {
     return {
-      conflicts: [], overloads: [], independent: [], entangled: [],
-      conflictCount: 0, unarbitratedCount: 0, coherencePct: 0,
+      conflicts: [],
+      overloads: [],
+      independent: [],
+      entangled: [],
+      conflictCount: 0,
+      unarbitratedCount: 0,
+      coherencePct: 0,
       headline: 'No objectives to check.',
       guidance: [],
       warnings: ['Add the objectives, the metrics each one moves, and what it claims.'],
     };
   }
   if (objectives.length === 1) {
-    warnings.push('A single objective cannot conflict with anything. Add the others it has to hold alongside.');
+    warnings.push(
+      'A single objective cannot conflict with anything. Add the others it has to hold alongside.',
+    );
   }
 
   /* ── 1. Directional conflict ──
@@ -145,20 +152,27 @@ export function computeConflicts(objectivesIn) {
           const pa = num(a.priority, 3);
           const pb = num(b.priority, 3);
           const gap = Math.abs(pa - pb);
-          const yields = gap === 0 ? null : (pa > pb ? b.name : a.name);
-          const winner = gap === 0 ? null : (pa > pb ? a.name : b.name);
+          const yields = gap === 0 ? null : pa > pb ? b.name : a.name;
+          const winner = gap === 0 ? null : pa > pb ? a.name : b.name;
 
           conflicts.push({
             metric: ea.metric.trim(),
-            aId: a.id, aName: a.name.trim(), aDirection: ea.direction, aPriority: pa,
-            bId: b.id, bName: b.name.trim(), bDirection: eb.direction, bPriority: pb,
+            aId: a.id,
+            aName: a.name.trim(),
+            aDirection: ea.direction,
+            aPriority: pa,
+            bId: b.id,
+            bName: b.name.trim(),
+            bDirection: eb.direction,
+            bPriority: pb,
             severity: r1(num(ea.magnitude, 3) + num(eb.magnitude, 3)),
             priorityGap: gap,
             yields,
             unarbitrated: gap === 0,
-            resolution: gap === 0
-              ? `Both carry priority ${pa}, so nothing decides this. It will be settled informally by whoever pushes hardest at the moment of collision — rank one above the other now, deliberately.`
-              : `${winner} outranks ${yields} by ${gap}. State explicitly that ${yields} yields on ${ea.metric.trim()}, so the person holding both knows which to protect.`,
+            resolution:
+              gap === 0
+                ? `Both carry priority ${pa}, so nothing decides this. It will be settled informally by whoever pushes hardest at the moment of collision — rank one above the other now, deliberately.`
+                : `${winner} outranks ${yields} by ${gap}. State explicitly that ${yields} yields on ${ea.metric.trim()}, so the person holding both knows which to protect.`,
           });
         }
       }
@@ -172,7 +186,11 @@ export function computeConflicts(objectivesIn) {
       if (!c.resource?.trim()) continue;
       const key = norm(c.resource);
       const list = byResource.get(key) ?? [];
-      list.push({ name: o.name.trim(), sharePct: Math.max(0, num(c.sharePct)), priority: num(o.priority, 3) });
+      list.push({
+        name: o.name.trim(),
+        sharePct: Math.max(0, num(c.sharePct)),
+        priority: num(o.priority, 3),
+      });
       byResource.set(key, list);
     }
   }
@@ -192,9 +210,11 @@ export function computeConflicts(objectivesIn) {
       running -= c.sharePct;
     }
 
-    const display = objectives
-      .flatMap((o) => o.claims ?? [])
-      .find((c) => norm(c.resource) === key)?.resource.trim() ?? key;
+    const display =
+      objectives
+        .flatMap((o) => o.claims ?? [])
+        .find((c) => norm(c.resource) === key)
+        ?.resource.trim() ?? key;
 
     overloads.push({
       resource: display,
@@ -213,10 +233,8 @@ export function computeConflicts(objectivesIn) {
      get discovered rather than decided. */
   const pairs = (objectives.length * (objectives.length - 1)) / 2;
   const unarbitratedCount = conflicts.filter((c) => c.unarbitrated).length;
-  const penalty = conflicts.length + unarbitratedCount;  // ties count twice
-  const coherencePct = pairs > 0
-    ? r1(Math.max(0, (1 - penalty / (pairs * 2)) * 100))
-    : 100;
+  const penalty = conflicts.length + unarbitratedCount; // ties count twice
+  const coherencePct = pairs > 0 ? r1(Math.max(0, (1 - penalty / (pairs * 2)) * 100)) : 100;
 
   const entangledIds = new Set(conflicts.flatMap((c) => [c.aId, c.bId]));
   const entangled = objectives.filter((o) => entangledIds.has(o.id)).map((o) => o.name.trim());
@@ -224,42 +242,68 @@ export function computeConflicts(objectivesIn) {
 
   /* ── Guidance ── */
   if (unarbitratedCount > 0) {
-    guidance.push(`${unarbitratedCount} conflict${unarbitratedCount > 1 ? 's have' : ' has'} no priority difference to settle ${unarbitratedCount > 1 ? 'them' : 'it'}. These are the dangerous ones — not because they are the largest, but because there is no rule for resolving them, so they get resolved by whoever is most insistent.`);
+    guidance.push(
+      `${unarbitratedCount} conflict${unarbitratedCount > 1 ? 's have' : ' has'} no priority difference to settle ${unarbitratedCount > 1 ? 'them' : 'it'}. These are the dangerous ones — not because they are the largest, but because there is no rule for resolving them, so they get resolved by whoever is most insistent.`,
+    );
   }
   const worst = [...conflicts].sort((a, b) => b.severity - a.severity)[0];
   if (worst) {
-    guidance.push(`The sharpest is "${worst.aName}" against "${worst.bName}" on ${worst.metric} — one wants it up, the other down. No amount of effort satisfies both.`);
+    guidance.push(
+      `The sharpest is "${worst.aName}" against "${worst.bName}" on ${worst.metric} — one wants it up, the other down. No amount of effort satisfies both.`,
+    );
   }
   if (overloads.length > 0) {
     const o = overloads[0];
-    guidance.push(`${o.resource} is over-committed by ${o.overBy} points across ${o.claimants.length} objectives. That is arithmetic, not ambition — something gives whatever anyone intends.`);
+    guidance.push(
+      `${o.resource} is over-committed by ${o.overBy} points across ${o.claimants.length} objectives. That is arithmetic, not ambition — something gives whatever anyone intends.`,
+    );
   }
   if (conflicts.length === 0 && overloads.length === 0 && objectives.length > 1) {
-    guidance.push('No direct conflicts found. Worth confirming the objectives genuinely share metrics and resources — a set that never collides is sometimes a set that is not specific enough to collide.');
+    guidance.push(
+      'No direct conflicts found. Worth confirming the objectives genuinely share metrics and resources — a set that never collides is sometimes a set that is not specific enough to collide.',
+    );
   }
   if (independent.length > 0 && objectives.length > 2) {
-    guidance.push(`${independent.join(', ')} touch nothing else in the set. Independent objectives are safe to pursue in parallel, and are the ones to delegate first.`);
+    guidance.push(
+      `${independent.join(', ')} touch nothing else in the set. Independent objectives are safe to pursue in parallel, and are the ones to delegate first.`,
+    );
   }
 
-  const noEffects = objectives.filter((o) => (o.effects ?? []).length === 0 && (o.claims ?? []).length === 0);
+  const noEffects = objectives.filter(
+    (o) => (o.effects ?? []).length === 0 && (o.claims ?? []).length === 0,
+  );
   if (noEffects.length > 0) {
-    warnings.push(`${noEffects.map((o) => o.name.trim()).join(', ')} declare no metrics or resource claims, so nothing about ${noEffects.length > 1 ? 'them' : 'it'} could be checked.`);
+    warnings.push(
+      `${noEffects.map((o) => o.name.trim()).join(', ')} declare no metrics or resource claims, so nothing about ${noEffects.length > 1 ? 'them' : 'it'} could be checked.`,
+    );
   }
-  const allSamePriority = objectives.length > 2
-    && objectives.every((o) => num(o.priority, 3) === num(objectives[0].priority, 3));
+  const allSamePriority =
+    objectives.length > 2 &&
+    objectives.every((o) => num(o.priority, 3) === num(objectives[0].priority, 3));
   if (allSamePriority) {
-    warnings.push('Every objective carries the same priority, so no conflict between them can be resolved on rank. Priority that does not discriminate is not priority.');
+    warnings.push(
+      'Every objective carries the same priority, so no conflict between them can be resolved on rank. Priority that does not discriminate is not priority.',
+    );
   }
 
-  const headline = conflicts.length === 0 && overloads.length === 0
-    ? `No contradictions found across ${objectives.length} objectives.`
-    : `${conflicts.length} conflict${conflicts.length === 1 ? '' : 's'}${overloads.length ? ` and ${overloads.length} over-committed resource${overloads.length === 1 ? '' : 's'}` : ''} — ${unarbitratedCount > 0 ? `${unarbitratedCount} with nothing to settle ${unarbitratedCount === 1 ? 'it' : 'them'}` : 'all resolvable on priority'}.`;
+  const headline =
+    conflicts.length === 0 && overloads.length === 0
+      ? `No contradictions found across ${objectives.length} objectives.`
+      : `${conflicts.length} conflict${conflicts.length === 1 ? '' : 's'}${overloads.length ? ` and ${overloads.length} over-committed resource${overloads.length === 1 ? '' : 's'}` : ''} — ${unarbitratedCount > 0 ? `${unarbitratedCount} with nothing to settle ${unarbitratedCount === 1 ? 'it' : 'them'}` : 'all resolvable on priority'}.`;
 
   return {
-    conflicts: conflicts.sort((a, b) => Number(b.unarbitrated) - Number(a.unarbitrated) || b.severity - a.severity),
-    overloads, independent, entangled,
-    conflictCount: conflicts.length, unarbitratedCount, coherencePct,
-    headline, guidance, warnings,
+    conflicts: conflicts.sort(
+      (a, b) => Number(b.unarbitrated) - Number(a.unarbitrated) || b.severity - a.severity,
+    ),
+    overloads,
+    independent,
+    entangled,
+    conflictCount: conflicts.length,
+    unarbitratedCount,
+    coherencePct,
+    headline,
+    guidance,
+    warnings,
   };
 }
 
@@ -267,10 +311,14 @@ export function computeConflicts(objectivesIn) {
 export function conflictsToPrompt(r) {
   const lines = [`• ${r.headline}`, `• Coherence: ${r.coherencePct}%`];
   for (const c of r.conflicts) {
-    lines.push(`• CONFLICT on ${c.metric}: "${c.aName}" ${c.aDirection} vs "${c.bName}" ${c.bDirection}${c.unarbitrated ? ' [UNARBITRATED]' : ` — ${c.yields} yields`}`);
+    lines.push(
+      `• CONFLICT on ${c.metric}: "${c.aName}" ${c.aDirection} vs "${c.bName}" ${c.bDirection}${c.unarbitrated ? ' [UNARBITRATED]' : ` — ${c.yields} yields`}`,
+    );
   }
   for (const o of r.overloads) {
-    lines.push(`• OVERLOAD ${o.resource}: ${o.claimedPct}% claimed, over by ${o.overBy}. ${o.suggestion}`);
+    lines.push(
+      `• OVERLOAD ${o.resource}: ${o.claimedPct}% claimed, over by ${o.overBy}. ${o.suggestion}`,
+    );
   }
   for (const g of r.guidance) lines.push(`• ${g}`);
   return lines.join('\n');

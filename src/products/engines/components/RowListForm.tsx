@@ -4,8 +4,22 @@ import './row-list-form.css';
 
 export type FieldDef =
   | { key: string; label: string; type: 'text'; default?: string }
-  | { key: string; label: string; type: 'number'; min?: number; max?: number; step?: number; default?: number }
-  | { key: string; label: string; type: 'select'; options: { value: string; label: string }[]; default?: string }
+  | {
+      key: string;
+      label: string;
+      type: 'number';
+      min?: number;
+      max?: number;
+      step?: number;
+      default?: number;
+    }
+  | {
+      key: string;
+      label: string;
+      type: 'select';
+      options: { value: string; label: string }[];
+      default?: string;
+    }
   | { key: string; label: string; type: 'checkbox'; default?: boolean };
 
 export type Row = Record<string, string | number | boolean>;
@@ -56,7 +70,10 @@ export function RowListForm({
               <label key={f.key}>
                 {f.label}
                 {f.type === 'select' ? (
-                  <select value={String(row[f.key] ?? '')} onChange={(e) => update(i, f.key, e.target.value)}>
+                  <select
+                    value={String(row[f.key] ?? '')}
+                    onChange={(e) => update(i, f.key, e.target.value)}
+                  >
                     {f.options.map((o) => (
                       <option key={o.value} value={o.value}>
                         {o.label}
@@ -64,7 +81,11 @@ export function RowListForm({
                     ))}
                   </select>
                 ) : f.type === 'checkbox' ? (
-                  <input type="checkbox" checked={Boolean(row[f.key])} onChange={(e) => update(i, f.key, e.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={Boolean(row[f.key])}
+                    onChange={(e) => update(i, f.key, e.target.checked)}
+                  />
                 ) : f.type === 'number' ? (
                   <input
                     type="number"
@@ -75,7 +96,11 @@ export function RowListForm({
                     onChange={(e) => update(i, f.key, Number(e.target.value))}
                   />
                 ) : (
-                  <input type="text" value={String(row[f.key] ?? '')} onChange={(e) => update(i, f.key, e.target.value)} />
+                  <input
+                    type="text"
+                    value={String(row[f.key] ?? '')}
+                    onChange={(e) => update(i, f.key, e.target.value)}
+                  />
                 )}
               </label>
             ))}

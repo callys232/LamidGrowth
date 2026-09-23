@@ -25,7 +25,12 @@ async function boot(fetchImpl, { configured = true } = {}) {
       : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
     ecosystemAdminEmails: [adminEmail],
   }));
@@ -36,7 +41,7 @@ async function boot(fetchImpl, { configured = true } = {}) {
 }
 async function teardown() {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 }
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -72,14 +77,23 @@ async function approvedProviderWithAccount(name, adminCookie, monthlyRateMinor =
     { headline: `${name} PM`, experience: '', monthlyRateMinor },
     provider,
   );
-  await request(`/admin/concierge-applications/${application.data.id}`, { decision: 'approve' }, adminCookie, 'PATCH');
+  await request(
+    `/admin/concierge-applications/${application.data.id}`,
+    { decision: 'approve' },
+    adminCookie,
+    'PATCH',
+  );
   const account = await request(
     '/payment-accounts',
     { provider: 'paystack', accountName: name, accountNumber: '0123456789', bankCode: '058' },
     provider,
   );
   const state = (await request('/state', undefined, provider, 'GET')).data;
-  return { cookie: provider, userId: state.user.id, hasRecipient: Boolean(account.data.recipient_code) };
+  return {
+    cookie: provider,
+    userId: state.user.id,
+    hasRecipient: Boolean(account.data.recipient_code),
+  };
 }
 
 test('no active concierge means nothing to pay out', async (t) => {
@@ -115,11 +129,21 @@ test('unconfigured provider refuses payout rather than faking success', async (t
     { headline: 'PM', experience: '', monthlyRateMinor: 20000 },
     providerSignup,
   );
-  await request(`/admin/concierge-applications/${application.data.id}`, { decision: 'approve' }, admin2, 'PATCH');
+  await request(
+    `/admin/concierge-applications/${application.data.id}`,
+    { decision: 'approve' },
+    admin2,
+    'PATCH',
+  );
   // Registering a payment account with no provider configured stores it with recipient_code: null.
   await request(
     '/payment-accounts',
-    { provider: 'paystack', accountName: 'Unconfigured Provider 2', accountNumber: '0123456789', bankCode: '058' },
+    {
+      provider: 'paystack',
+      accountName: 'Unconfigured Provider 2',
+      accountNumber: '0123456789',
+      bankCode: '058',
+    },
     providerSignup,
   );
   const providerState = (await request('/state', undefined, providerSignup, 'GET')).data;
@@ -150,7 +174,9 @@ test('a mocked Paystack payout marks only the unpaid pm_fee line items paid, lea
   const ownerState = (await request('/state', undefined, owner, 'GET')).data;
   const sixtyFiveDaysAgo = Date.now() - 65 * 24 * 60 * 60 * 1000;
   await store.db
-    .prepare("UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'")
+    .prepare(
+      "UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'",
+    )
     .run(sixtyFiveDaysAgo, ownerState.workspace.id);
 
   // Loading the statement lazily generates the elapsed pm_fee cycles.

@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 5000 }, auth: { max: 5000 }, mutation: { max: 5000 }, spend: { max: 5000 } },
+    rateLimits: {
+      api: { max: 5000 },
+      auth: { max: 5000 },
+      mutation: { max: 5000 },
+      spend: { max: 5000 },
+    },
     // The concurrent-companion-messages test below drives real companion messages through
     // context-curator (a paid specialist), so it needs AI configured the way production would
     // have it — same stub pattern as tests/agents.test.mjs.
@@ -15,7 +20,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -33,7 +43,9 @@ async function request(path, body, cookie, method = 'POST', rawBody) {
   const response = await fetch(`${base}/api${path}`, {
     method: body === undefined && rawBody === undefined ? 'GET' : method,
     headers: {
-      ...(body === undefined && rawBody === undefined ? {} : { 'Content-Type': 'application/json' }),
+      ...(body === undefined && rawBody === undefined
+        ? {}
+        : { 'Content-Type': 'application/json' }),
       ...(cookie ? { Cookie: cookie } : {}),
     },
     body: rawBody !== undefined ? rawBody : body === undefined ? undefined : JSON.stringify(body),
@@ -45,7 +57,11 @@ async function request(path, body, cookie, method = 'POST', rawBody) {
   } catch {
     data = text;
   }
-  return { status: response.status, data, cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data,
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 let counter = 0;
 async function signup(name, context = 'Founder') {
@@ -79,7 +95,12 @@ async function jobWithBid(client, freelancer, amount = 1000) {
   assert.equal(job.status, 201);
   const bid = await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work.', proposedAmount: amount, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this work.',
+      proposedAmount: amount,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
   assert.equal(bid.status, 201);
@@ -115,8 +136,16 @@ test('two clients cannot both approve the same milestone twice (double-decision 
 
   // Fire the same decision twice concurrently — a dispute racing an approval.
   const [first, second] = await Promise.all([
-    request(`/verification-cases/${verification.data.id}/decisions`, { decision: 'approve', reason: 'Approved.' }, client),
-    request(`/verification-cases/${verification.data.id}/decisions`, { decision: 'dispute', reason: 'Actually no.' }, client),
+    request(
+      `/verification-cases/${verification.data.id}/decisions`,
+      { decision: 'approve', reason: 'Approved.' },
+      client,
+    ),
+    request(
+      `/verification-cases/${verification.data.id}/decisions`,
+      { decision: 'dispute', reason: 'Actually no.' },
+      client,
+    ),
   ]);
 
   // Both requests are processed (no crash), and the final milestone state is exactly one of the two outcomes —
@@ -125,11 +154,15 @@ test('two clients cannot both approve the same milestone twice (double-decision 
   const finalMilestone = await request(`/projects/${project.data.id}`, undefined, client, 'GET');
   const status = finalMilestone.data.milestones[0].status;
   assert.ok(['approved', 'disputed'].includes(status));
-  const approvalRows = (await store.db
-    .prepare("SELECT COUNT(*) AS count FROM approvals WHERE subject_id = ?")
-    .get(milestone.data.id)).count;
+  const approvalRows = (
+    await store.db
+      .prepare('SELECT COUNT(*) AS count FROM approvals WHERE subject_id = ?')
+      .get(milestone.data.id)
+  ).count;
   assert.equal(approvalRows, 1, 'only the winning decision is recorded');
-  const disputes = await store.db.prepare("SELECT COUNT(*) AS count FROM disputes WHERE subject_id = ? AND status = 'open'").get(milestone.data.id);
+  const disputes = await store.db
+    .prepare("SELECT COUNT(*) AS count FROM disputes WHERE subject_id = ? AND status = 'open'")
+    .get(milestone.data.id);
   assert.equal(Number(disputes.count), status === 'disputed' ? 1 : 0);
 });
 
@@ -151,18 +184,27 @@ test('five concurrent bids on the same job are all accepted without corrupting j
     client,
   );
   assert.equal(job.status, 201);
-  const freelancers = await Promise.all(Array.from({ length: 5 }, () => signup('Concurrent Freelancer')));
+  const freelancers = await Promise.all(
+    Array.from({ length: 5 }, () => signup('Concurrent Freelancer')),
+  );
   const results = await Promise.all(
     freelancers.map((freelancer, i) =>
       request(
         `/jobs/${job.data.id}/bids`,
-        { coverLetter: `This is bid number ${i}, submitted concurrently.`, proposedAmount: 500 + i, currency: 'USD', timeline: '1 week' },
+        {
+          coverLetter: `This is bid number ${i}, submitted concurrently.`,
+          proposedAmount: 500 + i,
+          currency: 'USD',
+          timeline: '1 week',
+        },
         freelancer,
       ),
     ),
   );
   assert.ok(results.every((r) => r.status === 201));
-  const bidCount = (await store.db.prepare('SELECT COUNT(*) AS count FROM bids WHERE job_id = ?').get(job.data.id)).count;
+  const bidCount = (
+    await store.db.prepare('SELECT COUNT(*) AS count FROM bids WHERE job_id = ?').get(job.data.id)
+  ).count;
   assert.equal(bidCount, 5);
 });
 
@@ -203,12 +245,19 @@ test('a request body at exactly the JSON size limit is accepted; over the limit 
       timeline: '1 week',
     }),
   );
-  assert.equal(oversized.status, 413, `expected 413 for an oversized payload, got ${oversized.status}`);
+  assert.equal(
+    oversized.status,
+    413,
+    `expected 413 for an oversized payload, got ${oversized.status}`,
+  );
 });
 
 test('tampering with the session cookie is rejected, not treated as a valid session', async () => {
   const client = await signup('Cookie Client');
-  const tampered = client.replace('lamid_session=', 'lamid_session=deadbeef'.padEnd(client.length, '0') + '_tampered=');
+  const tampered = client.replace(
+    'lamid_session=',
+    'lamid_session=deadbeef'.padEnd(client.length, '0') + '_tampered=',
+  );
   const forged = `lamid_session=${'0'.repeat(64)}`;
 
   const withForged = await request('/state', undefined, forged, 'GET');
@@ -229,7 +278,9 @@ test('tampering with the session cookie is rejected, not treated as a valid sess
 test('a session for a disabled account is rejected on the next request', async () => {
   const client = await signup('Disable Me');
   const state = (await request('/state', undefined, client, 'GET')).data;
-  await store.db.prepare('UPDATE users SET disabled_at = ? WHERE id = ?').run(Date.now(), state.user.id);
+  await store.db
+    .prepare('UPDATE users SET disabled_at = ? WHERE id = ?')
+    .run(Date.now(), state.user.id);
   const attempt = await request('/state', undefined, client, 'GET');
   assert.equal(attempt.status, 403);
 });
@@ -250,11 +301,16 @@ test('ten concurrent Companion messages from the same user never over-deduct poi
   await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, client, 'PATCH');
   const before = (await request('/points', undefined, client, 'GET')).data.balance;
   const results = await Promise.all(
-    Array.from({ length: 10 }, () => request('/companion/messages', { message: 'what changed recently', consent: true }, client)),
+    Array.from({ length: 10 }, () =>
+      request('/companion/messages', { message: 'what changed recently', consent: true }, client),
+    ),
   );
   assert.ok(results.every((r) => r.status === 201));
   const balances = results.map((r) => r.data.balance);
-  assert.ok(balances.every((b) => b >= 0), 'no balance ever went negative');
+  assert.ok(
+    balances.every((b) => b >= 0),
+    'no balance ever went negative',
+  );
   // The atomic conditional UPDATE (WHERE points_balance >= ?) is what actually prevents a lost
   // update — Postgres's row-level locking serializes concurrent debits on the same row regardless
   // of how the ten HTTP requests interleave. What is NOT guaranteed under real network latency
@@ -264,8 +320,16 @@ test('ten concurrent Companion messages from the same user never over-deduct poi
   // exactly ten charges landed, for the exact same per-run cost, and nothing was double-charged
   // or dropped.
   const costs = new Set(results.map((r) => r.data.pointsCharged));
-  assert.equal(costs.size, 1, `expected one consistent per-run cost, got ${JSON.stringify([...costs])}`);
+  assert.equal(
+    costs.size,
+    1,
+    `expected one consistent per-run cost, got ${JSON.stringify([...costs])}`,
+  );
   const [cost] = costs;
   const after = Math.min(...balances);
-  assert.equal(after, before - 10 * cost, `expected exactly 10 charges of ${cost} with no lost or duplicate update`);
+  assert.equal(
+    after,
+    before - 10 * cost,
+    `expected exactly 10 charges of ${cost} with no lost or duplicate update`,
+  );
 });

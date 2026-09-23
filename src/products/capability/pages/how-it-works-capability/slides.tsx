@@ -48,14 +48,24 @@ export function GrowthWithoutCapabilityBecomesPressureSlide4({
   embedded = false,
 }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[3]}
+      index={3}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 
 /** Build the Project Even When You Do Not Know the Scope. */
 export function BuildTheProjectSlide5({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[4]} index={4} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[4]}
+      index={4}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

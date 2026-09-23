@@ -7,10 +7,7 @@
   "goal": "Plan a new service launch",
   "simulated": true,
   "stage": "goal",
-  "completed": [
-    "homepage",
-    "signup and development OTP"
-  ],
+  "completed": ["homepage", "signup and development OTP"],
   "homeOverflow": false,
   "documentLanguage": "en",
   "accessibility": [],

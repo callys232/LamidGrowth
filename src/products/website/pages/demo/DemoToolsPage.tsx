@@ -33,9 +33,9 @@ export function DemoToolsPage() {
           <span className="demo-tools-eyebrow">TRY IT — NO ACCOUNT NEEDED</span>
           <h1>Run a Real Diagnostic, Not a Demo Recording.</h1>
           <p>
-            Pick any tool below and run it for real — the same compute the product uses, just not saved and not
-            charged. When you're ready for the full 248-tool catalog and your own workspace,{' '}
-            <Link to="/signup">create an account</Link>.
+            Pick any tool below and run it for real — the same compute the product uses, just not
+            saved and not charged. When you're ready for the full 248-tool catalog and your own
+            workspace, <Link to="/signup">create an account</Link>.
           </p>
         </div>
 
@@ -55,7 +55,9 @@ export function DemoToolsPage() {
             >
               {name}
               {catalog && name !== 'All' && (
-                <span className="engines-tab-count">{catalog.engines.filter((e) => e.homeEngine === name).length}</span>
+                <span className="engines-tab-count">
+                  {catalog.engines.filter((e) => e.homeEngine === name).length}
+                </span>
               )}
             </button>
           ))}
@@ -70,7 +72,11 @@ export function DemoToolsPage() {
                 <li key={engine.code}>
                   <button
                     type="button"
-                    className={selected?.code === engine.code ? 'engines-list-item is-active' : 'engines-list-item'}
+                    className={
+                      selected?.code === engine.code
+                        ? 'engines-list-item is-active'
+                        : 'engines-list-item'
+                    }
                     onClick={() => setSelected(engine)}
                   >
                     <strong>{engine.engineName}</strong>
@@ -96,7 +102,13 @@ export function DemoToolsPage() {
   );
 }
 
-function DemoDetailPanel({ engine, run }: { engine: EngineSummary; run: ReturnType<typeof useEngineRun> }) {
+function DemoDetailPanel({
+  engine,
+  run,
+}: {
+  engine: EngineSummary;
+  run: ReturnType<typeof useEngineRun>;
+}) {
   const { manifest, running, result, error, run: submit } = run;
 
   return (
@@ -116,7 +128,10 @@ function DemoDetailPanel({ engine, run }: { engine: EngineSummary; run: ReturnTy
         <>
           <EngineResultView result={result.result} />
           <div className="demo-tools-cta">
-            <p>That's a real, computed result — not a screenshot. Sign up to save it and unlock the other 247 tools.</p>
+            <p>
+              That's a real, computed result — not a screenshot. Sign up to save it and unlock the
+              other 247 tools.
+            </p>
             <Link className="button button-primary" to="/signup">
               Create your account
             </Link>

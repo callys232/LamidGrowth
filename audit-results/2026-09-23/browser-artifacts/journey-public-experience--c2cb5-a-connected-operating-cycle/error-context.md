@@ -27,8 +27,8 @@ Call log:
 
 ```yaml
 - status:
-  - img
-  - text: Bringing your context together…
+    - img
+    - text: Bringing your context together…
 - button "Ask Companion"
 ```
 

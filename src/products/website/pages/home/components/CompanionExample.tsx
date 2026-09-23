@@ -70,7 +70,8 @@ export function CompanionExample() {
       </header>
       <ol ref={listRef}>
         {steps.map((step, index) => {
-          const isActive = hovered === index || (hovered === null && isScrolling && inView.has(index));
+          const isActive =
+            hovered === index || (hovered === null && isScrolling && inView.has(index));
           return (
             <li
               key={step.title}

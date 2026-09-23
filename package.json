@@ -14,6 +14,8 @@
     "test": "node --test --test-concurrency=3 tests/*.test.mjs",
     "test:e2e": "playwright test",
     "check": "npm run build && npm test",
+    "test:exploratory": "playwright test --config=usability.config.ts && playwright test --config=paid-path.config.ts && playwright test --config=deep-coverage.config.ts && playwright test --config=human-pace.config.ts && playwright test --config=click-everything.config.ts",
+    "test:full": "npm run check && npm run test:e2e && npm run test:exploratory && npm run format:check",
     "prune-test-schemas": "node scripts/prune-test-schemas.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

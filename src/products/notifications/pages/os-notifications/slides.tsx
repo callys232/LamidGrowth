@@ -34,14 +34,24 @@ export function WeeklyReviewSlide2({ embedded = false }: DocumentPageProps) {
 /** Workflow Updates */
 export function WorkflowUpdatesSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[2]}
+      index={2}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 
 /** Attention That Matches Your Goals */
 export function AttentionThatMatchesYourGoalsSlide4({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[3]}
+      index={3}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

@@ -14,7 +14,9 @@ export function mountInvitations(app, store) {
     const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
     if (!job) return res.status(404).json({ error: 'Job post not found.' });
     if (job.client_user_id !== req.user.id)
-      return res.status(403).json({ error: 'Only the job owner can invite a freelancer to this project.' });
+      return res
+        .status(403)
+        .json({ error: 'Only the job owner can invite a freelancer to this project.' });
     if (input.freelancerUserId === req.user.id)
       return res.status(400).json({ error: 'You cannot invite yourself.' });
     const existing = await db
@@ -23,20 +25,24 @@ export function mountInvitations(app, store) {
       )
       .get(job.id, input.freelancerUserId);
     if (existing)
-      return res.status(409).json({ error: 'This freelancer already has a pending or accepted invitation for this job.' });
+      return res.status(409).json({
+        error: 'This freelancer already has a pending or accepted invitation for this job.',
+      });
     const id = randomUUID();
     await transaction(async () => {
-      await db.prepare('INSERT INTO job_invitations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        id,
-        job.id,
-        job.workspace_id,
-        input.freelancerUserId,
-        req.user.id,
-        input.message,
-        'pending',
-        new Date().toISOString(),
-        null,
-      );
+      await db
+        .prepare('INSERT INTO job_invitations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          id,
+          job.id,
+          job.workspace_id,
+          input.freelancerUserId,
+          req.user.id,
+          input.message,
+          'pending',
+          new Date().toISOString(),
+          null,
+        );
       await log(job.workspace_id, req.user.name, 'Freelancer invited to project', id, job.title);
     });
     res.status(201).json(await db.prepare('SELECT * FROM job_invitations WHERE id = ?').get(id));
@@ -46,7 +52,9 @@ export function mountInvitations(app, store) {
     const job = await db.prepare('SELECT * FROM job_posts WHERE id = ?').get(req.params.id);
     if (!job) return res.status(404).json({ error: 'Job post not found.' });
     if (job.client_user_id !== req.user.id)
-      return res.status(403).json({ error: 'Only the job owner can view invitations for this job.' });
+      return res
+        .status(403)
+        .json({ error: 'Only the job owner can view invitations for this job.' });
     res.json(
       await db
         .prepare('SELECT * FROM job_invitations WHERE job_id = ? ORDER BY created_at DESC')
@@ -68,20 +76,28 @@ export function mountInvitations(app, store) {
 
   app.post('/api/invitations/:id/respond', async (req, res) => {
     const input = respondSchema.parse(req.body);
-    const invitation = await db.prepare('SELECT * FROM job_invitations WHERE id = ?').get(req.params.id);
+    const invitation = await db
+      .prepare('SELECT * FROM job_invitations WHERE id = ?')
+      .get(req.params.id);
     if (!invitation) return res.status(404).json({ error: 'Invitation not found.' });
     if (invitation.freelancer_user_id !== req.user.id)
-      return res.status(403).json({ error: 'Only the invited freelancer can respond to this invitation.' });
+      return res
+        .status(403)
+        .json({ error: 'Only the invited freelancer can respond to this invitation.' });
     if (invitation.status !== 'pending')
       return res.status(409).json({ error: 'This invitation has already been decided.' });
     const status = input.decision === 'accept' ? 'accepted' : 'rejected';
     await transaction(async () => {
-      await db.prepare('UPDATE job_invitations SET status = ?, decided_at = ? WHERE id = ?').run(
-        status,
-        new Date().toISOString(),
+      await db
+        .prepare('UPDATE job_invitations SET status = ?, decided_at = ? WHERE id = ?')
+        .run(status, new Date().toISOString(), invitation.id);
+      await log(
+        invitation.workspace_id,
+        req.user.name,
+        `Invitation ${status}`,
         invitation.id,
+        invitation.job_id,
       );
-      await log(invitation.workspace_id, req.user.name, `Invitation ${status}`, invitation.id, invitation.job_id);
     });
     res.json(await db.prepare('SELECT * FROM job_invitations WHERE id = ?').get(invitation.id));
   });

@@ -34,14 +34,24 @@ export function StrengthsSlide2({ embedded = false }: DocumentPageProps) {
 /** Gaps */
 export function GapsSlide3({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[2]} index={2} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[2]}
+      index={2}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 
 /** Career & Role Pathways */
 export function CareerAndRolePathwaysSlide4({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[3]} index={3} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[3]}
+      index={3}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

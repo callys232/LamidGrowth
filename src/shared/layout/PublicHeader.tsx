@@ -90,15 +90,31 @@ const menus: {
         title: 'Expert support',
         entries: [
           ['Expert Network', 'Discover specialist support.', '/experts#finding-engaging-expertise'],
-          ['Expert Matching', 'Find expertise relevant to your context.', '/experts#expert-matching'],
-          ['Verified Expertise', 'Review evidence of specialist capability.', '/experts#verification'],
+          [
+            'Expert Matching',
+            'Find expertise relevant to your context.',
+            '/experts#expert-matching',
+          ],
+          [
+            'Verified Expertise',
+            'Review evidence of specialist capability.',
+            '/experts#verification',
+          ],
         ],
       },
       {
         title: 'Capability & participation',
         entries: [
-          ['Talent & Capability', 'Connect people and capability needs.', '/experts#capability-strategy'],
-          ['Become an Expert', 'Contribute your professional expertise.', '/experts#become-an-expert'],
+          [
+            'Talent & Capability',
+            'Connect people and capability needs.',
+            '/experts#capability-strategy',
+          ],
+          [
+            'Become an Expert',
+            'Contribute your professional expertise.',
+            '/experts#become-an-expert',
+          ],
         ],
       },
     ],

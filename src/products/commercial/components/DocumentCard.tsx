@@ -37,7 +37,12 @@ export function DocumentCard({
       ))}
       {doc.note && <p className="specialist-document-note">{doc.note}</p>}
       {runId && (
-        <a className="button button-secondary" href={`/api/agent-runs/${runId}/pdf`} target="_blank" rel="noreferrer">
+        <a
+          className="button button-secondary"
+          href={`/api/agent-runs/${runId}/pdf`}
+          target="_blank"
+          rel="noreferrer"
+        >
           Download PDF
         </a>
       )}

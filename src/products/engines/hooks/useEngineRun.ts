@@ -38,7 +38,10 @@ export type EngineDetail = {
   correctionProtocols: string[];
   inputs: EngineInputSpec;
   pointsCost: number;
-  decisionQuality?: { requirements: DecisionQualityRequirement[]; questions: DecisionQualityQuestion[] };
+  decisionQuality?: {
+    requirements: DecisionQualityRequirement[];
+    questions: DecisionQualityQuestion[];
+  };
 };
 
 export type EngineResult = {
@@ -52,7 +55,12 @@ export type EngineResult = {
   warnings: string[];
 };
 
-export type EngineRunResponse = { runId?: string; pointsCharged?: number; balance?: number; result: EngineResult };
+export type EngineRunResponse = {
+  runId?: string;
+  pointsCharged?: number;
+  balance?: number;
+  result: EngineResult;
+};
 
 /** Loads one engine's manifest (for form rendering) and exposes a run() call.
  * `demo=false` (default) — authenticated, charges points, persists a run: POST /engines/:code/run.
@@ -80,7 +88,11 @@ export function useEngineRun(code: string | null, demo = false) {
       setRunning(true);
       setError('');
       try {
-        const response = await api<EngineRunResponse>(`/engines/${code}/${demo ? 'demo-run' : 'run'}`, { input }, 'POST');
+        const response = await api<EngineRunResponse>(
+          `/engines/${code}/${demo ? 'demo-run' : 'run'}`,
+          { input },
+          'POST',
+        );
         setResult(response);
         return response;
       } catch (e) {

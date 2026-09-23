@@ -8,7 +8,8 @@ import { parseSpecialistDocument } from '../lib/parseSpecialistDocument';
 function splitIntoItems(paragraphs: string[]): string[] {
   const joined = paragraphs.join(' ');
   const bulletLines = paragraphs.filter((p) => /^[-*•]|^\d+[.)]/.test(p.trim()));
-  if (bulletLines.length > 1) return bulletLines.map((line) => line.replace(/^[-*•]\s*|^\d+[.)]\s*/, '').trim());
+  if (bulletLines.length > 1)
+    return bulletLines.map((line) => line.replace(/^[-*•]\s*|^\d+[.)]\s*/, '').trim());
   const bySeparator = joined
     .split(/[,;]|(?<=\.)\s+(?=[A-Z])/)
     .map((s) => s.trim())
@@ -31,7 +32,10 @@ export function ChecklistCard({
   runId?: string;
 }) {
   const doc = parseSpecialistDocument(text);
-  const items = splitIntoItems([...doc.fields.map((f) => `${f.label}: ${f.value}`), ...doc.paragraphs]);
+  const items = splitIntoItems([
+    ...doc.fields.map((f) => `${f.label}: ${f.value}`),
+    ...doc.paragraphs,
+  ]);
   return (
     <div className="specialist-checklist-card">
       <div className="specialist-document-kind">
@@ -48,7 +52,12 @@ export function ChecklistCard({
       </ul>
       {doc.note && <p className="specialist-document-note">{doc.note}</p>}
       {runId && (
-        <a className="button button-secondary" href={`/api/agent-runs/${runId}/pdf`} target="_blank" rel="noreferrer">
+        <a
+          className="button button-secondary"
+          href={`/api/agent-runs/${runId}/pdf`}
+          target="_blank"
+          rel="noreferrer"
+        >
           Download PDF
         </a>
       )}

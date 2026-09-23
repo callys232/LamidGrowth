@@ -49,15 +49,30 @@ export function FinancialForm({
       <div className="engine-form-row engine-form-row-inline">
         <label>
           Currency
-          <input type="text" maxLength={8} value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
+          <input
+            type="text"
+            maxLength={8}
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+          />
         </label>
         <label>
           Cash balance
-          <input type="number" min={0} value={cashBalance} onChange={(e) => setCashBalance(Number(e.target.value))} />
+          <input
+            type="number"
+            min={0}
+            value={cashBalance}
+            onChange={(e) => setCashBalance(Number(e.target.value))}
+          />
         </label>
         <label>
           Headcount
-          <input type="number" min={0} value={headcount} onChange={(e) => setHeadcount(Number(e.target.value))} />
+          <input
+            type="number"
+            min={0}
+            value={headcount}
+            onChange={(e) => setHeadcount(Number(e.target.value))}
+          />
         </label>
       </div>
 
@@ -73,15 +88,29 @@ export function FinancialForm({
         <tbody>
           {periods.map((p, i) => (
             <tr key={i}>
-              <td>{periodLabel} {i + 1}</td>
               <td>
-                <input type="number" value={p.revenue} onChange={(e) => update(i, { revenue: Number(e.target.value) })} />
+                {periodLabel} {i + 1}
               </td>
               <td>
-                <input type="number" value={p.cogs} onChange={(e) => update(i, { cogs: Number(e.target.value) })} />
+                <input
+                  type="number"
+                  value={p.revenue}
+                  onChange={(e) => update(i, { revenue: Number(e.target.value) })}
+                />
               </td>
               <td>
-                <input type="number" value={p.opex} onChange={(e) => update(i, { opex: Number(e.target.value) })} />
+                <input
+                  type="number"
+                  value={p.cogs}
+                  onChange={(e) => update(i, { cogs: Number(e.target.value) })}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  value={p.opex}
+                  onChange={(e) => update(i, { opex: Number(e.target.value) })}
+                />
               </td>
             </tr>
           ))}
@@ -91,7 +120,11 @@ export function FinancialForm({
       <Button type="submit" disabled={submitting || !hasRevenue}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>
-      {!hasRevenue && <p className="engine-form-hint">Enter revenue for at least one {periodLabel.toLowerCase()}.</p>}
+      {!hasRevenue && (
+        <p className="engine-form-hint">
+          Enter revenue for at least one {periodLabel.toLowerCase()}.
+        </p>
+      )}
     </form>
   );
 }

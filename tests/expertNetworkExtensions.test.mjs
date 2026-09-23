@@ -7,7 +7,12 @@ const adminEmail = 'extensions-admin@lamidgrowth.test';
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
     // The AI-human-handoff test below drives a real companion message through context-curator (a
     // paid specialist), so it needs AI configured the way production would have it — same stub
@@ -17,7 +22,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -29,7 +39,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -40,10 +50,19 @@ async function request(path, body, cookie, method = 'POST') {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 async function signup(name, email) {
-  const result = await request('/auth/signup', { name, email, password: `a-long-${name.toLowerCase()}-password`, context: 'Founder' });
+  const result = await request('/auth/signup', {
+    name,
+    email,
+    password: `a-long-${name.toLowerCase()}-password`,
+    context: 'Founder',
+  });
   assert.equal(result.status, 201);
   // External AI requires a verified account (see aiPolicy.mjs) — verify immediately using the
   // dev-mode token the signup response includes, same as tests/ai.test.mjs's fixture.
@@ -52,7 +71,11 @@ async function signup(name, email) {
 }
 async function makeExpert(name, email) {
   const cookie = await signup(name, email);
-  const profile = await request('/talent/profile', { headline: `${name} — consultant`, skills: ['strategy'] }, cookie);
+  const profile = await request(
+    '/talent/profile',
+    { headline: `${name} — consultant`, skills: ['strategy'] },
+    cookie,
+  );
   assert.equal(profile.status, 200);
   return cookie;
 }
@@ -66,7 +89,11 @@ test('booking: an expert publishes availability and a client books it', async ()
 
   const slot = await request(
     '/booking/availability',
-    { startAt: '2027-01-10T10:00:00.000Z', endAt: '2027-01-10T11:00:00.000Z', format: 'advisory_session' },
+    {
+      startAt: '2027-01-10T10:00:00.000Z',
+      endAt: '2027-01-10T11:00:00.000Z',
+      format: 'advisory_session',
+    },
     expert,
   );
   assert.equal(slot.status, 201);
@@ -77,7 +104,11 @@ test('booking: an expert publishes availability and a client books it', async ()
   const open = await request(`/booking/availability/${expertUserId}`, undefined, client, 'GET');
   assert.equal(open.data.length, 1);
 
-  const booked = await request(`/booking/slots/${slot.data.id}/book`, { notes: 'Looking forward to it' }, client);
+  const booked = await request(
+    `/booking/slots/${slot.data.id}/book`,
+    { notes: 'Looking forward to it' },
+    client,
+  );
   assert.equal(booked.status, 201);
   assert.equal(booked.data.status, 'confirmed');
 
@@ -97,27 +128,47 @@ test('expert teams: a lead creates a team, adds a member, and only the lead can 
   const member = await makeExpert('Team Member', 'team-member@example.test');
   const outsider = await signup('Team Outsider', 'team-outsider@example.test');
 
-  const created = await request('/expert-teams', { name: 'Growth Pod', description: 'Cross-functional growth team' }, lead);
+  const created = await request(
+    '/expert-teams',
+    { name: 'Growth Pod', description: 'Cross-functional growth team' },
+    lead,
+  );
   assert.equal(created.status, 201);
   assert.equal(created.data.members.length, 1);
 
   const memberUserId = await userId(member);
 
-  const deniedAdd = await request(`/expert-teams/${created.data.id}/members`, { userId: memberUserId }, outsider);
+  const deniedAdd = await request(
+    `/expert-teams/${created.data.id}/members`,
+    { userId: memberUserId },
+    outsider,
+  );
   assert.equal(deniedAdd.status, 403);
 
-  const added = await request(`/expert-teams/${created.data.id}/members`, { userId: memberUserId, role: 'Analyst' }, lead);
+  const added = await request(
+    `/expert-teams/${created.data.id}/members`,
+    { userId: memberUserId, role: 'Analyst' },
+    lead,
+  );
   assert.equal(added.status, 201);
   assert.equal(added.data.members.length, 2);
 
-  const removed = await request(`/expert-teams/${created.data.id}/members/${memberUserId}`, {}, lead, 'DELETE');
+  const removed = await request(
+    `/expert-teams/${created.data.id}/members/${memberUserId}`,
+    {},
+    lead,
+    'DELETE',
+  );
   assert.equal(removed.status, 200);
   assert.equal(removed.data.members.length, 1);
 });
 
 test('expert teams: a team led by the engaged freelancer can be assigned to their project as a unit', async () => {
   const client = await signup('Team Assign Client', 'team-assign-client@example.test');
-  const freelancer = await makeExpert('Team Assign Freelancer', 'team-assign-freelancer@example.test');
+  const freelancer = await makeExpert(
+    'Team Assign Freelancer',
+    'team-assign-freelancer@example.test',
+  );
   const otherLead = await makeExpert('Other Team Lead', 'team-assign-other@example.test');
 
   const job = await request(
@@ -137,30 +188,59 @@ test('expert teams: a team led by the engaged freelancer can be assigned to thei
   );
   await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I lead a small team that can deliver this quickly and well.', proposedAmount: 750, currency: 'USD', timeline: '1 week' },
+    {
+      coverLetter: 'I lead a small team that can deliver this quickly and well.',
+      proposedAmount: 750,
+      currency: 'USD',
+      timeline: '1 week',
+    },
     freelancer,
   );
   const freelancerUserId = await userId(freelancer);
-  const project = await request('/projects', { jobId: job.data.id, title: 'Team assignment test project', freelancerUserId }, client);
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'Team assignment test project', freelancerUserId },
+    client,
+  );
   assert.equal(project.status, 201);
 
   const freelancerTeam = await request('/expert-teams', { name: 'Freelancer Pod' }, freelancer);
   const otherTeam = await request('/expert-teams', { name: 'Other Pod' }, otherLead);
 
-  const wrongTeam = await request(`/projects/${project.data.id}/team`, { teamId: otherTeam.data.id }, client, 'PATCH');
+  const wrongTeam = await request(
+    `/projects/${project.data.id}/team`,
+    { teamId: otherTeam.data.id },
+    client,
+    'PATCH',
+  );
   assert.equal(wrongTeam.status, 400);
 
-  const notOwner = await request(`/projects/${project.data.id}/team`, { teamId: freelancerTeam.data.id }, freelancer, 'PATCH');
+  const notOwner = await request(
+    `/projects/${project.data.id}/team`,
+    { teamId: freelancerTeam.data.id },
+    freelancer,
+    'PATCH',
+  );
   assert.equal(notOwner.status, 403);
 
-  const assigned = await request(`/projects/${project.data.id}/team`, { teamId: freelancerTeam.data.id }, client, 'PATCH');
+  const assigned = await request(
+    `/projects/${project.data.id}/team`,
+    { teamId: freelancerTeam.data.id },
+    client,
+    'PATCH',
+  );
   assert.equal(assigned.status, 200);
   assert.equal(assigned.data.assignedTeam.id, freelancerTeam.data.id);
 
   const detail = await request(`/projects/${project.data.id}`, undefined, client, 'GET');
   assert.equal(detail.data.assignedTeam.id, freelancerTeam.data.id);
 
-  const unassigned = await request(`/projects/${project.data.id}/team`, { teamId: null }, client, 'PATCH');
+  const unassigned = await request(
+    `/projects/${project.data.id}/team`,
+    { teamId: null },
+    client,
+    'PATCH',
+  );
   assert.equal(unassigned.status, 200);
   assert.equal(unassigned.data.assignedTeam, null);
 });
@@ -172,13 +252,20 @@ test('AI-human handoff: the Companion agent automatically raises a handoff for a
   // a real companion message through context-curator.
   await request('/ai/settings', { enabled: true, dailyLimit: 10, version: 0 }, client, 'PATCH');
 
-  const plain = await request('/companion/messages', { message: 'What is going on right now?', consent: true }, client);
+  const plain = await request(
+    '/companion/messages',
+    { message: 'What is going on right now?', consent: true },
+    client,
+  );
   assert.equal(plain.status, 201);
   assert.equal(plain.data.humanHandoffRequested, undefined);
 
   const regulated = await request(
     '/companion/messages',
-    { message: 'I need licensed legal review of this vendor contract before signing.', consent: true },
+    {
+      message: 'I need licensed legal review of this vendor contract before signing.',
+      consent: true,
+    },
     client,
   );
   assert.equal(regulated.status, 201);
@@ -189,7 +276,9 @@ test('AI-human handoff: the Companion agent automatically raises a handoff for a
   assert.ok(inbox.data.some((h) => h.id === regulated.data.handoffId));
 
   const mine = await request('/handoffs/mine', undefined, client, 'GET');
-  assert.ok(mine.data.some((h) => h.id === regulated.data.handoffId && h.source.startsWith('companion.')));
+  assert.ok(
+    mine.data.some((h) => h.id === regulated.data.handoffId && h.source.startsWith('companion.')),
+  );
 });
 
 test('AI-human handoff: an agent-raised handoff can be accepted and completed by an expert', async () => {
@@ -198,7 +287,11 @@ test('AI-human handoff: an agent-raised handoff can be accepted and completed by
 
   const created = await request(
     '/handoffs',
-    { source: 'companion-agent', contextSummary: 'User needs a licensed review of a contract clause.', contextSnapshot: { thread: 'abc' } },
+    {
+      source: 'companion-agent',
+      contextSummary: 'User needs a licensed review of a contract clause.',
+      contextSnapshot: { thread: 'abc' },
+    },
     client,
   );
   assert.equal(created.status, 201);
@@ -237,7 +330,12 @@ test('return-to-OS: an outcome can be recorded once per project and read back fr
   );
   const bidResult = await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I have delivered similar summary reports before and can start immediately.', proposedAmount: 750, currency: 'USD', timeline: '1 week' },
+    {
+      coverLetter: 'I have delivered similar summary reports before and can start immediately.',
+      proposedAmount: 750,
+      currency: 'USD',
+      timeline: '1 week',
+    },
     freelancer,
   );
   assert.equal(bidResult.status, 201);
@@ -254,7 +352,10 @@ test('return-to-OS: an outcome can be recorded once per project and read back fr
 
   const recorded = await request(
     `/projects/${project.data.id}/outcome`,
-    { summary: 'Delivered the summary report on time.', learnings: 'Scope was clear from the start.' },
+    {
+      summary: 'Delivered the summary report on time.',
+      learnings: 'Scope was clear from the start.',
+    },
     client,
   );
   assert.equal(recorded.status, 201);
@@ -277,7 +378,12 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
 
   const rule = await request(
     '/admin/jurisdiction-rules',
-    { jurisdiction: 'Germany', category: 'Legal and compliance', requiresLicense: true, notes: 'Requires a licensed local reviewer.' },
+    {
+      jurisdiction: 'Germany',
+      category: 'Legal and compliance',
+      requiresLicense: true,
+      notes: 'Requires a licensed local reviewer.',
+    },
     admin,
   );
   assert.equal(rule.status, 201);
@@ -289,7 +395,11 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   );
   assert.equal(deniedRule.status, 403);
 
-  const created = await request('/scoping-cases', { objective: 'Draft a data processing agreement', problemStatement: '' }, client);
+  const created = await request(
+    '/scoping-cases',
+    { objective: 'Draft a data processing agreement', problemStatement: '' },
+    client,
+  );
   const flagged = await request(
     `/scoping-cases/${created.data.id}`,
     {
@@ -308,7 +418,11 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   assert.equal(queued.status, 201);
   assert.equal(queued.data.status, 'pending');
 
-  const duplicateQueue = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+  const duplicateQueue = await request(
+    `/scoping-cases/${created.data.id}/request-review`,
+    {},
+    client,
+  );
   assert.equal(duplicateQueue.status, 400);
 
   const notExpert = await request('/review-queue', undefined, client, 'GET');
@@ -321,7 +435,11 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   assert.equal(claimed.status, 200);
   assert.equal(claimed.data.status, 'claimed');
 
-  const completed = await request(`/review-queue/${queued.data.id}/complete`, { notes: 'Reviewed and cleared for a licensed local reviewer.' }, expert);
+  const completed = await request(
+    `/review-queue/${queued.data.id}/complete`,
+    { notes: 'Reviewed and cleared for a licensed local reviewer.' },
+    expert,
+  );
   assert.equal(completed.status, 200);
   assert.equal(completed.data.status, 'completed');
 });

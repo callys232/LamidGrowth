@@ -35,7 +35,8 @@ async function setup(filename = ':memory:') {
   const command = async (run, command) => {
     const objectiveVersion =
       command === 'approve'
-        ? (await store.db.prepare('SELECT version FROM records WHERE id = ?').get(objective.id)).version
+        ? (await store.db.prepare('SELECT version FROM records WHERE id = ?').get(objective.id))
+            .version
         : undefined;
     return runtime.command(run.id, workspace, user, {
       command,
@@ -62,20 +63,43 @@ const write = { id: 'action', toolId: 'action.prepare', input: { title: 'Prepare
 test('human workflow rules block writes and allow only explicitly authorized workflow steps', async () => {
   const f = await setup();
   try {
-    const policy = await f.store.insert(f.workspace, 'ai_policy', { enabled: false, dailyLimit: 10, rules: { workflowCommands: false, changes: { 'action.prepare': 'block' } } });
+    const policy = await f.store.insert(f.workspace, 'ai_policy', {
+      enabled: false,
+      dailyLimit: 10,
+      rules: { workflowCommands: false, changes: { 'action.prepare': 'block' } },
+    });
     const run = await f.runtime.create(f.workspace, f.user, f.spec([write]));
-    await assert.rejects(() => f.runtime.command(run.id, f.workspace, f.user, { command: 'start', version: run.version }, { fromCompanion: true }), /block workflowCommands/);
+    await assert.rejects(
+      () =>
+        f.runtime.command(
+          run.id,
+          f.workspace,
+          f.user,
+          { command: 'start', version: run.version },
+          { fromCompanion: true },
+        ),
+      /block workflowCommands/,
+    );
     assert.equal((await f.read(run)).state, 'draft');
     await f.command(run, 'start');
     await f.runtime.tick();
     assert.equal((await f.read(run)).state, 'paused');
     assert.equal((await f.store.records(f.workspace, 'action')).length, 0);
-    await f.store.db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(JSON.stringify({ enabled: false, dailyLimit: 10, rules: { changes: { 'action.prepare': 'allow' } } }), policy.id);
+    await f.store.db.prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?').run(
+      JSON.stringify({
+        enabled: false,
+        dailyLimit: 10,
+        rules: { changes: { 'action.prepare': 'allow' } },
+      }),
+      policy.id,
+    );
     await f.command(run, 'resume');
     await f.runtime.tick();
     assert.equal((await f.read(run)).state, 'completed');
     assert.equal((await f.store.records(f.workspace, 'action')).length, 1);
-  } finally { await f.store.db.close(); }
+  } finally {
+    await f.store.db.close();
+  }
 });
 
 test('workflow changes wait for exact versioned approval and execute once', async () => {
@@ -101,7 +125,9 @@ test('workflow changes wait for exact versioned approval and execute once', asyn
     );
     await f.command(run, 'approve');
     // A material objective revision invalidates the approval before execution.
-    await f.store.db.prepare('UPDATE records SET version = version + 1 WHERE id = ?').run(f.objective.id);
+    await f.store.db
+      .prepare('UPDATE records SET version = version + 1 WHERE id = ?')
+      .run(f.objective.id);
     await f.runtime.tick();
     assert.equal((await f.read(run)).state, 'needs_approval');
     await f.command(run, 'approve');
@@ -260,16 +286,16 @@ test('a workflow can only be deleted once it has actually finished, and only by 
   const f = await setup();
   try {
     const run = await f.runtime.create(f.workspace, f.user, f.spec([write]));
-    await assert.rejects(() => f.runtime.remove(run.id, f.workspace, f.user), /completed, cancelled or expired/);
+    await assert.rejects(
+      () => f.runtime.remove(run.id, f.workspace, f.user),
+      /completed, cancelled or expired/,
+    );
     await f.command(run, 'start');
     await f.runtime.tick();
     await f.command(run, 'approve');
     await f.runtime.tick();
     assert.equal((await f.read(run)).state, 'completed');
-    await assert.rejects(
-      () => f.runtime.remove(run.id, f.workspace, randomUUID()),
-      /authorizing/,
-    );
+    await assert.rejects(() => f.runtime.remove(run.id, f.workspace, randomUUID()), /authorizing/);
     assert.ok(await f.read(run));
     await f.runtime.remove(run.id, f.workspace, f.user);
     assert.equal(await f.read(run), undefined);

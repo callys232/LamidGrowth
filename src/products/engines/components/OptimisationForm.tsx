@@ -6,7 +6,14 @@ import './engine-forms.css';
 const FIELDS: FieldDef[] = [
   { key: 'name', label: 'Process step', type: 'text' },
   { key: 'capacity', label: 'Capacity per period', type: 'number', min: 0, default: 10 },
-  { key: 'efficiencyPct', label: 'Efficiency (0-100%)', type: 'number', min: 0, max: 100, default: 90 },
+  {
+    key: 'efficiencyPct',
+    label: 'Efficiency (0-100%)',
+    type: 'number',
+    min: 0,
+    max: 100,
+    default: 90,
+  },
   { key: 'cost', label: 'Cost per period (optional)', type: 'number', min: 0, default: 0 },
 ];
 
@@ -28,7 +35,10 @@ export function OptimisationForm({
         e.preventDefault();
         onSubmit({
           steps: rows.map((r) => ({
-            id: r.id, name: r.name, capacity: Number(r.capacity), efficiencyPct: Number(r.efficiencyPct),
+            id: r.id,
+            name: r.name,
+            capacity: Number(r.capacity),
+            efficiencyPct: Number(r.efficiencyPct),
             ...(Number(r.cost) > 0 ? { cost: Number(r.cost) } : {}),
           })),
         });

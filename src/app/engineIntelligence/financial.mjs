@@ -38,7 +38,9 @@ const pct = (part, whole) => (whole === 0 ? 0 : r2((part / whole) * 100));
 export function computeFinancials(input) {
   const warnings = [];
   const periods = input.periods.map((p) => ({
-    revenue: safe(p.revenue), cogs: safe(p.cogs), opex: safe(p.opex),
+    revenue: safe(p.revenue),
+    cogs: safe(p.cogs),
+    opex: safe(p.opex),
   }));
 
   const periodsDerived = periods.map((p, i) => {
@@ -79,14 +81,20 @@ export function computeFinancials(input) {
   }
   const gm = pct(grossProfit, totalRevenue);
   if (totalRevenue > 0 && gm < 20) {
-    warnings.push(`Gross margin is ${gm}% — below the level most businesses can sustain operating costs on.`);
+    warnings.push(
+      `Gross margin is ${gm}% — below the level most businesses can sustain operating costs on.`,
+    );
   }
   if (runwayPeriods !== null && runwayPeriods < 6) {
-    warnings.push(`Runway is ${runwayPeriods} ${input.periodLabel.toLowerCase()}s at current burn — inside the typical fundraise window.`);
+    warnings.push(
+      `Runway is ${runwayPeriods} ${input.periodLabel.toLowerCase()}s at current burn — inside the typical fundraise window.`,
+    );
   }
   const opexRatio = pct(totalOpex, totalRevenue);
   if (totalRevenue > 0 && opexRatio > 60) {
-    warnings.push(`Operating expenses are ${opexRatio}% of revenue — concentration worth reviewing.`);
+    warnings.push(
+      `Operating expenses are ${opexRatio}% of revenue — concentration worth reviewing.`,
+    );
   }
   if (headcount === 0) {
     warnings.push('Headcount not entered — revenue per head unavailable.');
@@ -102,13 +110,19 @@ export function computeFinancials(input) {
     );
   }
   if (outpacingLines.length) {
-    warnings.push(`Growing faster than revenue: ${outpacingLines.join(', ')}. These are where cost is getting away.`);
+    warnings.push(
+      `Growing faster than revenue: ${outpacingLines.join(', ')}. These are where cost is getting away.`,
+    );
   }
 
   return {
     currency: input.currency,
     periodLabel: input.periodLabel,
-    totalRevenue, totalCogs, totalOpex, grossProfit, operatingProfit,
+    totalRevenue,
+    totalCogs,
+    totalOpex,
+    grossProfit,
+    operatingProfit,
     grossMarginPct: gm,
     operatingMarginPct: pct(operatingProfit, totalRevenue),
     revenueGrowthPct,

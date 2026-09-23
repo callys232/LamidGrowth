@@ -39,10 +39,7 @@ export function HomeExperienceSlide() {
   const context = contexts[selected];
   const scenario = scenarios[selected];
   return (
-    <HomeSection
-      section={1}
-      className="home-experience-section"
-    >
+    <HomeSection section={1} className="home-experience-section">
       <div className="home-context-selector" role="group" aria-label="Choose an audience context">
         {contexts.map((item, index) => (
           <button

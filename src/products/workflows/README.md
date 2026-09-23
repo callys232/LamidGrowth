@@ -20,8 +20,8 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
-| /product/workflows | [ProductWorkflowsDocumentPage](./pages/product-workflows/ProductWorkflowsDocumentPage.tsx) | [content.json](./pages/product-workflows/content.json) |
-| /os/workflows | [OsWorkflowsDocumentPage](./pages/os-workflows/OsWorkflowsDocumentPage.tsx) | [content.json](./pages/os-workflows/content.json) |
+| Route              | Page composition                                                                               | Copy                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| /product/workflows | [ProductWorkflowsDocumentPage](./pages/product-workflows/ProductWorkflowsDocumentPage.tsx)     | [content.json](./pages/product-workflows/content.json)   |
+| /os/workflows      | [OsWorkflowsDocumentPage](./pages/os-workflows/OsWorkflowsDocumentPage.tsx)                    | [content.json](./pages/os-workflows/content.json)        |
 | /os/workflows/[id] | [OsWorkflowsDetailDocumentPage](./pages/os-workflows-detail/OsWorkflowsDetailDocumentPage.tsx) | [content.json](./pages/os-workflows-detail/content.json) |

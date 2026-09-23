@@ -14,10 +14,24 @@ const profiles = [
 ] as const;
 
 for (const [name, locale, role, goal] of profiles) {
-  test(`${name}: deep coverage across engines, companion, and the full marketplace chain`, async ({ browser }, info) => {
-    const context = await browser.newContext({ locale, viewport: { width: 1280, height: 1000 }, reducedMotion: 'reduce' });
+  test(`${name}: deep coverage across engines, companion, and the full marketplace chain`, async ({
+    browser,
+  }, info) => {
+    const context = await browser.newContext({
+      locale,
+      viewport: { width: 1280, height: 1000 },
+      reducedMotion: 'reduce',
+    });
     const page = await context.newPage();
-    const result: Record<string, unknown> = { name, locale, role, goal, stage: 'signup', completed: [] as string[], notes: [] as string[] };
+    const result: Record<string, unknown> = {
+      name,
+      locale,
+      role,
+      goal,
+      stage: 'signup',
+      completed: [] as string[],
+      notes: [] as string[],
+    };
     const completed = result.completed as string[];
     const notes = result.notes as string[];
     const out = `artifacts/deep-coverage/${name}`;
@@ -56,8 +70,12 @@ for (const [name, locale, role, goal] of profiles) {
       result.stage = 'clarity';
       await page.getByRole('button', { name: 'New objective', exact: true }).click();
       await page.getByLabel('Your objective', { exact: true }).fill(goal);
-      await page.getByLabel('Why it matters').fill('Save time and turn an idea into clear next steps.');
-      await page.getByLabel('What does success look like?').fill('A useful plan I can act on this week.');
+      await page
+        .getByLabel('Why it matters')
+        .fill('Save time and turn an idea into clear next steps.');
+      await page
+        .getByLabel('What does success look like?')
+        .fill('A useful plan I can act on this week.');
       await page.getByRole('button', { name: 'Create objective', exact: true }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
       completed.push('Clarity: objective created');
@@ -76,7 +94,9 @@ for (const [name, locale, role, goal] of profiles) {
       await page.goto('/os/knowledge');
       await page.getByRole('button', { name: 'Add knowledge', exact: true }).click();
       await page.getByLabel('Knowledge title').fill(`Reference notes for: ${goal}`);
-      await page.getByLabel('Knowledge content').fill('Key facts and context worth remembering for this goal.');
+      await page
+        .getByLabel('Knowledge content')
+        .fill('Key facts and context worth remembering for this goal.');
       await page.getByRole('button', { name: 'Save knowledge', exact: true }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
       completed.push('Knowledge: entry saved');
@@ -86,8 +106,12 @@ for (const [name, locale, role, goal] of profiles) {
       await page.goto('/os/rhythm');
       await page.getByRole('button', { name: 'Record a reflection', exact: true }).click();
       await page.getByLabel('What moved forward?').fill('Made real progress defining the goal.');
-      await page.getByLabel('What changed or taught you something?').fill('Clarity on the first concrete step.');
-      await page.getByLabel('What will you carry into the next cycle?').fill('Keep the next action small and specific.');
+      await page
+        .getByLabel('What changed or taught you something?')
+        .fill('Clarity on the first concrete step.');
+      await page
+        .getByLabel('What will you carry into the next cycle?')
+        .fill('Keep the next action small and specific.');
       await page.getByRole('button', { name: 'Save reflection', exact: true }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
       completed.push('Rhythm: reflection saved');
@@ -110,16 +134,26 @@ for (const [name, locale, role, goal] of profiles) {
       // --- Companion: direct single-message chat with an explicit specialist ---
       result.stage = 'companion direct chat';
       await page.goto('/os/companion/chat');
-      await page.getByRole('combobox', { name: 'Specialist' }).selectOption({ label: 'Capability Mapper · 65 points' });
-      await page.getByLabel('Your message').fill(`What capability gaps stand between me and: ${goal}?`);
-      await page.getByLabel('Allow this request to share relevant workspace context with external AI, if enabled in workspace settings.').check();
+      await page
+        .getByRole('combobox', { name: 'Specialist' })
+        .selectOption({ label: 'Capability Mapper · 65 points' });
+      await page
+        .getByLabel('Your message')
+        .fill(`What capability gaps stand between me and: ${goal}?`);
+      await page
+        .getByLabel(
+          'Allow this request to share relevant workspace context with external AI, if enabled in workspace settings.',
+        )
+        .check();
       const balanceBeforeChat = (await (await context.request.get('/api/points')).json()).balance;
       await page.getByRole('button', { name: 'Send', exact: true }).click();
       // The response renders in the companion's message history, not the Specialist dropdown —
       // wait on the points balance actually dropping rather than a text match against the page
       // (the agent name also appears, hidden, inside the <select>'s own option list).
       await expect
-        .poll(async () => (await (await context.request.get('/api/points')).json()).balance, { timeout: 60000 })
+        .poll(async () => (await (await context.request.get('/api/points')).json()).balance, {
+          timeout: 60000,
+        })
         .toBeLessThan(balanceBeforeChat);
       completed.push('Companion: direct chat with named specialist');
 
@@ -129,8 +163,12 @@ for (const [name, locale, role, goal] of profiles) {
       await page.getByRole('button', { name: 'Post a job', exact: true }).click();
       const jobTitle = `${name} deep-coverage job: ${goal}`;
       await page.getByLabel('Job title').fill(jobTitle);
-      await page.getByLabel('Project description').fill('Real-world scoped work related to this goal, for a qualified specialist.');
-      await page.getByLabel('Deliverables').fill('A completed first milestone and a short handover note.');
+      await page
+        .getByLabel('Project description')
+        .fill('Real-world scoped work related to this goal, for a qualified specialist.');
+      await page
+        .getByLabel('Deliverables')
+        .fill('A completed first milestone and a short handover note.');
       await page.getByLabel('Minimum budget').fill('1000');
       await page.getByLabel('Maximum budget').fill('2000');
       await page.getByLabel('Timeline').fill('3 weeks');
@@ -140,21 +178,32 @@ for (const [name, locale, role, goal] of profiles) {
 
       // --- Bidding + manual proposal, via a lightweight counterpart account ---
       result.stage = 'bidding (counterpart)';
-      const bidderContext = await browser.newContext({ locale, viewport: { width: 1280, height: 1000 }, reducedMotion: 'reduce' });
+      const bidderContext = await browser.newContext({
+        locale,
+        viewport: { width: 1280, height: 1000 },
+        reducedMotion: 'reduce',
+      });
       const bidderPage = await bidderContext.newPage();
       let proposalTitle = '';
       try {
         await signup(bidderPage, `${name}Counterpart`, 'Professional');
         await enableAI(bidderPage);
         await bidderPage.goto('/os/commercial');
-        await bidderPage.getByRole('button', { name: 'Open opportunities', exact: true }).click().catch(() => {});
+        await bidderPage
+          .getByRole('button', { name: 'Open opportunities', exact: true })
+          .click()
+          .catch(() => {});
         await bidderPage.getByLabel('Search opportunities').fill(jobTitle);
         await bidderPage.getByRole('button', { name: 'View job', exact: true }).first().click();
-        await bidderPage.getByLabel('Cover letter').fill('I can deliver this well and on the stated timeline.');
+        await bidderPage
+          .getByLabel('Cover letter')
+          .fill('I can deliver this well and on the stated timeline.');
         await bidderPage.getByLabel(/^Proposed amount/).fill('1500');
         await bidderPage.getByLabel('Bid timeline').fill('3 weeks');
         await bidderPage.getByRole('button', { name: /^Submit bid/ }).click();
-        await expect(bidderPage.getByText('Prepare proposal draft', { exact: true })).toBeVisible({ timeout: 60000 });
+        await expect(bidderPage.getByText('Prepare proposal draft', { exact: true })).toBeVisible({
+          timeout: 60000,
+        });
         completed.push('Commercial: bid submitted (counterpart)');
 
         // --- Document tools, as the freelancer preparing to bid/deliver ---
@@ -171,7 +220,10 @@ for (const [name, locale, role, goal] of profiles) {
           const before = (await (await bidderContext.request.get('/api/points')).json()).balance;
           await bidderPage.getByRole('button', { name: label, exact: false }).first().click();
           await expect
-            .poll(async () => (await (await bidderContext.request.get('/api/points')).json()).balance, { timeout: 60000 })
+            .poll(
+              async () => (await (await bidderContext.request.get('/api/points')).json()).balance,
+              { timeout: 60000 },
+            )
             .toBeLessThan(before + 1);
           completed.push(`Document tool: ${label}`);
         }
@@ -186,8 +238,12 @@ for (const [name, locale, role, goal] of profiles) {
         }
         await expect(bidderPage.getByLabel('Proposal title')).toBeVisible();
         await bidderPage.getByLabel('Proposal title').fill(proposalTitle);
-        await bidderPage.getByLabel('Scope').fill('Deliver the agreed milestone with regular updates.');
-        await bidderPage.getByLabel('Proposal deliverables').fill('A completed first milestone and a short handover note.');
+        await bidderPage
+          .getByLabel('Scope')
+          .fill('Deliver the agreed milestone with regular updates.');
+        await bidderPage
+          .getByLabel('Proposal deliverables')
+          .fill('A completed first milestone and a short handover note.');
         await bidderPage.getByLabel(/^Proposal amount/).fill('1500');
         await bidderPage.getByLabel('Proposal timeline').fill('3 weeks');
         await bidderPage.getByRole('button', { name: 'Save proposal draft', exact: true }).click();
@@ -195,9 +251,13 @@ for (const [name, locale, role, goal] of profiles) {
         completed.push('Commercial: manual proposal drafted (counterpart)');
 
         // --- Change order, on the freshly-drafted proposal ---
-        await bidderPage.getByLabel('Request a change to this proposal').fill('Add a second revision round to the plan.');
+        await bidderPage
+          .getByLabel('Request a change to this proposal')
+          .fill('Add a second revision round to the plan.');
         await bidderPage.getByRole('button', { name: 'Draft change order', exact: false }).click();
-        await expect(bidderPage.locator('.specialist-changeorder-card')).toBeVisible({ timeout: 60000 });
+        await expect(bidderPage.locator('.specialist-changeorder-card')).toBeVisible({
+          timeout: 60000,
+        });
         completed.push('Change order drafted');
         await bidderPage.screenshot({ path: `${out}/change-order.png`, fullPage: true });
       } catch (bidError) {
@@ -213,7 +273,10 @@ for (const [name, locale, role, goal] of profiles) {
       // The client's own posting shows under "Workspace posts" (the default tab); this account
       // has posted exactly one job, so the first "View job" button is unambiguous.
       await page.getByRole('button', { name: 'View job', exact: true }).first().click();
-      await page.getByRole('button', { name: /^Award /, exact: false }).first().click();
+      await page
+        .getByRole('button', { name: /^Award /, exact: false })
+        .first()
+        .click();
       await expect(page).toHaveURL(/\/os\/commercial\/projects\//, { timeout: 60000 });
       completed.push('Awarded proposal, project created');
 
@@ -224,21 +287,32 @@ for (const [name, locale, role, goal] of profiles) {
       await page.getByPlaceholder('Amount').fill('500');
       await page.getByRole('button', { name: 'Add milestone', exact: true }).click();
       await page.getByPlaceholder('Deliverable title').fill('Core deliverable');
-      await page.getByPlaceholder('Criteria, comma separated').fill('Work is complete and reviewed');
+      await page
+        .getByPlaceholder('Criteria, comma separated')
+        .fill('Work is complete and reviewed');
       await page.getByRole('button', { name: 'Add deliverable', exact: true }).click();
       completed.push('Milestone + deliverable created');
 
-      await bidderContext.pages()[0]?.goto(projectUrl).catch(() => {});
+      await bidderContext
+        .pages()[0]
+        ?.goto(projectUrl)
+        .catch(() => {});
       const freelancerProjectPage = bidderContext.pages()[0] || bidderPage;
       await freelancerProjectPage.goto(projectUrl);
-      await freelancerProjectPage.getByPlaceholder('What did you complete?').fill('The core deliverable is complete and reviewed.');
-      await freelancerProjectPage.getByRole('button', { name: 'Submit for review', exact: true }).click();
+      await freelancerProjectPage
+        .getByPlaceholder('What did you complete?')
+        .fill('The core deliverable is complete and reviewed.');
+      await freelancerProjectPage
+        .getByRole('button', { name: 'Submit for review', exact: true })
+        .click();
       completed.push('Milestone submitted for review');
 
       await page.goto(projectUrl);
       await page.reload();
       await page.getByRole('button', { name: 'Run verification', exact: true }).click();
-      await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeVisible({ timeout: 60000 });
+      await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeVisible({
+        timeout: 60000,
+      });
       await page.getByRole('button', { name: 'Approve', exact: true }).click();
       completed.push('Milestone verified and approved');
 
@@ -246,10 +320,15 @@ for (const [name, locale, role, goal] of profiles) {
       result.stage = 'invoice generation';
       await freelancerProjectPage.goto(projectUrl);
       await freelancerProjectPage.reload();
-      const generateInvoiceButton = freelancerProjectPage.getByRole('button', { name: 'Generate invoice', exact: true });
+      const generateInvoiceButton = freelancerProjectPage.getByRole('button', {
+        name: 'Generate invoice',
+        exact: true,
+      });
       await expect(generateInvoiceButton).toBeVisible({ timeout: 60000 });
       await generateInvoiceButton.click();
-      await expect(freelancerProjectPage.getByRole('link', { name: 'Download invoice PDF', exact: true })).toBeVisible({ timeout: 60000 });
+      await expect(
+        freelancerProjectPage.getByRole('link', { name: 'Download invoice PDF', exact: true }),
+      ).toBeVisible({ timeout: 60000 });
       completed.push('Invoice generated with downloadable PDF');
       await freelancerProjectPage.screenshot({ path: `${out}/invoice.png`, fullPage: true });
 

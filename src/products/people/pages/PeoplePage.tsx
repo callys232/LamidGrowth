@@ -21,7 +21,9 @@ export function PeoplePage() {
       <div className="panel-heading">
         <div>
           <h2>People &amp; Capability</h2>
-          <span>Your workspace roster, real capability data, and expert teams on your projects.</span>
+          <span>
+            Your workspace roster, real capability data, and expert teams on your projects.
+          </span>
         </div>
       </div>
 
@@ -39,7 +41,11 @@ export function PeoplePage() {
             <h3>Roster</h3>
             <ol className="activity-feed-list">
               {page.data.roster.map((member) => (
-                <li key={member.userId} className="activity-feed-row" style={{ alignItems: 'flex-start' }}>
+                <li
+                  key={member.userId}
+                  className="activity-feed-row"
+                  style={{ alignItems: 'flex-start' }}
+                >
                   <span className="activity-feed-title">
                     <strong>{member.name}</strong>
                     <br />
@@ -49,7 +55,9 @@ export function PeoplePage() {
                         <br />
                         <small>
                           {member.talent.headline || 'No headline set'}
-                          {member.talent.experienceYears != null && <> · {member.talent.experienceYears} yrs experience</>}
+                          {member.talent.experienceYears != null && (
+                            <> · {member.talent.experienceYears} yrs experience</>
+                          )}
                         </small>
                         {member.talent.skills.length > 0 && (
                           <div style={{ marginTop: 4 }}>
@@ -60,7 +68,9 @@ export function PeoplePage() {
                           <div style={{ marginTop: 4 }}>
                             <small>
                               Assessments:{' '}
-                              {member.talent.assessments.map((a) => `${a.skill} (${a.score})`).join(', ')}
+                              {member.talent.assessments
+                                .map((a) => `${a.skill} (${a.score})`)
+                                .join(', ')}
                             </small>
                           </div>
                         )}
@@ -93,14 +103,26 @@ export function PeoplePage() {
             ) : (
               <ol className="activity-feed-list">
                 {page.data.teams.map((team) => (
-                  <li key={team.id} className="activity-feed-row" style={{ alignItems: 'flex-start' }}>
+                  <li
+                    key={team.id}
+                    className="activity-feed-row"
+                    style={{ alignItems: 'flex-start' }}
+                  >
                     <span className="activity-feed-title">
                       <strong>{team.name}</strong>
                       <br />
-                      <small>Led by {team.leadName}{team.description && <> · {team.description}</>}</small>
+                      <small>
+                        Led by {team.leadName}
+                        {team.description && <> · {team.description}</>}
+                      </small>
                       {team.members.length > 0 && (
                         <div style={{ marginTop: 4 }}>
-                          <small>Members: {team.members.map((m) => `${m.name} (${m.role || 'member'})`).join(', ')}</small>
+                          <small>
+                            Members:{' '}
+                            {team.members
+                              .map((m) => `${m.name} (${m.role || 'member'})`)
+                              .join(', ')}
+                          </small>
                         </div>
                       )}
                     </span>
@@ -120,7 +142,11 @@ export function PeoplePage() {
             ) : (
               <ol className="activity-feed-list">
                 {page.data.recentCapabilityReviews.map((review) => (
-                  <li key={review.id} className="activity-feed-row" style={{ alignItems: 'flex-start' }}>
+                  <li
+                    key={review.id}
+                    className="activity-feed-row"
+                    style={{ alignItems: 'flex-start' }}
+                  >
                     <span className="activity-feed-title">
                       <strong>{review.question || 'Capability review'}</strong>
                       <br />

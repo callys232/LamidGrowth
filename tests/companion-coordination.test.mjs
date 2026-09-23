@@ -33,7 +33,9 @@ test(
           .join('; '),
       };
     }
-    const publicGuide = await call('/companion/guide', { message: "I can't sign in, forgot my password" });
+    const publicGuide = await call('/companion/guide', {
+      message: "I can't sign in, forgot my password",
+    });
     assert.equal(publicGuide.status, 200);
     assert.equal(publicGuide.data.topic, 'support');
     assert.equal(publicGuide.data.href, '/forgot-password');
@@ -65,9 +67,17 @@ test(
     assert.equal((await call('/companion/history', undefined, owner)).data.length, 1);
     assert.equal((await call('/companion/history', undefined, stranger)).data.length, 0);
     const initialBalance = (await call('/points', undefined, owner)).data.balance;
-    const missingJob = await call('/companion/messages', { message: 'Build my client brief', agentId: 'brief-builder' }, owner);
+    const missingJob = await call(
+      '/companion/messages',
+      { message: 'Build my client brief', agentId: 'brief-builder' },
+      owner,
+    );
     assert.equal(missingJob.status, 422);
-    const offline = await call('/companion/messages', { message: 'Review my context', agentId: 'context-curator' }, owner);
+    const offline = await call(
+      '/companion/messages',
+      { message: 'Review my context', agentId: 'context-curator' },
+      owner,
+    );
     assert.equal(offline.status, 503);
     assert.equal((await call('/points', undefined, owner)).data.balance, initialBalance);
     assert.equal((await call('/companion/history', undefined, owner)).data.length, 1);

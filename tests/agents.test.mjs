@@ -36,7 +36,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -47,13 +47,19 @@ async function request(path, body, cookie, method = 'POST') {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 async function demo() {
   const result = await request('/auth/demo', {});
   assert.equal(result.status, 201);
   const state = await request('/state', undefined, result.cookie, 'GET');
-  await store.db.prepare('UPDATE users SET points_balance = 100000 WHERE id = ?').run(state.data.user.id);
+  await store.db
+    .prepare('UPDATE users SET points_balance = 100000 WHERE id = ?')
+    .run(state.data.user.id);
   return result.cookie;
 }
 
@@ -65,43 +71,40 @@ test('companion agent catalog lists the seeded agents', async () => {
   const cookie = await demo();
   const result = await request('/companion/agents', undefined, cookie, 'GET');
   assert.equal(result.status, 200);
-  assert.deepEqual(
-    result.data.map((agent) => agent.id).sort(),
-    [
-      'acceptance-builder',
-      'brief-builder',
-      // Every guidance topic in companionRouting.mjs (companionTasks widget guidance) is
-      // automatically exposed as a free (0-point) authenticated agent too — see agents.mjs's
-      // `...Object.fromEntries(Object.entries(guidance).map(...))` spread.
-      'capability',
-      'capability-mapper',
-      'change-order',
-      'clarity',
-      'companion',
-      'consistency',
-      'context-curator',
-      'deliverable-builder',
-      'diagnostic-intelligence',
-      'estimate-generator',
-      'experiment-builder',
-      'invoice-generator',
-      'market-intelligence',
-      'onboarding',
-      'opportunities',
-      'opportunity-signals',
-      'performance-analytics',
-      'pricing',
-      'proposal-drafter',
-      'quote-generator',
-      'scope-builder',
-      'signal-monitoring',
-      'sow-builder',
-      'starter-planner',
-      'support',
-      'workflow-orchestration',
-      'workflows',
-    ],
-  );
+  assert.deepEqual(result.data.map((agent) => agent.id).sort(), [
+    'acceptance-builder',
+    'brief-builder',
+    // Every guidance topic in companionRouting.mjs (companionTasks widget guidance) is
+    // automatically exposed as a free (0-point) authenticated agent too — see agents.mjs's
+    // `...Object.fromEntries(Object.entries(guidance).map(...))` spread.
+    'capability',
+    'capability-mapper',
+    'change-order',
+    'clarity',
+    'companion',
+    'consistency',
+    'context-curator',
+    'deliverable-builder',
+    'diagnostic-intelligence',
+    'estimate-generator',
+    'experiment-builder',
+    'invoice-generator',
+    'market-intelligence',
+    'onboarding',
+    'opportunities',
+    'opportunity-signals',
+    'performance-analytics',
+    'pricing',
+    'proposal-drafter',
+    'quote-generator',
+    'scope-builder',
+    'signal-monitoring',
+    'sow-builder',
+    'starter-planner',
+    'support',
+    'workflow-orchestration',
+    'workflows',
+  ]);
   assert.ok(result.data.every((agent) => typeof agent.pointsCost === 'number'));
 });
 
@@ -122,14 +125,20 @@ test('a signal, capability, analytics, or market question routes to its speciali
 
 test('a generic question routes to the read-only context curator agent', async () => {
   const cookie = await enableAI(await signup('Routing Generic', 'routing-generic@example.test'));
-  const result = await request('/companion/messages', { message: 'What is going on right now?', consent: true }, cookie);
+  const result = await request(
+    '/companion/messages',
+    { message: 'What is going on right now?', consent: true },
+    cookie,
+  );
   assert.equal(result.status, 201, JSON.stringify(result.data));
   assert.equal(result.data.agentId, 'context-curator');
   assert.ok(typeof result.data.response === 'string' && result.data.response.length > 0);
 });
 
 test('a diagnostic-style question routes to the diagnostic intelligence agent', async () => {
-  const cookie = await enableAI(await signup('Routing Diagnostic', 'routing-diagnostic@example.test'));
+  const cookie = await enableAI(
+    await signup('Routing Diagnostic', 'routing-diagnostic@example.test'),
+  );
   const result = await request(
     '/companion/messages',
     { message: 'Can you run a health check and assess our current risk?', consent: true },
@@ -150,7 +159,12 @@ test('a workflow command routes to the orchestration agent and never bypasses ap
       objectiveId: objective.id,
       steps: [
         { id: 'context', toolId: 'context.snapshot' },
-        { id: 'action', toolId: 'action.prepare', input: { title: 'Prepare report' }, dependsOn: ['context'] },
+        {
+          id: 'action',
+          toolId: 'action.prepare',
+          input: { title: 'Prepare report' },
+          dependsOn: ['context'],
+        },
       ],
       expiresAt: new Date(Date.now() + 86400000).toISOString(),
     },
@@ -194,11 +208,18 @@ test('a workspace member cannot use the mutating workflow-orchestration agent', 
   });
   const ownerState = (await request('/state', undefined, owner.cookie)).data;
   assert.equal(
-    (await request('/admin/members', { email: 'companion-member@example.test', role: 'member' }, owner.cookie)).status,
+    (
+      await request(
+        '/admin/members',
+        { email: 'companion-member@example.test', role: 'member' },
+        owner.cookie,
+      )
+    ).status,
     201,
   );
   assert.equal(
-    (await request('/workspace/switch', { workspaceId: ownerState.workspace.id }, member.cookie)).status,
+    (await request('/workspace/switch', { workspaceId: ownerState.workspace.id }, member.cookie))
+      .status,
     200,
   );
   // Enabling the workspace's AI policy requires workspace:manage, which only the owner has; the
@@ -244,7 +265,9 @@ test('a successful agent run debits points and reports the new balance', async (
 test('a failed agent run refunds the points it charged', async () => {
   const cookie = await demo();
   await store.db
-    .prepare("UPDATE model_registry SET status = 'deprecated' WHERE use_case = 'companion.context-curator'")
+    .prepare(
+      "UPDATE model_registry SET status = 'deprecated' WHERE use_case = 'companion.context-curator'",
+    )
     .run();
   const before = (await request('/points', undefined, cookie, 'GET')).data.balance;
   const failed = await request(
@@ -256,11 +279,15 @@ test('a failed agent run refunds the points it charged', async () => {
   const after = (await request('/points', undefined, cookie, 'GET')).data.balance;
   assert.equal(after, before);
   const refund = await store.db
-    .prepare("SELECT amount FROM points_ledger WHERE reason = 'agent_run_refund' ORDER BY created_at DESC LIMIT 1")
+    .prepare(
+      "SELECT amount FROM points_ledger WHERE reason = 'agent_run_refund' ORDER BY created_at DESC LIMIT 1",
+    )
     .get();
   assert.equal(refund.amount, 65);
   await store.db
-    .prepare("UPDATE model_registry SET status = 'approved' WHERE use_case = 'companion.context-curator'")
+    .prepare(
+      "UPDATE model_registry SET status = 'approved' WHERE use_case = 'companion.context-curator'",
+    )
     .run();
 });
 
@@ -274,9 +301,11 @@ test('an agent is rejected before it runs if the workspace has too few points', 
     cookie,
   );
   assert.equal(result.status, 402);
-  const runsAfter = (await store.db
-    .prepare('SELECT COUNT(*) AS count FROM agent_runs WHERE principal_id = ?')
-    .get(state.user.id)).count;
+  const runsAfter = (
+    await store.db
+      .prepare('SELECT COUNT(*) AS count FROM agent_runs WHERE principal_id = ?')
+      .get(state.user.id)
+  ).count;
   assert.equal(runsAfter, 0);
 });
 
@@ -484,7 +513,8 @@ test('the scope builder grounds its draft in the real job and rejects unrelated 
       await request(
         `/jobs/${job.data.id}/bids`,
         {
-          coverLetter: 'I can rebuild the onboarding flow with fewer steps and progress indicators.',
+          coverLetter:
+            'I can rebuild the onboarding flow with fewer steps and progress indicators.',
           proposedAmount: 3000,
           currency: 'USD',
           timeline: '5 weeks',
@@ -600,7 +630,11 @@ test('the change order generator grounds in the real proposal and rejects unrela
 
   const asBidder = await request(
     '/companion/messages',
-    { message: 'we need a change order to add an extra chart', proposalId: proposal.data.id, consent: true },
+    {
+      message: 'we need a change order to add an extra chart',
+      proposalId: proposal.data.id,
+      consent: true,
+    },
     bidder,
   );
   assert.equal(asBidder.status, 201);

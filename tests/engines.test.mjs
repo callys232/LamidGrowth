@@ -15,7 +15,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -26,7 +26,11 @@ async function request(path, body, cookie, method = 'POST') {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 async function demo() {
   const result = await request('/auth/demo', {});
@@ -63,7 +67,9 @@ test("a workspace's in-app catalog is filtered to its signup context, cumulative
   const state = await request('/state', undefined, cookie, 'GET');
   const workspaceId = state.data.workspace.id;
 
-  await store.db.prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?").run(workspaceId);
+  await store.db
+    .prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?")
+    .run(workspaceId);
   const individualView = await request('/engines', undefined, cookie, 'GET');
   assert.ok(individualView.data.count > 0);
   assert.ok(individualView.data.count < 248);
@@ -120,18 +126,26 @@ test('a financial-kind run returns arithmetically correct figures and appears on
 test('an assessment-kind run refuses a dimension the engine does not declare, without charging points', async () => {
   const cookie = await demo();
   const before = await request('/finance/points', undefined, cookie, 'GET');
-  const result = await request('/engines/s01/run', { input: { rows: [{ label: 'Not A Real Dimension', rating: 5 }] } }, cookie);
+  const result = await request(
+    '/engines/s01/run',
+    { input: { rows: [{ label: 'Not A Real Dimension', rating: 5 }] } },
+    cookie,
+  );
   assert.equal(result.status, 400);
   const after = await request('/finance/points', undefined, cookie, 'GET');
   assert.equal(after.data.balance, before.data.balance);
 });
 
-test('an assessment-kind run scores the module\'s own declared dimensions and charges points', async () => {
+test("an assessment-kind run scores the module's own declared dimensions and charges points", async () => {
   const cookie = await demo();
   const detail = await request('/engines/s01', undefined, cookie, 'GET');
   const label = detail.data.dimensionLabels[0];
   const before = await request('/finance/points', undefined, cookie, 'GET');
-  const result = await request('/engines/s01/run', { input: { rows: [{ label, rating: 4, weight: 2, evidence: 1 }] } }, cookie);
+  const result = await request(
+    '/engines/s01/run',
+    { input: { rows: [{ label, rating: 4, weight: 2, evidence: 1 }] } },
+    cookie,
+  );
   assert.equal(result.status, 200);
   assert.equal(result.data.pointsCharged, 35);
   const after = await request('/finance/points', undefined, cookie, 'GET');
@@ -141,8 +155,14 @@ test('an assessment-kind run scores the module\'s own declared dimensions and ch
 test('running an engine is rejected before charging when the workspace has too few points', async () => {
   const cookie = await demo();
   const state = await request('/state', undefined, cookie, 'GET');
-  await store.db.prepare('UPDATE users SET points_balance = 10 WHERE id = ?').run(state.data.user.id);
-  const result = await request('/engines/s01/run', { input: { rows: [{ label: 'Identity Clarity', rating: 4 }] } }, cookie);
+  await store.db
+    .prepare('UPDATE users SET points_balance = 10 WHERE id = ?')
+    .run(state.data.user.id);
+  const result = await request(
+    '/engines/s01/run',
+    { input: { rows: [{ label: 'Identity Clarity', rating: 4 }] } },
+    cookie,
+  );
   assert.equal(result.status, 402);
   const after = await request('/finance/points', undefined, cookie, 'GET');
   assert.equal(after.data.balance, 10);

@@ -1,5 +1,14 @@
 import { Link } from 'react-router-dom';
-import { Building, Building2, Briefcase, Landmark, Palette, Rocket, User, Users } from 'lucide-react';
+import {
+  Building,
+  Building2,
+  Briefcase,
+  Landmark,
+  Palette,
+  Rocket,
+  User,
+  Users,
+} from 'lucide-react';
 import individuals from '../../who-its-for-individuals/content.json';
 import professionals from '../../who-its-for-professionals/content.json';
 import creators from '../../who-its-for-creators/content.json';

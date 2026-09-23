@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -15,7 +20,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -68,7 +73,12 @@ test('an unknown currency pair returns 404 rather than inventing a rate', async 
 
 test('only a workspace owner can update an FX rate', async () => {
   const owner = await signup('Fx Owner', 'fx-owner@example.test');
-  const update = await request('/fx/rates', { from: 'USD', to: 'JPY', rate: 148.5 }, owner, 'PATCH');
+  const update = await request(
+    '/fx/rates',
+    { from: 'USD', to: 'JPY', rate: 148.5 },
+    owner,
+    'PATCH',
+  );
   assert.equal(update.status, 200);
   const converted = await request('/fx/convert?amount=10&from=USD&to=JPY', undefined, owner, 'GET');
   assert.equal(converted.status, 200);

@@ -6,11 +6,16 @@ import pg from 'pg';
 // Postgres (same connection the dedicated server itself uses), so the full paid sequence can be
 // shown completing end to end, not just the one step a real 500-point welcome grant affords.
 async function topUpPoints(email: string, amount: number) {
-  const pool = new pg.Pool({ connectionString: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL });
+  const pool = new pg.Pool({
+    connectionString: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
+  });
   try {
     // Matches the fixed schema name scripts/usability-server-paid.mjs opens (not ':memory:',
     // which would pick a randomly-named schema this script has no way to discover).
-    await pool.query('UPDATE paid_demo.users SET points_balance = points_balance + $1 WHERE email = $2', [amount, email]);
+    await pool.query(
+      'UPDATE paid_demo.users SET points_balance = points_balance + $1 WHERE email = $2',
+      [amount, email],
+    );
   } finally {
     await pool.end();
   }
@@ -27,9 +32,20 @@ const profiles = [
 
 for (const [city, locale, width, height, role, goal] of profiles) {
   test(`${city}: paid specialist sequence (simulated AI)`, async ({ browser }, info) => {
-    const context = await browser.newContext({ locale, viewport: { width, height }, reducedMotion: 'reduce' });
+    const context = await browser.newContext({
+      locale,
+      viewport: { width, height },
+      reducedMotion: 'reduce',
+    });
     const page = await context.newPage();
-    const result: Record<string, unknown> = { city, locale, viewport: `${width}x${height}`, role, goal, stage: 'signup' };
+    const result: Record<string, unknown> = {
+      city,
+      locale,
+      viewport: `${width}x${height}`,
+      role,
+      goal,
+      stage: 'signup',
+    };
     const out = `artifacts/paid-path-demo/${city}`;
     mkdirSync(out, { recursive: true });
     try {
@@ -52,8 +68,12 @@ for (const [city, locale, width, height, role, goal] of profiles) {
       result.stage = 'goal creation';
       await page.getByRole('button', { name: 'New objective', exact: true }).click();
       await page.getByLabel('Your objective', { exact: true }).fill(goal);
-      await page.getByLabel('Why it matters').fill('Save time and turn an idea into clear next steps.');
-      await page.getByLabel('What does success look like?').fill('A useful plan I can act on this week.');
+      await page
+        .getByLabel('Why it matters')
+        .fill('Save time and turn an idea into clear next steps.');
+      await page
+        .getByLabel('What does success look like?')
+        .fill('A useful plan I can act on this week.');
       await page.getByRole('button', { name: 'Create objective', exact: true }).click();
       await expect(page.getByRole('dialog')).toHaveCount(0);
 
@@ -71,7 +91,9 @@ for (const [city, locale, width, height, role, goal] of profiles) {
       const enableBox = page.getByRole('checkbox', { name: 'Allow external AI in this workspace' });
       if (!(await enableBox.isChecked())) await enableBox.check();
       await page.getByRole('button', { name: 'Save AI rules' }).click();
-      await expect(page.getByRole('checkbox', { name: 'Allow external AI in this workspace' })).toBeChecked();
+      await expect(
+        page.getByRole('checkbox', { name: 'Allow external AI in this workspace' }),
+      ).toBeChecked();
 
       result.stage = 'paid specialist plan';
       await page.goto('/os/companion/chat');
@@ -83,7 +105,11 @@ for (const [city, locale, width, height, role, goal] of profiles) {
       await expect(card).toBeVisible();
       result.plan = await card.innerText();
 
-      await page.getByRole('checkbox', { name: 'Allow external AI to use authorized workspace context for the next step.' }).check();
+      await page
+        .getByRole('checkbox', {
+          name: 'Allow external AI to use authorized workspace context for the next step.',
+        })
+        .check();
 
       const before = (await (await context.request.get('/api/points')).json()).balance;
       // Approve every step the current balance actually allows, capturing each specialist's
@@ -104,7 +130,9 @@ for (const [city, locale, width, height, role, goal] of profiles) {
           break;
         }
         await approveButton.click();
-        await expect(card.locator('.companion-task-chip-completed')).toHaveCount(i + 1, { timeout: 45000 });
+        await expect(card.locator('.companion-task-chip-completed')).toHaveCount(i + 1, {
+          timeout: 45000,
+        });
         stepResults.push(await card.innerText());
       }
       result.finalCard = await card.innerText();

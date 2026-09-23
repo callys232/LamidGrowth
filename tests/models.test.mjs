@@ -16,7 +16,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -28,7 +33,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -59,7 +64,12 @@ async function authedUser() {
   userCounter++;
   const signup = await request(
     '/auth/signup',
-    { name: 'Models Tester', email: `models-${userCounter}-${Date.now()}@example.test`, password: 'a-long-models-test-password', context: 'Founder' },
+    {
+      name: 'Models Tester',
+      email: `models-${userCounter}-${Date.now()}@example.test`,
+      password: 'a-long-models-test-password',
+      context: 'Founder',
+    },
     undefined,
   );
   assert.equal(signup.status, 201);
@@ -97,7 +107,11 @@ test('the model registry is seeded with approved companion use cases', async () 
 
 test('companion agent evidence records which registry entry authorized the call', async () => {
   const cookie = await authedUser();
-  const result = await request('/companion/messages', { message: 'what is going on right now?', consent: true }, cookie);
+  const result = await request(
+    '/companion/messages',
+    { message: 'what is going on right now?', consent: true },
+    cookie,
+  );
   assert.equal(result.status, 201);
   assert.equal(result.data.evidence.modelRegistryId, 'companion-context-v1');
 });

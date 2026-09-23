@@ -2,7 +2,10 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 const reviewSchema = z
-  .object({ rating: z.number().int().min(1).max(5), comment: z.string().trim().max(2000).default('') })
+  .object({
+    rating: z.number().int().min(1).max(5),
+    comment: z.string().trim().max(2000).default(''),
+  })
   .strict();
 
 const fail = (message, status) => {
@@ -41,18 +44,32 @@ export function mountReputation(app, store) {
       return res.status(403).json({ error: 'You are not a party to this milestone.' });
     const revieweeUserId = isClient ? row.freelancer_user_id : row.client_user_id;
     if (!revieweeUserId)
-      return res.status(400).json({ error: 'The other party on this milestone could not be determined.' });
+      return res
+        .status(400)
+        .json({ error: 'The other party on this milestone could not be determined.' });
     const existing = await db
       .prepare('SELECT id FROM reviews WHERE milestone_id = ? AND reviewer_user_id = ?')
       .get(row.milestone_id, req.user.id);
-    if (existing) return res.status(409).json({ error: 'You have already reviewed this milestone.' });
+    if (existing)
+      return res.status(409).json({ error: 'You have already reviewed this milestone.' });
     const input = reviewSchema.parse(req.body);
     const id = randomUUID();
     const now = new Date().toISOString();
     await transaction(async () => {
-      await db.prepare(
-        'INSERT INTO reviews (id, project_id, milestone_id, reviewer_user_id, reviewee_user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      ).run(id, row.project_id, row.milestone_id, req.user.id, revieweeUserId, input.rating, input.comment, now);
+      await db
+        .prepare(
+          'INSERT INTO reviews (id, project_id, milestone_id, reviewer_user_id, reviewee_user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        )
+        .run(
+          id,
+          row.project_id,
+          row.milestone_id,
+          req.user.id,
+          revieweeUserId,
+          input.rating,
+          input.comment,
+          now,
+        );
       await log(req.workspace.id, req.user.name, 'Review submitted', id, `${input.rating}/5`);
     });
     res.status(201).json(await db.prepare('SELECT * FROM reviews WHERE id = ?').get(id));
@@ -60,13 +77,17 @@ export function mountReputation(app, store) {
 
   app.get('/api/talent/:userId/reputation', async (req, res) => {
     const stats = await db
-      .prepare('SELECT COUNT(*) AS count, COALESCE(AVG(rating), 0) AS average FROM reviews WHERE reviewee_user_id = ?')
-      .get(req.params.userId);
-    const completedMilestones = (await db
       .prepare(
-        "SELECT COUNT(*) AS count FROM milestones JOIN projects ON projects.id = milestones.project_id WHERE projects.freelancer_user_id = ? AND milestones.status IN ('approved', 'paid')",
+        'SELECT COUNT(*) AS count, COALESCE(AVG(rating), 0) AS average FROM reviews WHERE reviewee_user_id = ?',
       )
-      .get(req.params.userId)).count;
+      .get(req.params.userId);
+    const completedMilestones = (
+      await db
+        .prepare(
+          "SELECT COUNT(*) AS count FROM milestones JOIN projects ON projects.id = milestones.project_id WHERE projects.freelancer_user_id = ? AND milestones.status IN ('approved', 'paid')",
+        )
+        .get(req.params.userId)
+    ).count;
     res.json({
       userId: req.params.userId,
       reviewCount: stats.count,

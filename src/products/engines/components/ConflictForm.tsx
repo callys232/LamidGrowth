@@ -48,7 +48,13 @@ export function ConflictForm({
         });
       }}
     >
-      <RowListForm fields={FIELDS} rows={rows} onChange={setRows} addLabel="Add objective" minRows={2} />
+      <RowListForm
+        fields={FIELDS}
+        rows={rows}
+        onChange={setRows}
+        addLabel="Add objective"
+        minRows={2}
+      />
       <Button type="submit" disabled={submitting || rows.length < 2}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>

@@ -21,7 +21,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -33,7 +38,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST', extra = {}) {
   const response = await fetch(`${base}/api${path}`, {
@@ -45,7 +50,11 @@ async function request(path, body, cookie, method = 'POST', extra = {}) {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
-  return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+  return {
+    status: response.status,
+    data: await response.json(),
+    cookie: response.headers.get('set-cookie')?.split(';')[0],
+  };
 }
 async function signup(name, email) {
   const result = await request('/auth/signup', {
@@ -93,14 +102,22 @@ test('concurrent requests cannot drive the points balance negative (race-conditi
   const state = await request('/state', undefined, cookie, 'GET');
   assert.equal(state.status, 200);
   // Force the balance down to exactly enough for 2 job posts (40 points each).
-  await store.db.prepare('UPDATE users SET points_balance = 80 WHERE id = ?').run(state.data.user.id);
+  await store.db
+    .prepare('UPDATE users SET points_balance = 80 WHERE id = ?')
+    .run(state.data.user.id);
 
   const attempts = await Promise.all(
-    Array.from({ length: 5 }, () => request('/jobs', jobBody({ title: `Race job ${randomUUID()}` }), cookie)),
+    Array.from({ length: 5 }, () =>
+      request('/jobs', jobBody({ title: `Race job ${randomUUID()}` }), cookie),
+    ),
   );
   const succeeded = attempts.filter((r) => r.status === 201).length;
   const rejected = attempts.filter((r) => r.status === 402).length;
-  assert.equal(succeeded, 2, 'exactly 2 of 5 concurrent job posts should succeed with 80 points at 40 each');
+  assert.equal(
+    succeeded,
+    2,
+    'exactly 2 of 5 concurrent job posts should succeed with 80 points at 40 each',
+  );
   assert.equal(rejected, 3);
 
   const finalBalance = (await request('/points', undefined, cookie, 'GET')).data.balance;
@@ -119,17 +136,33 @@ test('idempotency key replays the cached result instead of double-charging, and 
 
   const replay = await request('/jobs', body, cookie, 'POST', { 'Idempotency-Key': key });
   assert.equal(replay.status, 201);
-  assert.equal(replay.data.id, first.data.id, 'replaying the same key should return the same cached job');
+  assert.equal(
+    replay.data.id,
+    first.data.id,
+    'replaying the same key should return the same cached job',
+  );
   const balanceAfterReplay = (await request('/points', undefined, cookie, 'GET')).data.balance;
-  assert.equal(balanceAfterReplay, balanceAfterFirst, 'the replayed request must not charge points again');
+  assert.equal(
+    balanceAfterReplay,
+    balanceAfterFirst,
+    'the replayed request must not charge points again',
+  );
 
   const newKeyResult = await request('/jobs', body, cookie, 'POST', {
     'Idempotency-Key': 'replay-test-key-0002',
   });
   assert.equal(newKeyResult.status, 201);
-  assert.notEqual(newKeyResult.data.id, first.data.id, 'a new key must be treated as a genuinely new operation');
+  assert.notEqual(
+    newKeyResult.data.id,
+    first.data.id,
+    'a new key must be treated as a genuinely new operation',
+  );
   const balanceAfterNewKey = (await request('/points', undefined, cookie, 'GET')).data.balance;
-  assert.equal(balanceAfterNewKey, balanceAfterFirst - 40, 'a new idempotency key legitimately charges again');
+  assert.equal(
+    balanceAfterNewKey,
+    balanceAfterFirst - 40,
+    'a new idempotency key legitimately charges again',
+  );
 });
 
 test('the companion agent endpoint replays cached results under the same idempotency key', async () => {
@@ -147,14 +180,22 @@ test('the companion agent endpoint replays cached results under the same idempot
   const key = 'companion-replay-key-0001';
   const body = { message: 'what is going on right now?', consent: true };
 
-  const first = await request('/companion/messages', body, cookie, 'POST', { 'Idempotency-Key': key });
+  const first = await request('/companion/messages', body, cookie, 'POST', {
+    'Idempotency-Key': key,
+  });
   assert.equal(first.status, 201);
   const balanceAfterFirst = first.data.balance;
 
-  const replay = await request('/companion/messages', body, cookie, 'POST', { 'Idempotency-Key': key });
+  const replay = await request('/companion/messages', body, cookie, 'POST', {
+    'Idempotency-Key': key,
+  });
   assert.equal(replay.status, 201);
   assert.equal(replay.data.runId, first.data.runId);
-  assert.equal(replay.data.balance, balanceAfterFirst, 'replaying an agent message must not charge points again');
+  assert.equal(
+    replay.data.balance,
+    balanceAfterFirst,
+    'replaying an agent message must not charge points again',
+  );
 
   const noKeyRepeat = await request('/companion/messages', body, cookie);
   assert.equal(noKeyRepeat.status, 201);
@@ -173,9 +214,15 @@ test('a mismatched idempotency-key replay with different input is rejected, not 
     'Idempotency-Key': key,
   });
   assert.equal(first.status, 201);
-  const tampered = await request('/jobs', jobBody({ title: 'Different job entirely' }), cookie, 'POST', {
-    'Idempotency-Key': key,
-  });
+  const tampered = await request(
+    '/jobs',
+    jobBody({ title: 'Different job entirely' }),
+    cookie,
+    'POST',
+    {
+      'Idempotency-Key': key,
+    },
+  );
   assert.equal(tampered.status, 409);
 });
 
@@ -190,7 +237,11 @@ test('cross-tenant workspace tampering is rejected before any charge occurs', as
   });
   assert.equal(result.status, 409);
   const balanceAfter = (await request('/points', undefined, attacker, 'GET')).data.balance;
-  assert.equal(balanceAfter, balanceBefore, 'a rejected cross-tenant request must not charge points');
+  assert.equal(
+    balanceAfter,
+    balanceBefore,
+    'a rejected cross-tenant request must not charge points',
+  );
 });
 
 test('the dedicated spend rate limiter enforces a per-account ceiling on points-spending routes', async () => {
@@ -214,7 +265,11 @@ test('the dedicated spend rate limiter enforces a per-account ceiling on points-
         headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) },
         body: JSON.stringify(body),
       });
-      return { status: response.status, data: await response.json(), cookie: response.headers.get('set-cookie')?.split(';')[0] };
+      return {
+        status: response.status,
+        data: await response.json(),
+        cookie: response.headers.get('set-cookie')?.split(';')[0],
+      };
     }
     const signupResult = await limitedRequest('/auth/signup', {
       name: 'Spend Limited',
@@ -228,9 +283,12 @@ test('the dedicated spend rate limiter enforces a per-account ceiling on points-
       const result = await limitedRequest('/jobs', jobBody({ title: `Limited job ${i}` }), cookie);
       if (result.status === 429) rejected++;
     }
-    assert.ok(rejected > 0, 'at least one of 5 rapid spend requests should be rate-limited at max:3');
+    assert.ok(
+      rejected > 0,
+      'at least one of 5 rapid spend requests should be rate-limited at max:3',
+    );
   } finally {
     await new Promise((resolve) => limitedServer.close(resolve));
-    limitedStore.db.close();
+    await limitedStore.db.close();
   }
 });

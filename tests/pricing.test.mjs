@@ -7,7 +7,12 @@ const adminEmail = 'pricing-admin@lamidgrowth.test';
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
   }));
   server = await new Promise((resolve) => {
@@ -18,7 +23,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -59,7 +64,11 @@ test('billables list every registered tool/engine with its points cost and the p
 
 test('a non-admin cannot create, list, or manage bundles', async () => {
   const user = await signup('Non Admin Bundler');
-  const create = await request('/admin/bundles', { name: 'X', priceMinor: 1000, pointsIncluded: 10, agentIds: [] }, user);
+  const create = await request(
+    '/admin/bundles',
+    { name: 'X', priceMinor: 1000, pointsIncluded: 10, agentIds: [] },
+    user,
+  );
   assert.equal(create.status, 403);
   const list = await request('/admin/bundles', undefined, user, 'GET');
   assert.equal(list.status, 403);
@@ -72,7 +81,14 @@ test('an admin can create a bundle from real tools, publish it, and it becomes p
 
   const create = await request(
     '/admin/bundles',
-    { name: 'Starter Bundle', description: 'Two tools bundled', priceMinor: 500000, pointsIncluded: 200, billingCycle: 'monthly', agentIds },
+    {
+      name: 'Starter Bundle',
+      description: 'Two tools bundled',
+      priceMinor: 500000,
+      pointsIncluded: 200,
+      billingCycle: 'monthly',
+      agentIds,
+    },
     adminCookie,
   );
   assert.equal(create.status, 201);
@@ -83,7 +99,12 @@ test('an admin can create a bundle from real tools, publish it, and it becomes p
   const publicListBeforePublish = await request('/bundles', undefined, adminCookie, 'GET');
   assert.ok(!publicListBeforePublish.data.some((b) => b.id === create.data.id));
 
-  const publish = await request(`/admin/bundles/${create.data.id}`, { status: 'active' }, adminCookie, 'PATCH');
+  const publish = await request(
+    `/admin/bundles/${create.data.id}`,
+    { status: 'active' },
+    adminCookie,
+    'PATCH',
+  );
   assert.equal(publish.status, 200);
   assert.equal(publish.data.status, 'active');
 
@@ -101,7 +122,11 @@ test('creating a bundle with an unknown tool id is rejected', async () => {
 });
 
 test('an admin can delete a bundle', async () => {
-  const create = await request('/admin/bundles', { name: 'Deletable', priceMinor: 1000, pointsIncluded: 5, agentIds: [] }, adminCookie);
+  const create = await request(
+    '/admin/bundles',
+    { name: 'Deletable', priceMinor: 1000, pointsIncluded: 5, agentIds: [] },
+    adminCookie,
+  );
   assert.equal(create.status, 201);
   const del = await request(`/admin/bundles/${create.data.id}`, {}, adminCookie, 'DELETE');
   assert.equal(del.status, 200);

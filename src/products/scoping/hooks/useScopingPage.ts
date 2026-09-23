@@ -21,7 +21,9 @@ export type ScopingCase = {
   published_job_id: string | null;
 };
 export type ScopingSuggestions = {
-  suggestions: Partial<Record<'desiredOutcome' | 'deliverables' | 'acceptanceCriteria' | 'budgetContext', string>>;
+  suggestions: Partial<
+    Record<'desiredOutcome' | 'deliverables' | 'acceptanceCriteria' | 'budgetContext', string>
+  >;
   riskBand: ScopingCase['risk_band'];
 };
 export type ReviewQueueEntry = {
@@ -53,7 +55,9 @@ export function useScopingPage() {
 
   async function loadJurisdictionRules() {
     try {
-      setJurisdictionRules(await api<JurisdictionRule[]>('/admin/jurisdiction-rules', undefined, 'GET'));
+      setJurisdictionRules(
+        await api<JurisdictionRule[]>('/admin/jurisdiction-rules', undefined, 'GET'),
+      );
       setIsJurisdictionAdmin(true);
     } catch {
       // Non-admins get a 403 here — leave the admin panel hidden rather than error-banner a
@@ -170,20 +174,25 @@ export function useScopingPage() {
         title: job.title,
         category: scopingCase.category,
         projectType: job.projectType,
-        description: [scopingCase.objective, scopingCase.problem_statement, scopingCase.desired_outcome]
-          .filter(Boolean)
-          .join('\n\n')
-          .slice(0, 10000) || scopingCase.objective,
+        description:
+          [scopingCase.objective, scopingCase.problem_statement, scopingCase.desired_outcome]
+            .filter(Boolean)
+            .join('\n\n')
+            .slice(0, 10000) || scopingCase.objective,
         deliverables: scopingCase.deliverables || scopingCase.objective,
         budgetMin: job.budgetMin,
         budgetMax: job.budgetMax,
         currency: job.currency,
         timeline: job.timeline,
       });
-      const published = await api<ScopingCase>(`/scoping-cases/${scopingCase.id}/publish`, {
-        publishedJobId: created.id,
-        confirmed: job.confirmed,
-      }, 'PATCH');
+      const published = await api<ScopingCase>(
+        `/scoping-cases/${scopingCase.id}/publish`,
+        {
+          publishedJobId: created.id,
+          confirmed: job.confirmed,
+        },
+        'PATCH',
+      );
       setScopingCase(published);
       notify('Project published from your scoping case.');
       return published;
@@ -200,7 +209,10 @@ export function useScopingPage() {
     setBusy(true);
     setError('');
     try {
-      const entry = await api<ReviewQueueEntry>(`/scoping-cases/${scopingCase.id}/request-review`, {});
+      const entry = await api<ReviewQueueEntry>(
+        `/scoping-cases/${scopingCase.id}/request-review`,
+        {},
+      );
       setReviewEntry(entry);
       notify('Sent for qualified expert review.');
     } catch (e) {

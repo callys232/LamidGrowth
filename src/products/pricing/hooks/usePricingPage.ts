@@ -95,7 +95,9 @@ export function usePricingPage() {
   }
 
   function toggleAgent(id: string) {
-    setSelectedAgentIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedAgentIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   }
 
   async function createBundle(event: FormEvent<HTMLFormElement>) {

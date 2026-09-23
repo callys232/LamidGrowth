@@ -22,16 +22,16 @@ export function mountMessaging(app, store) {
     if (!isClient && !isFreelancer) fail('You are not a party to this project.', 403);
   }
   async function conversationFor(project) {
-    let conversation = await db.prepare('SELECT * FROM conversations WHERE project_id = ?').get(project.id);
+    let conversation = await db
+      .prepare('SELECT * FROM conversations WHERE project_id = ?')
+      .get(project.id);
     if (!conversation) {
       const id = randomUUID();
-      await db.prepare('INSERT INTO conversations (id, workspace_id, subject, created_at, project_id) VALUES (?, ?, ?, ?, ?)').run(
-        id,
-        project.workspace_id,
-        project.title,
-        new Date().toISOString(),
-        project.id,
-      );
+      await db
+        .prepare(
+          'INSERT INTO conversations (id, workspace_id, subject, created_at, project_id) VALUES (?, ?, ?, ?, ?)',
+        )
+        .run(id, project.workspace_id, project.title, new Date().toISOString(), project.id);
       conversation = await db.prepare('SELECT * FROM conversations WHERE id = ?').get(id);
     }
     return conversation;
@@ -40,7 +40,9 @@ export function mountMessaging(app, store) {
   app.get('/api/projects/:id/messages', async (req, res) => {
     const project = await projectFor(req.params.id);
     await requireParty(project, req.user.id);
-    const conversation = await db.prepare('SELECT * FROM conversations WHERE project_id = ?').get(project.id);
+    const conversation = await db
+      .prepare('SELECT * FROM conversations WHERE project_id = ?')
+      .get(project.id);
     if (!conversation) return res.json([]);
     res.json(
       await db
@@ -57,13 +59,9 @@ export function mountMessaging(app, store) {
       const id = randomUUID();
       await transaction(async () => {
         const conversation = await conversationFor(project);
-        await db.prepare('INSERT INTO messages VALUES (?, ?, ?, ?, ?)').run(
-          id,
-          conversation.id,
-          req.user.id,
-          input.body,
-          new Date().toISOString(),
-        );
+        await db
+          .prepare('INSERT INTO messages VALUES (?, ?, ?, ?, ?)')
+          .run(id, conversation.id, req.user.id, input.body, new Date().toISOString());
       });
       res.status(201).json(await db.prepare('SELECT * FROM messages WHERE id = ?').get(id));
     } catch (error) {

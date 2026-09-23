@@ -7,7 +7,12 @@ const adminEmail = 'billing-admin@lamidgrowth.test';
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     ecosystemAdminEmails: [adminEmail],
     // The no-concierge billing test below drives a real companion message through
     // signal-monitoring (a paid specialist), so it needs AI configured the way production would
@@ -17,7 +22,12 @@ before(async () => {
       model: 'test',
       async review(context) {
         return {
-          review: { summary: `AI summary: ${context.question}`, assumptions: [], suggestions: [], evidenceIds: (context.sources || []).map((s) => s.id) },
+          review: {
+            summary: `AI summary: ${context.question}`,
+            assumptions: [],
+            suggestions: [],
+            evidenceIds: (context.sources || []).map((s) => s.id),
+          },
         };
       },
     },
@@ -30,7 +40,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -70,14 +80,23 @@ async function approvedProvider(name, monthlyRateMinor = 20000) {
     { headline: `${name} PM`, experience: '', monthlyRateMinor },
     provider,
   );
-  await request(`/admin/concierge-applications/${application.data.id}`, { decision: 'approve' }, adminCookie, 'PATCH');
+  await request(
+    `/admin/concierge-applications/${application.data.id}`,
+    { decision: 'approve' },
+    adminCookie,
+    'PATCH',
+  );
   const state = (await request('/state', undefined, provider, 'GET')).data;
   return { cookie: provider, userId: state.user.id };
 }
 
 test('a workspace with no concierge ever assigned has an empty concierge fee history but real points usage', async () => {
   const owner = await signup('No Concierge Owner');
-  const companion = await request('/companion/messages', { message: 'what changed recently', consent: true }, owner);
+  const companion = await request(
+    '/companion/messages',
+    { message: 'what changed recently', consent: true },
+    owner,
+  );
   assert.equal(companion.status, 201, JSON.stringify(companion.data));
   const statement = await request('/billing/statement', undefined, owner, 'GET');
   assert.equal(statement.status, 200);
@@ -103,7 +122,9 @@ test('the ecosystem fee is charged once at assignment; the PM fee recurs every 3
 
   const sixtyFiveDaysAgo = Date.now() - 65 * 24 * 60 * 60 * 1000;
   await store.db
-    .prepare("UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'")
+    .prepare(
+      "UPDATE workspace_members SET created_at = ? WHERE workspace_id = ? AND role = 'concierge'",
+    )
     .run(sixtyFiveDaysAgo, ownerState.workspace.id);
 
   const statement = await request('/billing/statement', undefined, owner, 'GET');

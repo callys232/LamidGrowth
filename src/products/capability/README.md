@@ -20,7 +20,7 @@ Product-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT
 
 Each page folder contains its composition, named slides, and editable `content.json`.
 
-| Route | Page composition | Copy |
-| --- | --- | --- |
+| Route                    | Page composition                                                                                         | Copy                                                         |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | /how-it-works/capability | [HowItWorksCapabilityDocumentPage](./pages/how-it-works-capability/HowItWorksCapabilityDocumentPage.tsx) | [content.json](./pages/how-it-works-capability/content.json) |
-| /os/capability | [OsCapabilityDocumentPage](./pages/os-capability/OsCapabilityDocumentPage.tsx) | [content.json](./pages/os-capability/content.json) |
+| /os/capability           | [OsCapabilityDocumentPage](./pages/os-capability/OsCapabilityDocumentPage.tsx)                           | [content.json](./pages/os-capability/content.json)           |

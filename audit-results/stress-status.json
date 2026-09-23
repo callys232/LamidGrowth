@@ -1,14 +1,14 @@
 [
-    {
-        "suite":  "stress-worker-races",
-        "exitCode":  0
-    },
-    {
-        "suite":  "stress-reward-claims",
-        "exitCode":  0
-    },
-    {
-        "suite":  "stress-spending",
-        "exitCode":  1
-    }
+  {
+    "suite": "stress-worker-races",
+    "exitCode": 0
+  },
+  {
+    "suite": "stress-reward-claims",
+    "exitCode": 0
+  },
+  {
+    "suite": "stress-spending",
+    "exitCode": 1
+  }
 ]

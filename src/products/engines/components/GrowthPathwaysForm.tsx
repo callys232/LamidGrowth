@@ -28,9 +28,30 @@ const FIELDS: FieldDef[] = [
     ],
     default: '1',
   },
-  { key: 'marketAttractiveness', label: 'Market attractiveness (0-5)', type: 'number', min: 0, max: 5, default: 3 },
-  { key: 'capabilityFit', label: 'Capability fit (0-5)', type: 'number', min: 0, max: 5, default: 3 },
-  { key: 'investmentLevel', label: 'Investment level (0-5)', type: 'number', min: 0, max: 5, default: 2 },
+  {
+    key: 'marketAttractiveness',
+    label: 'Market attractiveness (0-5)',
+    type: 'number',
+    min: 0,
+    max: 5,
+    default: 3,
+  },
+  {
+    key: 'capabilityFit',
+    label: 'Capability fit (0-5)',
+    type: 'number',
+    min: 0,
+    max: 5,
+    default: 3,
+  },
+  {
+    key: 'investmentLevel',
+    label: 'Investment level (0-5)',
+    type: 'number',
+    min: 0,
+    max: 5,
+    default: 2,
+  },
   { key: 'timeToRevenueMonths', label: 'Months to revenue', type: 'number', min: 0, default: 6 },
   {
     key: 'confidence',
@@ -73,7 +94,12 @@ export function GrowthPathwaysForm({
     >
       <label>
         Execution capacity (slots)
-        <input type="number" min={1} value={capacity} onChange={(e) => setCapacity(Number(e.target.value))} />
+        <input
+          type="number"
+          min={1}
+          value={capacity}
+          onChange={(e) => setCapacity(Number(e.target.value))}
+        />
       </label>
       <RowListForm fields={FIELDS} rows={rows} onChange={setRows} addLabel="Add pathway" />
       <Button type="submit" disabled={submitting || rows.length === 0}>

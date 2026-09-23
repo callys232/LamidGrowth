@@ -73,8 +73,10 @@ export function PricingBillablesPage() {
               <h3>Your custom bundle</h3>
               <p>
                 From the bundle you built before signing in: {pendingBundle.toolNames.join(', ')}
-                {pendingBundle.extraPoints > 0 && <> plus {pendingBundle.extraPoints} extra points</>}. We've filled
-                in the total below — {pendingBundle.totalPoints} points.
+                {pendingBundle.extraPoints > 0 && (
+                  <> plus {pendingBundle.extraPoints} extra points</>
+                )}
+                . We've filled in the total below — {pendingBundle.totalPoints} points.
               </p>
               <Button variant="ghost" onClick={dismissPendingBundle}>
                 Dismiss
@@ -88,7 +90,8 @@ export function PricingBillablesPage() {
               {page.billables && (
                 <>
                   {' '}
-                  1 point costs {formatMinor(page.billables.pointsUnitPriceMinor, page.billables.currency)}. See
+                  1 point costs{' '}
+                  {formatMinor(page.billables.pointsUnitPriceMinor, page.billables.currency)}. See
                   what each tool costs on the <Link to="/pricing">pricing page</Link>.
                 </>
               )}
@@ -130,11 +133,16 @@ export function PricingBillablesPage() {
                       <small>
                         {bundle.description} · {bundle.points_included} points ·{' '}
                         {bundle.billing_cycle === 'monthly' ? 'per month' : 'one-time'}
-                        {bundle.items.length > 0 && <> · includes {bundle.items.map((i) => i.name).join(', ')}</>}
+                        {bundle.items.length > 0 && (
+                          <> · includes {bundle.items.map((i) => i.name).join(', ')}</>
+                        )}
                       </small>
                     </span>
                     <StatusPill status={formatMinor(bundle.price_minor, bundle.currency)} />
-                    <Button disabled={page.busy} onClick={() => void page.purchaseBundle(bundle.id)}>
+                    <Button
+                      disabled={page.busy}
+                      onClick={() => void page.purchaseBundle(bundle.id)}
+                    >
                       Buy bundle
                     </Button>
                   </li>
@@ -150,13 +158,20 @@ export function PricingBillablesPage() {
           <section className="panel settings-card">
             <h3>Billables</h3>
             <p>
-              Every registered tool and engine is billed the same way the Companion runs it — in points.
+              Every registered tool and engine is billed the same way the Companion runs it — in
+              points.
               {page.billables && (
-                <> 1 point costs {formatMinor(page.billables.pointsUnitPriceMinor, page.billables.currency)}.</>
+                <>
+                  {' '}
+                  1 point costs{' '}
+                  {formatMinor(page.billables.pointsUnitPriceMinor, page.billables.currency)}.
+                </>
               )}
             </p>
             {!page.billables ? (
-              <Empty title="Loading billables…">Fetching the current tool and engine price list.</Empty>
+              <Empty title="Loading billables…">
+                Fetching the current tool and engine price list.
+              </Empty>
             ) : (
               <ol className="activity-feed-list">
                 {page.billables.tools.map((tool) => (
@@ -168,7 +183,9 @@ export function PricingBillablesPage() {
                         {tool.home_engine} · {tool.max_authority} · human gate: {tool.human_gate}
                       </small>
                     </span>
-                    <StatusPill status={`${tool.points_cost} pt${tool.points_cost === 1 ? '' : 's'}`} />
+                    <StatusPill
+                      status={`${tool.points_cost} pt${tool.points_cost === 1 ? '' : 's'}`}
+                    />
                   </li>
                 ))}
                 <li className="activity-feed-row">
@@ -210,15 +227,27 @@ export function PricingBillablesPage() {
                 hint="Select every tool this bundle grants access to"
                 style={{ gridColumn: '1 / -1' }}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 220, overflowY: 'auto' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                    maxHeight: 220,
+                    overflowY: 'auto',
+                  }}
+                >
                   {page.billables?.tools.map((tool) => (
-                    <label key={tool.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}>
+                    <label
+                      key={tool.id}
+                      style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13 }}
+                    >
                       <input
                         type="checkbox"
                         checked={page.selectedAgentIds.includes(tool.id)}
                         onChange={() => page.toggleAgent(tool.id)}
                       />
-                      {tool.name} ({tool.home_engine}, {tool.points_cost} pt{tool.points_cost === 1 ? '' : 's'})
+                      {tool.name} ({tool.home_engine}, {tool.points_cost} pt
+                      {tool.points_cost === 1 ? '' : 's'})
                     </label>
                   ))}
                 </div>
@@ -240,8 +269,8 @@ export function PricingBillablesPage() {
                       <strong>{bundle.name}</strong>
                       <br />
                       <small>
-                        {formatMinor(bundle.price_minor, bundle.currency)} · {bundle.points_included} points ·{' '}
-                        {bundle.billing_cycle}
+                        {formatMinor(bundle.price_minor, bundle.currency)} ·{' '}
+                        {bundle.points_included} points · {bundle.billing_cycle}
                       </small>
                     </span>
                     <StatusPill status={bundle.status} />
@@ -264,7 +293,11 @@ export function PricingBillablesPage() {
                           Archive
                         </Button>
                       )}
-                      <Button variant="ghost" disabled={page.busy} onClick={() => void page.deleteBundle(bundle.id)}>
+                      <Button
+                        variant="ghost"
+                        disabled={page.busy}
+                        onClick={() => void page.deleteBundle(bundle.id)}
+                      >
                         Delete
                       </Button>
                     </div>

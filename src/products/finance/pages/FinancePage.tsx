@@ -91,28 +91,38 @@ export function FinancePage() {
         <>
           <section className="panel settings-card">
             <h3>Escrow</h3>
-            <p>Milestone funds held, released and refunded across every project in this workspace.</p>
+            <p>
+              Milestone funds held, released and refunded across every project in this workspace.
+            </p>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               <div>
-                <strong style={{ fontSize: 20 }}>{formatMinor(page.overview.escrow.heldMinor, 'USD')}</strong>
+                <strong style={{ fontSize: 20 }}>
+                  {formatMinor(page.overview.escrow.heldMinor, 'USD')}
+                </strong>
                 <div>
                   <small>currently held</small>
                 </div>
               </div>
               <div>
-                <strong style={{ fontSize: 20 }}>{formatMinor(page.overview.escrow.releasedMinor, 'USD')}</strong>
+                <strong style={{ fontSize: 20 }}>
+                  {formatMinor(page.overview.escrow.releasedMinor, 'USD')}
+                </strong>
                 <div>
                   <small>released</small>
                 </div>
               </div>
               <div>
-                <strong style={{ fontSize: 20 }}>{formatMinor(page.overview.escrow.refundedMinor, 'USD')}</strong>
+                <strong style={{ fontSize: 20 }}>
+                  {formatMinor(page.overview.escrow.refundedMinor, 'USD')}
+                </strong>
                 <div>
                   <small>refunded</small>
                 </div>
               </div>
               <div>
-                <strong style={{ fontSize: 20 }}>{formatMinor(page.overview.escrow.pendingMinor, 'USD')}</strong>
+                <strong style={{ fontSize: 20 }}>
+                  {formatMinor(page.overview.escrow.pendingMinor, 'USD')}
+                </strong>
                 <div>
                   <small>pending</small>
                 </div>
@@ -162,7 +172,10 @@ export function FinancePage() {
 
           <section className="panel settings-card">
             <h3>Billing</h3>
-            <p>Concierge and service fees for this workspace. Total: {formatMinor(page.overview.billing.totalMinor, page.overview.billing.currency)}</p>
+            <p>
+              Concierge and service fees for this workspace. Total:{' '}
+              {formatMinor(page.overview.billing.totalMinor, page.overview.billing.currency)}
+            </p>
             {page.overview.billing.lineItems.length === 0 && (
               <Empty title="No billing line items">Nothing owed at this time.</Empty>
             )}

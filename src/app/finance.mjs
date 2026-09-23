@@ -48,7 +48,8 @@ export function mountFinance(app, store) {
          WHERE mf.workspace_id = ? ORDER BY mf.created_at DESC`,
       )
       .all(workspaceId);
-    const sum = (status) => fundings.filter((f) => f.status === status).reduce((total, f) => total + f.amount_minor, 0);
+    const sum = (status) =>
+      fundings.filter((f) => f.status === status).reduce((total, f) => total + f.amount_minor, 0);
     const escrow = {
       heldMinor: sum('held'),
       releasedMinor: sum('released'),

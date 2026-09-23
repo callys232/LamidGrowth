@@ -13,9 +13,13 @@ async function signUp(page: import('@playwright/test').Page, name: string, email
   await expect(page).toHaveURL('/os');
 }
 
-test('the consolidated /experts page renders every group with its own heading', async ({ page }) => {
+test('the consolidated /experts page renders every group with its own heading', async ({
+  page,
+}) => {
   await page.goto('/experts');
-  await expect(page.getByRole('heading', { name: 'Bring the Right Human Expertise Into the Work.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Bring the Right Human Expertise Into the Work.' }),
+  ).toBeVisible();
   const groups: Array<[name: string, slug: string]> = [
     ['Finding & Engaging Expertise', 'finding-engaging-expertise'],
     ['Expert Matching', 'expert-matching'],
@@ -31,7 +35,9 @@ test('the consolidated /experts page renders every group with its own heading', 
   }
 });
 
-test('an expert can publish availability, see it on the week calendar, and create a team', async ({ page }) => {
+test('an expert can publish availability, see it on the week calendar, and create a team', async ({
+  page,
+}) => {
   const email = `expert-network-${Date.now()}@example.test`;
   await signUp(page, 'Expert Network Tester', email);
 
@@ -54,7 +60,9 @@ test('an expert can publish availability, see it on the week calendar, and creat
   await expect(page.getByText('Playwright Pod')).toBeVisible();
 });
 
-test('guided scoping wizard flags a regulated objective and offers expert review', async ({ page }) => {
+test('guided scoping wizard flags a regulated objective and offers expert review', async ({
+  page,
+}) => {
   const email = `scoping-network-${Date.now()}@example.test`;
   await signUp(page, 'Scoping Network Tester', email);
 
@@ -66,7 +74,9 @@ test('guided scoping wizard flags a regulated objective and offers expert review
   await page.getByLabel('Budget context').fill('$2000');
   await page.getByLabel('Timeline context').fill('2 weeks');
   await page.getByRole('button', { name: 'Continue to review', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Request expert review instead', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Request expert review instead', exact: true }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Request expert review instead', exact: true }).click();
   await expect(page.getByText(/Sent to the expert review queue/)).toBeVisible();
 });

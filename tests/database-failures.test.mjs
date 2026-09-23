@@ -181,10 +181,16 @@ test('startup failures close both pools even when acquisition or rollback fails'
           this.ended = true;
         }
       };
-      await assert.rejects(openStore(failurePoint === 'connect' ? ':memory:' : 'named_reconnect_test'), (error) => error === original);
+      await assert.rejects(
+        openStore(failurePoint === 'connect' ? ':memory:' : 'named_reconnect_test'),
+        (error) => error === original,
+      );
       assert.equal(instances.length, 2);
       assert.ok(instances.every((pool) => pool.ended));
-      assert.ok(instances[1].options.max <= 3, 'Named test schemas must also respect the test pool cap');
+      assert.ok(
+        instances[1].options.max <= 3,
+        'Named test schemas must also respect the test pool cap',
+      );
       if (failurePoint === 'migration') assert.equal(instances[1].client.destroyed, true);
     }
   } finally {

@@ -29,10 +29,10 @@ Call log:
 
 ```yaml
 - link "Expert Network Discover specialist support.":
-  - /url: /experts#finding-engaging-expertise
-  - text: Expert Network
-  - img
-  - text: Discover specialist support.
+    - /url: /experts#finding-engaging-expertise
+    - text: Expert Network
+    - img
+    - text: Discover specialist support.
 ```
 
 # Test source
@@ -40,7 +40,7 @@ Call log:
 ```ts
   1  | import { test, expect } from '@playwright/test';
   2  | import AxeBuilder from '@axe-core/playwright';
-  3  | 
+  3  |
   4  | test('mega menus expose options on hover and support keyboard navigation', async ({ page }) => {
   5  |   await page.goto('/');
   6  |   const product = page.getByRole('button', { name: 'Product', exact: true });
@@ -91,5 +91,5 @@ Call log:
   50 |   await page.mouse.move(5, 850);
   51 |   await expect(page.locator('.mega-panel')).toHaveCount(0);
   52 | });
-  53 | 
+  53 |
 ```

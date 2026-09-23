@@ -7,11 +7,7 @@
   "goal": "Plan my first client project",
   "simulated": true,
   "stage": "specialist plan",
-  "completed": [
-    "homepage",
-    "signup and development OTP",
-    "goal creation"
-  ],
+  "completed": ["homepage", "signup and development OTP", "goal creation"],
   "homeOverflow": false,
   "documentLanguage": "en",
   "accessibility": [],

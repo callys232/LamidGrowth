@@ -22,7 +22,12 @@ export function EachMaterialInsightShouldShowSlide1({ embedded = false }: Docume
 /** Turn an Insight Into Action */
 export function TurnAnInsightIntoActionSlide2({ embedded = false }: DocumentPageProps) {
   return (
-    <DocumentSectionSlide section={content.sections[1]} index={1} last={false} embedded={embedded} />
+    <DocumentSectionSlide
+      section={content.sections[1]}
+      index={1}
+      last={false}
+      embedded={embedded}
+    />
   );
 }
 

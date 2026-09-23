@@ -50,16 +50,41 @@
  */
 
 export const REQUIREMENTS = [
-  { id: 'frame',        label: 'Appropriate frame',       what: 'You are deciding the right question, at the right level, with a stated boundary.' },
-  { id: 'alternatives', label: 'Real alternatives',       what: 'Genuinely distinct options exist — not one preferred answer plus decoys.' },
-  { id: 'information',  label: 'Reliable information',    what: 'The key assumptions are backed, and the biggest uncertainty is named.' },
-  { id: 'values',       label: 'Clear criteria and tradeoffs', what: 'What good looks like was defined BEFORE the options were scored.' },
-  { id: 'reasoning',    label: 'Sound reasoning',         what: 'The path from evidence to choice is explicit and has been challenged.' },
-  { id: 'commitment',   label: 'Commitment to action',    what: 'One named owner, a date, and a first move the executors have accepted.' },
+  {
+    id: 'frame',
+    label: 'Appropriate frame',
+    what: 'You are deciding the right question, at the right level, with a stated boundary.',
+  },
+  {
+    id: 'alternatives',
+    label: 'Real alternatives',
+    what: 'Genuinely distinct options exist — not one preferred answer plus decoys.',
+  },
+  {
+    id: 'information',
+    label: 'Reliable information',
+    what: 'The key assumptions are backed, and the biggest uncertainty is named.',
+  },
+  {
+    id: 'values',
+    label: 'Clear criteria and tradeoffs',
+    what: 'What good looks like was defined BEFORE the options were scored.',
+  },
+  {
+    id: 'reasoning',
+    label: 'Sound reasoning',
+    what: 'The path from evidence to choice is explicit and has been challenged.',
+  },
+  {
+    id: 'commitment',
+    label: 'Commitment to action',
+    what: 'One named owner, a date, and a first move the executors have accepted.',
+  },
 ];
 
 const YES_NO = (no, yes) => [
-  { value: 0, label: no }, { value: 1, label: yes },
+  { value: 0, label: no },
+  { value: 1, label: yes },
 ];
 
 /**
@@ -74,183 +99,219 @@ const YES_NO = (no, yes) => [
 export const DQ_QUESTIONS = [
   /* ── Frame ── */
   {
-    id: 'frame_question', requirement: 'frame',
+    id: 'frame_question',
+    requirement: 'frame',
     prompt: 'How is the decision written down?',
     options: [
-      { value: 0,    label: 'As a topic or area of concern, not a question' },
-      { value: 0.5,  label: 'As a broad question with fuzzy boundaries' },
-      { value: 1,    label: 'As a specific question with a stated scope' },
+      { value: 0, label: 'As a topic or area of concern, not a question' },
+      { value: 0.5, label: 'As a broad question with fuzzy boundaries' },
+      { value: 1, label: 'As a specific question with a stated scope' },
     ],
-    remedy: 'Write the decision as one question someone could answer yes/no or pick from. If you cannot, you are not ready to decide.',
+    remedy:
+      'Write the decision as one question someone could answer yes/no or pick from. If you cannot, you are not ready to decide.',
     fatalAtZero: true,
   },
   {
-    id: 'frame_outofscope', requirement: 'frame',
+    id: 'frame_outofscope',
+    requirement: 'frame',
     prompt: 'Is what you are NOT deciding written down?',
     options: YES_NO('No — scope is assumed', 'Yes — out-of-scope is explicit'),
-    remedy: 'State the adjacent decisions you are deliberately not making here. Unstated scope is where meetings go to die.',
+    remedy:
+      'State the adjacent decisions you are deliberately not making here. Unstated scope is where meetings go to die.',
   },
   {
-    id: 'frame_level', requirement: 'frame',
+    id: 'frame_level',
+    requirement: 'frame',
     prompt: 'Are you deciding the actual issue or a symptom of it?',
     options: [
-      { value: 0,   label: 'Nobody has asked — we inherited the framing' },
+      { value: 0, label: 'Nobody has asked — we inherited the framing' },
       { value: 0.5, label: 'Discussed informally' },
-      { value: 1,   label: 'We explicitly tested whether this is the right level' },
+      { value: 1, label: 'We explicitly tested whether this is the right level' },
     ],
-    remedy: 'Ask once: if this decision goes perfectly, does the underlying problem go away? If not, you are deciding a symptom.',
+    remedy:
+      'Ask once: if this decision goes perfectly, does the underlying problem go away? If not, you are deciding a symptom.',
   },
 
   /* ── Alternatives ── */
   {
-    id: 'alt_count', requirement: 'alternatives',
+    id: 'alt_count',
+    requirement: 'alternatives',
     prompt: 'How many genuinely distinct options are on the table?',
     options: [
-      { value: 0,    label: 'One — this is an approval, not a decision' },
-      { value: 0.4,  label: 'Two' },
-      { value: 1,    label: 'Three or more materially different options' },
-      { value: 0.7,  label: 'More than seven — too many to compare properly' },
+      { value: 0, label: 'One — this is an approval, not a decision' },
+      { value: 0.4, label: 'Two' },
+      { value: 1, label: 'Three or more materially different options' },
+      { value: 0.7, label: 'More than seven — too many to compare properly' },
     ],
-    remedy: 'Generate at least one more option that a smart opponent would actually argue for. One option is a proposal seeking a rubber stamp.',
+    remedy:
+      'Generate at least one more option that a smart opponent would actually argue for. One option is a proposal seeking a rubber stamp.',
     fatalAtZero: true,
   },
   {
-    id: 'alt_strawmen', requirement: 'alternatives',
+    id: 'alt_strawmen',
+    requirement: 'alternatives',
     prompt: 'Could each option realistically be chosen?',
     options: [
-      { value: 0,   label: 'No — some exist to make the favourite look good' },
+      { value: 0, label: 'No — some exist to make the favourite look good' },
       { value: 0.5, label: 'Unsure' },
-      { value: 1,   label: 'Yes — a reasonable person could pick any of them' },
+      { value: 1, label: 'Yes — a reasonable person could pick any of them' },
     ],
-    remedy: 'Remove the decoys. A strawman option makes the comparison look rigorous while removing the rigour.',
+    remedy:
+      'Remove the decoys. A strawman option makes the comparison look rigorous while removing the rigour.',
   },
   {
-    id: 'alt_status_quo', requirement: 'alternatives',
+    id: 'alt_status_quo',
+    requirement: 'alternatives',
     prompt: 'Is doing nothing evaluated as a real option?',
     options: YES_NO('No — action is assumed', 'Yes — the status quo is costed like the others'),
-    remedy: 'Cost the status quo properly. Sometimes it wins, and if you never price it you will never know.',
+    remedy:
+      'Cost the status quo properly. Sometimes it wins, and if you never price it you will never know.',
   },
 
   /* ── Information ── */
   {
-    id: 'info_backing', requirement: 'information',
+    id: 'info_backing',
+    requirement: 'information',
     prompt: 'What backs the assumptions the choice rests on?',
     options: [
-      { value: 0,    label: 'Nothing written down' },
+      { value: 0, label: 'Nothing written down' },
       { value: 0.35, label: 'Individual experience and anecdote' },
-      { value: 0.7,  label: 'Internal data' },
-      { value: 1,    label: 'Internal data plus an external or independent check' },
+      { value: 0.7, label: 'Internal data' },
+      { value: 1, label: 'Internal data plus an external or independent check' },
     ],
-    remedy: 'List the three assumptions that, if wrong, flip the decision. Then find something to back each one.',
+    remedy:
+      'List the three assumptions that, if wrong, flip the decision. Then find something to back each one.',
   },
   {
-    id: 'info_uncertainty', requirement: 'information',
+    id: 'info_uncertainty',
+    requirement: 'information',
     prompt: 'Is the biggest uncertainty named?',
-    options: YES_NO('No', 'Yes — we know what we most don\'t know'),
-    remedy: 'Name the single unknown with the widest consequence. An unnamed uncertainty gets treated as zero.',
+    options: YES_NO('No', "Yes — we know what we most don't know"),
+    remedy:
+      'Name the single unknown with the widest consequence. An unnamed uncertainty gets treated as zero.',
   },
   {
-    id: 'info_disconfirm', requirement: 'information',
+    id: 'info_disconfirm',
+    requirement: 'information',
     prompt: 'Has anyone genuinely tried to disconfirm the favoured option?',
     options: [
-      { value: 0,   label: 'No — we looked for support, not problems' },
+      { value: 0, label: 'No — we looked for support, not problems' },
       { value: 0.5, label: 'Informally, in discussion' },
-      { value: 1,   label: 'Yes — a deliberate attempt to kill it, written up' },
+      { value: 1, label: 'Yes — a deliberate attempt to kill it, written up' },
     ],
-    remedy: 'Run a pre-mortem: assume it is eighteen months later and this failed badly — write the reasons. Do it before committing, not after.',
+    remedy:
+      'Run a pre-mortem: assume it is eighteen months later and this failed badly — write the reasons. Do it before committing, not after.',
   },
 
   /* ── Values and tradeoffs ── */
   {
-    id: 'values_before', requirement: 'values',
+    id: 'values_before',
+    requirement: 'values',
     prompt: 'Were the decision criteria written down before the options were scored?',
     options: [
-      { value: 0,   label: 'No — criteria emerged while comparing' },
-      { value: 0.4, label: 'Roughly, in someone\'s head' },
-      { value: 1,   label: 'Yes — written and agreed first' },
+      { value: 0, label: 'No — criteria emerged while comparing' },
+      { value: 0.4, label: "Roughly, in someone's head" },
+      { value: 1, label: 'Yes — written and agreed first' },
     ],
-    remedy: 'Set criteria first. Criteria written after the options are known reliably describe the option you already preferred.',
+    remedy:
+      'Set criteria first. Criteria written after the options are known reliably describe the option you already preferred.',
     fatalAtZero: true,
   },
   {
-    id: 'values_weighted', requirement: 'values',
+    id: 'values_weighted',
+    requirement: 'values',
     prompt: 'Are the criteria prioritised against each other?',
     options: [
-      { value: 0,   label: 'No — everything matters equally' },
+      { value: 0, label: 'No — everything matters equally' },
       { value: 0.5, label: 'Loosely ranked' },
-      { value: 1,   label: 'Explicitly weighted or ordered' },
+      { value: 1, label: 'Explicitly weighted or ordered' },
     ],
     remedy: 'If everything is equally important, nothing is decidable. Rank them, even crudely.',
   },
   {
-    id: 'values_sacrifice', requirement: 'values',
+    id: 'values_sacrifice',
+    requirement: 'values',
     prompt: 'Is it clear what you are willing to give up?',
     options: YES_NO('No — the choice is framed as all upside', 'Yes — the accepted cost is stated'),
-    remedy: 'Name the tradeoff you are accepting. A decision with no downside written down has not been examined.',
+    remedy:
+      'Name the tradeoff you are accepting. A decision with no downside written down has not been examined.',
   },
 
   /* ── Reasoning ── */
   {
-    id: 'reason_logic', requirement: 'reasoning',
+    id: 'reason_logic',
+    requirement: 'reasoning',
     prompt: 'Is the path from evidence to choice written down?',
     options: [
-      { value: 0,   label: 'No — the conclusion is asserted' },
+      { value: 0, label: 'No — the conclusion is asserted' },
       { value: 0.5, label: 'Partially — a summary, not a chain' },
-      { value: 1,   label: 'Yes — someone else could follow the reasoning' },
+      { value: 1, label: 'Yes — someone else could follow the reasoning' },
     ],
-    remedy: 'Write the argument, not the conclusion. If nobody can reconstruct why in six months, the reasoning is lost the moment the room empties.',
+    remedy:
+      'Write the argument, not the conclusion. If nobody can reconstruct why in six months, the reasoning is lost the moment the room empties.',
   },
   {
-    id: 'reason_killcriteria', requirement: 'reasoning',
+    id: 'reason_killcriteria',
+    requirement: 'reasoning',
     prompt: 'Have you stated what would change your mind?',
     options: YES_NO('No', 'Yes — the disconfirming condition is written down'),
-    remedy: 'Write the specific evidence that would reverse this. A decision that nothing could falsify is a belief.',
+    remedy:
+      'Write the specific evidence that would reverse this. A decision that nothing could falsify is a belief.',
     fatalAtZero: true,
   },
   {
-    id: 'reason_challenge', requirement: 'reasoning',
+    id: 'reason_challenge',
+    requirement: 'reasoning',
     prompt: 'Has the reasoning been independently challenged?',
     options: [
-      { value: 0,   label: 'No' },
+      { value: 0, label: 'No' },
       { value: 0.5, label: 'Informally, by people close to it' },
-      { value: 1,   label: 'Yes — by someone with standing to say no' },
+      { value: 1, label: 'Yes — by someone with standing to say no' },
     ],
-    remedy: 'Get challenge from someone who is not invested in the outcome and is senior enough to be listened to.',
+    remedy:
+      'Get challenge from someone who is not invested in the outcome and is senior enough to be listened to.',
   },
 
   /* ── Commitment ── */
   {
-    id: 'commit_owner', requirement: 'commitment',
+    id: 'commit_owner',
+    requirement: 'commitment',
     prompt: 'Who is accountable for the outcome?',
     options: [
-      { value: 0,   label: 'Nobody specific, or a committee' },
+      { value: 0, label: 'Nobody specific, or a committee' },
       { value: 0.5, label: 'A team or function' },
-      { value: 1,   label: 'One named person' },
+      { value: 1, label: 'One named person' },
     ],
-    remedy: 'Name one person. Shared accountability across a committee is the most reliable predictor of a decision quietly not happening.',
+    remedy:
+      'Name one person. Shared accountability across a committee is the most reliable predictor of a decision quietly not happening.',
     fatalAtZero: true,
   },
   {
-    id: 'commit_date', requirement: 'commitment',
+    id: 'commit_date',
+    requirement: 'commitment',
     prompt: 'Is there a date the decision takes effect?',
     options: YES_NO('No', 'Yes — a specific date'),
     remedy: 'Put a date on it. Undated decisions are intentions.',
   },
   {
-    id: 'commit_buyin', requirement: 'commitment',
+    id: 'commit_buyin',
+    requirement: 'commitment',
     prompt: 'Have the people who must execute it accepted it?',
     options: [
-      { value: 0,   label: 'They have not been asked' },
+      { value: 0, label: 'They have not been asked' },
       { value: 0.5, label: 'Informed, not consulted' },
-      { value: 1,   label: 'Consulted, and objections were heard' },
+      { value: 1, label: 'Consulted, and objections were heard' },
     ],
-    remedy: 'Talk to the executors before committing. Resistance surfaced after the announcement costs several times more than resistance surfaced before it.',
+    remedy:
+      'Talk to the executors before committing. Resistance surfaced after the announcement costs several times more than resistance surfaced before it.',
   },
   {
-    id: 'commit_firstmove', requirement: 'commitment',
+    id: 'commit_firstmove',
+    requirement: 'commitment',
     prompt: 'Is the first concrete action defined?',
     options: YES_NO('No', 'Yes — a specific next step with an owner'),
-    remedy: 'Define the first move. A decision whose first action is undefined has not really been made.',
+    remedy:
+      'Define the first move. A decision whose first action is undefined has not really been made.',
   },
 ];
 
@@ -265,9 +326,9 @@ export const DQ_QUESTIONS = [
    ═══════════════════════════════════════════════════════════════ */
 
 const REQUIRED_BAR = {
-  low:      { easy: 30, costly: 45, irreversible: 60 },
+  low: { easy: 30, costly: 45, irreversible: 60 },
   moderate: { easy: 45, costly: 60, irreversible: 72 },
-  high:     { easy: 58, costly: 72, irreversible: 82 },
+  high: { easy: 58, costly: 72, irreversible: 82 },
   critical: { easy: 68, costly: 82, irreversible: 90 },
 };
 
@@ -327,7 +388,9 @@ export function computeDecisionQuality(
         const v = answers[q.id];
         const worst = Math.min(...q.options.map((o) => o.value));
         return {
-          id: q.id, prompt: q.prompt, remedy: q.remedy,
+          id: q.id,
+          prompt: q.prompt,
+          remedy: q.remedy,
           fatal: Boolean(q.fatalAtZero) && (typeof v !== 'number' || v <= worst),
         };
       });
@@ -335,7 +398,9 @@ export function computeDecisionQuality(
     const scorePct = qs.length > 0 ? pct(total / qs.length) : 0;
 
     return {
-      id: meta.id, label: meta.label, what: meta.what,
+      id: meta.id,
+      label: meta.label,
+      what: meta.what,
       scorePct,
       answered: answered.length,
       total: qs.length,
@@ -346,9 +411,7 @@ export function computeDecisionQuality(
 
   /* THE CHAIN. Overall quality is the weakest requirement — see the
      header. The mean is computed only so the difference can be shown. */
-  const overallPct = requirements.length
-    ? Math.min(...requirements.map((r) => r.scorePct))
-    : 0;
+  const overallPct = requirements.length ? Math.min(...requirements.map((r) => r.scorePct)) : 0;
   const averagePct = requirements.length
     ? Math.round((requirements.reduce((s, r) => s + r.scorePct, 0) / requirements.length) * 10) / 10
     : 0;
@@ -360,10 +423,13 @@ export function computeDecisionQuality(
   const gapPts = Math.round((overallPct - requiredPct) * 10) / 10;
 
   const verdict =
-    fatalIssues.length > 0 ? 'blocked'
-    : gapPts >= 0 ? 'ready'
-    : gapPts >= -12 ? 'nearly'
-    : 'not_ready';
+    fatalIssues.length > 0
+      ? 'blocked'
+      : gapPts >= 0
+        ? 'ready'
+        : gapPts >= -12
+          ? 'nearly'
+          : 'not_ready';
 
   const blockers = requirements.filter((r) => r.blocking).sort((a, b) => a.scorePct - b.scorePct);
 
@@ -394,21 +460,34 @@ export function computeDecisionQuality(
     );
   }
   if (answeredCount >= 8 && new Set(given).size === 1) {
-    confidenceFlags.push('Every question has the identical answer. That is a response pattern, not an assessment — re-read the anchors.');
+    confidenceFlags.push(
+      'Every question has the identical answer. That is a response pattern, not an assessment — re-read the anchors.',
+    );
   }
   if (answeredCount >= 8 && given.every((v) => v >= 0.9)) {
-    confidenceFlags.push('Every question scored top. Genuinely well-formed decisions are rare; check this is the decision as it stands, not as you intend it to be.');
+    confidenceFlags.push(
+      'Every question scored top. Genuinely well-formed decisions are rare; check this is the decision as it stands, not as you intend it to be.',
+    );
   }
   if (answeredCount >= 8 && given.every((v) => v <= 0.1)) {
-    confidenceFlags.push('Every question scored bottom — if that is accurate this is not yet a decision, it is a topic.');
+    confidenceFlags.push(
+      'Every question scored bottom — if that is accurate this is not yet a decision, it is a topic.',
+    );
   }
 
   return {
-    overallPct, averagePct,
+    overallPct,
+    averagePct,
     flatteryPts: Math.round((averagePct - overallPct) * 10) / 10,
-    requiredPct, gapPts, verdict, headline,
-    requirements, nextActions, fatalIssues,
-    answeredCount, totalQuestions: DQ_QUESTIONS.length,
+    requiredPct,
+    gapPts,
+    verdict,
+    headline,
+    requirements,
+    nextActions,
+    fatalIssues,
+    answeredCount,
+    totalQuestions: DQ_QUESTIONS.length,
     confidenceFlags,
   };
 }

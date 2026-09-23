@@ -14,18 +14,18 @@ A pilot used an incorrectly scoped error locator. That was corrected before the 
 
 ## Results by profile
 
-| Profile | Locale / viewport | Intended task | Observed outcome |
-| --- | --- | --- | --- |
-| Lagos | en-NG / 360×800 | First client project | Goal flow progressed. Charged 65 points for a request to supply a job ID; second step rejected for insufficient points. |
-| Nairobi | en-KE / 390×844 | Professional skills | Signup verified; goal modal remained open after submission. Screenshot shows stale workspace refresh error. |
-| London | en-GB / 1440×900 | Client proposal | Goal flow progressed. Charged 65 points for a request to supply a job ID; second step rejected. |
-| New York | en-US / 1366×768 | Career transition | Signup verified; goal modal remained open. Screenshot shows stale workspace refresh error. |
-| Toronto | en-CA / 768×1024 | Content series | Signup verified; goal modal did not close within the 25-second post-submit check. |
-| Berlin | de-DE / 1280×800 | Consulting business growth | Goal flow progressed. Charged 65 points for a recorded-data-only summary; second step rejected. Interface remained English. |
-| Mumbai | en-IN / 360×740 | Learning goal | Signup verified; goal modal did not close within the post-submit check. |
-| Dubai | ar-AE / 390×844 | Service launch | Signup verified; goal modal did not close within the post-submit check. Document language remained English. |
-| São Paulo | pt-BR / 375×812 | Creative project | Signup verified; goal modal did not close within the post-submit check. Document language remained English. |
-| Sydney | en-AU / 1440×900 | Weekly planning | Goal flow progressed. Charged 65 points for a recorded-data-only summary; second step rejected. |
+| Profile   | Locale / viewport | Intended task              | Observed outcome                                                                                                            |
+| --------- | ----------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Lagos     | en-NG / 360×800   | First client project       | Goal flow progressed. Charged 65 points for a request to supply a job ID; second step rejected for insufficient points.     |
+| Nairobi   | en-KE / 390×844   | Professional skills        | Signup verified; goal modal remained open after submission. Screenshot shows stale workspace refresh error.                 |
+| London    | en-GB / 1440×900  | Client proposal            | Goal flow progressed. Charged 65 points for a request to supply a job ID; second step rejected.                             |
+| New York  | en-US / 1366×768  | Career transition          | Signup verified; goal modal remained open. Screenshot shows stale workspace refresh error.                                  |
+| Toronto   | en-CA / 768×1024  | Content series             | Signup verified; goal modal did not close within the 25-second post-submit check.                                           |
+| Berlin    | de-DE / 1280×800  | Consulting business growth | Goal flow progressed. Charged 65 points for a recorded-data-only summary; second step rejected. Interface remained English. |
+| Mumbai    | en-IN / 360×740   | Learning goal              | Signup verified; goal modal did not close within the post-submit check.                                                     |
+| Dubai     | ar-AE / 390×844   | Service launch             | Signup verified; goal modal did not close within the post-submit check. Document language remained English.                 |
+| São Paulo | pt-BR / 375×812   | Creative project           | Signup verified; goal modal did not close within the post-submit check. Document language remained English.                 |
+| Sydney    | en-AU / 1440×900  | Weekly planning            | Goal flow progressed. Charged 65 points for a recorded-data-only summary; second step rejected.                             |
 
 ### Counts
 

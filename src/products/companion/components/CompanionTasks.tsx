@@ -50,7 +50,9 @@ export function CompanionTasks() {
   }
   useEffect(() => {
     refresh().catch((e) => setError(e.message));
-    api<Array<{ id: string; title: string }>>('/jobs').then(setJobs).catch(() => {});
+    api<Array<{ id: string; title: string }>>('/jobs')
+      .then(setJobs)
+      .catch(() => {});
   }, []);
   async function act(task?: Task) {
     setBusy(true);
@@ -73,8 +75,9 @@ export function CompanionTasks() {
     <details className="companion-task-panel">
       <summary>Coordinate a task across specialists</summary>
       <p>
-        Start with a free planning worksheet that turns your outcome into a first action and review checklist.
-        AI specialist sequences are optional, priced separately, and require the relevant job context.
+        Start with a free planning worksheet that turns your outcome into a first action and review
+        checklist. AI specialist sequences are optional, priced separately, and require the relevant
+        job context.
       </p>
       <form
         className="companion-task-form"
@@ -93,21 +96,39 @@ export function CompanionTasks() {
             required
           />
         </label>
-        <label>Plan type
-          <select value={mode} onChange={e => setMode(e.target.value as 'starter' | 'specialists')}>
+        <label>
+          Plan type
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value as 'starter' | 'specialists')}
+          >
             <option value="starter">Free starter worksheet · 0 points</option>
-            <option value="specialists" disabled={!options.aiAvailable}>AI specialist sequence</option>
+            <option value="specialists" disabled={!options.aiAvailable}>
+              AI specialist sequence
+            </option>
           </select>
         </label>
-        {mode === 'specialists' && <label>Related job (required for project documents)
-          <select value={jobId} onChange={e => setJobId(e.target.value)}>
-            <option value="">Select a job when creating project documents</option>
-            {jobs.map(job => <option key={job.id} value={job.id}>{job.title}</option>)}
-          </select>
-        </label>}
+        {mode === 'specialists' && (
+          <label>
+            Related job (required for project documents)
+            <select value={jobId} onChange={(e) => setJobId(e.target.value)}>
+              <option value="">Select a job when creating project documents</option>
+              {jobs.map((job) => (
+                <option key={job.id} value={job.id}>
+                  {job.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <button disabled={busy}>Preview specialist plan</button>
       </form>
-      <p>Available balance: {options.balance} points. {options.aiAvailable ? '' : 'AI specialists are unavailable. The free worksheet remains available.'}</p>
+      <p>
+        Available balance: {options.balance} points.{' '}
+        {options.aiAvailable
+          ? ''
+          : 'AI specialists are unavailable. The free worksheet remains available.'}
+      </p>
       <label className="companion-task-consent">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />{' '}
         Allow external AI to use authorized workspace context for the next step.
@@ -137,13 +158,28 @@ export function CompanionTasks() {
               ))}
             </ol>
             {next && task.status !== 'cancelled' && (
-              <button disabled={busy || (next.status !== 'running' && (next.points > options.balance || (next.points > 0 && !options.aiAvailable)))} onClick={() => void act(task)}>
+              <button
+                disabled={
+                  busy ||
+                  (next.status !== 'running' &&
+                    (next.points > options.balance || (next.points > 0 && !options.aiAvailable)))
+                }
+                onClick={() => void act(task)}
+              >
                 {next.status === 'running'
                   ? 'Refresh or resume step'
                   : `Approve ${next.name} · ${next.points} points`}
               </button>
             )}
-            {next && next.status !== 'running' && next.points > options.balance && task.status !== 'cancelled' && <p>You need {next.points - options.balance} more points for this step. <a href="/pricing">View points options</a></p>}
+            {next &&
+              next.status !== 'running' &&
+              next.points > options.balance &&
+              task.status !== 'cancelled' && (
+                <p>
+                  You need {next.points - options.balance} more points for this step.{' '}
+                  <a href="/pricing">View points options</a>
+                </p>
+              )}
             {['awaiting_approval', 'failed'].includes(task.status) && (
               <button disabled={busy} onClick={() => void cancel(task)}>
                 Cancel remaining steps
@@ -154,7 +190,9 @@ export function CompanionTasks() {
             )}
             {!next && (
               <p>
-                {task.mode === 'starter' ? 'Your free worksheet is ready. ' : 'Specialist review complete. '}
+                {task.mode === 'starter'
+                  ? 'Your free worksheet is ready. '
+                  : 'Specialist review complete. '}
                 <a href="/os/companion">
                   Review and save your goal and next action in Guided Planning.
                 </a>

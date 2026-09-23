@@ -47,8 +47,12 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
   }
 }
 applyTheme(getStoredTheme());
-window.addEventListener('error', (event) => reportClientError('error', event.error || event.message));
-window.addEventListener('unhandledrejection', (event) => reportClientError('rejection', event.reason));
+window.addEventListener('error', (event) =>
+  reportClientError('error', event.error || event.message),
+);
+window.addEventListener('unhandledrejection', (event) =>
+  reportClientError('rejection', event.reason),
+);
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>

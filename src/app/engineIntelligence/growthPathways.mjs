@@ -70,10 +70,26 @@
  */
 
 export const QUADRANTS = [
-  { id: 'penetration',         label: 'Market penetration',  what: 'More of what you already sell, to the market you already serve.' },
-  { id: 'market_development',  label: 'Market development',  what: 'What you already sell, taken to a new market or segment.' },
-  { id: 'product_development', label: 'Product development', what: 'Something new, sold to the customers you already have.' },
-  { id: 'diversification',     label: 'Diversification',     what: 'Something new, sold to someone new. Both unknowns at once.' },
+  {
+    id: 'penetration',
+    label: 'Market penetration',
+    what: 'More of what you already sell, to the market you already serve.',
+  },
+  {
+    id: 'market_development',
+    label: 'Market development',
+    what: 'What you already sell, taken to a new market or segment.',
+  },
+  {
+    id: 'product_development',
+    label: 'Product development',
+    what: 'Something new, sold to the customers you already have.',
+  },
+  {
+    id: 'diversification',
+    label: 'Diversification',
+    what: 'Something new, sold to someone new. Both unknowns at once.',
+  },
 ];
 
 /**
@@ -88,10 +104,10 @@ export const QUADRANTS = [
  * a penetration play to rank above it, and here it must.
  */
 const QUADRANT_RISK = {
-  penetration:         1.00,
-  market_development:  0.80,
+  penetration: 1.0,
+  market_development: 0.8,
   product_development: 0.75,
-  diversification:     0.55,
+  diversification: 0.55,
 };
 
 const CONFIDENCE_FACTOR = { 0: 0.65, 1: 0.85, 2: 1 };
@@ -164,34 +180,40 @@ const timeFactor = (months) => {
  * @param {PathwayInput[]} inputs
  * @param {number} [capacity]
  */
-export function computeGrowthPathways(
-  inputs,
-  capacity = 3,
-) {
+export function computeGrowthPathways(inputs, capacity = 3) {
   const warnings = [];
   const portfolioWarnings = [];
 
   const clean = (inputs ?? []).filter((p) => p?.name?.trim());
   if (clean.length === 0) {
     return {
-      scored: [], selected: [], deferred: [], capacity, capacityUsed: 0,
-      horizonMix: [], portfolioWarnings: [],
+      scored: [],
+      selected: [],
+      deferred: [],
+      capacity,
+      capacityUsed: 0,
+      horizonMix: [],
+      portfolioWarnings: [],
       headline: 'No pathways to compare yet.',
-      warnings: ['Add at least two candidate pathways — a single option is a proposal, not a choice.'],
+      warnings: [
+        'Add at least two candidate pathways — a single option is a proposal, not a choice.',
+      ],
     };
   }
   if (clean.length === 1) {
-    warnings.push('Only one pathway supplied — a single option is a proposal, not a choice. Add the alternatives you are implicitly rejecting so the comparison is real.');
+    warnings.push(
+      'Only one pathway supplied — a single option is a proposal, not a choice. Add the alternatives you are implicitly rejecting so the comparison is real.',
+    );
   }
 
   const scored = clean.map((p) => {
     const attractiveness = clamp(p.marketAttractiveness, 0, 5);
-    const capability     = clamp(p.capabilityFit, 0, 5);
-    const investment     = clamp(p.investmentLevel, 0, 5);
-    const months         = Math.max(0, Number(p.timeToRevenueMonths) || 0);
-    const confidence     = clamp(p.confidence, 0, 2);
-    const load           = Math.max(1, Number(p.load) || 1);
-    const quadrant       = QUADRANT_RISK[p.quadrant] !== undefined ? p.quadrant : 'diversification';
+    const capability = clamp(p.capabilityFit, 0, 5);
+    const investment = clamp(p.investmentLevel, 0, 5);
+    const months = Math.max(0, Number(p.timeToRevenueMonths) || 0);
+    const confidence = clamp(p.confidence, 0, 2);
+    const load = Math.max(1, Number(p.load) || 1);
+    const quadrant = QUADRANT_RISK[p.quadrant] !== undefined ? p.quadrant : 'diversification';
 
     /* Value is multiplicative, not additive: a brilliant opportunity you
        cannot execute is worth nothing, and neither is flawless capability
@@ -210,20 +232,37 @@ export function computeGrowthPathways(
 
     /* Structural blocks — no score rescues these. */
     let blocked = null;
-    if (capability === 0) blocked = 'No capability at all. Acquire or partner for it first, or this is a wish.';
-    else if (attractiveness === 0) blocked = 'The market is rated as having no attractiveness. Nothing downstream can fix that.';
+    if (capability === 0)
+      blocked = 'No capability at all. Acquire or partner for it first, or this is a wish.';
+    else if (attractiveness === 0)
+      blocked = 'The market is rated as having no attractiveness. Nothing downstream can fix that.';
 
     const parts = [];
-    if (qFactor < 1) parts.push(`${QUADRANTS.find((q) => q.id === quadrant).label.toLowerCase()} carries higher structural risk`);
-    if (cFactor < 1) parts.push(confidence === 0 ? 'the case is asserted rather than evidenced' : 'evidence is indicative only');
+    if (qFactor < 1)
+      parts.push(
+        `${QUADRANTS.find((q) => q.id === quadrant).label.toLowerCase()} carries higher structural risk`,
+      );
+    if (cFactor < 1)
+      parts.push(
+        confidence === 0
+          ? 'the case is asserted rather than evidenced'
+          : 'evidence is indicative only',
+      );
     if (tFactor < 0.8) parts.push(`${months} months to revenue`);
 
     return {
-      id: p.id, name: p.name.trim(), quadrant,
+      id: p.id,
+      name: p.name.trim(),
+      quadrant,
       quadrantLabel: QUADRANTS.find((q) => q.id === quadrant).label,
       horizon: clamp(p.horizon, 1, 3),
-      rawValuePct, riskAdjustedPct, efficiency,
-      timeToRevenueMonths: months, investmentLevel: investment, load, confidence,
+      rawValuePct,
+      riskAdjustedPct,
+      efficiency,
+      timeToRevenueMonths: months,
+      investmentLevel: investment,
+      load,
+      confidence,
       rationale: parts.length
         ? `Discounted from ${rawValuePct}% to ${riskAdjustedPct}% — ${parts.join(', ')}.`
         : `No discount applied — existing offer, existing market, evidenced, near-term.`,
@@ -250,12 +289,16 @@ export function computeGrowthPathways(
       selected.push({
         pathway: p,
         sequence: selected.length + 1,
-        why: selected.length === 0
-          ? `Highest risk-adjusted value at ${p.riskAdjustedPct}%, and ${p.timeToRevenueMonths} months to revenue.`
-          : `Risk-adjusted ${p.riskAdjustedPct}%, efficiency ${p.efficiency} per unit of investment.`,
+        why:
+          selected.length === 0
+            ? `Highest risk-adjusted value at ${p.riskAdjustedPct}%, and ${p.timeToRevenueMonths} months to revenue.`
+            : `Risk-adjusted ${p.riskAdjustedPct}%, efficiency ${p.efficiency} per unit of investment.`,
       });
     } else {
-      deferred.push({ pathway: p, why: `Capacity is full — this needs ${p.load} slot${p.load > 1 ? 's' : ''} and ${cap - used} remain${cap - used === 1 ? 's' : ''}.` });
+      deferred.push({
+        pathway: p,
+        why: `Capacity is full — this needs ${p.load} slot${p.load > 1 ? 's' : ''} and ${cap - used} remain${cap - used === 1 ? 's' : ''}.`,
+      });
     }
   }
   for (const p of scored.filter((x) => x.blocked)) {
@@ -266,42 +309,61 @@ export function computeGrowthPathways(
   const horizonMix = [1, 2, 3].map((h) => {
     const count = selected.filter((s) => s.pathway.horizon === h).length;
     return {
-      horizon: h, label: HORIZON_LABEL[h], count,
+      horizon: h,
+      label: HORIZON_LABEL[h],
+      count,
       sharePct: selected.length ? r1((count / selected.length) * 100) : 0,
     };
   });
 
   if (selected.length >= 2) {
-    const h1 = horizonMix[0].count, h3 = horizonMix[2].count;
+    const h1 = horizonMix[0].count,
+      h3 = horizonMix[2].count;
     if (h1 === selected.length) {
-      portfolioWarnings.push('Every selected pathway defends the existing core. That protects this year and builds nothing for the years after it.');
+      portfolioWarnings.push(
+        'Every selected pathway defends the existing core. That protects this year and builds nothing for the years after it.',
+      );
     }
     if (h1 === 0) {
-      portfolioWarnings.push('Nothing selected defends the core. Growth strategies that abandon the business currently paying for them tend not to get finished.');
+      portfolioWarnings.push(
+        'Nothing selected defends the core. Growth strategies that abandon the business currently paying for them tend not to get finished.',
+      );
     }
     if (h3 >= Math.ceil(selected.length / 2)) {
-      portfolioWarnings.push('Half or more of the portfolio is speculative. Options on the future are worth holding, but they cannot be the plan.');
+      portfolioWarnings.push(
+        'Half or more of the portfolio is speculative. Options on the future are worth holding, but they cannot be the plan.',
+      );
     }
     const quadrants = new Set(selected.map((s) => s.pathway.quadrant));
     if (quadrants.size === 1 && selected.length >= 3) {
-      portfolioWarnings.push(`All ${selected.length} selected pathways sit in ${selected[0].pathway.quadrantLabel.toLowerCase()} — correlated risk, so one wrong assumption takes the whole portfolio.`);
+      portfolioWarnings.push(
+        `All ${selected.length} selected pathways sit in ${selected[0].pathway.quadrantLabel.toLowerCase()} — correlated risk, so one wrong assumption takes the whole portfolio.`,
+      );
     }
     const totalMonths = selected.map((s) => s.pathway.timeToRevenueMonths);
     if (Math.min(...totalMonths) >= 12) {
-      portfolioWarnings.push('Nothing selected produces revenue inside a year. Fund it accordingly, or add something nearer-term to pay for the wait.');
+      portfolioWarnings.push(
+        'Nothing selected produces revenue inside a year. Fund it accordingly, or add something nearer-term to pay for the wait.',
+      );
     }
   }
 
   /* ── Input-quality checks ── */
   const asserted = scored.filter((p) => p.confidence === 0);
   if (asserted.length === scored.length && scored.length > 1) {
-    warnings.push('Every pathway is asserted rather than evidenced, so the ranking reflects confidence in opinions, not in evidence.');
+    warnings.push(
+      'Every pathway is asserted rather than evidenced, so the ranking reflects confidence in opinions, not in evidence.',
+    );
   }
   if (scored.every((p) => p.quadrant === scored[0].quadrant) && scored.length > 2) {
-    warnings.push(`All candidates are ${scored[0].quadrantLabel.toLowerCase()}. The other three Ansoff quadrants are unexamined — that is usually a framing gap, not an absence of options.`);
+    warnings.push(
+      `All candidates are ${scored[0].quadrantLabel.toLowerCase()}. The other three Ansoff quadrants are unexamined — that is usually a framing gap, not an absence of options.`,
+    );
   }
   if (scored.some((p) => p.blocked)) {
-    warnings.push(`${scored.filter((p) => p.blocked).length} pathway(s) are structurally blocked and were excluded from selection regardless of score.`);
+    warnings.push(
+      `${scored.filter((p) => p.blocked).length} pathway(s) are structurally blocked and were excluded from selection regardless of score.`,
+    );
   }
 
   const top = selected[0]?.pathway;
@@ -311,8 +373,14 @@ export function computeGrowthPathways(
 
   return {
     scored: [...scored].sort((a, b) => b.riskAdjustedPct - a.riskAdjustedPct),
-    selected, deferred, capacity: cap, capacityUsed: used,
-    horizonMix, portfolioWarnings, headline, warnings,
+    selected,
+    deferred,
+    capacity: cap,
+    capacityUsed: used,
+    horizonMix,
+    portfolioWarnings,
+    headline,
+    warnings,
   };
 }
 
@@ -320,7 +388,9 @@ export function computeGrowthPathways(
 export function growthPathwaysToPrompt(r) {
   const lines = [`• ${r.headline}`];
   for (const s of r.selected) {
-    lines.push(`• DO ${s.sequence}: ${s.pathway.name} (${s.pathway.quadrantLabel}, H${s.pathway.horizon}) — risk-adjusted ${s.pathway.riskAdjustedPct}%. ${s.why}`);
+    lines.push(
+      `• DO ${s.sequence}: ${s.pathway.name} (${s.pathway.quadrantLabel}, H${s.pathway.horizon}) — risk-adjusted ${s.pathway.riskAdjustedPct}%. ${s.why}`,
+    );
   }
   for (const d of r.deferred.slice(0, 4)) {
     lines.push(`• DEFER: ${d.pathway.name} — ${d.why}`);

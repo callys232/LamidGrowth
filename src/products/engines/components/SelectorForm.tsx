@@ -28,15 +28,26 @@ export function SelectorForm({
   onSubmit: (input: { options: unknown[]; criteria: unknown[] }) => void;
   submitting: boolean;
 }) {
-  const [criteria, setCriteria] = useState<Row[]>([defaultRow(CRITERIA_FIELDS, 0), defaultRow(CRITERIA_FIELDS, 1)]);
+  const [criteria, setCriteria] = useState<Row[]>([
+    defaultRow(CRITERIA_FIELDS, 0),
+    defaultRow(CRITERIA_FIELDS, 1),
+  ]);
   const optionFields = useMemo<FieldDef[]>(
     () => [
       { key: 'name', label: 'Option', type: 'text' },
-      ...criteria.map((c): FieldDef => ({ key: `score:${c.name}`, label: `Score — ${c.name || '(unnamed)'}`, type: 'number', default: 0 })),
+      ...criteria.map((c): FieldDef => ({
+        key: `score:${c.name}`,
+        label: `Score — ${c.name || '(unnamed)'}`,
+        type: 'number',
+        default: 0,
+      })),
     ],
     [criteria],
   );
-  const [options, setOptions] = useState<Row[]>([defaultRow(optionFields, 0), defaultRow(optionFields, 1)]);
+  const [options, setOptions] = useState<Row[]>([
+    defaultRow(optionFields, 0),
+    defaultRow(optionFields, 1),
+  ]);
 
   return (
     <form
@@ -44,19 +55,38 @@ export function SelectorForm({
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit({
-          criteria: criteria.map((c) => ({ id: c.name, name: c.name, weight: Number(c.weight), direction: c.direction })),
+          criteria: criteria.map((c) => ({
+            id: c.name,
+            name: c.name,
+            weight: Number(c.weight),
+            direction: c.direction,
+          })),
           options: options.map((o) => ({
             id: o.name,
             name: o.name,
-            scores: Object.fromEntries(criteria.map((c) => [c.name, Number(o[`score:${c.name}`] ?? 0)])),
+            scores: Object.fromEntries(
+              criteria.map((c) => [c.name, Number(o[`score:${c.name}`] ?? 0)]),
+            ),
           })),
         });
       }}
     >
       <h4>Criteria</h4>
-      <RowListForm fields={CRITERIA_FIELDS} rows={criteria} onChange={setCriteria} addLabel="Add criterion" minRows={2} />
+      <RowListForm
+        fields={CRITERIA_FIELDS}
+        rows={criteria}
+        onChange={setCriteria}
+        addLabel="Add criterion"
+        minRows={2}
+      />
       <h4>Options</h4>
-      <RowListForm fields={optionFields} rows={options} onChange={setOptions} addLabel="Add option" minRows={2} />
+      <RowListForm
+        fields={optionFields}
+        rows={options}
+        onChange={setOptions}
+        addLabel="Add option"
+        minRows={2}
+      />
       <Button type="submit" disabled={submitting || criteria.length < 2 || options.length < 2}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>

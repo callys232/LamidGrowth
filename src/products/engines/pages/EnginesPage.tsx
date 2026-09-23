@@ -61,7 +61,9 @@ export function EnginesPage() {
           >
             {name}
             {catalog && name !== 'All' && (
-              <span className="engines-tab-count">{catalog.engines.filter((e) => e.homeEngine === name).length}</span>
+              <span className="engines-tab-count">
+                {catalog.engines.filter((e) => e.homeEngine === name).length}
+              </span>
             )}
           </button>
         ))}
@@ -76,7 +78,11 @@ export function EnginesPage() {
               <li key={engine.code}>
                 <button
                   type="button"
-                  className={selected?.code === engine.code ? 'engines-list-item is-active' : 'engines-list-item'}
+                  className={
+                    selected?.code === engine.code
+                      ? 'engines-list-item is-active'
+                      : 'engines-list-item'
+                  }
                   onClick={() => setSelected(engine)}
                 >
                   <strong>{engine.engineName}</strong>
@@ -90,7 +96,9 @@ export function EnginesPage() {
 
           <div className="engines-detail">
             {!selected ? (
-              <Empty title="Pick a diagnostic">Choose one from the list to see what it measures and run it.</Empty>
+              <Empty title="Pick a diagnostic">
+                Choose one from the list to see what it measures and run it.
+              </Empty>
             ) : (
               <EngineDetailPanel key={selected.code} engine={selected} run={run} />
             )}
@@ -101,7 +109,13 @@ export function EnginesPage() {
   );
 }
 
-function EngineDetailPanel({ engine, run }: { engine: EngineSummary; run: ReturnType<typeof useEngineRun> }) {
+function EngineDetailPanel({
+  engine,
+  run,
+}: {
+  engine: EngineSummary;
+  run: ReturnType<typeof useEngineRun>;
+}) {
   const { manifest, running, result, error, run: submit } = run;
 
   return (
@@ -119,7 +133,11 @@ function EngineDetailPanel({ engine, run }: { engine: EngineSummary; run: Return
       {!manifest ? (
         <Empty title="Loading…">Fetching this diagnostic's input form.</Empty>
       ) : result ? (
-        <EngineResultView pointsCharged={result.pointsCharged} balance={result.balance} result={result.result} />
+        <EngineResultView
+          pointsCharged={result.pointsCharged}
+          balance={result.balance}
+          result={result.result}
+        />
       ) : (
         <EngineForm manifest={manifest} submitting={running} onSubmit={submit} />
       )}
@@ -140,13 +158,30 @@ export function EngineForm({
 }) {
   switch (manifest.inputs.kind) {
     case 'assessment':
-      return <AssessmentForm dimensionLabels={manifest.dimensionLabels} onSubmit={onSubmit} submitting={submitting} />;
+      return (
+        <AssessmentForm
+          dimensionLabels={manifest.dimensionLabels}
+          onSubmit={onSubmit}
+          submitting={submitting}
+        />
+      );
     case 'financial': {
       const spec = manifest.inputs as { periodLabel: string; periods: number };
-      return <FinancialForm periodLabel={spec.periodLabel} periods={spec.periods} onSubmit={onSubmit} submitting={submitting} />;
+      return (
+        <FinancialForm
+          periodLabel={spec.periodLabel}
+          periods={spec.periods}
+          onSubmit={onSubmit}
+          submitting={submitting}
+        />
+      );
     }
     case 'timeseries': {
-      const spec = manifest.inputs as { periodLabel: string; periods: number; metrics: import('../hooks/useEngineRun').SeriesMetric[] };
+      const spec = manifest.inputs as {
+        periodLabel: string;
+        periods: number;
+        metrics: import('../hooks/useEngineRun').SeriesMetric[];
+      };
       return (
         <TimeseriesForm
           periodLabel={spec.periodLabel}
@@ -191,8 +226,8 @@ export function EngineForm({
     default:
       return (
         <Empty title="Form coming soon">
-          This diagnostic type is computed and ready on the server, but its input form hasn't shipped to this page
-          yet.
+          This diagnostic type is computed and ready on the server, but its input form hasn't
+          shipped to this page yet.
         </Empty>
       );
   }

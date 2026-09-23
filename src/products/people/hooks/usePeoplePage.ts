@@ -22,10 +22,31 @@ export type TalentSummary = {
   assessments: Assessment[];
   credentials: Credential[];
 };
-export type Member = { userId: string; name: string; email: string; role: string; talent: TalentSummary | null };
-export type Team = { id: string; name: string; description: string; leadName: string; members: { userId: string; name: string; role: string }[] };
-export type CapabilityReview = { id: string; question: string; response: string; createdAt: string };
-export type PeopleOverview = { roster: Member[]; teams: Team[]; recentCapabilityReviews: CapabilityReview[] };
+export type Member = {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+  talent: TalentSummary | null;
+};
+export type Team = {
+  id: string;
+  name: string;
+  description: string;
+  leadName: string;
+  members: { userId: string; name: string; role: string }[];
+};
+export type CapabilityReview = {
+  id: string;
+  question: string;
+  response: string;
+  createdAt: string;
+};
+export type PeopleOverview = {
+  roster: Member[];
+  teams: Team[];
+  recentCapabilityReviews: CapabilityReview[];
+};
 
 export function usePeoplePage() {
   const [data, setData] = useState<PeopleOverview | null>(null);

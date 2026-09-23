@@ -41,7 +41,7 @@ Call log:
   15  |     await pool.end();
   16  |   }
   17  | }
-  18  | 
+  18  |
   19  | // Simulates the paid AI-specialist path with a stub AI provider standing in for a real OpenAI
   20  | // key (see scripts/usability-server-paid.mjs) — the user has not subscribed to OpenAI yet, but
   21  | // wants to see the paid coordinated-task flow work end to end before adding a real key.
@@ -50,7 +50,7 @@ Call log:
   24  |   ['Berlin-Paid', 'de-DE', 1280, 800, 'Founder', 'Grow my consulting business'],
   25  |   ['Mumbai-Paid', 'en-IN', 360, 740, 'Individual', 'Make progress on my learning goal'],
   26  | ] as const;
-  27  | 
+  27  |
   28  | for (const [city, locale, width, height, role, goal] of profiles) {
   29  |   test(`${city}: paid specialist sequence (simulated AI)`, async ({ browser }, info) => {
   30  |     const context = await browser.newContext({ locale, viewport: { width, height }, reducedMotion: 'reduce' });
@@ -74,7 +74,7 @@ Call log:
   48  |       await page.getByRole('button', { name: 'Verify account', exact: true }).click();
   49  |       await page.getByRole('link', { name: 'Continue to workspace', exact: true }).click();
   50  |       await expect(page).toHaveURL(/\/os$/);
-  51  | 
+  51  |
   52  |       result.stage = 'goal creation';
   53  |       await page.getByRole('button', { name: 'New objective', exact: true }).click();
   54  |       await page.getByLabel('Your objective', { exact: true }).fill(goal);
@@ -82,13 +82,13 @@ Call log:
   56  |       await page.getByLabel('What does success look like?').fill('A useful plan I can act on this week.');
   57  |       await page.getByRole('button', { name: 'Create objective', exact: true }).click();
   58  |       await expect(page.getByRole('dialog')).toHaveCount(0);
-  59  | 
+  59  |
   60  |       // Test-only: top up past the 500-point welcome grant so the full multi-step sequence can
   61  |       // be shown completing. A real free-tier signup only gets the 500-point welcome grant —
   62  |       // documented separately, not re-demonstrated in this run.
   63  |       result.stage = 'top up points (test-only)';
   64  |       await topUpPoints(email, 1000);
-  65  | 
+  65  |
   66  |       // Enabling the workspace's AI policy is a real settings-page action a real user (with
   67  |       // workspace:manage) would take once, not a per-run step — exercised here via the actual
   68  |       // page, not a database shortcut.
@@ -98,7 +98,7 @@ Call log:
   72  |       if (!(await enableBox.isChecked())) await enableBox.check();
   73  |       await page.getByRole('button', { name: 'Save AI rules' }).click();
   74  |       await expect(page.getByRole('checkbox', { name: 'Allow external AI in this workspace' })).toBeChecked();
-  75  | 
+  75  |
   76  |       result.stage = 'paid specialist plan';
   77  |       await page.goto('/os/companion/chat');
   78  |       await page.getByText('Coordinate a task across specialists', { exact: true }).click();
@@ -108,9 +108,9 @@ Call log:
   82  |       const card = page.locator('.companion-task-card').filter({ hasText: goal });
   83  |       await expect(card).toBeVisible();
   84  |       result.plan = await card.innerText();
-  85  | 
+  85  |
   86  |       await page.getByRole('checkbox', { name: 'Allow external AI to use authorized workspace context for the next step.' }).check();
-  87  | 
+  87  |
   88  |       const before = (await (await context.request.get('/api/points')).json()).balance;
   89  |       // Approve every step the current balance actually allows, capturing each specialist's
   90  |       // grounded output. Stopping on a genuinely disabled button (insufficient balance) is a
@@ -154,5 +154,5 @@ Call log:
   127 |     }
   128 |   });
   129 | }
-  130 | 
+  130 |
 ```

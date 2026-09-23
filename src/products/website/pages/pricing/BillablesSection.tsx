@@ -39,8 +39,8 @@ export function BillablesSection() {
           ) : (
             <>
               Points cover every tool and engine call — 1 point costs{' '}
-              {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}. No hidden tiers: this is the same
-              price list the app bills against.
+              {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}. No hidden tiers:
+              this is the same price list the app bills against.
             </>
           )}
         </p>
@@ -94,7 +94,11 @@ export function BillablesSection() {
           <nav className="pricing-billables-nav" aria-label="Browse billables">
             <div className="pricing-nav-group">
               <span className="pricing-nav-heading">Platform</span>
-              <button type="button" className={filter === 'all' ? 'is-active' : ''} onClick={() => setFilter('all')}>
+              <button
+                type="button"
+                className={filter === 'all' ? 'is-active' : ''}
+                onClick={() => setFilter('all')}
+              >
                 All billables
               </button>
               <button
@@ -144,8 +148,16 @@ export function BillablesSection() {
                     <tr key={tool.id}>
                       <td>{tool.name}</td>
                       <td>{tool.home_engine}</td>
-                      <td>{tool.human_gate === 'none' ? 'Runs autonomously' : `Human ${tool.human_gate}`}</td>
-                      <td>{tool.points_cost === 0 ? 'Free' : `${tool.points_cost} pt${tool.points_cost === 1 ? '' : 's'}`}</td>
+                      <td>
+                        {tool.human_gate === 'none'
+                          ? 'Runs autonomously'
+                          : `Human ${tool.human_gate}`}
+                      </td>
+                      <td>
+                        {tool.points_cost === 0
+                          ? 'Free'
+                          : `${tool.points_cost} pt${tool.points_cost === 1 ? '' : 's'}`}
+                      </td>
                     </tr>
                   ))}
                   {(filter === 'all' || filter === 'free') && (

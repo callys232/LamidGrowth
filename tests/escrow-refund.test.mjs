@@ -20,10 +20,17 @@ function jsonResponse(status, data) {
 let app, store, server, base;
 async function boot(fetchImpl) {
   const paymentProvider = (name) =>
-    name === 'paystack' ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl: fetchImpl || fetch }) : null;
+    name === 'paystack'
+      ? paystackProvider({ secretKey: PAYSTACK_SECRET, fetchImpl: fetchImpl || fetch })
+      : null;
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
     paymentProvider,
   }));
   server = await new Promise((resolve) => {
@@ -33,7 +40,7 @@ async function boot(fetchImpl) {
 }
 async function teardown() {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 }
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -79,7 +86,12 @@ async function fundedAndDisputedMilestone(client, freelancer, base) {
   );
   await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work as agreed.', proposedAmount: 750, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this work as agreed.',
+      proposedAmount: 750,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
@@ -93,7 +105,11 @@ async function fundedAndDisputedMilestone(client, freelancer, base) {
     { title: 'Phase 1', description: '', amount: 750, currency: 'USD' },
     client,
   );
-  const submission = await request(`/milestones/${milestone.data.id}/submissions`, { notes: 'Completely unrelated work.' }, freelancer);
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: 'Completely unrelated work.' },
+    freelancer,
+  );
   const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
 
   // Fund and confirm the hold before disputing.
@@ -119,7 +135,10 @@ async function fundedAndDisputedMilestone(client, freelancer, base) {
 test('a refund is refused before a dispute exists, even with held funds', async (t) => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': () =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/abc', access_code: 'abc' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/abc', access_code: 'abc' },
+      }),
   });
   await boot(fetchImpl);
   t.after(teardown);
@@ -140,10 +159,27 @@ test('a refund is refused before a dispute exists, even with held funds', async 
     },
     client,
   );
-  await request(`/jobs/${job.data.id}/bids`, { coverLetter: 'A bid for this job that is long enough.', proposedAmount: 500, currency: 'USD', timeline: '1 week' }, freelancer);
+  await request(
+    `/jobs/${job.data.id}/bids`,
+    {
+      coverLetter: 'A bid for this job that is long enough.',
+      proposedAmount: 500,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    freelancer,
+  );
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
-  const project = await request('/projects', { jobId: job.data.id, title: 'No dispute project', freelancerUserId: freelancerState.user.id }, client);
-  const milestone = await request(`/projects/${project.data.id}/milestones`, { title: 'Phase 1', description: '', amount: 500, currency: 'USD' }, client);
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'No dispute project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
   await request(`/milestones/${milestone.data.id}/fund`, {}, client);
 
   const refund = await request(`/milestones/${milestone.data.id}/refund`, {}, client);
@@ -155,7 +191,10 @@ test('a refund is refused with no held funding, even once disputed', async (t) =
   await boot(mockFetch({}));
   t.after(teardown);
   const client = await signup('Unfunded Dispute Client', 'unfunded-dispute-client@example.test');
-  const freelancer = await signup('Unfunded Dispute Freelancer', 'unfunded-dispute-freelancer@example.test');
+  const freelancer = await signup(
+    'Unfunded Dispute Freelancer',
+    'unfunded-dispute-freelancer@example.test',
+  );
   const job = await request(
     '/jobs',
     {
@@ -171,13 +210,38 @@ test('a refund is refused with no held funding, even once disputed', async (t) =
     },
     client,
   );
-  await request(`/jobs/${job.data.id}/bids`, { coverLetter: 'A bid for this job that is long enough.', proposedAmount: 500, currency: 'USD', timeline: '1 week' }, freelancer);
+  await request(
+    `/jobs/${job.data.id}/bids`,
+    {
+      coverLetter: 'A bid for this job that is long enough.',
+      proposedAmount: 500,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    freelancer,
+  );
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
-  const project = await request('/projects', { jobId: job.data.id, title: 'Unfunded project', freelancerUserId: freelancerState.user.id }, client);
-  const milestone = await request(`/projects/${project.data.id}/milestones`, { title: 'Phase 1', description: '', amount: 500, currency: 'USD' }, client);
-  const submission = await request(`/milestones/${milestone.data.id}/submissions`, { notes: 'Unrelated work.' }, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'Unfunded project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: 'Unrelated work.' },
+    freelancer,
+  );
   const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
-  await request(`/verification-cases/${verification.data.id}/decisions`, { decision: 'dispute', reason: 'Not what was agreed.' }, client);
+  await request(
+    `/verification-cases/${verification.data.id}/decisions`,
+    { decision: 'dispute', reason: 'Not what was agreed.' },
+    client,
+  );
 
   const refund = await request(`/milestones/${milestone.data.id}/refund`, {}, client);
   assert.equal(refund.status, 400);
@@ -187,9 +251,15 @@ test('a refund is refused with no held funding, even once disputed', async (t) =
 test('a mocked fund -> dispute -> refund lifecycle only marks refunded after webhook confirmation', async (t) => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/xyz', access_code: 'xyz' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/xyz', access_code: 'xyz' },
+      }),
     'https://api.paystack.co/refund': (body) =>
-      jsonResponse(200, { status: true, data: { transaction_reference: body.transaction, status: 'pending' } }),
+      jsonResponse(200, {
+        status: true,
+        data: { transaction_reference: body.transaction, status: 'pending' },
+      }),
   });
   await boot(fetchImpl);
   t.after(teardown);
@@ -204,7 +274,12 @@ test('a mocked fund -> dispute -> refund lifecycle only marks refunded after web
   assert.equal(refund.status, 201);
   assert.equal(refund.data.status, 'refund_pending');
 
-  const beforeWebhook = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  const beforeWebhook = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(beforeWebhook.data.status, 'refund_pending');
 
   const event = { event: 'refund.processed', data: { reference: refund.data.provider_reference } };
@@ -216,7 +291,12 @@ test('a mocked fund -> dispute -> refund lifecycle only marks refunded after web
     body: rawBody,
   });
 
-  const afterWebhook = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  const afterWebhook = await request(
+    `/milestones/${milestoneId}/funding`,
+    undefined,
+    client,
+    'GET',
+  );
   assert.equal(afterWebhook.data.status, 'refunded');
   assert.ok(afterWebhook.data.refunded_at);
 });
@@ -224,8 +304,12 @@ test('a mocked fund -> dispute -> refund lifecycle only marks refunded after web
 test('a failed refund API call marks refund_failed, never refunded', async (t) => {
   const fetchImpl = mockFetch({
     'https://api.paystack.co/transaction/initialize': (body) =>
-      jsonResponse(200, { status: true, data: { authorization_url: 'https://paystack.test/pay/fail', access_code: 'fail' } }),
-    'https://api.paystack.co/refund': () => jsonResponse(400, { status: false, message: 'Refund window has passed.' }),
+      jsonResponse(200, {
+        status: true,
+        data: { authorization_url: 'https://paystack.test/pay/fail', access_code: 'fail' },
+      }),
+    'https://api.paystack.co/refund': () =>
+      jsonResponse(400, { status: false, message: 'Refund window has passed.' }),
   });
   await boot(fetchImpl);
   t.after(teardown);

@@ -17,7 +17,12 @@ export function RoadmapForm({
   onSubmit,
   submitting,
 }: {
-  onSubmit: (input: { initiatives: unknown[]; periods: number; capacityPerPeriod: number; periodLabel: string }) => void;
+  onSubmit: (input: {
+    initiatives: unknown[];
+    periods: number;
+    capacityPerPeriod: number;
+    periodLabel: string;
+  }) => void;
   submitting: boolean;
 }) {
   const [rows, setRows] = useState<Row[]>([defaultRow(FIELDS, 0)]);
@@ -32,7 +37,11 @@ export function RoadmapForm({
         e.preventDefault();
         onSubmit({
           initiatives: rows.map((r) => ({
-            id: r.id, name: r.name, value: Number(r.value), effort: Number(r.effort), mandatory: Boolean(r.mandatory),
+            id: r.id,
+            name: r.name,
+            value: Number(r.value),
+            effort: Number(r.effort),
+            mandatory: Boolean(r.mandatory),
           })),
           periods,
           capacityPerPeriod,
@@ -47,11 +56,21 @@ export function RoadmapForm({
         </label>
         <label>
           Number of periods
-          <input type="number" min={1} value={periods} onChange={(e) => setPeriods(Number(e.target.value))} />
+          <input
+            type="number"
+            min={1}
+            value={periods}
+            onChange={(e) => setPeriods(Number(e.target.value))}
+          />
         </label>
         <label>
           Capacity per period
-          <input type="number" min={1} value={capacityPerPeriod} onChange={(e) => setCapacityPerPeriod(Number(e.target.value))} />
+          <input
+            type="number"
+            min={1}
+            value={capacityPerPeriod}
+            onChange={(e) => setCapacityPerPeriod(Number(e.target.value))}
+          />
         </label>
       </div>
       <RowListForm fields={FIELDS} rows={rows} onChange={setRows} addLabel="Add initiative" />

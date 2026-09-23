@@ -2,12 +2,31 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
 import { hasToolAccess, accessibleEngineCodes } from './entitlements.mjs';
-import { getModuleConfig, MODULE_REGISTRY, buildFallbackConfig, ENGINE_CODES } from './engineRegistry.mjs';
+import {
+  getModuleConfig,
+  MODULE_REGISTRY,
+  buildFallbackConfig,
+  ENGINE_CODES,
+} from './engineRegistry.mjs';
 import { computeAssessment, assessmentToPrompt } from './engineIntelligence/assessment.mjs';
-import { computeDecisionQuality, decisionQualityToPrompt, DQ_QUESTIONS, REQUIREMENTS } from './engineIntelligence/decisionQuality.mjs';
-import { computeGrowthPathways, growthPathwaysToPrompt } from './engineIntelligence/growthPathways.mjs';
-import { computeBenchStrength, benchStrengthToPrompt } from './engineIntelligence/benchStrength.mjs';
-import { computeScenarioDecision, scenarioDecisionToPrompt } from './engineIntelligence/scenarioDecision.mjs';
+import {
+  computeDecisionQuality,
+  decisionQualityToPrompt,
+  DQ_QUESTIONS,
+  REQUIREMENTS,
+} from './engineIntelligence/decisionQuality.mjs';
+import {
+  computeGrowthPathways,
+  growthPathwaysToPrompt,
+} from './engineIntelligence/growthPathways.mjs';
+import {
+  computeBenchStrength,
+  benchStrengthToPrompt,
+} from './engineIntelligence/benchStrength.mjs';
+import {
+  computeScenarioDecision,
+  scenarioDecisionToPrompt,
+} from './engineIntelligence/scenarioDecision.mjs';
 import { computeRoadmap, roadmapToPrompt } from './engineIntelligence/roadmap.mjs';
 import { computeOptimisation, optimisationToPrompt } from './engineIntelligence/optimisation.mjs';
 import { computeSelection, selectionToPrompt } from './engineIntelligence/selector.mjs';
@@ -38,11 +57,16 @@ import { computeSeriesStats, seriesStatsToPrompt } from './engineIntelligence/in
 
 /** Which of this app's canonical engine names a module series rolls up into. */
 const SERIES_TO_HOME_ENGINE = {
-  S: 'Clarity', Q: 'Clarity',
-  R: 'Consistency', P: 'Consistency', X: 'Consistency',
-  Z: 'Growth', G: 'Growth',
+  S: 'Clarity',
+  Q: 'Clarity',
+  R: 'Consistency',
+  P: 'Consistency',
+  X: 'Consistency',
+  Z: 'Growth',
+  G: 'Growth',
   A: 'Capability',
-  F: 'Finance', C: 'Finance',
+  F: 'Finance',
+  C: 'Finance',
 };
 
 /** Flat points cost per engine run — cheaper than the AI-backed chat agents (65pts)
@@ -58,7 +82,11 @@ export function parseEngineCode(input) {
   const m = /^([A-Za-z])(\d{2,3})$/.exec(String(input).trim());
   if (!m) return null;
   const series = m[1].toUpperCase();
-  return { code: `${series}${m[2]}`, series, homeEngine: SERIES_TO_HOME_ENGINE[series] ?? 'Shared' };
+  return {
+    code: `${series}${m[2]}`,
+    series,
+    homeEngine: SERIES_TO_HOME_ENGINE[series] ?? 'Shared',
+  };
 }
 
 export function configFor(ref) {
@@ -178,12 +206,17 @@ export function runEngine(ref, input) {
   if (kind === 'decision-quality') {
     const dq = computeDecisionQuality(input.answers ?? {}, input.consequence, input.reversibility);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'decision-quality',
       summary: dq,
       working: decisionQualityToPrompt(dq),
-      warnings: [...dq.confidenceFlags, ...(dq.fatalIssues.length ? [`Fatal gaps: ${dq.fatalIssues.join('; ')}`] : [])],
+      warnings: [
+        ...dq.confidenceFlags,
+        ...(dq.fatalIssues.length ? [`Fatal gaps: ${dq.fatalIssues.join('; ')}`] : []),
+      ],
     };
   }
 
@@ -193,8 +226,10 @@ export function runEngine(ref, input) {
   if (kind === 'growth-pathways') {
     const gp = computeGrowthPathways(input.pathways ?? [], Number(input.capacity) || 3);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'growth-pathways',
       summary: gp,
       working: growthPathwaysToPrompt(gp),
@@ -208,8 +243,10 @@ export function runEngine(ref, input) {
   if (kind === 'bench-strength') {
     const bs = computeBenchStrength(input.roles ?? []);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'bench-strength',
       summary: bs,
       working: benchStrengthToPrompt(bs),
@@ -222,8 +259,10 @@ export function runEngine(ref, input) {
   if (kind === 'scenario-decision') {
     const sd = computeScenarioDecision(input.scenarios ?? [], input.options ?? []);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'scenario-decision',
       summary: sd,
       working: scenarioDecisionToPrompt(sd),
@@ -241,8 +280,10 @@ export function runEngine(ref, input) {
       String(input.periodLabel ?? 'Quarter'),
     );
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'roadmap',
       summary: rm,
       working: roadmapToPrompt(rm),
@@ -255,8 +296,10 @@ export function runEngine(ref, input) {
   if (kind === 'optimisation') {
     const op = computeOptimisation(input.steps ?? []);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
       kind: 'optimisation',
       summary: op,
       working: optimisationToPrompt(op),
@@ -268,9 +311,13 @@ export function runEngine(ref, input) {
   if (kind === 'selection') {
     const sel = computeSelection(input.options ?? [], input.criteria ?? []);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
-      kind: 'selection', summary: sel, working: selectionToPrompt(sel),
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
+      kind: 'selection',
+      summary: sel,
+      working: selectionToPrompt(sel),
       warnings: [...sel.warnings, ...sel.guidance],
     };
   }
@@ -280,9 +327,13 @@ export function runEngine(ref, input) {
   if (kind === 'conflict') {
     const cf = computeConflicts(input.objectives ?? []);
     return {
-      code: ref.code, homeEngine: ref.homeEngine,
-      engineName: config.engineName, seriesName: config.seriesName,
-      kind: 'conflict', summary: cf, working: conflictsToPrompt(cf),
+      code: ref.code,
+      homeEngine: ref.homeEngine,
+      engineName: config.engineName,
+      seriesName: config.seriesName,
+      kind: 'conflict',
+      summary: cf,
+      working: conflictsToPrompt(cf),
       warnings: [...cf.warnings, ...cf.guidance],
     };
   }
@@ -299,7 +350,8 @@ export function runEngine(ref, input) {
     }
 
     case 'financial': {
-      if (!input.periods) throw new EngineInputError('`periods` is required for a financial module.');
+      if (!input.periods)
+        throw new EngineInputError('`periods` is required for a financial module.');
       summary = computeFinancials(input);
       working = financialsToPrompt(summary);
       break;
@@ -307,7 +359,8 @@ export function runEngine(ref, input) {
 
     case 'roster': {
       const roles = arr(input.roles);
-      if (roles.length === 0) throw new EngineInputError('`roles` is required for a roster module.');
+      if (roles.length === 0)
+        throw new EngineInputError('`roles` is required for a roster module.');
       summary = computeRoster(roles);
       working = rosterToPrompt(summary);
       break;
@@ -315,7 +368,8 @@ export function runEngine(ref, input) {
 
     case 'scenario': {
       const options = arr(input.options);
-      if (options.length === 0) throw new EngineInputError('`options` is required for a scenario module.');
+      if (options.length === 0)
+        throw new EngineInputError('`options` is required for a scenario module.');
       summary = computeScenarios(options);
       working = scenariosToPrompt(summary);
       break;
@@ -326,7 +380,9 @@ export function runEngine(ref, input) {
          several tracked metrics is computed per series and the results
          collected. Accepts either a single `{metric, values}` or a `series`
          array of them. */
-      const series = arr(input.series ?? (input.metric ? [{ metric: input.metric, values: input.values }] : []));
+      const series = arr(
+        input.series ?? (input.metric ? [{ metric: input.metric, values: input.values }] : []),
+      );
       if (series.length === 0) {
         throw new EngineInputError(
           'A time-series module needs `series: [{ metric, values }]`, or a single `metric` with `values`.',
@@ -335,12 +391,16 @@ export function runEngine(ref, input) {
 
       const computed = series.map((s) => {
         const values = arr(s.values).map(Number).filter(Number.isFinite);
-        if (values.length === 0) throw new EngineInputError('Each series needs at least one numeric value.');
+        if (values.length === 0)
+          throw new EngineInputError('Each series needs at least one numeric value.');
         return computeSeriesStats(s.metric, values, s.target ?? null);
       });
 
       summary = computed.length === 1 ? computed[0] : computed;
-      working = seriesStatsToPrompt(computed, typeof input.periodLabel === 'string' ? input.periodLabel : 'period');
+      working = seriesStatsToPrompt(
+        computed,
+        typeof input.periodLabel === 'string' ? input.periodLabel : 'period',
+      );
       break;
     }
 
@@ -363,7 +423,16 @@ export function runEngine(ref, input) {
     }
   }
 
-  return { code: ref.code, homeEngine: ref.homeEngine, engineName: config.engineName, seriesName: config.seriesName, kind, summary, working, warnings };
+  return {
+    code: ref.code,
+    homeEngine: ref.homeEngine,
+    engineName: config.engineName,
+    seriesName: config.seriesName,
+    kind,
+    summary,
+    working,
+    warnings,
+  };
 }
 
 /** Engine count per home engine, derived from the registry rather than typed by hand. */
@@ -412,7 +481,10 @@ export function mountPublicEngines(app) {
   app.get('/api/engines/catalog', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const list = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
-    res.json({ engines: filter ? list.filter((m) => m.homeEngine === filter) : list, count: list.length });
+    res.json({
+      engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
+      count: list.length,
+    });
   });
 
   app.post('/api/engines/:code/demo-run', async (req, res) => {
@@ -441,7 +513,9 @@ export function mountPublicEngines(app) {
       pointsCost: ENGINE_POINTS_COST,
       // The fixed question bank Q44 (decision-quality) is scored against — the frontend needs
       // this to render the form at all, since it isn't user-defined like the other archetypes.
-      ...(kind === 'decision-quality' ? { decisionQuality: { requirements: REQUIREMENTS, questions: DQ_QUESTIONS } } : {}),
+      ...(kind === 'decision-quality'
+        ? { decisionQuality: { requirements: REQUIREMENTS, questions: DQ_QUESTIONS } }
+        : {}),
     });
   });
 }
@@ -455,20 +529,30 @@ export function mountEngines(app, store) {
   app.get('/api/engines', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const accessible = await accessibleEngineCodes(store, req.workspace);
-    const list = ENGINE_CODES.filter((code) => accessible.has(code)).map(manifestSummary).filter(Boolean);
-    res.json({ engines: filter ? list.filter((m) => m.homeEngine === filter) : list, count: list.length });
+    const list = ENGINE_CODES.filter((code) => accessible.has(code))
+      .map(manifestSummary)
+      .filter(Boolean);
+    res.json({
+      engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
+      count: list.length,
+    });
   });
 
   app.post('/api/engines/:code/run', requirePermission('work:write'), async (req, res) => {
     const ref = parseEngineCode(req.params.code);
     if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
     const manifestId = ref.code.toLowerCase();
-    const manifest = await db.prepare('SELECT id, points_cost FROM agent_manifests WHERE id = ?').get(manifestId);
+    const manifest = await db
+      .prepare('SELECT id, points_cost FROM agent_manifests WHERE id = ?')
+      .get(manifestId);
     if (!manifest) return res.status(404).json({ error: 'This engine is not yet available.' });
     // Real entitlement gate — enterprise tier, a free tool, or an actually-purchased bundle. See
     // src/app/entitlements.mjs. Checked before compute/charge, same pattern as agents.mjs's send().
     if (!(await hasToolAccess(store, req.workspace, manifestId)))
-      return res.status(403).json({ error: "This engine isn't included in your plan. Purchase a bundle that includes it, or upgrade to Enterprise." });
+      return res.status(403).json({
+        error:
+          "This engine isn't included in your plan. Purchase a bundle that includes it, or upgrade to Enterprise.",
+      });
     const { input } = runInput.parse(req.body ?? {});
 
     const points = manifest.points_cost || 0;
@@ -484,21 +568,44 @@ export function mountEngines(app, store) {
     await transaction(async () => {
       if (points > 0) {
         const charged = await db
-          .prepare('UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?')
+          .prepare(
+            'UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?',
+          )
           .run(points, req.user.id, points);
         if (charged.changes !== 1)
-          throw Object.assign(new Error('You do not have enough points for this engine.'), { status: 402 });
+          throw Object.assign(new Error('You do not have enough points for this engine.'), {
+            status: 402,
+          });
         await db
           .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .run(randomUUID(), req.user.id, req.workspace.id, -points, 'agent_run', runId, Date.now());
+          .run(
+            randomUUID(),
+            req.user.id,
+            req.workspace.id,
+            -points,
+            'agent_run',
+            runId,
+            Date.now(),
+          );
       }
-      await db.prepare('INSERT INTO agent_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').run(
-        runId, req.workspace.id, req.user.id, manifestId,
-        JSON.stringify(input), JSON.stringify(result), 'completed', createdAt, createdAt,
-      );
+      await db
+        .prepare('INSERT INTO agent_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(
+          runId,
+          req.workspace.id,
+          req.user.id,
+          manifestId,
+          JSON.stringify(input),
+          JSON.stringify(result),
+          'completed',
+          createdAt,
+          createdAt,
+        );
     });
 
-    const balance = (await db.prepare('SELECT points_balance FROM users WHERE id = ?').get(req.user.id)).points_balance;
+    const balance = (
+      await db.prepare('SELECT points_balance FROM users WHERE id = ?').get(req.user.id)
+    ).points_balance;
     await log(req.workspace.id, req.user.name, 'Engine run', runId, ref.code);
     res.json({ runId, pointsCharged: points, balance, result });
   });

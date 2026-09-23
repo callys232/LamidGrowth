@@ -27,97 +27,97 @@ Call log:
 
 ```yaml
 - banner:
-  - link "LAMID ONE home":
-    - /url: /
-    - text: LAMID ONE
-  - button "Open navigation":
-    - img
-  - button "Switch to dark mode"
-  - link "Experience LAMID ONE":
-    - /url: /start
-    - text: Experience LAMID ONE
-    - img
+    - link "LAMID ONE home":
+        - /url: /
+        - text: LAMID ONE
+    - button "Open navigation":
+        - img
+    - button "Switch to dark mode"
+    - link "Experience LAMID ONE":
+        - /url: /start
+        - text: Experience LAMID ONE
+        - img
 - main:
-  - link "LAMID ONE home":
-    - /url: /
-    - text: LAMID ONE HUMAN JUDGMENT. INFINITE POSSIBILITY.
-  - link "Back to LAMID ONE":
-    - /url: /
-    - img
-    - text: Back to LAMID ONE
-  - text: YOUR FIRST STEP · 1 OF 2
-  - heading "Start with your context." [level=2]:
-    - text: Start with
-    - emphasis: your context.
-  - paragraph: Where are you starting? Choose what fits your work today.
-  - button "Individual":
-    - img
-    - text: Individual
-  - button "Professional" [pressed]:
-    - img
-    - text: Professional
-    - img
-  - button "Creator":
-    - img
-    - text: Creator
-  - button "Founder":
-    - img
-    - text: Founder
-  - button "Team":
-    - img
-    - text: Team
-  - button "SME":
-    - img
-    - text: SME
-  - button "Enterprise":
-    - img
-    - text: Enterprise
-  - button "Institution":
-    - img
-    - text: Institution
-  - button "Continue":
-    - text: Continue
-    - img
-  - paragraph: Your context can change as your work grows.
-  - text: or take a look first
-  - button "Explore a sample workspace":
-    - text: Explore a sample workspace
-    - img
-  - paragraph:
-    - text: Already have a workspace?
-    - link "Sign in":
-      - /url: /login
-  - text: © 2026 LAMID ONE
-  - group: ▸ Getting started
+    - link "LAMID ONE home":
+        - /url: /
+        - text: LAMID ONE HUMAN JUDGMENT. INFINITE POSSIBILITY.
+    - link "Back to LAMID ONE":
+        - /url: /
+        - img
+        - text: Back to LAMID ONE
+    - text: YOUR FIRST STEP · 1 OF 2
+    - heading "Start with your context." [level=2]:
+        - text: Start with
+        - emphasis: your context.
+    - paragraph: Where are you starting? Choose what fits your work today.
+    - button "Individual":
+        - img
+        - text: Individual
+    - button "Professional" [pressed]:
+        - img
+        - text: Professional
+        - img
+    - button "Creator":
+        - img
+        - text: Creator
+    - button "Founder":
+        - img
+        - text: Founder
+    - button "Team":
+        - img
+        - text: Team
+    - button "SME":
+        - img
+        - text: SME
+    - button "Enterprise":
+        - img
+        - text: Enterprise
+    - button "Institution":
+        - img
+        - text: Institution
+    - button "Continue":
+        - text: Continue
+        - img
+    - paragraph: Your context can change as your work grows.
+    - text: or take a look first
+    - button "Explore a sample workspace":
+        - text: Explore a sample workspace
+        - img
+    - paragraph:
+        - text: Already have a workspace?
+        - link "Sign in":
+            - /url: /login
+    - text: © 2026 LAMID ONE
+    - group: ▸ Getting started
 - contentinfo:
-  - link "LAMID ONE home":
-    - /url: /
-    - text: LAMID ONE HUMAN JUDGMENT. INFINITE POSSIBILITY.
-  - paragraph: Think clearly. Build capability. Make consistent progress.
-  - heading "Explore" [level=3]
-  - link "The product":
-    - /url: /product
-  - link "How it works":
-    - /url: /how-it-works
-  - link "Your context":
-    - /url: /who-its-for
-  - heading "Learn" [level=3]
-  - link "Our story":
-    - /url: /about
-  - link "Getting started":
-    - /url: /help/getting-started
-  - link "Help center":
-    - /url: /help
-  - heading "Trust" [level=3]
-  - link "Human control":
-    - /url: /trust/governance
-  - link "Privacy & data":
-    - /url: /trust/privacy
-  - link "Accessibility":
-    - /url: /accessibility
-  - text: © 2026 LAMID ONE Progress keeps moving. Control stays with you.
-  - link "Back to top ↑":
-    - /url: "#top"
+    - link "LAMID ONE home":
+        - /url: /
+        - text: LAMID ONE HUMAN JUDGMENT. INFINITE POSSIBILITY.
+    - paragraph: Think clearly. Build capability. Make consistent progress.
+    - heading "Explore" [level=3]
+    - link "The product":
+        - /url: /product
+    - link "How it works":
+        - /url: /how-it-works
+    - link "Your context":
+        - /url: /who-its-for
+    - heading "Learn" [level=3]
+    - link "Our story":
+        - /url: /about
+    - link "Getting started":
+        - /url: /help/getting-started
+    - link "Help center":
+        - /url: /help
+    - heading "Trust" [level=3]
+    - link "Human control":
+        - /url: /trust/governance
+    - link "Privacy & data":
+        - /url: /trust/privacy
+    - link "Accessibility":
+        - /url: /accessibility
+    - text: © 2026 LAMID ONE Progress keeps moving. Control stays with you.
+    - link "Back to top ↑":
+        - /url: '#top'
 - button "Ask Companion"
 ```
 
@@ -127,7 +127,7 @@ Call log:
   1   | import { test, expect } from '@playwright/test';
   2   | import AxeBuilder from '@axe-core/playwright';
   3   | import { mkdirSync, writeFileSync } from 'node:fs';
-  4   | 
+  4   |
   5   | const profiles = [
   6   |   ['Lagos', 'en-NG', 'Africa/Lagos', 360, 800, 'Founder', 'Plan my first client project'],
   7   |   ['Nairobi', 'en-KE', 'Africa/Nairobi', 390, 844, 'Professional', 'Build my professional skills'],
@@ -140,7 +140,7 @@ Call log:
   14  |   ['Sao Paulo', 'pt-BR', 'America/Sao_Paulo', 375, 812, 'Creator', 'Prepare a creative project'],
   15  |   ['Sydney', 'en-AU', 'Australia/Sydney', 1440, 900, 'Professional', 'Improve my weekly planning'],
   16  | ] as const;
-  17  | 
+  17  |
   18  | for (const [city, locale, timezoneId, width, height, role, goal] of profiles) {
   19  |   test(`${city}: onboarding, goal and specialist value`, async ({ browser }, info) => {
   20  |     const context = await browser.newContext({ locale, timezoneId, viewport: { width, height }, reducedMotion: 'reduce' });
@@ -224,5 +224,5 @@ Call log:
   97  |     }
   98  |   });
   99  | }
-  100 | 
+  100 |
 ```

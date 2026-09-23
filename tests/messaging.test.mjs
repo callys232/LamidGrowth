@@ -6,7 +6,12 @@ let app, store, server, base;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
-    rateLimits: { api: { max: 1000 }, auth: { max: 1000 }, mutation: { max: 1000 }, spend: { max: 1000 } },
+    rateLimits: {
+      api: { max: 1000 },
+      auth: { max: 1000 },
+      mutation: { max: 1000 },
+      spend: { max: 1000 },
+    },
   }));
   server = await new Promise((resolve) => {
     const listening = app.listen(0, '127.0.0.1', () => resolve(listening));
@@ -15,7 +20,7 @@ before(async () => {
 });
 after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  store.db.close();
+  await store.db.close();
 });
 async function request(path, body, cookie, method = 'POST') {
   const response = await fetch(`${base}/api${path}`, {
@@ -60,7 +65,12 @@ async function makeProject(client, freelancer) {
   );
   await request(
     `/jobs/${job.data.id}/bids`,
-    { coverLetter: 'I will deliver this work as agreed.', proposedAmount: 1000, currency: 'USD', timeline: '2 weeks' },
+    {
+      coverLetter: 'I will deliver this work as agreed.',
+      proposedAmount: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
     freelancer,
   );
   const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
@@ -80,9 +90,17 @@ test('both project parties can post and read messages, in order', async () => {
   const empty = await request(`/projects/${project.id}/messages`, undefined, client, 'GET');
   assert.deepEqual(empty.data, []);
 
-  const first = await request(`/projects/${project.id}/messages`, { body: 'Hi, when can we kick off?' }, client);
+  const first = await request(
+    `/projects/${project.id}/messages`,
+    { body: 'Hi, when can we kick off?' },
+    client,
+  );
   assert.equal(first.status, 201);
-  const second = await request(`/projects/${project.id}/messages`, { body: 'Tomorrow morning works for me.' }, freelancer);
+  const second = await request(
+    `/projects/${project.id}/messages`,
+    { body: 'Tomorrow morning works for me.' },
+    freelancer,
+  );
   assert.equal(second.status, 201);
 
   const thread = await request(`/projects/${project.id}/messages`, undefined, freelancer, 'GET');
@@ -100,6 +118,10 @@ test('a stranger cannot read or post to a project they are not party to', async 
 
   const blockedRead = await request(`/projects/${project.id}/messages`, undefined, stranger, 'GET');
   assert.equal(blockedRead.status, 403);
-  const blockedPost = await request(`/projects/${project.id}/messages`, { body: 'Let me in!' }, stranger);
+  const blockedPost = await request(
+    `/projects/${project.id}/messages`,
+    { body: 'Let me in!' },
+    stranger,
+  );
   assert.equal(blockedPost.status, 403);
 });

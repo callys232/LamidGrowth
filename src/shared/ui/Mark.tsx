@@ -69,10 +69,24 @@ export function Mark({
       <use href={`#${letter}`} fill={`url(#${red})`} />
       <g clipPath={`url(#${clip})`}>
         <path d="M12.4 21.7H25v8H7.8Z" fill={`url(#${white})`} />
-        <path d="m12.4 21.7-3.91 6.8" fill="none" stroke="#FFFFFF" strokeOpacity=".35" strokeWidth=".35" />
+        <path
+          d="m12.4 21.7-3.91 6.8"
+          fill="none"
+          stroke="#FFFFFF"
+          strokeOpacity=".35"
+          strokeWidth=".35"
+        />
       </g>
       <use href={`#${letter}`} fill="none" stroke="#FFFFFF" strokeOpacity=".18" strokeWidth=".35" />
-      <rect x="15.9" y="14.6" width="7.6" height="4.2" rx=".6" fill={`url(#${white})`} opacity=".48" />
+      <rect
+        x="15.9"
+        y="14.6"
+        width="7.6"
+        height="4.2"
+        rx=".6"
+        fill={`url(#${white})`}
+        opacity=".48"
+      />
     </svg>
   );
 }
