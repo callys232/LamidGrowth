@@ -94,7 +94,7 @@ test('domain tables support a basic insert/select roundtrip', async () => {
     const profileId = randomUUID();
     await store.db
       .prepare(
-        'INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO talent_profiles VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       )
       .run(
         profileId,
@@ -117,6 +117,12 @@ test('domain tables support a basic insert/select roundtrip', async () => {
         '[]',
         '[]',
         null,
+        null,
+        0,
+        0,
+        null,
+        null,
+        '[]',
       );
     const row = await store.db.prepare('SELECT * FROM talent_profiles WHERE id = ?').get(profileId);
     assert.equal(row.user_id, user);

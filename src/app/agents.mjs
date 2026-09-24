@@ -12,6 +12,7 @@ import { readAIRules, enforceFeature } from './aiRules.mjs';
 import { collectAgentSources } from './agentSources.mjs';
 import { TRANSITIONS, TERMINAL } from './goals.mjs';
 import { upsertIntelligenceResult } from './intelligence.mjs';
+import { createRecommendation } from './recommendations.mjs';
 
 const messageInput = z
   .object({
@@ -810,6 +811,17 @@ const agents = {
         conclusion,
         summary: summaryFacts,
       });
+      let recommendation = null;
+      if (suggestedStage) {
+        recommendation = await createRecommendation(ctx.store, {
+          workspaceId: ctx.workspace.id,
+          subjectKind: 'goal',
+          subjectId: goal.id,
+          agentId: 'goal-advisor',
+          title: `Move "${goal.title}" to "${suggestedStage}"`,
+          rationale: summaryFacts,
+        });
+      }
       if (!deps.aiProvider) {
         return {
           response: `${summaryFacts}${
@@ -820,7 +832,7 @@ const agents = {
                 : ' This goal has reached a terminal stage.'
           } (AI is not configured, so this is a deterministic summary only.)`,
           toolCalls: [],
-          evidence: { goalId: goal.id, stage, actionCount: actions.length, done, method: 'template-only', modelRegistryId: model.id },
+          evidence: { goalId: goal.id, stage, actionCount: actions.length, done, method: 'template-only', modelRegistryId: model.id, recommendationId: recommendation?.id ?? null },
         };
       }
       const result = await deps.aiProvider.review(
@@ -847,6 +859,7 @@ const agents = {
           allowedNextStages: allowedNext,
           modelRegistryId: model.id,
           responseId: result.responseId,
+          recommendationId: recommendation?.id ?? null,
         },
       };
     },

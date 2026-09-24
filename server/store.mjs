@@ -1105,6 +1105,79 @@ export async function openStore(filename, { poolMax } = {}) {
       detected_at TEXT NOT NULL, resolved INTEGER NOT NULL DEFAULT 0
     );
     CREATE INDEX IF NOT EXISTS intelligence_conflicts_subject ON intelligence_conflicts(workspace_id, subject_kind, subject_id, resolved);`);
+    // Recommendation Lifecycle Manager (spec 20.8 / SI-10): a recommendation an agent makes is a
+    // trackable object with its own state, not just a chat response the user reads once and loses.
+    await client.query(`CREATE TABLE IF NOT EXISTS recommendations (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL, agent_id TEXT NOT NULL,
+      title TEXT NOT NULL, rationale TEXT NOT NULL DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'recommended',
+      scheduled_for TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS recommendations_subject ON recommendations(workspace_id, subject_kind, subject_id, status);`);
+    // Scope Reconciliation (spec 25.1 / PS-07): every save of a scoping case snapshots the prior
+    // state as a new version, so "what changed between scope versions and why" is answerable
+    // instead of PATCH silently overwriting the only copy.
+    await client.query(`CREATE TABLE IF NOT EXISTS scope_versions (
+      id TEXT PRIMARY KEY, scoping_case_id TEXT NOT NULL REFERENCES scoping_cases(id),
+      version INTEGER NOT NULL, source TEXT NOT NULL,
+      snapshot TEXT NOT NULL, reason TEXT NOT NULL DEFAULT '',
+      created_by TEXT NOT NULL REFERENCES users(id), created_at TEXT NOT NULL,
+      UNIQUE (scoping_case_id, version)
+    );
+    CREATE INDEX IF NOT EXISTS scope_versions_case ON scope_versions(scoping_case_id, version);`);
+    // Asynchronous Expert Availability (spec 21.5 / EX-04 / PS-06): reviewer eligibility, timezone,
+    // availability, review SLA and urgent/async capability are tracked, not assumed. A red-band
+    // scoping case at 2am is not a dead end — it queues, and this is what lets the queue expose an
+    // honest expected response window instead of a fabricated one.
+    await client.query(`ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS timezone TEXT;
+      ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS async_review_eligible INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS urgent_review_eligible INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS expected_response_hours INTEGER;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS sla_due_at TEXT;
+      ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS seniority TEXT;
+      ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS engagement_models TEXT NOT NULL DEFAULT '[]';`);
+    // Outcome Attribution & Learning (spec 20.9 / SI-11): observed results are recorded with an
+    // explicit attribution strength rather than overstating causality — correlation is not the
+    // same claim as verified-causal, and the schema keeps that distinction instead of collapsing
+    // it into a single "it worked" flag.
+    await client.query(`CREATE TABLE IF NOT EXISTS outcomes (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL,
+      recommendation_id TEXT REFERENCES recommendations(id),
+      description TEXT NOT NULL, attribution_strength TEXT NOT NULL,
+      observed_at TEXT NOT NULL, created_by TEXT NOT NULL REFERENCES users(id), created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS outcomes_subject ON outcomes(workspace_id, subject_kind, subject_id);`);
+    // Expert Context Handoff (spec 19.4/19.7, EX-04): an explicit, inspectable, revocable record of
+    // exactly which objects a client shared with an engaged expert — not implicit trust from being
+    // assigned to the project. Scope references are typed (kind, id) pairs, resolved read-only and
+    // only while the package is active.
+    await client.query(`CREATE TABLE IF NOT EXISTS context_packages (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      project_id TEXT NOT NULL REFERENCES projects(id), expert_user_id TEXT NOT NULL REFERENCES users(id),
+      granted_by TEXT NOT NULL REFERENCES users(id),
+      scope TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'active',
+      created_at TEXT NOT NULL, revoked_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS context_packages_project ON context_packages(project_id, status);`);
+    // Context Transfer & Multi-Party Rules (spec 20.10 / SI-12): "personal" and "organization" are
+    // not a new scope this platform lacks — they are exactly workspace ownership (workspaces.user_id)
+    // versus workspace_members membership, which already exist. What was missing is the explicit,
+    // audited transfer action between two workspaces a user legitimately belongs to; personal
+    // intelligence does not silently become organization-visible merely because the same person is
+    // in both, and this table is the record of every deliberate crossing.
+    await client.query(`CREATE TABLE IF NOT EXISTS context_transfers (
+      id TEXT PRIMARY KEY,
+      source_workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      target_workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      record_kind TEXT NOT NULL, source_record_id TEXT NOT NULL, target_record_id TEXT,
+      action TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'active',
+      performed_by TEXT NOT NULL REFERENCES users(id),
+      created_at TEXT NOT NULL, revoked_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS context_transfers_source ON context_transfers(source_workspace_id, source_record_id);
+    CREATE INDEX IF NOT EXISTS context_transfers_target ON context_transfers(target_workspace_id, status);`);
     await client.query(
       `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),

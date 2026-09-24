@@ -22,6 +22,10 @@ import { mountKyc } from './kyc.mjs';
 import { mountCreationStudio } from './creationStudio.mjs';
 import { mountExpertWatches } from './expertWatches.mjs';
 import { mountIntelligence } from './intelligence.mjs';
+import { mountRecommendations } from './recommendations.mjs';
+import { mountOutcomeAttribution } from './outcomeAttribution.mjs';
+import { mountExpertContextPackage } from './expertContextPackage.mjs';
+import { mountContextTransfer } from './contextTransfer.mjs';
 import {
   mountPayments,
   mountPaystackWebhook,
@@ -1655,6 +1659,10 @@ export async function createApp({
   mountCreationStudio(app, store);
   mountExpertWatches(app, store);
   mountIntelligence(app, store);
+  mountRecommendations(app, store);
+  mountOutcomeAttribution(app, store);
+  mountExpertContextPackage(app, store);
+  mountContextTransfer(app, store);
   mountPayments(app, store, { paymentProvider });
   mountPointsPurchase(app, store, { paymentProvider });
   mountDocuments(app, store);

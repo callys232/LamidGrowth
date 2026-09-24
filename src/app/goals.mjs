@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { markResultsStale } from './intelligence.mjs';
+import { invalidateRecommendations } from './recommendations.mjs';
 
 // Canonical 12-stage goal lifecycle. A goal (= an 'objective' record) starts 'captured' and moves
 // forward; from 'active' onward it may branch across health states (progressing/at_risk/blocked)
@@ -155,6 +157,10 @@ export function mountGoals(app, store) {
         goal.id,
         `${currentStage} → ${input.stage}${input.reason ? `: ${input.reason}` : ''}`,
       );
+      // Change Impact Analyzer: the stage itself changing means any prior intelligence result or
+      // recommendation about this goal was computed against a now-outdated state.
+      await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: goal.id });
+      await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: goal.id });
       return { goalId: goal.id, stage: input.stage, updatedAt: now };
     });
     res.json(result);

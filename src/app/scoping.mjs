@@ -22,6 +22,7 @@ const updateSchema = z
     budgetContext: text(500).optional(),
     timelineContext: text(500).optional(),
     jurisdiction: z.string().trim().max(120).nullish(),
+    reason: text(500).optional(),
   })
   .strict();
 const publishSchema = z
@@ -36,6 +37,87 @@ const jurisdictionRuleSchema = z
   })
   .strict();
 const claimSchema = z.object({ notes: z.string().trim().max(2000).default('') }).strict();
+
+// Field Guidance Contract (spec 21.2 / PS-02): every material scoping field supports four layers —
+// Explain, Example, Suggest for me, Help me decide. Explain/Example are static plain-language
+// content; Help me decide is a small set of targeted questions, not an AI-generated essay; Suggest
+// for me reuses the same deterministic, evidence-based suggestion logic /suggest already used.
+const GUIDANCE_FIELDS = [
+  'objective',
+  'problemStatement',
+  'desiredOutcome',
+  'inScope',
+  'outOfScope',
+  'deliverables',
+  'acceptanceCriteria',
+  'assumptions',
+  'category',
+  'budgetContext',
+  'timelineContext',
+  'jurisdiction',
+];
+const FIELD_GUIDANCE = {
+  objective: {
+    explain: 'The single outcome you want this work to achieve, in plain language — the result you want, not the deliverable itself.',
+    example: 'Get our new product page live and converting visitors into signups.',
+    helpMeDecide: ['What would success look like in one sentence?', 'Who asked for this, and why now?'],
+  },
+  problemStatement: {
+    explain: 'What is currently wrong, missing, or blocking progress — the "why" behind the objective.',
+    example: "Our signup page has a 2% conversion rate and we don't know why visitors are leaving.",
+    helpMeDecide: ['What have you already tried?', 'How do you know this is a problem — what evidence do you have?'],
+  },
+  desiredOutcome: {
+    explain: 'A resolved version of the objective — the state you want to exist once this work is done.',
+    example: 'A signup page with a conversion rate above 5%, verified with two weeks of traffic data.',
+    helpMeDecide: ['How will you know when this is done?', 'Is there a number or state that proves success?'],
+  },
+  inScope: {
+    explain: 'The specific work that is included in this engagement.',
+    example: 'Redesigning the signup form, rewriting the page copy, and adding social proof.',
+    helpMeDecide: ['What must be touched to reach the outcome?', "What would you be disappointed NOT to get?"],
+  },
+  outOfScope: {
+    explain: 'Work that is explicitly excluded, to prevent scope creep and disputes later.',
+    example: 'Backend infrastructure changes and unrelated pages are out of scope.',
+    helpMeDecide: ['What related work should wait for a future phase?', "What might someone assume is included that isn't?"],
+  },
+  deliverables: {
+    explain: 'The concrete artifact(s) the work produces — what you will actually receive.',
+    example: 'A redesigned, deployed signup page and a short report on what changed.',
+    helpMeDecide: ['What will you actually receive at the end?', 'Is it a document, a working feature, or a completed process change?'],
+  },
+  acceptanceCriteria: {
+    explain: 'The testable conditions that must be true for you to accept the deliverable.',
+    example: 'The new page is live, passes accessibility checks, and conversions are tracked in analytics.',
+    helpMeDecide: ['How will you check the work is actually done, not just delivered?', 'What would make you reject it?'],
+  },
+  assumptions: {
+    explain: 'Anything you are taking for granted that, if wrong, would change the scope or cost.',
+    example: 'Assumes our current analytics setup is already tracking conversions correctly.',
+    helpMeDecide: ['What are you assuming is already true or already in place?', 'What would surprise you if it turned out false?'],
+  },
+  category: {
+    explain: 'The professional category this work falls under — helps route it to the right expertise.',
+    example: 'UX/UI design, for a page-redesign objective.',
+    helpMeDecide: ['What kind of specialist would you hire to do this in-house?'],
+  },
+  budgetContext: {
+    explain: "Your budget range or constraint for this work — a range is fine if you're unsure.",
+    example: '$500-1500, flexible if the approach is strongly justified.',
+    helpMeDecide: ['What would you be comfortable spending without a second thought?', 'Is there a hard ceiling?'],
+  },
+  timelineContext: {
+    explain: 'When you need this done, and any hard deadlines.',
+    example: '2-3 weeks, no hard deadline but sooner is better.',
+    helpMeDecide: ['Is there an external event this needs to be ready for?', 'What happens if it takes longer than expected?'],
+  },
+  jurisdiction: {
+    explain: 'The country or region whose laws/regulations apply to this work, if relevant.',
+    example: 'United States — relevant if the work touches legal, financial, or healthcare compliance.',
+    helpMeDecide: ['Does this work involve regulated advice, contracts, or compliance?', 'Where is your business legally based?'],
+  },
+};
 
 // Exported so any content-creation route (not just the scoping-case pre-flow) can apply the same
 // regulated-content check — see isRegulatedContent's use in app.mjs's POST /api/jobs, which has no
@@ -78,6 +160,19 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     return row;
   }
 
+  // Scope Reconciliation: snapshot the case state as a new version on every save, source-tagged so
+  // AI-suggested and human-edited/expert-reviewed changes stay distinguishable (25.1 / PS-07).
+  async function snapshotVersion(caseId, source, snapshot, userId, reason = '') {
+    const existing = await db
+      .prepare('SELECT COALESCE(MAX(version), 0) AS max_version FROM scope_versions WHERE scoping_case_id = ?')
+      .get(caseId);
+    const version = existing.max_version + 1;
+    await db
+      .prepare('INSERT INTO scope_versions VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(randomUUID(), caseId, version, source, JSON.stringify(snapshot), reason, userId, new Date().toISOString());
+    return version;
+  }
+
   app.post('/api/scoping-cases', async (req, res) => {
     const input = createSchema.parse(req.body);
     const id = randomUUID();
@@ -110,6 +205,13 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         'Scoping case started',
         id,
         input.objective.slice(0, 80),
+      );
+      await snapshotVersion(
+        id,
+        'user',
+        { objective: input.objective, problemStatement: input.problemStatement, riskBand },
+        req.user.id,
+        'Case created',
       );
     });
     res.status(201).json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(id));
@@ -179,15 +281,32 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
           now,
           req.params.id,
         );
+      await snapshotVersion(req.params.id, 'user', merged, req.user.id, input.reason || '');
     });
     res.json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(req.params.id));
+  });
+
+  app.get('/api/scoping-cases/:id/versions', async (req, res) => {
+    await caseFor(req.params.id, req.user.id);
+    const rows = await db
+      .prepare('SELECT * FROM scope_versions WHERE scoping_case_id = ? ORDER BY version')
+      .all(req.params.id);
+    res.json(
+      rows.map((row) => ({
+        version: row.version,
+        source: row.source,
+        reason: row.reason,
+        snapshot: JSON.parse(row.snapshot),
+        createdBy: row.created_by,
+        createdAt: row.created_at,
+      })),
+    );
   });
 
   // Deterministic, evidence-based suggestions only — consistent with this codebase's estimator
   // philosophy (src/app/estimator.mjs): never fabricate a plausible-looking figure or paragraph
   // with no basis. Suggestions are returned for the user to accept/edit, never silently applied.
-  app.post('/api/scoping-cases/:id/suggest', async (req, res) => {
-    const existing = await caseFor(req.params.id, req.user.id);
+  async function computeSuggestions(existing) {
     const suggestions = {};
     if (!existing.desired_outcome) {
       suggestions.desiredOutcome = `A resolved version of: "${existing.objective}"`;
@@ -209,7 +328,43 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         suggestions.budgetContext = `Similar "${existing.category}" projects on this platform typically range ${avg('budget_min')}-${avg('budget_max')} USD (based on ${sample.length} prior posts).`;
       }
     }
+    return suggestions;
+  }
+
+  app.post('/api/scoping-cases/:id/suggest', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
+    const suggestions = await computeSuggestions(existing);
     res.json({ suggestions, riskBand: existing.risk_band });
+  });
+
+  const FIELD_TO_COLUMN = {
+    objective: 'objective',
+    problemStatement: 'problem_statement',
+    desiredOutcome: 'desired_outcome',
+    inScope: 'in_scope',
+    outOfScope: 'out_of_scope',
+    deliverables: 'deliverables',
+    acceptanceCriteria: 'acceptance_criteria',
+    assumptions: 'assumptions',
+    category: 'category',
+    budgetContext: 'budget_context',
+    timelineContext: 'timeline_context',
+    jurisdiction: 'jurisdiction',
+  };
+  app.get('/api/scoping-cases/:id/guidance/:field', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
+    const field = req.params.field;
+    if (!GUIDANCE_FIELDS.includes(field)) fail(`Unknown scoping field "${field}".`, 404);
+    const content = FIELD_GUIDANCE[field];
+    const suggestions = await computeSuggestions(existing);
+    res.json({
+      field,
+      explain: content.explain,
+      example: content.example,
+      helpMeDecide: content.helpMeDecide,
+      suggestion: suggestions[field] ?? null,
+      currentValue: existing[FIELD_TO_COLUMN[field]] ?? null,
+    });
   });
 
   app.patch('/api/scoping-cases/:id/publish', async (req, res) => {
@@ -297,8 +452,8 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     );
   });
 
-  // Any qualified expert can see and claim pending review-queue work — this is the async queue
-  // the gap-table asked for, deliberately kept simple (no SLA timers yet, see plan notes).
+  // Any qualified expert can see and claim pending review-queue work — the async queue with a
+  // real, per-claim SLA computed from the claiming expert's own declared response window (21.5).
   app.get('/api/review-queue', async (req, res) => {
     if (!(await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id)))
       return res.status(403).json({ error: 'Only registered experts can view the review queue.' });
@@ -314,7 +469,8 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
   });
 
   app.post('/api/review-queue/:id/claim', async (req, res) => {
-    if (!(await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id)))
+    const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    if (!profile)
       return res
         .status(403)
         .json({ error: 'Only registered experts can claim review queue entries.' });
@@ -324,11 +480,17 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
     if (entry.status !== 'pending')
       return res.status(400).json({ error: 'This entry has already been claimed.' });
+    const claimedAt = new Date();
+    // If this reviewer hasn't declared an expected response window, no SLA is fabricated — the
+    // entry is claimed without one rather than inventing a plausible-looking number.
+    const slaDueAt = profile.expected_response_hours
+      ? new Date(claimedAt.getTime() + profile.expected_response_hours * 60 * 60 * 1000).toISOString()
+      : null;
     await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ? WHERE id = ?",
+        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ?, sla_due_at = ? WHERE id = ?",
       )
-      .run(req.user.id, new Date().toISOString(), entry.id);
+      .run(req.user.id, claimedAt.toISOString(), slaDueAt, entry.id);
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
   });
 

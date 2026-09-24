@@ -71,6 +71,20 @@ export async function upsertIntelligenceResult(
   });
 }
 
+// Change Impact Analyzer's write side (spec 20.5 / SI-06): when the subject itself materially
+// changes (e.g. a goal's lifecycle stage moves), any previously-computed result about that subject
+// is no longer trustworthy as current — it is marked stale (expired) rather than silently left
+// looking fresh. Callers that read via GET /intelligence-results will simply no longer see it.
+export async function markResultsStale(store, { workspaceId, subjectKind, subjectId }) {
+  const now = new Date().toISOString();
+  const result = await store.db
+    .prepare(
+      'UPDATE intelligence_results SET expires_at = ? WHERE workspace_id = ? AND subject_kind = ? AND subject_id = ? AND expires_at > ?',
+    )
+    .run(now, workspaceId, subjectKind, subjectId, now);
+  return result.changes;
+}
+
 const querySchema = z
   .object({ subjectKind: z.string().trim().min(1).max(80), subjectId: z.string().trim().min(1).max(200) })
   .strict();

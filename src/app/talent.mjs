@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { wordSet, scoreBid } from './text.mjs';
-import { DOMAINS, FUNCTIONS, INDUSTRIES } from './expertiseTaxonomy.mjs';
+import { DOMAINS, FUNCTIONS, INDUSTRIES, SENIORITY, ENGAGEMENT_MODELS } from './expertiseTaxonomy.mjs';
 
 const profileSchema = z
   .object({
@@ -21,6 +21,8 @@ const profileSchema = z
     functions: z.array(z.enum(FUNCTIONS)).max(15).default([]),
     industries: z.array(z.enum(INDUSTRIES)).max(10).default([]),
     jurisdiction: z.string().trim().max(120).optional(),
+    seniority: z.enum(SENIORITY).optional(),
+    engagementModels: z.array(z.enum(ENGAGEMENT_MODELS)).max(ENGAGEMENT_MODELS.length).default([]),
   })
   .strict();
 const vettingDecisionSchema = z.object({ decision: z.enum(['verified', 'rejected']) }).strict();
@@ -147,6 +149,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           domains: JSON.parse(row.domains),
           functions: JSON.parse(row.functions),
           industries: JSON.parse(row.industries),
+          engagementModels: JSON.parse(row.engagement_models),
         }
       : null;
   }
@@ -169,7 +172,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           .prepare(
             `UPDATE talent_profiles SET headline = ?, skills = ?, experience_years = ?, availability = ?,
            hourly_rate = ?, currency = ?, location = ?, languages = ?, portfolio_url = ?,
-           domains = ?, functions = ?, industries = ?, jurisdiction = ?, updated_at = ?
+           domains = ?, functions = ?, industries = ?, jurisdiction = ?, seniority = ?, engagement_models = ?, updated_at = ?
            WHERE user_id = ?`,
           )
           .run(
@@ -186,6 +189,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
             JSON.stringify(input.functions),
             JSON.stringify(input.industries),
             input.jurisdiction ?? null,
+            input.seniority ?? null,
+            JSON.stringify(input.engagementModels),
             now,
             req.user.id,
           );
@@ -193,8 +198,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         await db
           .prepare(
             `INSERT INTO talent_profiles
-           (id, user_id, headline, skills, experience_years, availability, hourly_rate, currency, created_at, updated_at, location, languages, portfolio_url, vetting_status, domains, functions, industries, jurisdiction)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?, ?)`,
+           (id, user_id, headline, skills, experience_years, availability, hourly_rate, currency, created_at, updated_at, location, languages, portfolio_url, vetting_status, domains, functions, industries, jurisdiction, seniority, engagement_models)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, ?, ?, ?, ?, ?)`,
           )
           .run(
             randomUUID(),
@@ -214,6 +219,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
             JSON.stringify(input.functions),
             JSON.stringify(input.industries),
             input.jurisdiction ?? null,
+            input.seniority ?? null,
+            JSON.stringify(input.engagementModels),
           );
       }
       await log(
@@ -228,6 +235,34 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   });
 
   app.get('/api/talent/profile/mine', async (req, res) => {
+    res.json(await profileFor(req.user.id));
+  });
+
+  // Asynchronous Expert Availability (21.5 / EX-04): declared once, used to compute a real SLA the
+  // moment this expert claims a review-queue entry (see scoping.mjs's claim route).
+  app.patch('/api/talent/profile/review-availability', async (req, res) => {
+    const profile = await profileFor(req.user.id);
+    if (!profile) return res.status(404).json({ error: 'Create a talent profile before setting review availability.' });
+    const input = z
+      .object({
+        timezone: z.string().trim().max(60).optional(),
+        asyncReviewEligible: z.boolean().optional(),
+        urgentReviewEligible: z.boolean().optional(),
+        expectedResponseHours: z.number().int().positive().max(720).nullable().optional(),
+      })
+      .strict()
+      .parse(req.body);
+    await db
+      .prepare(
+        'UPDATE talent_profiles SET timezone = ?, async_review_eligible = ?, urgent_review_eligible = ?, expected_response_hours = ? WHERE user_id = ?',
+      )
+      .run(
+        input.timezone ?? profile.timezone ?? null,
+        input.asyncReviewEligible === undefined ? profile.async_review_eligible : (input.asyncReviewEligible ? 1 : 0),
+        input.urgentReviewEligible === undefined ? profile.urgent_review_eligible : (input.urgentReviewEligible ? 1 : 0),
+        input.expectedResponseHours === undefined ? profile.expected_response_hours : input.expectedResponseHours,
+        req.user.id,
+      );
     res.json(await profileFor(req.user.id));
   });
 

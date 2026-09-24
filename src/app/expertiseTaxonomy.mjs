@@ -38,6 +38,23 @@ export const FUNCTIONS = [
   'Content strategy',
 ];
 
+// Seniority and Engagement axes (spec 19.2) — the two axes of the expertise ontology that had no
+// representation anywhere in the domain model; everything else (domain/function/industry/
+// jurisdiction/evidence/availability) already existed on talent_profiles.
+export const SENIORITY = ['Specialist', 'Senior specialist', 'Lead', 'Executive', 'Fractional leader'];
+
+export const ENGAGEMENT_MODELS = [
+  'Advisory',
+  'Project',
+  'Milestone',
+  'Retainer',
+  'Fractional',
+  'Workshop',
+  'Coaching',
+  'Assessment',
+  'Expert pod',
+];
+
 export const INDUSTRIES = [
   'Financial services',
   'Fintech',
