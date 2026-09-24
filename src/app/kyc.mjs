@@ -1,9 +1,45 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 
 const EVIDENCE_KINDS = ['government_id', 'proof_of_address', 'business_registration', 'other'];
 
-const createSchema = z.object({ provider: z.string().trim().max(120).default('manual') }).strict();
+const createSchema = z
+  .object({
+    provider: z.string().trim().max(120).default('manual'),
+    // Real-life shape: the applicant/session id a KYC vendor's SDK hands back when a verification
+    // session is started client-side. Recorded now so a later webhook can be correlated to
+    // exactly this case (see mountKycWebhook) — never left for the webhook to invent or guess.
+    providerReference: z.string().trim().min(1).max(200).optional(),
+  })
+  .strict();
+
+// SEC-03: a real KYC vendor integration (Sumsub, per the vendor evaluation covered in this
+// session) is not something a coding session can complete — it needs the account/API keys that
+// only the business holder can create. What this DOES build is the governed contract that
+// integration plugs into: signed, deduplicated, reference-correlated webhook processing that
+// mirrors the same pattern already proven for the Paystack payment webhook. The exact header
+// name and signing scheme below (HMAC-SHA256 over the raw body, hex-encoded) is a defensible,
+// common default — confirm it against the real vendor's webhook docs before flipping this on in
+// production, the same way paystackProvider's scheme was confirmed against Paystack's own docs.
+export function genericKycProvider({
+  name = 'sumsub',
+  secretKey = process.env.KYC_WEBHOOK_SECRET,
+  signatureHeader = 'x-kyc-signature',
+} = {}) {
+  if (!secretKey) return null;
+  return {
+    name,
+    signatureHeader,
+    verifyWebhookSignature(rawBody, signatureValue) {
+      if (!signatureValue || !rawBody) return false;
+      const expected = createHmac('sha256', secretKey).update(rawBody).digest('hex');
+      const expectedBuffer = Buffer.from(expected, 'utf8');
+      const providedBuffer = Buffer.from(String(signatureValue), 'utf8');
+      if (expectedBuffer.length !== providedBuffer.length) return false;
+      return timingSafeEqual(expectedBuffer, providedBuffer);
+    },
+  };
+}
 const evidenceSchema = z
   .object({ kind: z.enum(EVIDENCE_KINDS), fileId: z.string().uuid() })
   .strict();
@@ -39,12 +75,22 @@ export function mountKyc(app, store, { ecosystemAdminEmails = [] } = {}) {
     if (openExisting) fail('You already have a pending KYC case. Add evidence to it instead of starting another.', 409);
     const id = randomUUID();
     const now = new Date().toISOString();
-    await transaction(async () => {
-      await db
-        .prepare('INSERT INTO kyc_cases VALUES (?, ?, ?, ?, ?, ?)')
-        .run(id, req.user.id, 'pending', input.provider, now, now);
-      await log(req.workspace.id, req.user.name, 'KYC case opened', id, input.provider);
-    });
+    try {
+      await transaction(async () => {
+        await db
+          .prepare(
+            'INSERT INTO kyc_cases (id, user_id, status, provider, created_at, updated_at, provider_reference) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          )
+          .run(id, req.user.id, 'pending', input.provider, now, now, input.providerReference || null);
+        await log(req.workspace.id, req.user.name, 'KYC case opened', id, input.provider);
+      });
+    } catch (error) {
+      // kyc_cases_provider_reference (provider, provider_reference) — the vendor's session id is
+      // already tied to a case; this should never happen for a genuine new session.
+      if (error.code === '23505')
+        fail('This verification session is already linked to a KYC case.', 409);
+      throw error;
+    }
     res.status(201).json(await withEvidence(await ownCaseFor(id, req.user.id)));
   });
 
@@ -99,6 +145,70 @@ export function mountKyc(app, store, { ecosystemAdminEmails = [] } = {}) {
       await log(req.workspace.id, req.user.name, `KYC case ${input.decision}`, kycCase.id, input.notes);
     });
     res.json(await withEvidence(await db.prepare('SELECT * FROM kyc_cases WHERE id = ?').get(kycCase.id)));
+  });
+}
+
+const webhookDecisionSchema = z
+  .object({
+    reference: z.string().trim().min(1).max(200),
+    decision: z.enum(['verified', 'rejected']),
+    notes: z.string().trim().max(2000).optional().default(''),
+  })
+  .strict();
+
+// SEC-03: the governed callback contract itself. Structurally mirrors mountPaystackWebhook:
+// signature-verified, deduplicated by (provider, provider_event_id), and — the part specific to
+// this being an identity decision rather than a payment — a webhook can only ever act on the one
+// case its signed payload's `reference` was issued for, looked up by that reference rather than
+// any client- or webhook-suppliable case id, and only while that case is still 'pending'. A
+// verified provider webhook is treated as an equivalent, auditable substitute for the manual
+// admin PATCH /api/admin/kyc/cases/:id/decision path, not a separate trust tier.
+export function mountKycWebhook(app, store, deps) {
+  const { db, transaction } = store;
+  app.post('/api/webhooks/kyc', async (req, res) => {
+    const provider = deps.kycProvider?.();
+    if (!provider) return res.status(503).json({ error: 'No KYC provider is configured.' });
+    const signature = req.headers[provider.signatureHeader];
+    if (!provider.verifyWebhookSignature(req.rawBody, signature))
+      return res.status(401).json({ error: 'Invalid webhook signature.' });
+
+    let payload;
+    try {
+      payload = webhookDecisionSchema.parse((req.body || {}).data || req.body);
+    } catch {
+      return res.status(400).json({ error: 'Malformed webhook payload.' });
+    }
+    const eventId = String(req.body?.eventId || payload.reference);
+
+    const deduplicated = await transaction(async () => {
+      const claimed = await db
+        .prepare(
+          'INSERT INTO kyc_webhook_events VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_event_id) DO NOTHING RETURNING *',
+        )
+        .get(
+          randomUUID(),
+          provider.name,
+          req.body?.event || 'verification.decided',
+          eventId,
+          JSON.stringify(req.body),
+          new Date().toISOString(),
+        );
+      if (!claimed) return true;
+      const kycCase = await db
+        .prepare(
+          "SELECT * FROM kyc_cases WHERE provider = ? AND provider_reference = ? AND status = 'pending'",
+        )
+        .get(provider.name, payload.reference);
+      if (!kycCase) return false;
+      const now = new Date().toISOString();
+      await db
+        .prepare('UPDATE kyc_cases SET status = ?, updated_at = ? WHERE id = ?')
+        .run(payload.decision, now, kycCase.id);
+      if (payload.decision === 'verified')
+        await db.prepare('UPDATE users SET kyc_verified_at = ? WHERE id = ?').run(now, kycCase.user_id);
+      return false;
+    });
+    res.status(200).json({ ok: true, ...(deduplicated ? { deduplicated: true } : {}) });
   });
 }
 

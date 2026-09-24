@@ -18,7 +18,7 @@ import { mountGoals } from './goals.mjs';
 import { mountGrowth } from './growth.mjs';
 import { mountSignals } from './signals.mjs';
 import { mountFiles } from './files.mjs';
-import { mountKyc } from './kyc.mjs';
+import { mountKyc, mountKycWebhook, genericKycProvider } from './kyc.mjs';
 import { mountCreationStudio } from './creationStudio.mjs';
 import { mountExpertWatches } from './expertWatches.mjs';
 import { mountIntelligence } from './intelligence.mjs';
@@ -169,6 +169,7 @@ export async function createApp({
   aiProvider = defaultAiProvider(),
   paymentProvider = (name) =>
     name === 'paystack' ? paystackProvider() : name === 'crypto_usdt' ? cryptoUsdtProvider() : null,
+  kycProvider = () => genericKycProvider(),
   ecosystemAdminEmails = (process.env.ECOSYSTEM_ADMIN_EMAILS || '')
     .split(',')
     .map((email) => email.trim().toLowerCase())
@@ -313,6 +314,7 @@ export async function createApp({
     }),
   );
   mountPaystackWebhook(app, store, { paymentProvider });
+  mountKycWebhook(app, store, { kycProvider });
   app.use('/api', apiLimiter);
   app.use('/api/auth', (req, res, next) => {
     if (req.method === 'GET') return next();
@@ -374,6 +376,7 @@ export async function createApp({
     publicOrigin,
     welcomeIpVelocityLimit,
     errorLogger,
+    ecosystemAdminEmails,
   });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
@@ -434,6 +437,33 @@ export async function createApp({
   app.post('/api/auth/logout', async (req, res) => {
     await db.prepare('DELETE FROM sessions WHERE token = ?').run(digest(req.token));
     res.clearCookie('lamid_session', { path: '/' });
+    res.json({ ok: true });
+  });
+  // SEC-01: TOTP MFA enrollment/confirmation/disable. Placed here, after the session-auth
+  // middleware above, unlike accounts.mjs's own routes — a route registered inside mountAccounts
+  // runs before that middleware and would never see req.user (the exact bug the AU-03 tier route
+  // hit and was moved to fix).
+  app.get('/api/mfa/status', async (req, res) => res.json(await accounts.mfa.status(req.user.id)));
+  app.post('/api/mfa/enroll', async (req, res) => {
+    if (req.user.demo) return res.status(403).json({ error: 'Sample accounts cannot enroll MFA.' });
+    res.json(await accounts.mfa.enroll(req.user.id, req.user.email || req.user.name));
+  });
+  app.post('/api/mfa/confirm', async (req, res) => {
+    const input = z.object({ code: z.string().min(6).max(6) }).strict().parse(req.body);
+    const result = await accounts.mfa.confirm(req.user.id, input.code);
+    if (!result)
+      return res.status(400).json({
+        error: 'No pending enrollment matches, or the code is incorrect. Start enrollment again.',
+      });
+    await log(req.workspace.id, req.user.name, 'MFA enabled', req.user.id, 'TOTP confirmed');
+    res.json({ ok: true, ...result });
+  });
+  app.post('/api/mfa/disable', async (req, res) => {
+    const input = z.object({ password: z.string().max(128) }).strict().parse(req.body);
+    if (!(await verifyCurrentPassword(req, input.password)))
+      return res.status(403).json({ error: 'Your password is incorrect.' });
+    await accounts.mfa.disable(req.user.id);
+    await log(req.workspace.id, req.user.name, 'MFA disabled', req.user.id, 'Removed by account owner');
     res.json({ ok: true });
   });
   app.get('/api/admin/welcome-rewards', async (req, res) => {
@@ -498,6 +528,33 @@ export async function createApp({
         );
     });
     res.json({ ok: true });
+  });
+  // AU-03: the single authorized source of truth for a workspace's paid/verified tier. Nothing
+  // else in this codebase may set `tier` — not signup, not audience-context selection, not any
+  // other route — so an enterprise entitlement always traces back to an explicit ecosystem-admin
+  // decision (or, once wired, a real billing/subscription event that would call this same path).
+  app.post('/api/admin/workspaces/:id/tier', async (req, res) => {
+    if (!ecosystemAdminEmails.includes((req.user.email || '').toLowerCase()))
+      return res
+        .status(403)
+        .json({ error: 'Only an ecosystem administrator can change a workspace tier.' });
+    const input = z
+      .object({ tier: z.enum(['individual', 'team', 'enterprise']), mfaCode: z.string().max(64).optional() })
+      .strict()
+      .parse(req.body);
+    // SEC-01 step-up: an admin who has enrolled MFA must re-prove it for this action; an admin
+    // who has never enrolled is let through (see accounts.mfa.verifyStepUp) so rollout doesn't
+    // lock anyone out before they've had a chance to set it up.
+    if (!(await accounts.mfa.verifyStepUp(req.user.id, input.mfaCode)))
+      return res.status(401).json({ error: 'A valid authentication code is required for this action.' });
+    const workspaceRow = await db.prepare('SELECT id FROM workspaces WHERE id = ?').get(req.params.id);
+    if (!workspaceRow) return res.status(404).json({ error: 'Workspace not found.' });
+    const memberLimit = input.tier === 'enterprise' ? enterpriseMemberLimit : input.tier === 'team' ? 10 : 1;
+    await db
+      .prepare('UPDATE workspaces SET tier = ?, member_limit = ? WHERE id = ?')
+      .run(input.tier, memberLimit, workspaceRow.id);
+    await log(workspaceRow.id, req.user.name, 'Workspace tier changed by admin', workspaceRow.id, input.tier);
+    res.json({ id: workspaceRow.id, tier: input.tier, memberLimit });
   });
   app.get('/api/admin/operations', async (req, res) => {
     if (!ecosystemAdminEmails.includes(req.user.email))
@@ -912,6 +969,11 @@ export async function createApp({
   const deleteUser = async (userId, actorId) => {
     const workspaces = await db.prepare('SELECT id FROM workspaces WHERE user_id = ?').all(userId);
     await transaction(async () => {
+      // SEC-02: points_ledger/audit rows are otherwise append-only and immutable at the database
+      // level (see server/store.mjs triggers) — this Lamid-admin-only purge is the sole
+      // legitimate path allowed to physically destroy them, and it does so only for the duration
+      // of this transaction.
+      await db.exec("SET LOCAL app.allow_purge = 'on'");
       // Remove the account's draft commercial work; preserve other users' point history.
       await db
         .prepare(
@@ -983,6 +1045,7 @@ export async function createApp({
       .object({
         confirmation: z.literal('DELETE USER ACCOUNT'),
         password: z.string().max(128),
+        mfaCode: z.string().max(64).optional(),
       })
       .strict()
       .parse(req.body);
@@ -992,6 +1055,9 @@ export async function createApp({
         .json({ error: 'Only an ecosystem administrator can permanently delete accounts.' });
     if (!(await verifyCurrentPassword(req, input.password)))
       return res.status(403).json({ error: 'Your administrator password is incorrect.' });
+    // SEC-01 step-up: same progressive-enrollment policy as the tier-grant route above.
+    if (!(await accounts.mfa.verifyStepUp(req.user.id, input.mfaCode)))
+      return res.status(401).json({ error: 'A valid authentication code is required for this action.' });
     const target = await db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.id);
     if (!target) return res.status(404).json({ error: 'User account not found.' });
     await deleteUser(target.id, req.user.id);
@@ -1331,6 +1397,48 @@ export async function createApp({
       await log(req.workspace.id, req.user.name, 'Workspace updated', req.workspace.id, input.name);
     });
     res.json({ ok: true });
+  });
+  // AU-02: organization hierarchy — a workspace with workspace:manage permission can create and
+  // oversee child workspaces (e.g. a global org creating per-country workspaces). This is the
+  // real, buildable part of AU-02; SSO/SCIM federation across an org's own identity provider is
+  // explicitly out of scope here — that requires the org's actual IdP account/credentials, not
+  // more code.
+  app.post('/api/workspace/children', requirePermission('workspace:manage'), async (req, res) => {
+    const input = z
+      .object({ name: text.max(100), context: contexts })
+      .strict()
+      .parse(req.body);
+    const childId = randomUUID();
+    await transaction(async () => {
+      await db
+        .prepare(
+          `INSERT INTO workspaces (id, user_id, name, context, tier, member_limit, parent_workspace_id, created_at)
+           VALUES (?, ?, ?, ?, 'individual', 1, ?, ?)`,
+        )
+        .run(childId, req.user.id, input.name, input.context, req.workspace.id, new Date().toISOString());
+      await db
+        .prepare('INSERT INTO workspace_members VALUES (?, ?, ?, ?, ?)')
+        .run(childId, req.user.id, 'owner', 'active', Date.now());
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Child workspace created',
+        childId,
+        input.name,
+      );
+    });
+    res.status(201).json(await db.prepare('SELECT * FROM workspaces WHERE id = ?').get(childId));
+  });
+  app.get('/api/workspace/children', requirePermission('workspace:manage'), async (req, res) => {
+    res.json(
+      await db
+        .prepare(
+          `SELECT w.id, w.name, w.context, w.tier, w.member_limit AS "memberLimit", w.created_at AS "createdAt",
+                  (SELECT COUNT(*) FROM workspace_members wm WHERE wm.workspace_id = w.id AND wm.status = 'active') AS "memberCount"
+           FROM workspaces w WHERE w.parent_workspace_id = ? ORDER BY w.created_at`,
+        )
+        .all(req.workspace.id),
+    );
   });
   app.post('/api/objectives', async (req, res) => {
     const input = objectiveSchema.parse(req.body);

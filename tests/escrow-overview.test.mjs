@@ -117,7 +117,10 @@ async function fundAMilestone(amount) {
     client,
   );
   const fund = await request(`/milestones/${milestone.data.id}/fund`, {}, client);
-  const event = { event: 'charge.success', data: { reference: fund.data.reference } };
+  const event = {
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+  };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
   await fetch(`${base}/api/webhooks/paystack`, {

@@ -88,7 +88,7 @@ test('domain tables support a basic insert/select roundtrip', async () => {
       .prepare('INSERT INTO users (id, name, created_at) VALUES (?, ?, ?)')
       .run(user, 'Owner', new Date().toISOString());
     await store.db
-      .prepare('INSERT INTO workspaces VALUES (?, ?, ?, ?, ?, ?)')
+      .prepare('INSERT INTO workspaces (id, user_id, name, context, tier, member_limit) VALUES (?, ?, ?, ?, ?, ?)')
       .run(workspace, user, 'Test', 'Professional', 'individual', 1);
 
     const profileId = randomUUID();

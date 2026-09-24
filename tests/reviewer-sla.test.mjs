@@ -46,8 +46,19 @@ async function signup() {
   return result.cookie;
 }
 async function makeExpert(cookie) {
-  const profile = await request('/talent/profile', { headline: 'Reviewer', skills: ['Compliance'] }, cookie);
+  const profile = await request(
+    '/talent/profile',
+    { headline: 'Reviewer', skills: ['Compliance'], domains: ['Legal and compliance'] },
+    cookie,
+  );
   assert.equal(profile.status, 200);
+  // F-SC-02: the review queue is eligibility-gated (verified + matching declared domain) —
+  // elevate this fixture reviewer directly, the same shortcut other tests use for admin-gated
+  // state.
+  const state = await request('/state', undefined, cookie, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(state.data.user.id);
   return cookie;
 }
 

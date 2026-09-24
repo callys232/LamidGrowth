@@ -107,7 +107,16 @@ async function downgradeToIndividual(cookie) {
 }
 
 async function fireWebhook(reference) {
-  const event = { event: 'charge.success', data: { reference } };
+  // PAY-02: the webhook handler now checks the reported amount/currency against what was
+  // actually dispatched to the provider — read it back rather than guess, since a bundle/points
+  // purchase may have gone through FX conversion (see payments.mjs) before Paystack ever saw it.
+  const purchase = await store.db
+    .prepare('SELECT provider_amount_minor, provider_currency FROM points_purchases WHERE provider_reference = ?')
+    .get(reference);
+  const event = {
+    event: 'charge.success',
+    data: { reference, amount: purchase.provider_amount_minor, currency: purchase.provider_currency },
+  };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
   const response = await fetch(`${base}/api/webhooks/paystack`, {

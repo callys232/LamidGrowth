@@ -27,6 +27,18 @@ export function mountHandoff(app, store) {
     if (!row) fail('Handoff not found.', 404);
     return row;
   }
+  // EX-02 fix: an unassigned handoff is only claimable by a registered expert, never by any
+  // signed-in account. A routed (target_user_id set) handoff is only claimable by that exact
+  // user. This same rule applies to accept AND decline — declining requires the same eligibility
+  // as accepting, since it exposes the same context snapshot.
+  async function requireEligible(handoff, userId) {
+    if (handoff.target_user_id) {
+      if (handoff.target_user_id !== userId) fail('This handoff was routed to a different expert.', 403);
+      return;
+    }
+    const expert = await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(userId);
+    if (!expert) fail('Only a registered expert can act on an unassigned handoff.', 403);
+  }
 
   app.post('/api/handoffs', async (req, res) => {
     const input = createSchema.parse(req.body);
@@ -61,8 +73,12 @@ export function mountHandoff(app, store) {
   });
 
   // Open pool for experts: unassigned pending handoffs any qualified expert can pick up, plus
-  // anything already routed to them by user_id.
+  // anything already routed to them by user_id. Visibility itself is gated to registered experts
+  // — an unrelated signed-in account with no expert profile must not see another workspace's
+  // context snapshot at all, not merely be blocked from acting on it.
   app.get('/api/handoffs/inbox', async (req, res) => {
+    const expert = await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    if (!expert) return res.status(403).json({ error: 'Only registered experts can view the handoff inbox.' });
     res.json(
       await db
         .prepare(
@@ -76,8 +92,7 @@ export function mountHandoff(app, store) {
     const handoff = await handoffFor(req.params.id);
     if (handoff.status !== 'pending')
       return res.status(400).json({ error: 'This handoff is no longer pending.' });
-    if (handoff.target_user_id && handoff.target_user_id !== req.user.id)
-      return res.status(403).json({ error: 'This handoff was routed to a different expert.' });
+    await requireEligible(handoff, req.user.id);
     await transaction(async () => {
       await db
         .prepare(
@@ -92,6 +107,7 @@ export function mountHandoff(app, store) {
     const handoff = await handoffFor(req.params.id);
     if (handoff.status !== 'pending')
       return res.status(400).json({ error: 'This handoff is no longer pending.' });
+    await requireEligible(handoff, req.user.id);
     await db
       .prepare("UPDATE handoffs SET status = 'declined', resolved_at = ? WHERE id = ?")
       .run(new Date().toISOString(), handoff.id);

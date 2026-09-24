@@ -1178,6 +1178,131 @@ export async function openStore(filename, { poolMax } = {}) {
     );
     CREATE INDEX IF NOT EXISTS context_transfers_source ON context_transfers(source_workspace_id, source_record_id);
     CREATE INDEX IF NOT EXISTS context_transfers_target ON context_transfers(target_workspace_id, status);`);
+    // SEC-02: financial ledger and audit evidence must resist ordinary application bugs and
+    // malicious/accidental deletion — no everyday code path may delete a row or alter its
+    // financial/audit fields. The one legitimate exception is a full, Lamid-admin-only account
+    // purge (src/app/app.mjs deleteUser), which physically destroys these rows on request; that
+    // path sets the session-local app.allow_purge flag immediately before deleting, and only
+    // then do the triggers stand aside. CREATE OR REPLACE/DROP TRIGGER IF EXISTS are all
+    // idempotent, safe to run unconditionally on every startup.
+    await client.query(`
+      CREATE OR REPLACE FUNCTION prevent_ledger_delete() RETURNS TRIGGER AS $$
+      BEGIN
+        IF current_setting('app.allow_purge', true) = 'on' THEN
+          RETURN OLD;
+        END IF;
+        RAISE EXCEPTION 'points_ledger rows are append-only and cannot be deleted';
+      END;
+      $$ LANGUAGE plpgsql;
+      CREATE OR REPLACE FUNCTION prevent_ledger_tamper() RETURNS TRIGGER AS $$
+      BEGIN
+        -- The purge path also needs to null points_ledger.workspace_id on OTHER users' rows
+        -- when their workspace is deleted (the column has a FK to workspaces(id), and those
+        -- rows are not the deleted account's own — they must be detached, not destroyed). Even
+        -- during a purge, only the identity-link columns may move; the financial fields stay
+        -- immutable no matter what.
+        IF current_setting('app.allow_purge', true) = 'on'
+           AND NEW.amount IS NOT DISTINCT FROM OLD.amount
+           AND NEW.reason IS NOT DISTINCT FROM OLD.reason
+           AND NEW.reference_id IS NOT DISTINCT FROM OLD.reference_id
+           AND NEW.created_at IS NOT DISTINCT FROM OLD.created_at
+        THEN
+          RETURN NEW;
+        END IF;
+        RAISE EXCEPTION 'points_ledger rows are immutable and cannot be updated';
+      END;
+      $$ LANGUAGE plpgsql;
+      DROP TRIGGER IF EXISTS points_ledger_no_delete ON points_ledger;
+      CREATE TRIGGER points_ledger_no_delete BEFORE DELETE ON points_ledger
+        FOR EACH ROW EXECUTE FUNCTION prevent_ledger_delete();
+      DROP TRIGGER IF EXISTS points_ledger_no_tamper ON points_ledger;
+      CREATE TRIGGER points_ledger_no_tamper BEFORE UPDATE ON points_ledger
+        FOR EACH ROW EXECUTE FUNCTION prevent_ledger_tamper();
+
+      CREATE OR REPLACE FUNCTION prevent_audit_delete() RETURNS TRIGGER AS $$
+      BEGIN
+        IF current_setting('app.allow_purge', true) = 'on' THEN
+          RETURN OLD;
+        END IF;
+        RAISE EXCEPTION 'audit rows are append-only and cannot be deleted';
+      END;
+      $$ LANGUAGE plpgsql;
+      CREATE OR REPLACE FUNCTION prevent_audit_tamper() RETURNS TRIGGER AS $$
+      BEGIN
+        RAISE EXCEPTION 'audit rows are immutable and cannot be updated';
+      END;
+      $$ LANGUAGE plpgsql;
+      DROP TRIGGER IF EXISTS audit_no_delete ON audit;
+      CREATE TRIGGER audit_no_delete BEFORE DELETE ON audit
+        FOR EACH ROW EXECUTE FUNCTION prevent_audit_delete();
+      DROP TRIGGER IF EXISTS audit_no_tamper ON audit;
+      CREATE TRIGGER audit_no_tamper BEFORE UPDATE ON audit
+        FOR EACH ROW EXECUTE FUNCTION prevent_audit_tamper();
+    `);
+    // SEC-01: TOTP-based MFA and step-up verification for high-risk actions. The secret is
+    // stored AES-256-GCM encrypted (never in plaintext) using the same account security key
+    // already used to encrypt outbound mail; recovery codes are stored only as salted hashes,
+    // consistent with how passwords are never stored in recoverable form elsewhere in this schema.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS mfa_secrets (
+        user_id TEXT PRIMARY KEY REFERENCES users(id),
+        secret_encrypted TEXT NOT NULL,
+        confirmed_at BIGINT,
+        created_at BIGINT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS mfa_recovery_codes (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id),
+        code_hash TEXT NOT NULL,
+        used_at BIGINT,
+        created_at BIGINT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS mfa_recovery_codes_user ON mfa_recovery_codes(user_id, used_at);
+    `);
+    // PAY-02: points purchases can be charged to Paystack in a converted currency/amount (see
+    // the FX comment in src/app/payments.mjs) that differs from the canonical USD figures this
+    // table already stores — so a webhook can only validate "does the provider's reported amount
+    // match what we actually asked it to charge" against these, not against amount_minor/currency.
+    await client.query(`
+      ALTER TABLE points_purchases ADD COLUMN IF NOT EXISTS provider_amount_minor INTEGER;
+      ALTER TABLE points_purchases ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+    `);
+    // AU-02: organization hierarchy. A parent workspace (e.g. "UNICEF Global") can own child
+    // workspaces (e.g. country offices) it creates directly — which requires relaxing the old
+    // "one self-owned workspace per user" UNIQUE constraint, since the same admin who owns the
+    // parent becomes the owner-of-record for each child it creates too. This is purely additive:
+    // every existing single-workspace user is completely unaffected, and workspace_members
+    // (which already allowed one user to belong to many workspaces) is untouched.
+    await client.query(`
+      ALTER TABLE workspaces DROP CONSTRAINT IF EXISTS workspaces_user_id_key;
+      CREATE INDEX IF NOT EXISTS workspaces_user_id ON workspaces(user_id);
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS parent_workspace_id TEXT REFERENCES workspaces(id);
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS created_at TEXT;
+      CREATE INDEX IF NOT EXISTS workspaces_parent ON workspaces(parent_workspace_id);
+    `);
+    // SEC-03: a governed contract for a real KYC provider's verification-result callback,
+    // mirroring the same signature-verified, deduplicated webhook pattern already proven for
+    // Paystack (see mountPaystackWebhook). provider_reference correlates an inbound webhook to
+    // exactly one case — the webhook can never target a case by a client-suppliable case id, only
+    // by the reference issued when the case was opened, so a forged or replayed callback cannot
+    // decide an arbitrary case even before signature verification is considered.
+    await client.query(`
+      ALTER TABLE kyc_cases ADD COLUMN IF NOT EXISTS provider_reference TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS kyc_cases_provider_reference
+        ON kyc_cases(provider, provider_reference) WHERE provider_reference IS NOT NULL;
+      CREATE TABLE IF NOT EXISTS kyc_webhook_events (
+        id TEXT PRIMARY KEY, provider TEXT NOT NULL, event_type TEXT NOT NULL,
+        provider_event_id TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL,
+        UNIQUE(provider, provider_event_id)
+      );
+    `);
+    // F-SC-01/F-SC-02 (spec-review audit): a completed review is bound to the exact scope
+    // version it reviewed, so a material edit after review completion invalidates it rather
+    // than letting a red-band case publish on a stale approval. reviewed_version is set only
+    // when a claimed entry is completed.
+    await client.query(`
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS reviewed_version INTEGER;
+    `);
     await client.query(
       `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),

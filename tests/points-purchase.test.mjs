@@ -95,7 +95,22 @@ test('a mocked Paystack checkout, confirmed by webhook, credits exactly the righ
   assert.equal(purchase.data.amountMinor, 500); // 50 points * 10 minor units/point
   assert.ok(purchase.data.authorizationUrl.startsWith('https://paystack.test'));
 
-  const event = { event: 'charge.success', data: { reference: purchase.data.reference } };
+  // PAY-02: the webhook now validates the reported amount/currency against what was actually
+  // dispatched to Paystack, which can differ from the canonical purchase amount after FX
+  // conversion (see payments.mjs) — read the dispatched figures back rather than guess them.
+  const dispatched = await store.db
+    .prepare(
+      'SELECT provider_amount_minor, provider_currency FROM points_purchases WHERE provider_reference = ?',
+    )
+    .get(purchase.data.reference);
+  const event = {
+    event: 'charge.success',
+    data: {
+      reference: purchase.data.reference,
+      amount: dispatched.provider_amount_minor,
+      currency: dispatched.provider_currency,
+    },
+  };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
   const webhookResponse = await fetch(`${base}/api/webhooks/paystack`, {

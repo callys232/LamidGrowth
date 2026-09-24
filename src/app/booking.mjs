@@ -101,10 +101,27 @@ export function mountBooking(app, store) {
     if (expertProfile.user_id === req.user.id)
       return res.status(400).json({ error: 'You cannot book your own availability.' });
     const input = bookSchema.parse(req.body ?? {});
+    // F-EX-04: projectId was previously accepted without proving the caller is actually a party
+    // to that project — anyone could tag a booking onto someone else's project.
+    if (input.projectId) {
+      const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(input.projectId);
+      if (!project) return res.status(404).json({ error: 'Project not found.' });
+      const job = await db.prepare('SELECT client_user_id FROM job_posts WHERE id = ?').get(project.job_id);
+      const isParty = (job && job.client_user_id === req.user.id) || project.freelancer_user_id === req.user.id;
+      if (!isParty) return res.status(403).json({ error: 'You are not a party to this project.' });
+    }
     const id = randomUUID();
     const now = new Date().toISOString();
+    let claimed;
     await transaction(async () => {
-      await db.prepare("UPDATE availability_slots SET status = 'booked' WHERE id = ?").run(slot.id);
+      // F-EX-04: the claim is this atomic UPDATE itself (guarded by status = 'open'), not the
+      // preceding SELECT above — two concurrent bookings could otherwise both pass that read and
+      // both insert a booking row for the same slot. A losing concurrent request affects no rows
+      // and is rejected below instead of double-booking the expert.
+      claimed = await db
+        .prepare("UPDATE availability_slots SET status = 'booked' WHERE id = ? AND status = 'open'")
+        .run(slot.id);
+      if (claimed.changes === 0) return;
       await db
         .prepare('INSERT INTO bookings VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
         .run(
@@ -119,6 +136,8 @@ export function mountBooking(app, store) {
         );
       await log(req.workspace.id, req.user.name, 'Booked availability slot', id, slot.start_at);
     });
+    if (claimed.changes === 0)
+      return res.status(409).json({ error: 'This slot was just booked by someone else.' });
     res.status(201).json(await db.prepare('SELECT * FROM bookings WHERE id = ?').get(id));
   });
 

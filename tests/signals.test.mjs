@@ -127,6 +127,90 @@ test('a subscription to an unsupported signal class reports it honestly instead 
   assert.deepEqual(scan.data.unsupportedSignalClasses, ['grants']);
 });
 
+// SI-04: a free-only, language-constrained subscription must not match a paid path in a
+// different language — constraints were parsed off the subscription row but never applied.
+test('a training subscription with free-only and language constraints does not match a paid path in another language', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie);
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['training'], constraints: { freeOrPaid: 'free', language: 'en' }, attentionPolicy: 'digest' },
+    cookie,
+  );
+  assert.equal(subscription.status, 201);
+
+  const wrongPath = await request(
+    '/learning/paths',
+    { title: 'Paid course in French', description: 'x', pointsCost: 100, language: 'fr' },
+    cookie,
+  );
+  assert.equal(wrongPath.status, 201);
+
+  const rightPath = await request(
+    '/learning/paths',
+    { title: 'Free course in English', description: 'x', pointsCost: 0, language: 'en' },
+    cookie,
+  );
+  assert.equal(rightPath.status, 201);
+
+  const scan = await request(`/goal-subscriptions/${subscription.data.id}/scan`, {}, cookie, 'POST');
+  assert.equal(scan.status, 200);
+  assert.equal(scan.data.newMatches.length, 1, 'only the free, English-language path should match');
+  assert.equal(scan.data.newMatches[0].sourceId, rightPath.data.id);
+});
+
+// SI-04: a job subscription with a budget ceiling must not match a job whose minimum budget
+// exceeds it.
+test('a jobs subscription with a budget ceiling does not match a job priced above it', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie);
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], constraints: { budget: 'up to $300' }, attentionPolicy: 'digest' },
+    cookie,
+  );
+  assert.equal(subscription.status, 201);
+
+  const poster = await signup();
+  const tooExpensive = await request(
+    '/jobs',
+    {
+      title: 'Expensive redesign',
+      category: 'UX/UI design',
+      projectType: 'Fixed-scope project',
+      description: 'A job priced above the subscriber budget ceiling.',
+      deliverables: 'A redesigned page.',
+      budgetMin: 1000,
+      budgetMax: 2000,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    poster,
+  );
+  assert.equal(tooExpensive.status, 201);
+  const affordable = await request(
+    '/jobs',
+    {
+      title: 'Affordable redesign',
+      category: 'UX/UI design',
+      projectType: 'Fixed-scope project',
+      description: 'A job priced within the subscriber budget ceiling.',
+      deliverables: 'A redesigned page.',
+      budgetMin: 100,
+      budgetMax: 250,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    poster,
+  );
+  assert.equal(affordable.status, 201);
+
+  const scan = await request(`/goal-subscriptions/${subscription.data.id}/scan`, {}, cookie, 'POST');
+  assert.equal(scan.status, 200);
+  assert.equal(scan.data.newMatches.length, 1);
+  assert.equal(scan.data.newMatches[0].sourceId, affordable.data.id);
+});
+
 test('a stranger cannot scan or list matches on a subscription they do not own', async () => {
   const cookie = await signup();
   const created = await goal(cookie);

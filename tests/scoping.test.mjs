@@ -123,7 +123,7 @@ test('suggest returns editable suggestions without changing the stored case', as
   assert.equal(reread.data.deliverables, '');
 });
 
-test('a red-band case cannot publish without explicit confirmation, and only over a job the user owns', async () => {
+test('a red-band case cannot publish on self-confirmation alone — it requires a real completed review bound to the current version, and only over a job the user owns', async () => {
   const client = await signup('Publish Client', 'publish-client@example.test');
   const stranger = await signup('Publish Stranger', 'publish-stranger@example.test');
   const created = await request(
@@ -150,13 +150,15 @@ test('a red-band case cannot publish without explicit confirmation, and only ove
   );
   assert.equal(job.status, 201);
 
-  const withoutConfirm = await request(
+  // F-SC-01: self-confirmation no longer unblocks a red-band publish — not even with
+  // confirmed: true. Only a completed qualified review of the current scope version does.
+  const withoutReview = await request(
     `/scoping-cases/${created.data.id}/publish`,
-    { publishedJobId: job.data.id },
+    { publishedJobId: job.data.id, confirmed: true },
     client,
     'PATCH',
   );
-  assert.equal(withoutConfirm.status, 400);
+  assert.equal(withoutReview.status, 400);
 
   const notOwner = await request(
     `/scoping-cases/${created.data.id}/publish`,
@@ -165,6 +167,21 @@ test('a red-band case cannot publish without explicit confirmation, and only ove
     'PATCH',
   );
   assert.equal(notOwner.status, 403);
+
+  // A real qualified review closes the gate: request review, an eligible (verified) expert
+  // claims and completes it, and only then can the case publish.
+  const requested = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+  assert.equal(requested.status, 201);
+  const expert = await signup('Publish Reviewer', 'publish-reviewer@example.test');
+  await request('/talent/profile', { headline: 'Reviewer', skills: ['Finance'] }, expert);
+  const expertState = await request('/state', undefined, expert, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(expertState.data.user.id);
+  const claimed = await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+  assert.equal(claimed.status, 200);
+  const completed = await request(`/review-queue/${requested.data.id}/complete`, { notes: 'Looks sound.' }, expert);
+  assert.equal(completed.status, 200);
 
   const published = await request(
     `/scoping-cases/${created.data.id}/publish`,
@@ -183,6 +200,52 @@ test('a red-band case cannot publish without explicit confirmation, and only ove
     'PATCH',
   );
   assert.equal(editAfterPublish.status, 400);
+});
+
+test('a material edit after a completed review invalidates that review for publishing', async () => {
+  const client = await signup('Stale Review Client', 'stale-review-client@example.test');
+  const created = await request(
+    '/scoping-cases',
+    { objective: 'Provide legal advice on contracts', problemStatement: '' },
+    client,
+  );
+  assert.equal(created.data.risk_band, 'red');
+
+  const requested = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+  const expert = await signup('Stale Review Reviewer', 'stale-review-reviewer@example.test');
+  await request('/talent/profile', { headline: 'Reviewer', skills: ['Legal'] }, expert);
+  const expertState = await request('/state', undefined, expert, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(expertState.data.user.id);
+  await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+  await request(`/review-queue/${requested.data.id}/complete`, { notes: 'Approved.' }, expert);
+
+  // A material edit bumps the scope version, so the completed review no longer matches.
+  await request(`/scoping-cases/${created.data.id}`, { objective: 'Provide legal advice on new contracts' }, client, 'PATCH');
+
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Legal advisory project',
+      category: 'Legal and compliance',
+      projectType: 'Advisory engagement',
+      description: 'A project used to test stale-review invalidation.',
+      deliverables: 'Advisory memo.',
+      budgetMin: 500,
+      budgetMax: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
+    client,
+  );
+  const blockedPublish = await request(
+    `/scoping-cases/${created.data.id}/publish`,
+    { publishedJobId: job.data.id, confirmed: true },
+    client,
+    'PATCH',
+  );
+  assert.equal(blockedPublish.status, 400, 'a stale review must not authorize publishing an edited scope');
 });
 
 test('a job posted directly (skipping the guided scoping pre-flow) is still risk-gated', async () => {
@@ -210,8 +273,19 @@ test('a job posted directly (skipping the guided scoping pre-flow) is still risk
   // Self-confirmation unblocks posting but does not skip human review — an independent expert
   // review queue entry must exist for it, same queue the guided scoping pre-flow uses.
   const expert = await signup('QueueExpert', `queue-expert-${Date.now()}@example.test`);
-  const profile = await request('/talent/profile', { headline: 'Reviewer', skills: ['Compliance'] }, expert);
+  const profile = await request(
+    '/talent/profile',
+    { headline: 'Reviewer', skills: ['Compliance'], domains: ['Legal and compliance'] },
+    expert,
+  );
   assert.equal(profile.status, 200);
+  // F-SC-02: the review queue is now eligibility-gated (verified + matching declared domain),
+  // not visible to any registered profile — mark this fixture reviewer verified directly, the
+  // same shortcut other tests use for admin-gated state.
+  const expertState = await request('/state', undefined, expert, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(expertState.data.user.id);
   const queue = await request('/review-queue', undefined, expert, 'GET');
   assert.equal(queue.status, 200);
   assert.ok(

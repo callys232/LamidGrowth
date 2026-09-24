@@ -245,7 +245,10 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
   // Fund the milestone and confirm the hold via webhook before release is possible.
   const fund = await request(`/milestones/${milestone.id}/fund`, {}, client);
   assert.equal(fund.status, 201);
-  const fundEvent = { event: 'charge.success', data: { reference: fund.data.reference } };
+  const fundEvent = {
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+  };
   const fundRawBody = Buffer.from(JSON.stringify(fundEvent));
   const fundSignature = createHmac('sha512', PAYSTACK_SECRET).update(fundRawBody).digest('hex');
   await fetch(`${base}/api/webhooks/paystack`, {
@@ -265,7 +268,10 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
   const providerReference = release.data.provider_reference;
   assert.ok(providerReference);
 
-  const event = { event: 'transfer.success', data: { reference: providerReference } };
+  const event = {
+    event: 'transfer.success',
+    data: { reference: providerReference, amount: release.data.amount_minor, currency: release.data.currency },
+  };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
   const webhookResponse = await fetch(`${base}/api/webhooks/paystack`, {

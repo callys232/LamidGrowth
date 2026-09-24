@@ -12,7 +12,7 @@ async function setup(filename = ':memory:') {
     .prepare('INSERT INTO users (id, name, created_at) VALUES (?, ?, ?)')
     .run(user, 'Owner', new Date().toISOString());
   await store.db
-    .prepare('INSERT INTO workspaces VALUES (?, ?, ?, ?, ?, ?)')
+    .prepare('INSERT INTO workspaces (id, user_id, name, context, tier, member_limit) VALUES (?, ?, ?, ?, ?, ?)')
     .run(workspace, user, 'Test', 'Professional', 'individual', 1);
   await store.db
     .prepare('INSERT INTO workspace_members VALUES (?, ?, ?, ?, ?)')

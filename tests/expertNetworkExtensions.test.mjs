@@ -309,6 +309,51 @@ test('AI-human handoff: an agent-raised handoff can be accepted and completed by
   assert.equal(completed.data.status, 'completed');
 });
 
+// EX-02: an unassigned handoff — which can carry the raw user message and AI response — must not
+// be visible to, acceptable by, or declinable by any signed-in account. Only a registered expert
+// (or the exact routed target, if one was set) may act on it.
+test('EX-02: an unrelated account with no expert profile cannot see, accept or decline an unassigned handoff', async () => {
+  const client = await signup('EX02 Client', 'ex02-client@example.test');
+  const stranger = await signup('EX02 Stranger', 'ex02-stranger@example.test');
+
+  const created = await request(
+    '/handoffs',
+    {
+      source: 'companion-agent',
+      contextSummary: 'Confidential context that must not leak to an unrelated account.',
+      contextSnapshot: { thread: 'confidential-thread' },
+    },
+    client,
+  );
+  assert.equal(created.status, 201);
+
+  const inbox = await request('/handoffs/inbox', undefined, stranger, 'GET');
+  assert.equal(inbox.status, 403, 'a non-expert must not even see the inbox, let alone its content');
+
+  const declined = await request(`/handoffs/${created.data.id}/decline`, {}, stranger);
+  assert.equal(declined.status, 403, 'declining requires the same eligibility as accepting');
+
+  const accepted = await request(`/handoffs/${created.data.id}/accept`, {}, stranger);
+  assert.equal(accepted.status, 403);
+
+  // A registered expert (but not the routed target of a *targeted* handoff) is still correctly
+  // blocked, proving the fix isn't merely "any expert profile bypasses everything."
+  const routedTarget = await makeExpert('EX02 Routed Target', 'ex02-target@example.test');
+  const otherExpert = await makeExpert('EX02 Other Expert', 'ex02-other@example.test');
+  const targetUserId = await userId(routedTarget);
+  const routed = await request(
+    '/handoffs',
+    { source: 'companion-agent', contextSummary: 'Routed to a specific expert.', contextSnapshot: {}, targetUserId },
+    client,
+  );
+  assert.equal(routed.status, 201);
+  const otherExpertDeclineAttempt = await request(`/handoffs/${routed.data.id}/decline`, {}, otherExpert);
+  assert.equal(otherExpertDeclineAttempt.status, 403, 'a different expert cannot decline a handoff routed to someone else');
+
+  const routedDecline = await request(`/handoffs/${routed.data.id}/decline`, {}, routedTarget);
+  assert.equal(routedDecline.status, 200);
+});
+
 test('return-to-OS: an outcome can be recorded once per project and read back from the workspace feed', async () => {
   const client = await signup('Outcome Client', 'outcome-client@example.test');
   const freelancer = await signup('Outcome Freelancer', 'outcome-freelancer@example.test');
@@ -375,6 +420,17 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   const admin = await signup('Extensions Admin', adminEmail);
   const client = await signup('Governance Client', 'governance-client@example.test');
   const expert = await makeExpert('Governance Expert', 'governance-expert@example.test');
+  // F-SC-02: the review queue is eligibility-gated on verification, declared domain and, for a
+  // jurisdiction-license-required red case, matching declared jurisdiction. Elevate this expert
+  // to match what the case below will require.
+  await request(
+    '/talent/profile',
+    { headline: 'Governance Expert — consultant', skills: ['strategy'], domains: ['Legal and compliance'], jurisdiction: 'Germany' },
+    expert,
+  );
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(await userId(expert));
 
   const rule = await request(
     '/admin/jurisdiction-rules',

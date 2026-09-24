@@ -11,6 +11,15 @@ import { hashPassword, verifyPassword, seedWorkspace } from '../../server/store.
 import { createMailOutbox, defaultMailer } from './mail.mjs';
 import { createRateLimiter } from './ratelimit.mjs';
 import { welcomeRewardPoints } from './rewards.mjs';
+import {
+  generateTotpSecret,
+  verifyTotp,
+  otpauthUrl,
+  generateRecoveryCodes,
+  hashRecoveryCode,
+  encryptSecret,
+  decryptSecret,
+} from './mfa.mjs';
 
 const emailSchema = z
   .string()
@@ -44,6 +53,7 @@ export async function mountAccounts(
     publicOrigin = process.env.PUBLIC_ORIGIN || 'http://localhost:3000',
     welcomeIpVelocityLimit = 3,
     errorLogger,
+    ecosystemAdminEmails = [],
   },
 ) {
   const { db, transaction, log } = store;
@@ -100,6 +110,17 @@ export async function mountAccounts(
     ['/api/auth/login', '/api/auth/resend-verification', '/api/auth/request-recovery'],
     accountLimiter,
   );
+  // SEC-01: a wrong guess must not need a fresh login to try again (see mfa/verify below, which
+  // only consumes the challenge token on success) — so brute-forcing the 6-digit code is capped
+  // here instead, per challenge token rather than per account.
+  const mfaVerifyLimiter = createRateLimiter(store, {
+    namespace: 'auth-mfa-verify',
+    windowMs: 15 * 60_000,
+    max: 10,
+    key: (req) => sign(`mfa-verify:${String(req.body?.challengeToken || '').slice(0, 64)}`),
+    message: 'Too many attempts for this challenge. Sign in again to get a new one.',
+  });
+  app.use('/api/auth/mfa/verify', mfaVerifyLimiter);
   function requireDelivery() {
     if (production && !mail.configured)
       fail('Account email delivery is temporarily unavailable. Please try again later.', 503);
@@ -323,18 +344,16 @@ export async function mountAccounts(
             'INSERT INTO users (id,email,password,name,demo,created_at,verified_at,disabled_at,points_balance) VALUES (?,?,?,?,0,?,NULL,NULL,0)',
           )
           .run(user, input.email, password, input.name, new Date().toISOString());
+        // AU-03 fix: `context` is a self-described audience label used only for onboarding/UX
+        // tailoring — it must never itself confer a paid/verified entitlement tier. Every new
+        // workspace starts at the lowest tier regardless of which audience the signer-upper
+        // picked; tier can only change through the authorized admin grant below (or, once wired,
+        // a real billing/subscription event) — never from a client-supplied signup field.
         await db
           .prepare(
             'INSERT INTO workspaces (id,user_id,name,context,tier,member_limit) VALUES (?,?,?,?,?,?)',
           )
-          .run(
-            workspace,
-            user,
-            `${input.name.split(' ')[0]}'s workspace`,
-            input.context,
-            input.context === 'Enterprise' ? 'enterprise' : 'individual',
-            input.context === 'Enterprise' ? enterpriseMemberLimit : 1,
-          );
+          .run(workspace, user, `${input.name.split(' ')[0]}'s workspace`, input.context, 'individual', 1);
         await db
           .prepare('INSERT INTO workspace_members VALUES (?,?,?,?,?)')
           .run(workspace, user, 'owner', 'active', Date.now());
@@ -492,6 +511,72 @@ export async function mountAccounts(
     );
     if (!user || !valid || user.disabled_at)
       return res.status(401).json({ error: 'Email or password is incorrect.' });
+    // SEC-01: a confirmed MFA enrollment gates session issuance behind a second factor — the
+    // password alone only unlocks a short-lived step-up challenge, not the session itself.
+    const mfa = await db
+      .prepare('SELECT confirmed_at FROM mfa_secrets WHERE user_id = ?')
+      .get(user.id);
+    if (mfa?.confirmed_at) {
+      const challengeToken = randomBytes(32).toString('hex');
+      await db
+        .prepare('INSERT INTO account_tokens VALUES (?, ?, ?, ?, ?, NULL, ?)')
+        .run(
+          randomUUID(),
+          user.id,
+          'mfa_step_up',
+          digest(challengeToken),
+          Date.now() + 5 * 60_000,
+          Date.now(),
+        );
+      return res.json({ ok: true, mfaRequired: true, challengeToken });
+    }
+    const workspace = await db.prepare('SELECT id FROM workspaces WHERE user_id = ?').get(user.id);
+    await session(res, user.id, workspace?.id || null);
+    res.json({ ok: true, verificationRequired: !user.verified_at });
+  });
+  async function consumeRecoveryCode(userId, code) {
+    const hash = hashRecoveryCode(code);
+    const row = await db
+      .prepare(
+        'UPDATE mfa_recovery_codes SET used_at = ? WHERE user_id = ? AND code_hash = ? AND used_at IS NULL RETURNING id',
+      )
+      .run(Date.now(), userId, hash);
+    return row.changes > 0;
+  }
+  app.post('/api/auth/mfa/verify', async (req, res) => {
+    const input = z
+      .object({ challengeToken: z.string().regex(/^[a-f0-9]{64}$/), code: z.string().min(6).max(64) })
+      .strict()
+      .parse(req.body);
+    const tokenHash = digest(input.challengeToken);
+    // A wrong code must not burn the one-time challenge — otherwise a single mistyped digit
+    // forces the user back through email+password to try again. The token is only consumed
+    // below, once the code is confirmed correct (rate-limited separately, see mfaVerifyLimiter).
+    const pending = await db
+      .prepare(
+        `SELECT account_tokens.user_id FROM account_tokens JOIN users ON users.id = account_tokens.user_id
+         WHERE token_hash = ? AND kind = 'mfa_step_up' AND used_at IS NULL AND expires_at > ? AND users.disabled_at IS NULL`,
+      )
+      .get(tokenHash, Date.now());
+    if (!pending)
+      return res
+        .status(400)
+        .json({ error: 'This verification challenge is invalid or expired. Please sign in again.' });
+    const secretRow = await db
+      .prepare('SELECT secret_encrypted FROM mfa_secrets WHERE user_id = ?')
+      .get(pending.user_id);
+    const totpOk =
+      secretRow && verifyTotp(decryptSecret(key, secretRow.secret_encrypted), input.code);
+    const ok = totpOk || (secretRow && (await consumeRecoveryCode(pending.user_id, input.code)));
+    if (!ok) return res.status(401).json({ error: 'Invalid authentication code.' });
+    const claimed = await db
+      .prepare(
+        "UPDATE account_tokens SET used_at = ? WHERE token_hash = ? AND kind = 'mfa_step_up' AND used_at IS NULL",
+      )
+      .run(Date.now(), tokenHash);
+    if (claimed.changes === 0)
+      return res.status(400).json({ error: 'This verification challenge has already been used.' });
+    const user = await db.prepare('SELECT * FROM users WHERE id = ?').get(pending.user_id);
     const workspace = await db.prepare('SELECT id FROM workspaces WHERE user_id = ?').get(user.id);
     await session(res, user.id, workspace?.id || null);
     res.json({ ok: true, verificationRequired: !user.verified_at });
@@ -520,5 +605,65 @@ export async function mountAccounts(
     await session(res, user, workspace);
     res.status(201).json({ ok: true });
   });
-  return { mail, credit };
+
+  // SEC-01: exposed so app.mjs's authenticated routes (mounted after the session middleware,
+  // which this module's own routes run before — see AU-03's tier-route fix for why that ordering
+  // matters) can offer enrollment/confirmation/disable/step-up without re-deriving the account
+  // security key or duplicating the encryption details.
+  const mfa = {
+    async status(userId) {
+      const row = await db
+        .prepare('SELECT confirmed_at FROM mfa_secrets WHERE user_id = ?')
+        .get(userId);
+      return { enabled: Boolean(row?.confirmed_at) };
+    },
+    async enroll(userId, email) {
+      const secret = generateTotpSecret();
+      await db
+        .prepare(
+          `INSERT INTO mfa_secrets (user_id, secret_encrypted, confirmed_at, created_at) VALUES (?, ?, NULL, ?)
+           ON CONFLICT (user_id) DO UPDATE SET secret_encrypted = EXCLUDED.secret_encrypted, confirmed_at = NULL, created_at = EXCLUDED.created_at`,
+        )
+        .run(userId, encryptSecret(key, secret), Date.now());
+      return { secret, otpauthUrl: otpauthUrl(secret, email) };
+    },
+    async confirm(userId, code) {
+      const row = await db
+        .prepare('SELECT secret_encrypted, confirmed_at FROM mfa_secrets WHERE user_id = ?')
+        .get(userId);
+      if (!row || row.confirmed_at) return null;
+      if (!verifyTotp(decryptSecret(key, row.secret_encrypted), code)) return null;
+      const codes = generateRecoveryCodes();
+      await transaction(async () => {
+        await db
+          .prepare('UPDATE mfa_secrets SET confirmed_at = ? WHERE user_id = ?')
+          .run(Date.now(), userId);
+        for (const plainCode of codes)
+          await db
+            .prepare('INSERT INTO mfa_recovery_codes VALUES (?, ?, ?, NULL, ?)')
+            .run(randomUUID(), userId, hashRecoveryCode(plainCode), Date.now());
+      });
+      return { recoveryCodes: codes };
+    },
+    async disable(userId) {
+      await transaction(async () => {
+        await db.prepare('DELETE FROM mfa_recovery_codes WHERE user_id = ?').run(userId);
+        await db.prepare('DELETE FROM mfa_secrets WHERE user_id = ?').run(userId);
+      });
+    },
+    // Used to gate high-risk admin actions (account deletion, tier grants) behind a second
+    // factor when the acting admin has one enrolled — returns true (no step-up required) for an
+    // admin who has never enrolled, so rollout is progressive rather than a hard lockout.
+    async verifyStepUp(userId, code) {
+      const row = await db
+        .prepare('SELECT secret_encrypted, confirmed_at FROM mfa_secrets WHERE user_id = ?')
+        .get(userId);
+      if (!row?.confirmed_at) return true;
+      if (!code) return false;
+      if (verifyTotp(decryptSecret(key, row.secret_encrypted), code)) return true;
+      return consumeRecoveryCode(userId, code);
+    },
+  };
+
+  return { mail, credit, mfa };
 }

@@ -1,0 +1,412 @@
+[
+  {
+    "id": "F-EX-02",
+    "priority": "P0",
+    "status": "Reproduced",
+    "title": "Unassigned expert handoffs cross the account boundary",
+    "spec": "ENT:3000; ENT:3046; CAN:1739; DEL:1859",
+    "code": "src/app/handoff.mjs:65; src/app/handoff.mjs:91; src/app/agents.mjs:1129",
+    "observed": "An unrelated signed-in account with no expert profile received another workspace’s unassigned context snapshot and declined its handoff (both HTTP 200). The inbox filters only pending/unassigned or assigned-to-me; decline has no ownership, target, or workspace check. Agent-created handoffs can contain the user message and response.",
+    "needed": "Enforce eligible reviewer/recipient access, consent-scoped context projection, and authorized atomic claim/decline transitions. Add negative tests for unrelated users, unqualified experts, and revoked access."
+  },
+  {
+    "id": "F-PAY-01",
+    "priority": "P0",
+    "status": "Static",
+    "title": "Ambiguous transfer failures can reopen a paid-out operation for retry",
+    "spec": "ENT:1179; ENT:1797; ENT:2699; DEL:514",
+    "code": "src/app/payments.mjs:343; src/app/payments.mjs:432; src/app/payments.mjs:7",
+    "observed": "Release has an atomic approved-to-releasing claim, which prevents ordinary concurrent release. However, the catch path treats every provider exception as failure and resets the milestone to approved. A transport failure can occur after the provider accepted payment. A later attempt creates a new reference. Provider fetches also lack an explicit deadline. This is a static failure-path finding, not a reproduced double payout.",
+    "needed": "Persist a stable provider reference before dispatch; distinguish rejected from unknown outcome; reconcile unknown and interrupted transfers before allowing retry; set request deadlines and test acceptance-followed-by-timeout and crash windows."
+  },
+  {
+    "id": "F-FILE-01",
+    "priority": "P0",
+    "status": "Reproduced",
+    "title": "Uploads bypass the specified content-security lifecycle",
+    "spec": "ENT:1713; ENT:1726; ENT:2688; ENT:2689; CAN:862",
+    "code": "src/app/files.mjs:1; src/app/files.mjs:50",
+    "observed": "An inert HTML file was accepted with HTTP 201 and downloaded as text/html with inline Content-Disposition on the application origin. The handler trusts the supplied MIME type and stores bytes directly; no format detection, quarantine, or malware scanning step exists. This demonstrates unsafe format handling, not a successful script exploit. Existing CSP may constrain execution.",
+    "needed": "Introduce a pending/quarantined/clean/rejected lifecycle, byte-based type checks and processing limits, malware scanning, authorized private downloads and safe attachment handling. Use synthetic scanner fixtures, never live malware."
+  },
+  {
+    "id": "F-SC-01",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Red scoping can proceed without the required qualified review",
+    "spec": "INT:140; CAN:1923; DEL:1925",
+    "code": "src/app/scoping.mjs:130; src/app/scoping.mjs:370; src/app/app.mjs:675",
+    "observed": "Red-band publication accepts a user confirmation flag without requiring a completed qualified review. Quick posting has a similar riskConfirmed escape. Risk detection relies on a small text/jurisdiction check and does not cover all scope fields. Confirmation is not the red-band review gate specified by the documents.",
+    "needed": "Separate acknowledgement from approval; require current qualified review where red policy demands it, bind approval to scope version, and invalidate approval after material edits."
+  },
+  {
+    "id": "F-SC-02",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Scoping reviewer selection is neither qualification-gated nor atomic",
+    "spec": "EXP:65; ENT:3184; DEL:1931",
+    "code": "src/app/scoping.mjs:457; src/app/scoping.mjs:471",
+    "observed": "Any talent profile can see the pending queue’s objective/category/jurisdiction and claim a case. These handlers do not check licensing, credential expiry, jurisdiction eligibility, conflicts, or availability. Claim reads state then updates without a compare-and-swap/row lock, permitting a concurrent claim race. No race reproduction was performed.",
+    "needed": "Filter before disclosure; bind qualification and consent to review assignment; claim atomically; publish a realistic queue ETA and add reassignment/escalation for expired claims."
+  },
+  {
+    "id": "F-SC-03",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Guided scoping lacks reviewer proposals and user reconciliation",
+    "spec": "INT:116; INT:150; CAN:1909; ENT:3194",
+    "code": "src/app/scoping.mjs:41; src/app/scoping.mjs:165; src/app/scoping.mjs:334; src/app/scoping.mjs:497",
+    "observed": "Quick drafting, unknown fields, four guidance responses, saved user versions, and a review queue exist. Many suggestions are static templates or null. Review completion stores notes/status, not proposed field changes with reviewer provenance, version diff, user acceptance/rejection, and reconciled scope. Response-hour data is optional, with no monitored SLA worker.",
+    "needed": "Persist suggested field changes as proposals; show provenance and a diff; let the user reconcile each change; implement deadline monitoring and absence/escalation states."
+  },
+  {
+    "id": "F-SC-04",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Budget guidance combines incompatible currencies",
+    "spec": "CAN:1909; BRAND:562; ENT:3194",
+    "code": "src/app/scoping.mjs:323",
+    "observed": "The category budget average reads job budget values without filtering or converting currencies or selecting comparable completed work, then labels the answer USD. It cannot support the advertised grounded estimate.",
+    "needed": "Use comparable evidence with explicit original currency, dated FX conversion where appropriate, sample size, range, freshness and uncertainty; decline to estimate with insufficient evidence."
+  },
+  {
+    "id": "F-SI-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "The shared result fabric is a latest-result cache, not the specified result graph",
+    "spec": "INT:68; INT:88; CAN:1789; CAN:1811; ENT:3084",
+    "code": "src/app/intelligence.mjs:10; src/app/intelligence.mjs:78; src/app/agents.mjs:304",
+    "observed": "Results are upserted per workspace/subject/agent, overwriting prior result content. The schema/envelope lacks source versions, complete lineage, purpose/permission envelope, typed reusable payloads, confidence/uncertainty and model/prompt provenance. Only performance-analytics and goal-advisor publish through this helper in the snapshot. No general cross-engine consumer contract or dependency graph is implemented.",
+    "needed": "Define versioned typed results and immutable source/version edges; enforce scope/purpose on production and consumption; migrate each producer and consumer with contract and privacy tests."
+  },
+  {
+    "id": "F-SI-02",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Goal edits and deletion leave dependent intelligence and subscriptions behind",
+    "spec": "INT:88; CAN:1829; DEL:1896",
+    "code": "src/app/goals.mjs:130; src/app/app.mjs:1447; src/app/app.mjs:1502; src/app/signals.mjs:105",
+    "observed": "Goal stage transitions invalidate direct results and recommendations. Ordinary objective edits do not call that invalidation; deletion soft-deletes the objective/actions and cancels workflows but does not remove subscriptions or invalidate intelligence/recommendations. Scanning checks the subscription without revalidating a live goal. Objective editing also checks a version before a non-CAS write, leaving a race window.",
+    "needed": "Use one transactional goal mutation service with optimistic concurrency and change events; cascade dependency invalidation, disable deleted/completed-goal monitoring, and show stale/degraded results rather than silently reusing or hiding them."
+  },
+  {
+    "id": "F-SI-03",
+    "priority": "P1",
+    "status": "Reproduced",
+    "title": "Causal certainty is accepted as an unsupported user assertion",
+    "spec": "CAN:1865; INT:164; ENT:3150",
+    "code": "src/app/outcomeAttribution.mjs:11; src/app/outcomeAttribution.mjs:42",
+    "observed": "The API accepted verified_causal with an arbitrary nonexistent subject and no experiment/evidence (HTTP 201). The schema exposes causal strength as caller input without a verification gate.",
+    "needed": "Validate subject ownership/existence and evidence provenance; reserve verified causal status for an authorized evidence-backed transition; distinguish observation, contribution and causality in storage and UI."
+  },
+  {
+    "id": "F-SI-04",
+    "priority": "P1",
+    "status": "Reproduced",
+    "title": "Goal monitoring ignores stored constraints and is not continuous",
+    "spec": "INT:96; CAN:1819; CAN:1847; DEL:1902; COPY:2607",
+    "code": "src/app/goals.mjs:62; src/app/signals.mjs:11; src/app/signals.mjs:73; src/app/signals.mjs:105; server/index.mjs:103",
+    "observed": "A free-only, zero-budget, language-constrained subscription matched a paid path in another language. Scanning uses signal class/date, not the goal text, budget, language, geography, time or attention policy. Only jobs, training/certifications, internal progress and experts have finders, each with small recent-record limits. Scans are endpoint-triggered; the server worker schedules workflows/reconciliation/mail, not goal subscriptions. Expert job watches are also manually scanned.",
+    "needed": "Build permissioned scheduled/event-driven monitoring; enforce all constraints, eligibility and readiness before ranking; explain match and why-now; deduplicate, expire and digest according to user attention settings."
+  },
+  {
+    "id": "F-SI-05",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Conflict and recommendation states are not linked to execution and reconciliation",
+    "spec": "CAN:1839; CAN:1855; ENT:3118",
+    "code": "src/app/intelligence.mjs:151; src/app/recommendations.mjs:8; src/app/recommendations.mjs:35; src/app/recommendations.mjs:80",
+    "observed": "Conflict resolution stores a resolved flag and note without selecting/recomputing a reconciled result. Recommendation states exist, but scheduled_for is only read, there is no scheduling input or execution binding in the module, and state writes are not compare-and-swap. Invalidation includes completed recommendations despite the comment saying otherwise.",
+    "needed": "Bind decisions to result versions, sources and reconciled outputs; schedule actual owned work through the authorized runtime; enforce atomic transitions and preserve completed historical evidence."
+  },
+  {
+    "id": "F-SI-06",
+    "priority": "P1",
+    "status": "Missing contract",
+    "title": "Context transfer, personal privacy and multi-person intelligence are incomplete",
+    "spec": "CAN:1873; CAN:1881; INT:90; ENT:3140",
+    "code": "src/app/agentSources.mjs:1; src/app/knowledge.mjs:1; src/app/expertContextPackage.mjs:8; src/app/people.mjs:1",
+    "observed": "Workspace records and explicit expert packages exist. The full typed seven-operation context-transfer contract, scenario isolation, per-purpose personal-to-organization consent, dependency propagation after revocation, and multi-person readiness/escalation model are not represented by these handlers/schema. A workspace-wide source-kind filter is not field-level personal-career confidentiality.",
+    "needed": "Implement typed transfer operations and per-object/field/purpose controls; cover copy/link/refresh/revoke semantics and personal-to-team leakage with negative tests."
+  },
+  {
+    "id": "F-EX-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Expert context packages enforce recipient/revocation but omit other required boundaries",
+    "spec": "CAN:1739; EXP:81; ENT:3000",
+    "code": "src/app/expertContextPackage.mjs:8; src/app/expertContextPackage.mjs:83",
+    "observed": "Only the project client can grant supported objective/knowledge references, and resolving checks the designated expert and revoked state. Missing fields/guards include expiry, declared purpose, redaction, source version snapshot, current project-assignment recheck, and governed evidence return.",
+    "needed": "Retain the existing checks while adding expiry/purpose/redaction/version controls, assignment revalidation, read audit and approved evidence-return flow."
+  },
+  {
+    "id": "F-EX-03",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Expert ranking does not implement the eligibility and credibility contract",
+    "spec": "EXP:11; CAN:1686; CAN:1727; ENT:3010",
+    "code": "src/app/talent.mjs:33; src/app/talent.mjs:479; src/app/expertiseTaxonomy.mjs:1; src/app/reputation.mjs:39",
+    "observed": "Cross-domain taxonomy and multidimensional profiles exist. Ranking uses keyword/rate/verification/reputation signals; verified-credential counts ignore expiry. Credentials lack scoped licensing/jurisdiction and revoked/expired lifecycle. No immutable match-reason/version snapshot or demonstrated fairness evaluation exists. Reputation submission requires exactly approved milestone status, so paid milestones are excluded even though aggregate statistics count paid work.",
+    "needed": "Gate eligibility before scoring; verify scoped credentials and expiry/revocation; preserve match evidence; add contextual reputation, appeal/abuse controls and permit legitimate post-payment feedback."
+  },
+  {
+    "id": "F-EX-04",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Expert pods and booking are not a complete engagement model",
+    "spec": "CAN:1705; EXP:43; ENT:3022",
+    "code": "src/app/expertTeams.mjs:1; src/app/projects.mjs:68; src/app/booking.mjs:101; server/store.mjs:659",
+    "observed": "Team membership/accessScope is stored, while project authorization still admits only client and one freelancer; pod members do not obtain the specified scoped work access. Booking selects an open slot before an unconditional update and has no unique active-slot constraint, leaving a double-booking race. projectId is accepted without proving the caller’s relationship to that project in the booking handler. These are static observations.",
+    "needed": "Implement per-engagement scoped delegation for pod roles; validate project association; atomically reserve slots with database-enforced uniqueness and test concurrent booking/cancellation."
+  },
+  {
+    "id": "F-AU-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Human AI controls exist, but not all three independent progression lanes",
+    "spec": "CAN:21; CAN:29; AGT:133; ENT:482",
+    "code": "src/app/aiRules.mjs:18; src/app/aiPolicy.mjs:1; src/app/workflows.mjs:183; src/products/workspace/components/WorkspaceShell.tsx:65",
+    "observed": "AI Settings is visible in the user sidebar. Users can control external AI, features, source kinds, points and instructions; three workflow writes support block/ask/allow. Scoped provider calls recheck policy before and after processing. The complete independent context/intelligence/execution lane grants with purpose, scope, expiry, delegated authority and immediate cross-service revocation are not modeled. Most feature toggles default enabled; deterministic result production is not comprehensively governed by external-AI consent.",
+    "needed": "Keep the existing settings; define independent grants for each lane and enforce them at every read, result production, scheduling and commitment boundary, with readable return-state and revocation tests."
+  },
+  {
+    "id": "F-AU-02",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Organization authority stops at three workspace roles",
+    "spec": "ENT:471; ENT:1516; ENT:1534; CAN:862",
+    "code": "src/app/policy.mjs:1; src/app/app.mjs:380; src/app/invitations.mjs:1",
+    "observed": "Owner/member/concierge permissions and live workspace membership checks are implemented. The specified organization/division/team/project hierarchy, inherited policies, richer RBAC/ABAC, enterprise SSO/SCIM and deprovisioning integration are absent from the inspected schema/route model. Separate expert-team rows do not provide organization policy inheritance.",
+    "needed": "Define organization hierarchy, scope-aware policy resolution and enterprise identity lifecycle; test inheritance conflicts, stale membership and revocation during work."
+  },
+  {
+    "id": "F-AU-03",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Audience choice confers enterprise access",
+    "spec": "CAN:1184; ENT:1516; COPY:1873",
+    "code": "src/app/accounts.mjs:335; src/app/entitlements.mjs:40",
+    "observed": "Signup with Enterprise context creates enterprise tier; hasToolAccess immediately grants every tool for that tier. This conflates audience context with purchased/approved entitlement. Whether enterprise access is intentionally free is a product-policy decision, but the code does not separate those concepts as required.",
+    "needed": "Separate audience, verified organization membership, subscription and capability grants; derive paid/contracted entitlements only from an authorized source of truth."
+  },
+  {
+    "id": "F-SEC-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Authentication lacks the required assurance levels",
+    "spec": "CAN:862; ENT:459; ENT:2673; ENT:2701",
+    "code": "src/app/accounts.mjs:1; src/app/app.mjs:324; src/app/payments.mjs:343; src/app/kyc.mjs:1",
+    "observed": "Scrypt passwords, hashed expiring one-use recovery/verification tokens, quotas and secure cookies are real protections. No passkey/MFA challenge flow, assurance-bound step-up for payment/beneficiary/privileged decisions, or enterprise SSO/SCIM implementation was found. Sessions have a fixed lifetime rather than the specified idle/privileged session lifecycle. Email verification/recovery OTP is not a second authentication factor.",
+    "needed": "Implement the selected identity ADR, MFA/passkeys and step-up policy; bind assurance to session and action, rotate/revoke appropriately and test recovery without assurance bypass."
+  },
+  {
+    "id": "F-SEC-02",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Audit and ledger evidence can be removed through normal application paths",
+    "spec": "ENT:367; ENT:2702; ENT:2709; DEL:1471",
+    "code": "src/app/app.mjs:911; src/app/app.mjs:938; src/app/app.mjs:953; src/app/workflows.mjs:330; server/store.mjs:292",
+    "observed": "Account deletion explicitly removes the user’s points ledger and workspace audit rows; workflow deletion cascades tool invocation evidence. Audit tables are ordinary mutable tables and do not carry the full versioned actor/policy/correlation/before-after envelope. Privacy deletion requires a retention/pseudonymization design, not blanket destruction of financial and consequential evidence.",
+    "needed": "Separate identity erasure from legally/policy-retained immutable records; use append-only correction events, retention/hold rules, tamper evidence and explicit privileged-access audit."
+  },
+  {
+    "id": "F-PAY-02",
+    "priority": "P1",
+    "status": "Static",
+    "title": "Signed webhook authenticity is not sufficient payment validation",
+    "spec": "ENT:866; ENT:1179; ENT:2698",
+    "code": "src/app/payments.mjs:561; src/app/payments.mjs:628; src/app/finance.mjs:1",
+    "observed": "Webhooks use raw-body signature checking and event/reference deduplication. Charge success credits purchases or marks funding held by reference without comparing provider amount/currency to the stored purchase/funding. Transfer reference is persisted after provider response, creating a possible early-callback/recovery gap. Finance aggregates amounts across currencies without currency grouping. No external provider mismatch was tested.",
+    "needed": "Validate provider, reference, amount, currency, recipient and expected state; persist dispatch intent first; make unmatched events replayable; expose currency-safe balances and reconciliation evidence."
+  },
+  {
+    "id": "F-SEC-03",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "KYC and secure evidence handling are manual and weakly bound",
+    "spec": "CAN:862; ENT:2682; ENT:2683; ENT:2684",
+    "code": "src/app/kyc.mjs:1; src/app/files.mjs:50",
+    "observed": "KYC cases and administrator decisions exist. There is no implemented KYC-provider callback lifecycle, current-assurance check or required evidence threshold for verified decisions. Evidence downloads use workspace access rather than a dedicated identity-evidence scope. Provider choice remains an open ADR; the gap is the governed integration/control contract, not a missing particular vendor.",
+    "needed": "Choose and record the provider/assurance policy; isolate evidence ACLs, implement signed idempotent case-bound callbacks or documented manual verification controls, and invalidate verification on material evidence changes."
+  },
+  {
+    "id": "F-WF-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Durable workflow execution supports a small subset of the contract",
+    "spec": "AGT:189; ENT:728; DEL:514",
+    "code": "src/app/workflows.mjs:8; src/app/workflows.mjs:127; src/app/workflows.mjs:271; src/app/workflows.mjs:342",
+    "observed": "Five deterministic tools, dependency ordering, scheduled start/expiry, row locking, principal/policy rechecks, approval-version binding, pause/cancel and bounded retries are implemented. Missing runtime constructs include versioned reusable definitions/templates, conditional branches, event waits, compensation and broader multi-tool orchestration. This is a real durable runtime, not merely a chat response, but it does not satisfy the entire workflow specification.",
+    "needed": "Extend the schema/runtime through versioned contracts and explicit state transitions; add event correlation, idempotent effects and compensations before broadening delegated actions."
+  },
+  {
+    "id": "F-TF-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Canonical tools and agents are not registered under their required contracts",
+    "spec": "CAN:1293; AGT:537; AGT:557; AGT:955; ENT:706",
+    "code": "src/app/workflows.mjs:109; src/app/agents.mjs:869; src/app/engines.mjs:194; src/app/engineRegistry.mjs:1",
+    "observed": "The snapshot exports 31 agent manifests, 248 legacy engine configurations and five workflow tools. These are not a verified crosswalk to AG-001–030 and T-001–202. Manifests omit major input/output/risk/data/evidence/cost/compensation fields. Several useful deterministic calculation families and structured CRUD services exist; neither counts nor names prove the 202 canonical capabilities are complete.",
+    "needed": "Create canonical IDs, explicit implementation aliases and versioned manifests; certify each tool’s semantics, permissions, evidence and tests. Preserve Foundation/Expansion phase distinctions rather than treating all 202 as immediate launch blockers."
+  },
+  {
+    "id": "F-TF-02",
+    "priority": "P1",
+    "status": "Contradiction",
+    "title": "Legacy diagnostic codes remain public runtime identity",
+    "spec": "CAN:137; CAN:1608; AGT:95; BRAND:447",
+    "code": "src/app/engines.mjs:59; src/app/engines.mjs:81; src/app/engines.mjs:480; src/products/engines/pages/EnginesPage.tsx:90",
+    "observed": "Public engine routes/catalogs expose legacy series codes and the runtime maps F/C series to a fifth Finance engine. The canonical architecture has four engines and relegates legacy codes to traceability. Public detail/demo accepts syntactically valid series codes with fallback configuration instead of requiring a registered canonical capability.",
+    "needed": "Keep legacy identifiers as migration aliases only; use the canonical four-engine homes and capability names in public routing/catalogs; reject unknown IDs."
+  },
+  {
+    "id": "F-AI-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Model governance is not tied to the model actually executed",
+    "spec": "ENT:1593; ENT:1616; DEL:1022",
+    "code": "src/app/models.mjs:1; server/store.mjs:808; src/app/ai.mjs:45; src/app/aiPolicy.mjs:1",
+    "observed": "The registry approves a use case but does not bind approval to provider/model/version. Seeded use cases are approved automatically, while environment-selected providers/models and fallback determine actual execution. Structured responses, evidence-ID filtering, cost limits and pre/post policy checks exist. No versioned evaluation/promotion evidence establishes quality, fairness, regression thresholds or approved fallback.",
+    "needed": "Bind provider/model/prompt/schema/data-policy versions to use-case approval; promote only evaluated configurations, enforce fallback approval, and persist execution provenance and quality/degradation outcomes."
+  },
+  {
+    "id": "F-CORE-01",
+    "priority": "P1",
+    "status": "Missing contract",
+    "title": "Connector/event/context infrastructure is mostly absent",
+    "spec": "CAN:311; CAN:991; CAN:1028; ENT:791; ENT:878; ENT:1025",
+    "code": "src/app/app.mjs:1; src/app/agentSources.mjs:1; src/app/knowledge.mjs:1; server/index.mjs:103; server/store.mjs:1",
+    "observed": "There are direct Express endpoints, records, mail outbox, payment webhooks and a workflow worker. There is no general versioned event bus/outbox contract for domain changes, user connector registry with scoped OAuth grants/revocation/sync health, or typed temporal context graph and five-scope memory service. Payment/model/mail adapters are real integrations but are not that general connector platform.",
+    "needed": "Define API/event schemas, versioning/error/pagination conventions, correlation and retries; add connector grants and health; build the minimal typed graph and memory boundaries required by actual flows."
+  },
+  {
+    "id": "F-CORE-02",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Return-state and attention are not the specified continuity service",
+    "spec": "CAN:45; AGT:508; ENT:599; ENT:1654; BRAND:337",
+    "code": "src/products/workspace/components/WorkspaceShell.tsx:1; src/app/app.mjs:1272; src/app/workflows.mjs:8; src/app/tasks.mjs:39",
+    "observed": "The shell refreshes state periodically and on focus; workflow snapshots, notification records and computed task attention exist. There is no unified last-visit comparison with prior/current state, provenance, permission, reversal, materiality, goal relevance and digest policy across lanes. Static copy describing continuity does not supply that service.",
+    "needed": "Persist per-user review checkpoints; aggregate material authorized changes, approvals, blockers and stale results; enforce quiet hours/digests without suppressing mandatory security notices."
+  },
+  {
+    "id": "F-DATA-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Shared data contracts and safe schema evolution are incomplete",
+    "spec": "ENT:311; ENT:367; ENT:391; DEL:1471",
+    "code": "server/store.mjs:202; server/store.mjs:995; src/app/creationStudio.mjs:55; src/app/knowledge.mjs:1",
+    "observed": "PostgreSQL tables and transactional operations exist, but entities do not consistently carry required tenant/owner/classification/version/provenance/retention metadata. Schema creation and ALTER statements run from the store rather than a complete versioned migration/rollback program. MAX(version)+1 creation/scoping revisions and read-then-write updates have concurrency windows.",
+    "needed": "Introduce versioned migrations with forward/backward compatibility, consistent metadata and database constraints; use atomic version checks and deterministic conflict responses."
+  },
+  {
+    "id": "F-LEARN-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Learning completion does not establish assessed capability",
+    "spec": "CAN:461; EXP:81; ENT:3150",
+    "code": "src/app/learning.mjs:97; src/app/learning.mjs:181; src/app/learning.mjs:290; src/app/learning.mjs:344",
+    "observed": "Paths, modules, prerequisites, enrollment charging, progress and completion certificates exist; certificates create an unverified expert credential, correctly avoiding automatic verification. Assessment completion accepts a caller-supplied score with no trusted grading or passing threshold. Paths are listed globally without a private/draft publishing lifecycle. Completion is not wired to goal/capability-gap/result invalidation.",
+    "needed": "Distinguish attendance from assessed mastery; use trusted assessment outcomes and pass criteria, path visibility/publication controls and explicit capability/goal evidence updates."
+  },
+  {
+    "id": "F-GROW-01",
+    "priority": "P2",
+    "status": "Partial",
+    "title": "Growth analytics lacks governed metric and experiment evidence",
+    "spec": "CAN:646; ENT:1989; ENT:2025",
+    "code": "src/app/growth.mjs:1; src/app/outcomes.mjs:1; src/app/outcomeAttribution.mjs:1",
+    "observed": "KPI/observation, opportunity, experiment and outcome CRUD exists. Definitions lack versioned calculation/coverage/quality/provenance; observations can carry a source string rather than validated evidence. Experiments lack a full variant/exposure/guardrail/approval/statistical design. Opportunity records are not the universal typed eligibility/readiness model.",
+    "needed": "Version metric definitions and evidence; implement constrained opportunity types and assessed readiness; add experiment design/approval/measurement and attributable result return."
+  },
+  {
+    "id": "F-COMM-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Commercial workflow exists, but verification and signing remain limited",
+    "spec": "CAN:803; ENT:1113; ENT:1143; ENT:1169",
+    "code": "src/app/projects.mjs:341; src/app/verification.mjs:1; src/app/documents.mjs:1; src/app/tasks.mjs:1",
+    "observed": "Projects, parties, deliverables, criteria, submissions, approval/dispute and payment states are implemented. Deliverable review evaluates notes and link descriptions without fetching artifact contents; the prompt honestly states links were not inspected. Required deterministic/domain-specific/integrity verification is therefore incomplete. Document signing is explicitly an in-app hash-bound attestation, not a qualified electronic signature or complete agreement execution service.",
+    "needed": "Implement safe artifact ingestion and domain checks, evidence sufficiency/human escalation, agreement/version consent and signature policy; keep acceptance and release as separate authorized transitions."
+  },
+  {
+    "id": "F-WEB-01",
+    "priority": "P1",
+    "status": "Contradiction",
+    "title": "Public pages are forced to noindex and served as one client-rendered document",
+    "spec": "ENT:2049; ENT:2081; COPY:1",
+    "code": "src/App.tsx:1; src/app/frontend.mjs:1",
+    "observed": "RouteEffects unconditionally sets robots to noindex,nofollow. The production frontend serves the same index.html for routes, with metadata set client-side and no route-level 404 response. This conflicts with specified indexable public pages and server-rendered metadata. Private routes should remain protected/noindex. Deployment may add headers, but cannot be assumed to repair the application behavior.",
+    "needed": "Separate public/private indexing policy, generate route-specific crawlable metadata/canonicals/structured data and correct 404s; validate in a production-configured staging crawl."
+  },
+  {
+    "id": "F-WEB-02",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "The 103-page specification is not 103 functioning routes",
+    "spec": "ENT:1351; ENT:1431; COPY:2195; COPY:2735",
+    "code": "src/App.tsx:1; src/shared/content/CopyLine.tsx:1; tests/copy.test.mjs:1",
+    "observed": "The route inventory finds 13 specified OS URLs dispatched to PlannedModule. Four expert pages are consolidated into /experts instead of separate catalog routes. Existing 99 content entries closely match the source text, but content registration and text tests do not verify working controls or journeys. Some missing-route functions exist elsewhere, so this is not a claim that all 13 features are wholly absent.",
+    "needed": "Resolve route decisions explicitly, implement/redirect required functional destinations, preserve intent through CTAs, and test each route’s auth, controls, empty/error states and complete journey."
+  },
+  {
+    "id": "F-WEB-03",
+    "priority": "P2",
+    "status": "Partial",
+    "title": "Several CTAs are generic navigation rather than the promised flow",
+    "spec": "ENT:1383; COPY:1673; COPY:2723; BRAND:431",
+    "code": "src/shared/content/CopyLine.tsx:24; src/shared/content/destinations.ts:75",
+    "observed": "Known labels route through a static destination map; unknown labels render as text and same-page links scroll to the next block. Expert CTAs route to generic /start without preserving the specific intent. Send Inquiry is mailto rather than a structured inquiry workflow. These choices need explicit acceptance against the prescribed user journeys.",
+    "needed": "Map every actionable CTA to an implemented intent-preserving destination/form; verify routing with actual forms and authenticated continuation rather than text-presence assertions."
+  },
+  {
+    "id": "F-UX-01",
+    "priority": "P2",
+    "status": "Partial",
+    "title": "Brand foundations exist; full stillness/accessibility acceptance is not established",
+    "spec": "BRAND:47; BRAND:113; BRAND:151; BRAND:189; BRAND:431; ENT:2063",
+    "code": "src/products/companion/components/companionWidget.css:270; src/App.tsx:1",
+    "observed": "Canonical color tokens, restrained tween durations, reduced-motion handling and a demand-rendered orbit with visibility/fallback controls exist. Companion typing uses an infinite bounce despite the no-bounce rule; reduced-motion support does not make default bouncing compliant. No user-level product motion preference or complete 15-state experience acceptance evidence was found. Screenshots/manual assistive-technology and visual review were not performed in this audit.",
+    "needed": "Remove prohibited motion, respect product and OS motion preferences, audit all state/attention patterns and run WCAG 2.2 AA keyboard/screen-reader/contrast and representative device checks with recorded evidence."
+  },
+  {
+    "id": "F-OPS-01",
+    "priority": "P1",
+    "status": "Partial / external evidence required",
+    "title": "Connection safeguards do not establish production resilience",
+    "spec": "ENT:1774; ENT:1784; ENT:1807; DEL:871",
+    "code": "server/index.mjs:40; src/app/readiness.mjs:1; src/app/reliability.mjs:1; src/app/operations.mjs:18",
+    "observed": "Worker count is capped by a configured connection budget; readiness shares one in-flight query and has a response deadline, and database failures are classified. A per-process/deployment budget is not a global budget across replicas, workers, maintenance and serverless callers. No staging evidence proves 99.95% availability, latency targets, RPO/RTO, failover or restore. Actual provider backups/HA cannot be inferred from repository absence.",
+    "needed": "Allocate one aggregate database budget with reserve, bounded acquisition/query/transaction deadlines and measured overload behavior; validate production configuration in staging with timeout/failover/restore drills and monitored SLOs."
+  },
+  {
+    "id": "F-OPS-02",
+    "priority": "P1",
+    "status": "Partial / external evidence required",
+    "title": "Delivery and security release gates are incomplete",
+    "spec": "ENT:1845; ENT:1883; ENT:1896; DEL:1276",
+    "code": ".github/workflows/ci.yml:1; deploy/README.md:1; package.json:1",
+    "observed": "Build, backend/stress and Chromium browser automation exist. The supplied code does not establish the full six-environment promotion process, immutable signed artifacts/SBOM, SAST/SCA/secret/IaC/DAST gates, canary/rollback, security review, operational runbooks and disaster-recovery acceptance. External pipeline or approval artifacts may exist but were not supplied.",
+    "needed": "Implement and retain pipeline evidence for the applicable gates; provision staging with production-shaped services, run safe smoke/failure tests, exercise rollback/restore and collect owner sign-offs."
+  },
+  {
+    "id": "F-QA-01",
+    "priority": "P1",
+    "status": "Partial",
+    "title": "Tests cover implemented happy paths but not specification acceptance",
+    "spec": "INT:164; ENT:1922; ENT:1967; DEL:1093",
+    "code": "tests/signals.test.mjs:1; tests/scoping.test.mjs:1; tests/outcome-attribution.test.mjs:1; tests/copy.test.mjs:1",
+    "observed": "The new focused run passed 29/29 tests, while six boundary observations reproduced four requirement failures. Existing copy tests preserve a historical baseline and catalog consistency rather than verifying 103 fully implemented routes. Earlier full-suite failures are recorded separately and are not erased by this focused run. No blanket production-ready conclusion is supported.",
+    "needed": "Trace acceptance IDs to negative/security/concurrency/state-machine tests, especially the reproduced boundaries; preserve realistic entitlement fixtures and separate environment failures from product failures."
+  },
+  {
+    "id": "F-DOC-01",
+    "priority": "P2",
+    "status": "Document conflict / external evidence required",
+    "title": "The supplied suite contains historical inconsistencies and unprovided acceptance artifacts",
+    "spec": "CAN:1635; CAN:1658; ENT:2933; BRAND:532; DEL:1144",
+    "code": "README.md:90",
+    "observed": "The eight documents mix older version labels, 98/103-page references, overlapping ADR numbers and differing risk vocabularies. Reserved legacy ranges and absent historical Step 4 are explicitly not permission to invent scope. “Closed” design matrices are not proof of shipped code. Schedules, reference budget, legal approvals, staffing, owner signatures, UAT, media originals and executed acceptance are not verifiable from code; README also contains statements superseded by implementation.",
+    "needed": "Use domain precedence and record explicit ADR/CR resolutions; reconcile one requirement/owner/phase register, refresh repository documentation and attach real acceptance/operational/legal evidence."
+  }
+]

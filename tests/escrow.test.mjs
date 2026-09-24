@@ -215,7 +215,10 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
   const duplicateFund = await request(`/milestones/${milestoneId}/fund`, {}, client);
   assert.equal(duplicateFund.status, 409);
 
-  const event = { event: 'charge.success', data: { reference: fund.data.reference } };
+  const event = {
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+  };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
   const webhookResponse = await fetch(`${base}/api/webhooks/paystack`, {
@@ -262,7 +265,11 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
 
   const transferEvent = {
     event: 'transfer.success',
-    data: { reference: release.data.provider_reference },
+    data: {
+      reference: release.data.provider_reference,
+      amount: release.data.amount_minor,
+      currency: release.data.currency,
+    },
   };
   const transferRawBody = Buffer.from(JSON.stringify(transferEvent));
   const transferSignature = createHmac('sha512', PAYSTACK_SECRET)

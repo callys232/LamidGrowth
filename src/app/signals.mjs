@@ -4,11 +4,22 @@ const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
 
+// SI-04 fix: a subscription's stored constraints (budget, free/paid, language) were parsed and
+// then never applied — every finder matched on signal class and date alone. This extracts a
+// usable ceiling from the free-text budget field; unparseable text means "cannot apply this
+// constraint," never "treat as unconstrained," so filtering only ever narrows results.
+function parseBudgetCeiling(text) {
+  if (!text) return null;
+  const match = String(text).match(/(\d[\d,]*)(?!.*\d)/);
+  if (!match) return null;
+  return Number(match[1].replace(/,/g, ''));
+}
+
 // Signal classes with a real internal data source today. The rest of the enum in goals.mjs
 // (grants, tenders, events, funding, market_changes, requirement_changes) has no data source
 // anywhere in this codebase — scanning for them returns an explicit "not yet supported" note
 // instead of fabricating matches, per the same evidence-only discipline as the AI agents.
-async function findJobMatches(db, subscription) {
+async function findJobMatches(db, subscription, constraints) {
   const rows = await db
     .prepare(
       `SELECT job_posts.* FROM job_posts
@@ -16,24 +27,34 @@ async function findJobMatches(db, subscription) {
        ORDER BY created_at DESC LIMIT 25`,
     )
     .all(new Date(subscription.created_at).getTime());
-  return rows.map((row) => ({
-    sourceKind: 'job',
-    sourceId: row.id,
-    title: row.title,
-    summary: `${row.category} · budget ${row.budget_min}-${row.budget_max} ${row.currency}`,
-  }));
+  const ceiling = parseBudgetCeiling(constraints.budget);
+  return rows
+    .filter((row) => ceiling === null || row.budget_min <= ceiling)
+    .map((row) => ({
+      sourceKind: 'job',
+      sourceId: row.id,
+      title: row.title,
+      summary: `${row.category} · budget ${row.budget_min}-${row.budget_max} ${row.currency}`,
+    }));
 }
 
-async function findTrainingMatches(db, subscription) {
+async function findTrainingMatches(db, subscription, constraints) {
   const rows = await db
     .prepare('SELECT * FROM learning_paths WHERE created_at > ? ORDER BY created_at DESC LIMIT 25')
     .all(subscription.created_at);
-  return rows.map((row) => ({
-    sourceKind: 'learning_path',
-    sourceId: row.id,
-    title: row.title,
-    summary: row.description,
-  }));
+  return rows
+    .filter((row) => {
+      if (constraints.freeOrPaid === 'free' && row.points_cost) return false;
+      if (constraints.freeOrPaid === 'paid' && !row.points_cost) return false;
+      if (constraints.language && row.language && row.language.toLowerCase() !== constraints.language.toLowerCase()) return false;
+      return true;
+    })
+    .map((row) => ({
+      sourceKind: 'learning_path',
+      sourceId: row.id,
+      title: row.title,
+      summary: row.description,
+    }));
 }
 
 async function findInternalProgressMatches(db, subscription) {
@@ -80,12 +101,13 @@ const FINDERS = {
 
 async function evaluateSubscription(db, subscription) {
   const signalClasses = JSON.parse(subscription.signal_classes);
+  const constraints = JSON.parse(subscription.constraints || '{}');
   const unsupported = signalClasses.filter((cls) => !FINDERS[cls]);
   const found = [];
   for (const cls of signalClasses) {
     const finder = FINDERS[cls];
     if (!finder) continue;
-    const matches = await finder(db, subscription);
+    const matches = await finder(db, subscription, constraints);
     for (const match of matches) found.push({ ...match, signalClass: cls });
   }
   return { found, unsupported };

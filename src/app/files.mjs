@@ -13,6 +13,22 @@ const uploadSchema = z
   })
   .strict();
 
+// FILE-01 fix: the declared mimeType is never trusted alone. Only a small allow-list of types
+// with a verifiable byte signature (or, for text/plain, an absence of markup) are accepted;
+// everything else — including text/html, SVG and any other markup/script-capable type — is
+// rejected outright rather than merely relabeled, since this app has no sandboxed rendering
+// pipeline to make inline HTML/SVG safe to serve from the same origin.
+const SIGNATURE_CHECKS = {
+  'image/png': (buf) => buf.length >= 8 && buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])),
+  'image/jpeg': (buf) => buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff,
+  'image/gif': (buf) => buf.length >= 6 && (buf.subarray(0, 6).toString('ascii') === 'GIF87a' || buf.subarray(0, 6).toString('ascii') === 'GIF89a'),
+  'image/webp': (buf) => buf.length >= 12 && buf.subarray(0, 4).toString('ascii') === 'RIFF' && buf.subarray(8, 12).toString('ascii') === 'WEBP',
+  'application/pdf': (buf) => buf.length >= 5 && buf.subarray(0, 5).toString('ascii') === '%PDF-',
+  // No binary signature exists for plain text; instead reject content that looks like markup —
+  // a real HTML/SVG/script payload cannot pass as text/plain by simply changing the declared type.
+  'text/plain': (buf) => !/<\s*(script|html|svg|iframe|object|embed)\b/i.test(buf.subarray(0, 4096).toString('utf8')),
+};
+
 const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
@@ -40,6 +56,11 @@ export function mountFiles(app, store) {
     }
     if (buffer.length === 0) fail('The uploaded file is empty.', 400);
     if (buffer.length > MAX_BYTES) fail(`Files over ${MAX_BYTES / (1024 * 1024)}MB are not accepted.`, 413);
+    const signatureCheck = SIGNATURE_CHECKS[input.mimeType];
+    if (!signatureCheck)
+      fail(`File type "${input.mimeType}" is not accepted. Allowed types: ${Object.keys(SIGNATURE_CHECKS).join(', ')}.`, 415);
+    if (!signatureCheck(buffer))
+      fail('The file content does not match its declared type.', 415);
     const id = randomUUID();
     const createdAt = new Date().toISOString();
     await transaction(async () => {
@@ -60,8 +81,12 @@ export function mountFiles(app, store) {
   app.get('/api/files/:id', async (req, res) => {
     const meta = await fileFor(req.params.id, req.workspace.id);
     const row = await db.prepare('SELECT content FROM uploaded_files WHERE id = ?').get(meta.id);
+    // Always attachment, never inline: even an allow-listed type must not render on this origin.
+    // nosniff blocks a browser from reinterpreting the byte content as something more dangerous
+    // than the declared/verified type regardless.
     res.setHeader('Content-Type', meta.mime_type);
-    res.setHeader('Content-Disposition', `inline; filename="${meta.filename.replace(/"/g, '')}"`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Disposition', `attachment; filename="${meta.filename.replace(/"/g, '')}"`);
     res.send(row.content);
   });
 

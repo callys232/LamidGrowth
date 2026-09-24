@@ -371,11 +371,32 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     const existing = await caseFor(req.params.id, req.user.id);
     if (existing.status === 'published')
       return res.status(400).json({ error: 'This scoping case is already published.' });
-    if (existing.risk_band === 'red' && !req.body?.confirmed)
+    // F-SC-01: a self-asserted "confirmed" checkbox is an acknowledgement, not the qualified
+    // review the red band requires. Red-band publication now needs an actual completed review
+    // bound to the scope's current version — a material edit after that review (which bumps the
+    // version) revokes it, so the case cannot publish on a stale approval.
+    if (existing.risk_band === 'red') {
+      const currentVersion = (
+        await db
+          .prepare('SELECT COALESCE(MAX(version), 0) AS max_version FROM scope_versions WHERE scoping_case_id = ?')
+          .get(existing.id)
+      ).max_version;
+      const review = await db
+        .prepare(
+          "SELECT * FROM review_queue_entries WHERE scoping_case_id = ? AND status = 'completed' AND reviewed_version = ?",
+        )
+        .get(existing.id, currentVersion);
+      if (!review)
+        return res.status(400).json({
+          error:
+            'This scope requires a completed qualified review of the current version before it can be published. Request expert review if you have not already.',
+        });
+    } else if (existing.risk_band === 'amber' && !req.body?.confirmed) {
       return res.status(400).json({
         error:
-          'This scope was flagged for qualified review. Confirm explicitly before publishing, or request expert review first.',
+          'This scope was flagged for review. Confirm explicitly before publishing, or request expert review first.',
       });
+    }
     const input = publishSchema.parse(req.body);
     const job = await db
       .prepare('SELECT id FROM job_posts WHERE id = ? AND client_user_id = ?')
@@ -452,20 +473,43 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     );
   });
 
-  // Any qualified expert can see and claim pending review-queue work — the async queue with a
-  // real, per-claim SLA computed from the claiming expert's own declared response window (21.5).
+  // F-SC-02 (spec-review audit): "any registered talent profile" previously meant literally
+  // any expert — a UX designer could see and claim a case flagged red for legal-jurisdiction
+  // reasons. Eligibility now requires a verified profile whose declared domain actually covers
+  // the case's category (an unset category stays visible to any verified expert, since nothing
+  // more specific can be checked), and — for cases red-flagged by a jurisdiction rule — a
+  // matching declared jurisdiction. This does not fabricate a licensing check the platform has
+  // no evidence for; it uses the eligibility signals the schema actually has.
+  async function isEligibleReviewer(profile, caseRow) {
+    if (!profile || profile.vetting_status !== 'verified') return false;
+    if (caseRow.category) {
+      const domains = JSON.parse(profile.domains || '[]');
+      if (!domains.includes(caseRow.category)) return false;
+    }
+    if (caseRow.risk_band === 'red' && caseRow.jurisdiction) {
+      const requiresLicense = await jurisdictionRequiresLicense(caseRow.jurisdiction, caseRow.category);
+      if (requiresLicense && profile.jurisdiction !== caseRow.jurisdiction) return false;
+    }
+    return true;
+  }
+
   app.get('/api/review-queue', async (req, res) => {
-    if (!(await db.prepare('SELECT 1 FROM talent_profiles WHERE user_id = ?').get(req.user.id)))
+    const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    if (!profile)
       return res.status(403).json({ error: 'Only registered experts can view the review queue.' });
-    res.json(
-      await db
-        .prepare(
-          `SELECT r.*, s.objective, s.category, s.jurisdiction FROM review_queue_entries r
-           JOIN scoping_cases s ON s.id = r.scoping_case_id
-           WHERE r.status = 'pending' OR r.claimed_by = ? ORDER BY r.created_at`,
-        )
-        .all(req.user.id),
-    );
+    const rows = await db
+      .prepare(
+        `SELECT r.*, s.objective, s.category, s.jurisdiction, s.risk_band AS case_risk_band FROM review_queue_entries r
+         JOIN scoping_cases s ON s.id = r.scoping_case_id
+         WHERE r.status = 'pending' OR r.claimed_by = ? ORDER BY r.created_at`,
+      )
+      .all(req.user.id);
+    const visible = [];
+    for (const row of rows) {
+      if (row.claimed_by === req.user.id || (await isEligibleReviewer(profile, { category: row.category, jurisdiction: row.jurisdiction, risk_band: row.case_risk_band })))
+        visible.push(row);
+    }
+    res.json(visible);
   });
 
   app.post('/api/review-queue/:id/claim', async (req, res) => {
@@ -475,22 +519,29 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         .status(403)
         .json({ error: 'Only registered experts can claim review queue entries.' });
     const entry = await db
-      .prepare('SELECT * FROM review_queue_entries WHERE id = ?')
+      .prepare(
+        `SELECT r.*, s.category, s.jurisdiction, s.risk_band AS case_risk_band FROM review_queue_entries r
+         JOIN scoping_cases s ON s.id = r.scoping_case_id WHERE r.id = ?`,
+      )
       .get(req.params.id);
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
-    if (entry.status !== 'pending')
-      return res.status(400).json({ error: 'This entry has already been claimed.' });
+    if (!(await isEligibleReviewer(profile, entry)))
+      return res.status(403).json({ error: 'You are not eligible to review this case.' });
     const claimedAt = new Date();
     // If this reviewer hasn't declared an expected response window, no SLA is fabricated — the
     // entry is claimed without one rather than inventing a plausible-looking number.
     const slaDueAt = profile.expected_response_hours
       ? new Date(claimedAt.getTime() + profile.expected_response_hours * 60 * 60 * 1000).toISOString()
       : null;
-    await db
+    // Atomic claim: the WHERE status = 'pending' guard means a losing concurrent claim affects
+    // zero rows instead of both requests reading 'pending' and both writing a claim.
+    const claimed = await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ?, sla_due_at = ? WHERE id = ?",
+        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ?, sla_due_at = ? WHERE id = ? AND status = 'pending'",
       )
       .run(req.user.id, claimedAt.toISOString(), slaDueAt, entry.id);
+    if (claimed.changes === 0)
+      return res.status(409).json({ error: 'This entry was already claimed by someone else.' });
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
   });
 
@@ -502,11 +553,17 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     if (entry.claimed_by !== req.user.id)
       return res.status(403).json({ error: 'You have not claimed this entry.' });
     const input = claimSchema.parse(req.body ?? {});
+    // F-SC-01: bind this completion to the scope's current version, so a later material edit
+    // (which creates a new scope_versions row) makes the case's publish check see a stale,
+    // no-longer-matching reviewed_version instead of silently honoring an outdated approval.
+    const versionRow = await db
+      .prepare('SELECT COALESCE(MAX(version), 0) AS max_version FROM scope_versions WHERE scoping_case_id = ?')
+      .get(entry.scoping_case_id);
     await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ? WHERE id = ?",
+        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ?, reviewed_version = ? WHERE id = ?",
       )
-      .run(input.notes, new Date().toISOString(), entry.id);
+      .run(input.notes, new Date().toISOString(), versionRow.max_version, entry.id);
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
   });
 

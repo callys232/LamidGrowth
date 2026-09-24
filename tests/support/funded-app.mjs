@@ -13,6 +13,10 @@ export async function createFundedTestApp(options = {}) {
     mailProvider: null,
     ...options,
   });
+  // Some test files pass their own enterpriseMemberLimit (e.g. enterprise.test.mjs uses 2, to
+  // make the cap cheap to exercise) — the fixture must honor that instead of a fixed number, or
+  // it would silently defeat exactly the seat-cap test it's meant to stay out of the way of.
+  const enterpriseMemberLimit = options.enterpriseMemberLimit ?? 200;
   const app = express();
   app.use((req, res, next) => {
     const json = res.json.bind(res);
@@ -58,10 +62,16 @@ export async function createFundedTestApp(options = {}) {
                 "INSERT INTO welcome_claims VALUES (?, ?, NULL, NULL, 'legacy', 'Explicitly funded domain-test fixture', ?)",
               )
               .run(user.id, `test:${user.id}`, Date.now());
+            // AU-03 (src/app/accounts.mjs): signup no longer sets member_limit from audience
+            // context either — every workspace starts at member_limit=1 regardless of tier. This
+            // fixture bypasses that gate too, the same way it already bypasses the tier gate,
+            // using whatever enterpriseMemberLimit this app instance was actually configured
+            // with (see above) — the same figure a real admin-granted enterprise tier (AU-03's
+            // /api/admin/workspaces/:id/tier) would set.
             if (membership)
               await instance.store.db
-                .prepare("UPDATE workspaces SET tier = 'enterprise' WHERE id = ?")
-                .run(membership.workspace_id);
+                .prepare("UPDATE workspaces SET tier = 'enterprise', member_limit = ? WHERE id = ?")
+                .run(enterpriseMemberLimit, membership.workspace_id);
           });
         }
         return json(body);

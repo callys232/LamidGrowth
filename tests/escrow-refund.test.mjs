@@ -115,7 +115,10 @@ async function fundedAndDisputedMilestone(client, freelancer, base) {
   // Fund and confirm the hold before disputing.
   const fund = await request(`/milestones/${milestone.data.id}/fund`, {}, client);
   assert.equal(fund.status, 201);
-  const fundEvent = { event: 'charge.success', data: { reference: fund.data.reference } };
+  const fundEvent = {
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+  };
   const fundRawBody = Buffer.from(JSON.stringify(fundEvent));
   const fundSignature = createHmac('sha512', PAYSTACK_SECRET).update(fundRawBody).digest('hex');
   await fetch(`${base}/api/webhooks/paystack`, {

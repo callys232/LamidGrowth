@@ -343,7 +343,7 @@ test('enterprise capacity survives restart and descriptive context never changes
       .prepare('INSERT INTO users (id, name, created_at) VALUES (?, ?, ?)')
       .run('u', 'Owner', new Date().toISOString());
     await instance.store.db
-      .prepare('INSERT INTO workspaces VALUES (?, ?, ?, ?, ?, ?)')
+      .prepare('INSERT INTO workspaces (id, user_id, name, context, tier, member_limit) VALUES (?, ?, ?, ?, ?, ?)')
       .run('w', 'u', 'Enterprise', 'Enterprise', 'enterprise', 50);
     await instance.store.db.close();
     instance = await createApp({ filename: schemaName });

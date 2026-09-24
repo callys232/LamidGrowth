@@ -63,6 +63,7 @@ test('promoting a personal goal into an org workspace is explicit, resolvable by
   const member = await signup('Org Member');
   const orgWorkspaceId = (await state(orgOwner)).workspace.id;
   const memberEmail = (await state(member)).user.email;
+  await store.db.prepare('UPDATE workspaces SET member_limit = 10 WHERE id = ?').run(orgWorkspaceId);
 
   const added = await request('/admin/members', { email: memberEmail }, orgOwner);
   assert.equal(added.status, 201);
@@ -115,6 +116,7 @@ test('a copy transfer produces an independent record that cannot be revoked, and
   const member = await signup('Copy Org Member');
   const orgWorkspaceId = (await state(orgOwner)).workspace.id;
   const memberEmail = (await state(member)).user.email;
+  await store.db.prepare('UPDATE workspaces SET member_limit = 10 WHERE id = ?').run(orgWorkspaceId);
   await request('/admin/members', { email: memberEmail }, orgOwner);
 
   const personalGoal = await request(

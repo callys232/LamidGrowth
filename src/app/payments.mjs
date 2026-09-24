@@ -29,21 +29,36 @@ export function paystackProvider({
       return { recipientCode: body.data.recipient_code };
     },
     async initiateTransfer({ amountMinor, currency, recipientCode, reference, reason }) {
-      const response = await fetchImpl('https://api.paystack.co/transfer', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          source: 'balance',
-          amount: amountMinor,
-          currency,
-          recipient: recipientCode,
-          reference,
-          reason,
-        }),
-      });
-      const body = await response.json();
+      // PAY-02: a network failure or 5xx here means we genuinely do not know whether Paystack
+      // received and is acting on the transfer — the request may have reached them before the
+      // connection dropped. That ambiguity must survive into the caller (`outcome: 'unknown'`)
+      // so the app never assumes "definitely failed" and frees the milestone for a retry that
+      // could pay the freelancer twice. Only a clean 4xx rejection from Paystack itself is safe
+      // to treat as a definite, retry-safe failure.
+      let response;
+      try {
+        response = await fetchImpl('https://api.paystack.co/transfer', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'balance',
+            amount: amountMinor,
+            currency,
+            recipient: recipientCode,
+            reference,
+            reason,
+          }),
+        });
+      } catch (networkError) {
+        throw Object.assign(new Error(`Network error contacting Paystack: ${networkError.message}`), {
+          outcome: 'unknown',
+        });
+      }
+      const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.status)
-        throw new Error(body.message || 'Paystack could not initiate this transfer.');
+        throw Object.assign(new Error(body.message || 'Paystack could not initiate this transfer.'), {
+          outcome: response.status >= 500 ? 'unknown' : 'rejected',
+        });
       return {
         providerReference: String(body.data.reference || reference),
         status: body.data.status,
@@ -61,14 +76,23 @@ export function paystackProvider({
       return { authorizationUrl: body.data.authorization_url, accessCode: body.data.access_code };
     },
     async refundTransaction({ reference, amountMinor }) {
-      const response = await fetchImpl('https://api.paystack.co/refund', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transaction: reference, amount: amountMinor }),
-      });
-      const body = await response.json();
+      let response;
+      try {
+        response = await fetchImpl('https://api.paystack.co/refund', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transaction: reference, amount: amountMinor }),
+        });
+      } catch (networkError) {
+        throw Object.assign(new Error(`Network error contacting Paystack: ${networkError.message}`), {
+          outcome: 'unknown',
+        });
+      }
+      const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.status)
-        throw new Error(body.message || 'Paystack could not process this refund.');
+        throw Object.assign(new Error(body.message || 'Paystack could not process this refund.'), {
+          outcome: response.status >= 500 ? 'unknown' : 'rejected',
+        });
       return {
         refundReference: String(body.data.transaction_reference || reference),
         status: body.data.status,
@@ -220,12 +244,12 @@ export function mountPayments(app, store, deps) {
       const fundingId = randomUUID();
       const reference = `LMD-FUND-${fundingId.slice(0, 8)}`;
       const amountMinor = milestone.amount * 100;
-      const init = await provider.initializeTransaction({
-        amountMinor,
-        currency: milestone.currency,
-        email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
-        reference,
-      });
+      // PAY-01: the record is persisted, with its reference, BEFORE the provider is ever called
+      // — a crash or DB hiccup between "Paystack accepted this" and "we saved that" would
+      // otherwise leave a real pending transaction with no local trace to reconcile against.
+      // 'awaiting_provider' marks that gap explicitly; it becomes 'pending' only once dispatch is
+      // confirmed, or 'init_failed' (which the uniqueness/existing-funding check above ignores,
+      // same as 'pending'/'held' do, so a genuine retry is not blocked) if dispatch never happens.
       await transaction(async () => {
         await db
           .prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
@@ -237,12 +261,34 @@ export function mountPayments(app, store, deps) {
             amountMinor,
             milestone.currency,
             reference,
-            'pending',
+            'awaiting_provider',
             new Date().toISOString(),
             null,
             null,
             null,
           );
+      });
+      let init;
+      try {
+        init = await provider.initializeTransaction({
+          amountMinor,
+          currency: milestone.currency,
+          email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
+          reference,
+        });
+      } catch (error) {
+        await db
+          .prepare("UPDATE milestone_fundings SET status = 'init_failed' WHERE id = ?")
+          .run(fundingId);
+        logHandledError(req, res, 'payment_fund_init_error', error);
+        return res.status(502).json({
+          error: 'The payment provider could not initialize this transaction. No funds have been held.',
+        });
+      }
+      await transaction(async () => {
+        await db
+          .prepare("UPDATE milestone_fundings SET status = 'pending' WHERE id = ?")
+          .run(fundingId);
         await log(
           project.workspace_id,
           req.user.name,
@@ -323,14 +369,23 @@ export function mountPayments(app, store, deps) {
         });
       } catch (error) {
         logHandledError(req, res, 'payment_refund_error', error);
+        // PAY-02: a rejection (error.outcome === 'rejected', e.g. Paystack's own 4xx) means the
+        // refund definitely did not happen — safe to label 'refund_failed'. Anything else
+        // (network failure, 5xx) is genuinely ambiguous: the refund may have gone through on
+        // Paystack's side even though this request never got a clean answer. Mislabeling that as
+        // 'refund_failed' would look identical to a real rejection with no way to tell them
+        // apart later; 'refund_unknown' instead flags it for manual reconciliation and — because
+        // it isn't 'held' — still blocks any further automatic refund attempt on this funding.
+        const status = error.outcome === 'rejected' ? 'refund_failed' : 'refund_unknown';
         await transaction(async () => {
-          await db
-            .prepare("UPDATE milestone_fundings SET status = 'refund_failed' WHERE id = ?")
-            .run(funding.id);
+          await db.prepare('UPDATE milestone_fundings SET status = ? WHERE id = ?').run(status, funding.id);
         });
-        return res
-          .status(502)
-          .json({ error: 'The payment provider could not process this refund.' });
+        return res.status(502).json({
+          error:
+            status === 'refund_unknown'
+              ? 'The payment provider did not confirm this refund. It requires manual reconciliation.'
+              : 'The payment provider could not process this refund.',
+        });
       }
       res
         .status(201)
@@ -437,23 +492,32 @@ export function mountPayments(app, store, deps) {
         });
       } catch (error) {
         logHandledError(req, res, 'payment_transfer_error', error);
+        // PAY-02: only a definite rejection (error.outcome === 'rejected') justifies freeing the
+        // milestone claim back to 'approved' for retry — "nothing was paid" is only known for
+        // certain in that case. A network failure or 5xx is ambiguous: the transfer may have
+        // been accepted by Paystack before the response was lost, so this milestone must stay
+        // locked in 'releasing' (not silently retryable) and the transfer marked 'unknown' for
+        // manual reconciliation, instead of risking a second real payout on retry.
+        const isRejected = error.outcome === 'rejected';
+        const status = isRejected ? 'failed' : 'unknown';
         await transaction(async () => {
           await db
             .prepare(
-              "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
+              "UPDATE payment_transfers SET status = ?, failure_reason = ?, updated_at = ? WHERE id = ?",
             )
-            .run(error.message, new Date().toISOString(), transferId);
-          // Release the claim so a genuine retry is possible — the provider call itself failed,
-          // nothing was paid, so this milestone should not be stuck in 'releasing' forever.
-          await db
-            .prepare(
-              "UPDATE milestones SET status = 'approved' WHERE id = ? AND status = 'releasing'",
-            )
-            .run(milestone.id);
+            .run(status, error.message, new Date().toISOString(), transferId);
+          if (isRejected)
+            await db
+              .prepare(
+                "UPDATE milestones SET status = 'approved' WHERE id = ? AND status = 'releasing'",
+              )
+              .run(milestone.id);
         });
-        return res
-          .status(502)
-          .json({ error: 'The payment provider could not initiate this transfer.' });
+        return res.status(502).json({
+          error: isRejected
+            ? 'The payment provider could not initiate this transfer.'
+            : 'The payment provider did not confirm this transfer. It requires manual reconciliation before retrying.',
+        });
       }
       res
         .status(201)
@@ -511,15 +575,15 @@ export function mountPointsPurchase(app, store, deps) {
       }
       const purchaseId = randomUUID();
       const reference = `LMD-PTS-${purchaseId.slice(0, 8)}`;
-      const init = await provider.initializeTransaction({
-        amountMinor: paystackAmountMinor,
-        currency: paystackCurrency,
-        email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
-        reference,
-      });
+      // PAY-01: persisted before the provider is ever called — see the identical reasoning in
+      // /api/milestones/:id/fund above.
       await transaction(async () => {
         await db
-          .prepare('INSERT INTO points_purchases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .prepare(
+            `INSERT INTO points_purchases
+             (id, user_id, workspace_id, points, amount_minor, currency, provider, provider_reference, status, created_at, bundle_id, provider_amount_minor, provider_currency)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          )
           .run(
             purchaseId,
             req.user.id,
@@ -529,10 +593,34 @@ export function mountPointsPurchase(app, store, deps) {
             currency,
             'paystack',
             reference,
-            'pending',
+            'awaiting_provider',
             new Date().toISOString(),
             bundleId,
+            paystackAmountMinor,
+            paystackCurrency,
           );
+      });
+      let init;
+      try {
+        init = await provider.initializeTransaction({
+          amountMinor: paystackAmountMinor,
+          currency: paystackCurrency,
+          email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
+          reference,
+        });
+      } catch (error) {
+        await db
+          .prepare("UPDATE points_purchases SET status = 'init_failed' WHERE id = ?")
+          .run(purchaseId);
+        logHandledError(req, res, 'payment_purchase_init_error', error);
+        return res.status(502).json({
+          error: 'The payment provider could not initialize this transaction. No purchase has been made.',
+        });
+      }
+      await transaction(async () => {
+        await db
+          .prepare("UPDATE points_purchases SET status = 'pending' WHERE id = ?")
+          .run(purchaseId);
         await log(
           req.workspace.id,
           req.user.name,
@@ -556,6 +644,22 @@ export function mountPointsPurchase(app, store, deps) {
         .all(req.user.id),
     );
   });
+}
+
+// PAY-02: a webhook reporting success is only trustworthy if it says the provider moved the
+// amount and currency we actually asked it to move — otherwise a compromised/misconfigured
+// provider integration (or a forged-but-signature-valid replay from a rotated key) could credit
+// points or release escrow for an amount that was never really charged. Comparison is against
+// what was *dispatched to the provider* (see the provider_amount_minor/provider_currency
+// distinction for points_purchases), not necessarily the canonical internal amount.
+function providerAmountMatches(event, expectedAmountMinor, expectedCurrency) {
+  const reportedAmount = Number(event.data?.amount);
+  const reportedCurrency = String(event.data?.currency || '').toUpperCase();
+  return (
+    Number.isFinite(reportedAmount) &&
+    reportedAmount === expectedAmountMinor &&
+    reportedCurrency === String(expectedCurrency || '').toUpperCase()
+  );
 }
 
 export function mountPaystackWebhook(app, store, deps) {
@@ -604,6 +708,18 @@ export function mountPaystackWebhook(app, store, deps) {
         .get(eventId);
       if (transfer) {
         if (event.event === 'transfer.success') {
+          if (!providerAmountMatches(event, transfer.amount_minor, transfer.currency)) {
+            await db
+              .prepare(
+                "UPDATE payment_transfers SET status = 'amount_mismatch', failure_reason = ?, updated_at = ? WHERE id = ?",
+              )
+              .run(
+                `Webhook reported ${event.data?.amount} ${event.data?.currency}, expected ${transfer.amount_minor} ${transfer.currency}. Requires manual reconciliation.`,
+                new Date().toISOString(),
+                transfer.id,
+              );
+            return false;
+          }
           await db
             .prepare(
               "UPDATE payment_transfers SET status = 'succeeded', updated_at = ? WHERE id = ?",
@@ -632,27 +748,35 @@ export function mountPaystackWebhook(app, store, deps) {
           )
           .get(eventId);
         if (purchase) {
-          await db
-            .prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?")
-            .run(purchase.id);
-          await db
-            .prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?')
-            .run(purchase.points, purchase.user_id);
-          await db
-            .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
-            .run(
-              randomUUID(),
-              purchase.user_id,
-              purchase.workspace_id,
-              purchase.points,
-              'purchase',
-              purchase.id,
-              Date.now(),
-            );
-          // Only a CONFIRMED purchase grants real tool access — never at initiation, since an
-          // unpaid/pending purchase must not unlock anything. See src/app/entitlements.mjs.
-          if (purchase.bundle_id)
-            await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
+          const expectedAmount = purchase.provider_amount_minor ?? purchase.amount_minor;
+          const expectedCurrency = purchase.provider_currency ?? purchase.currency;
+          if (!providerAmountMatches(event, expectedAmount, expectedCurrency)) {
+            await db
+              .prepare("UPDATE points_purchases SET status = 'amount_mismatch' WHERE id = ?")
+              .run(purchase.id);
+          } else {
+            await db
+              .prepare("UPDATE points_purchases SET status = 'completed' WHERE id = ?")
+              .run(purchase.id);
+            await db
+              .prepare('UPDATE users SET points_balance = points_balance + ? WHERE id = ?')
+              .run(purchase.points, purchase.user_id);
+            await db
+              .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
+              .run(
+                randomUUID(),
+                purchase.user_id,
+                purchase.workspace_id,
+                purchase.points,
+                'purchase',
+                purchase.id,
+                Date.now(),
+              );
+            // Only a CONFIRMED purchase grants real tool access — never at initiation, since an
+            // unpaid/pending purchase must not unlock anything. See src/app/entitlements.mjs.
+            if (purchase.bundle_id)
+              await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
+          }
         }
         const funding = await db
           .prepare(
@@ -660,9 +784,15 @@ export function mountPaystackWebhook(app, store, deps) {
           )
           .get(eventId);
         if (funding) {
-          await db
-            .prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?")
-            .run(new Date().toISOString(), funding.id);
+          if (!providerAmountMatches(event, funding.amount_minor, funding.currency)) {
+            await db
+              .prepare("UPDATE milestone_fundings SET status = 'amount_mismatch' WHERE id = ?")
+              .run(funding.id);
+          } else {
+            await db
+              .prepare("UPDATE milestone_fundings SET status = 'held', held_at = ? WHERE id = ?")
+              .run(new Date().toISOString(), funding.id);
+          }
         }
       }
       if (event.event === 'refund.processed' || event.event === 'refund.failed') {

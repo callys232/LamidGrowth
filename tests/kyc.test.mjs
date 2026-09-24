@@ -84,7 +84,7 @@ test('a KYC case moves from pending to verified with attached evidence, and only
 
   const file = await request(
     '/files',
-    { filename: 'id.jpg', mimeType: 'image/jpeg', base64Content: Buffer.from('fake id bytes').toString('base64') },
+    { filename: 'id.jpg', mimeType: 'image/jpeg', base64Content: Buffer.concat([Buffer.from([0xff, 0xd8, 0xff]), Buffer.from('fake id bytes')]).toString('base64') },
     cookie,
   );
   const evidence = await request(
@@ -98,7 +98,7 @@ test('a KYC case moves from pending to verified with attached evidence, and only
   const stranger = await signup();
   const strangerFile = await request(
     '/files',
-    { filename: 'x.jpg', mimeType: 'image/jpeg', base64Content: Buffer.from('other bytes').toString('base64') },
+    { filename: 'x.jpg', mimeType: 'image/jpeg', base64Content: Buffer.concat([Buffer.from([0xff, 0xd8, 0xff]), Buffer.from('other bytes')]).toString('base64') },
     stranger,
   );
   const crossAccountAttach = await request(
