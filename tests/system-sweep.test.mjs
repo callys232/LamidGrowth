@@ -118,6 +118,7 @@ test('full job-to-invoice lifecycle succeeds for every job category', async () =
         budgetMax: 2000,
         currency: 'USD',
         timeline: '2 weeks',
+        riskConfirmed: true,
       },
       client,
     );

@@ -4,6 +4,7 @@ import { requireApprovedModel } from './models.mjs';
 import { wordSet } from './text.mjs';
 import { scopedProvider } from './aiPolicy.mjs';
 import { parseVerificationVerdict } from './verification.mjs';
+import { renderProjectCertificatePdf } from './pdf.mjs';
 
 const title = z.string().trim().min(1).max(500);
 const longText = z.string().trim().max(10000).default('');
@@ -574,5 +575,57 @@ export function mountProjects(app, store, deps) {
       );
     });
     res.status(201).json(await milestoneFor(milestone.id));
+  });
+
+  // Project Closeout: requires every milestone to have actually reached 'paid' — the true
+  // terminal state after webhook-confirmed release (see payments.mjs) — not merely 'approved',
+  // so a project can't be closed while money is still owed.
+  app.post('/api/projects/:id/close', async (req, res) => {
+    const project = await projectFor(req.params.id);
+    const { isClient } = await requireParty(project, req.user.id);
+    if (!isClient) fail('Only the project owner can close a project.', 403);
+    if (project.status === 'closed') fail('This project is already closed.', 409);
+    const milestones = await db
+      .prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY created_at')
+      .all(project.id);
+    if (milestones.length === 0)
+      fail('Add and complete at least one milestone before closing this project.', 409);
+    const unpaid = milestones.filter((milestone) => milestone.status !== 'paid');
+    if (unpaid.length > 0)
+      fail(
+        `${unpaid.length} milestone(s) are not yet paid in full: ${unpaid.map((m) => m.title).join(', ')}.`,
+        409,
+      );
+    await transaction(async () => {
+      const current = await db
+        .prepare('SELECT status FROM projects WHERE id = ? FOR UPDATE')
+        .get(project.id);
+      if (current.status === 'closed') fail('This project is already closed.', 409);
+      await db.prepare('UPDATE projects SET status = ? WHERE id = ?').run('closed', project.id);
+      await log(project.workspace_id, req.user.name, 'Project closed', project.id, project.title);
+    });
+    res.json(await projectFor(project.id));
+  });
+
+  app.get('/api/projects/:id/certificate', async (req, res, next) => {
+    try {
+      const project = await projectFor(req.params.id);
+      await requireParty(project, req.user.id);
+      if (project.status !== 'closed')
+        fail('A completion certificate is only available once the project is closed.', 409);
+      const milestones = await db
+        .prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY created_at')
+        .all(project.id);
+      const doc = renderProjectCertificatePdf(project, req.workspace, milestones);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="completion-certificate-${project.id.slice(0, 8)}.pdf"`,
+      );
+      doc.pipe(res);
+      doc.end();
+    } catch (error) {
+      next(error);
+    }
   });
 }

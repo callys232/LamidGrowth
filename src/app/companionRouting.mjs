@@ -222,6 +222,15 @@ export function chooseAgent(message, { previousAgent, page = '', context = '' } 
     return 'workflow-orchestration';
   const rules = [
     ['change-order', /change (order|request)/],
+    // Deliberately narrower than a bare /\bcontract\b/ — a message just mentioning "this contract"
+    // in passing (e.g. asking for legal review of one) should fall through to context-curator,
+    // where the regulated-keyword handoff check in agents.mjs can still catch it. Only an explicit
+    // request to draft/write/create one should route here.
+    ['contract-builder', /\b(draft|write|create|generate|build)\b[^.?!]{0,20}\bcontract\b/],
+    // Deliberately narrow — a bare "goal" is too generic (matches ordinary chat like "help review
+    // my goal") and would wrongly reroute those messages into a tool that then 422s for lacking an
+    // objectiveId. Only route here for phrasing that specifically names the lifecycle/advisor concept.
+    ['goal-advisor', /\bgoal\s+(advice|advisor|stage|lifecycle|progress)\b/i],
     ['sow-builder', /statement of work|\bsow\b/],
     ['scope-builder', /\bscope\b/],
     ['brief-builder', /\bbriefs?\b/],

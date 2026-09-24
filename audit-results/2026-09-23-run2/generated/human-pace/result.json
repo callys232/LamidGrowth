@@ -1,0 +1,19 @@
+{
+  "stage": "first free outcome",
+  "completed": [
+    "landed on homepage",
+    "clicked through to start",
+    "selected context",
+    "submitted signup",
+    "verified account, entered workspace",
+    "created first goal",
+    "navigated to Companion via sidebar"
+  ],
+  "timings": {
+    "reached start page": 20,
+    "reached verification": 37,
+    "reached workspace": 44,
+    "created first goal": 70
+  },
+  "failure": "locator.scrollIntoViewIfNeeded: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Coordinate a task across specialists', { exact: true })\u001b[22m\n"
+}

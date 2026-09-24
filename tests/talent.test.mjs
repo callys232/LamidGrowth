@@ -350,6 +350,7 @@ test("job-matches ranks open jobs by fit to the freelancer's own profile", async
       budgetMax: 2000,
       currency: 'USD',
       timeline: '2 weeks',
+      riskConfirmed: true,
     },
     client,
   );

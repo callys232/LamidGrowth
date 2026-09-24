@@ -184,3 +184,43 @@ test('a red-band case cannot publish without explicit confirmation, and only ove
   );
   assert.equal(editAfterPublish.status, 400);
 });
+
+test('a job posted directly (skipping the guided scoping pre-flow) is still risk-gated', async () => {
+  const client = await signup('DirectPoster', `direct-poster-${Date.now()}@example.test`);
+  const regulatedBody = {
+    title: 'Need licensed medical advice for a product',
+    category: 'Legal and compliance',
+    projectType: 'Advisory engagement',
+    description: 'We need someone to give clinical guidance on our new health product.',
+    deliverables: 'A written opinion.',
+    budgetMin: 500,
+    budgetMax: 1000,
+    currency: 'USD',
+    timeline: '2 weeks',
+  };
+
+  const blocked = await request('/jobs', regulatedBody, client);
+  assert.equal(blocked.status, 409, 'a regulated job post must be blocked without confirmation');
+  assert.equal(blocked.data.riskBand, 'red');
+
+  const confirmed = await request('/jobs', { ...regulatedBody, riskConfirmed: true }, client);
+  assert.equal(confirmed.status, 201);
+  assert.equal(confirmed.data.riskBand, 'red');
+
+  // Self-confirmation unblocks posting but does not skip human review — an independent expert
+  // review queue entry must exist for it, same queue the guided scoping pre-flow uses.
+  const expert = await signup('QueueExpert', `queue-expert-${Date.now()}@example.test`);
+  const profile = await request('/talent/profile', { headline: 'Reviewer', skills: ['Compliance'] }, expert);
+  assert.equal(profile.status, 200);
+  const queue = await request('/review-queue', undefined, expert, 'GET');
+  assert.equal(queue.status, 200);
+  assert.ok(
+    queue.data.some((entry) => entry.category === 'Legal and compliance' && entry.risk_band === 'red'),
+    'the directly-posted regulated job must appear in the same expert review queue as guided scoping cases',
+  );
+
+  const unregulatedBody = { ...regulatedBody, title: 'Redesign our marketing website', category: 'Creative and media', description: 'A straightforward website redesign with no regulated content.' };
+  const clean = await request('/jobs', unregulatedBody, client);
+  assert.equal(clean.status, 201);
+  assert.equal(clean.data.riskBand, 'green');
+});

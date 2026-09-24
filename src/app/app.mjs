@@ -13,6 +13,15 @@ import { mountAI, defaultAiProvider, reviewSchema as aiReviewSchema } from './ai
 import { createAgentRuntime, mountAgents, agentManifests } from './agents.mjs';
 import { mountModelRegistry } from './models.mjs';
 import { mountProjects } from './projects.mjs';
+import { mountTasks } from './tasks.mjs';
+import { mountGoals } from './goals.mjs';
+import { mountGrowth } from './growth.mjs';
+import { mountSignals } from './signals.mjs';
+import { mountFiles } from './files.mjs';
+import { mountKyc } from './kyc.mjs';
+import { mountCreationStudio } from './creationStudio.mjs';
+import { mountExpertWatches } from './expertWatches.mjs';
+import { mountIntelligence } from './intelligence.mjs';
 import {
   mountPayments,
   mountPaystackWebhook,
@@ -29,7 +38,7 @@ import { mountPeople } from './people.mjs';
 import { mountEngines, mountPublicEngines } from './engines.mjs';
 import { mountPricing, mountPublicPricing } from './pricing.mjs';
 import { mountReputation } from './reputation.mjs';
-import { mountScoping } from './scoping.mjs';
+import { mountScoping, isRegulatedContent } from './scoping.mjs';
 import { mountBooking } from './booking.mjs';
 import { mountExpertTeams } from './expertTeams.mjs';
 import { mountHandoff } from './handoff.mjs';
@@ -108,6 +117,10 @@ const jobPostSchema = z
     currency,
     timeline: text.max(200),
     tags: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
+    // Explicit human acknowledgement that this post touches a regulated area — see
+    // isRegulatedContent below. Distinct from any AI humanGate confirm flag; this one is about
+    // content risk, not AI authority.
+    riskConfirmed: z.boolean().optional(),
   })
   .strict()
   .refine((value) => value.budgetMax >= value.budgetMin, {
@@ -275,6 +288,18 @@ export async function createApp({
     }
     next();
   });
+  // File uploads are JSON-with-base64 (see files.mjs), so this one path needs a much larger body
+  // limit than the rest of the API. Registered before the general 32kb limit below so it applies
+  // first for this path — body-parser only parses a request body once.
+  app.use(
+    '/api/files',
+    express.json({
+      limit: '15mb',
+      verify: (req, _res, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+  );
   app.use(
     express.json({
       limit: '32kb',
@@ -639,6 +664,17 @@ export async function createApp({
   });
   app.post('/api/jobs', spendLimiter, async (req, res) => {
     const input = jobPostSchema.parse(req.body);
+    // Guided Project Discovery & Scoping's risk banding (scoping.mjs) only ever applied to jobs
+    // posted through the optional scoping-case pre-flow — a job posted directly here bypassed it
+    // entirely. Applying the same regulated-content check unconditionally closes that gap: no job
+    // post reaches the marketplace unreviewed just because the client skipped guided scoping.
+    const regulated = isRegulatedContent(`${input.category} ${input.title} ${input.description}`);
+    if (regulated && !input.riskConfirmed)
+      return res.status(409).json({
+        error:
+          'This job post touches a regulated area and needs explicit confirmation before it can go live. Resend with riskConfirmed: true, or use Guided Scoping to request expert review first.',
+        riskBand: 'red',
+      });
     const id = randomUUID();
     const result = await replayable(req, 'job.create', input, async () => {
       const changed = await db
@@ -671,7 +707,44 @@ export async function createApp({
           JSON.stringify(input.tags),
         );
       await log(req.workspace.id, req.user.name, 'Job post created', id, input.title);
-      return { id, ...input, status: 'open', pointsCharged: jobPostCost };
+      if (regulated) {
+        // A client's own confirmation is not the human control — it only unblocks posting.
+        // Independent expert review still happens via the same review_queue_entries queue guided
+        // scoping uses, so a self-confirmed regulated post is never silently unsupervised.
+        const scopingCaseId = randomUUID();
+        const now = new Date().toISOString();
+        await db
+          .prepare(
+            'INSERT INTO scoping_cases VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+          )
+          .run(
+            scopingCaseId,
+            req.workspace.id,
+            req.user.id,
+            'published',
+            input.title,
+            input.description,
+            '',
+            '',
+            '',
+            input.deliverables,
+            '',
+            '',
+            input.category,
+            `${input.budgetMin}-${input.budgetMax} ${input.currency}`,
+            input.timeline,
+            'red',
+            id,
+            now,
+            now,
+            null,
+          );
+        await db
+          .prepare('INSERT INTO review_queue_entries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .run(randomUUID(), scopingCaseId, 'red', 'pending', null, null, '', null, now);
+        await log(req.workspace.id, req.user.name, 'Regulated job post queued for expert review', id, input.title);
+      }
+      return { id, ...input, status: 'open', pointsCharged: jobPostCost, riskBand: regulated ? 'red' : 'green' };
     });
     res.status(201).json(result);
   });
@@ -1573,6 +1646,15 @@ export async function createApp({
   mountAgents(app, store, agentRuntime, { spendLimiter });
   mountModelRegistry(app, store);
   mountProjects(app, store, { aiProvider });
+  mountTasks(app, store);
+  mountGoals(app, store);
+  mountGrowth(app, store);
+  mountSignals(app, store);
+  mountFiles(app, store);
+  mountKyc(app, store, { ecosystemAdminEmails });
+  mountCreationStudio(app, store);
+  mountExpertWatches(app, store);
+  mountIntelligence(app, store);
   mountPayments(app, store, { paymentProvider });
   mountPointsPurchase(app, store, { paymentProvider });
   mountDocuments(app, store);

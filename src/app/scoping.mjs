@@ -37,9 +37,16 @@ const jurisdictionRuleSchema = z
   .strict();
 const claimSchema = z.object({ notes: z.string().trim().max(2000).default('') }).strict();
 
+// Exported so any content-creation route (not just the scoping-case pre-flow) can apply the same
+// regulated-content check — see isRegulatedContent's use in app.mjs's POST /api/jobs, which has no
+// scoping-case in front of it and would otherwise let a red-risk job post go live unreviewed.
+export function isRegulatedContent(text) {
+  const haystack = (text || '').toLowerCase();
+  return REGULATED_KEYWORDS.some((word) => haystack.includes(word));
+}
+
 function computeRiskBand(row, jurisdictionRequiresLicense) {
-  const haystack = `${row.category || ''} ${row.objective} ${row.problem_statement}`.toLowerCase();
-  if (jurisdictionRequiresLicense || REGULATED_KEYWORDS.some((word) => haystack.includes(word)))
+  if (jurisdictionRequiresLicense || isRegulatedContent(`${row.category || ''} ${row.objective} ${row.problem_statement}`))
     return 'red';
   const hasCore = row.category && row.deliverables && row.budget_context && row.timeline_context;
   return hasCore ? 'green' : 'amber';

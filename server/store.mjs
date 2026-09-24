@@ -423,6 +423,24 @@ CREATE TABLE IF NOT EXISTS disputes (
 );
 CREATE INDEX IF NOT EXISTS disputes_subject ON disputes(subject_type, subject_id);
 
+CREATE TABLE IF NOT EXISTS tasks (
+  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+  title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', status TEXT NOT NULL,
+  assignee_user_id TEXT REFERENCES users(id), due_at TEXT,
+  blocked INTEGER NOT NULL DEFAULT 0, blocked_reason TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS tasks_project ON tasks(project_id, status);
+
+CREATE TABLE IF NOT EXISTS project_change_requests (
+  id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+  title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+  requested_by TEXT NOT NULL REFERENCES users(id), status TEXT NOT NULL,
+  decided_by TEXT REFERENCES users(id), decided_at TEXT, decision_reason TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS project_change_requests_project ON project_change_requests(project_id, status);
+
 CREATE TABLE IF NOT EXISTS kpi_definitions (
   id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
   name TEXT NOT NULL, unit TEXT NOT NULL DEFAULT '', target DOUBLE PRECISION, created_at TEXT NOT NULL
@@ -781,9 +799,11 @@ INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, a
   ('deliverable-builder', 'Deliverable Builder', 'Capability', 'A1', 'none', '[]', now()::text, 65),
   ('acceptance-builder', 'Acceptance Criteria Builder', 'Capability', 'A1', 'none', '[]', now()::text, 65),
   ('change-order', 'Change Order Generator', 'Capability', 'A1', 'none', '[]', now()::text, 65),
+  ('contract-builder', 'Contract Builder', 'Capability', 'A1', 'none', '[]', now()::text, 65),
   ('quote-generator', 'Quote Generator', 'Capability', 'A1', 'none', '[]', now()::text, 65),
   ('estimate-generator', 'Estimate Generator', 'Capability', 'A1', 'none', '[]', now()::text, 65),
-  ('invoice-generator', 'Invoice Generator', 'Capability', 'A1', 'none', '[]', now()::text, 65);
+  ('invoice-generator', 'Invoice Generator', 'Capability', 'A1', 'none', '[]', now()::text, 65),
+  ('goal-advisor', 'Goal Advisor', 'Clarity', 'A1', 'none', '[]', now()::text, 65);
 
 INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
   ('companion-context-v1', 'openai', 'companion.context-curator', 'approved', now()::text),
@@ -799,6 +819,8 @@ INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
   ('companion-deliverable-v1', 'openai', 'companion.deliverable-builder', 'approved', now()::text),
   ('companion-acceptance-v1', 'openai', 'companion.acceptance-builder', 'approved', now()::text),
   ('companion-change-order-v1', 'openai', 'companion.change-order', 'approved', now()::text),
+  ('companion-contract-v1', 'openai', 'companion.contract-builder', 'approved', now()::text),
+  ('companion-goal-advisor-v1', 'openai', 'companion.goal-advisor', 'approved', now()::text),
   ('companion-verification-v1', 'openai', 'companion.deliverable-verification', 'approved', now()::text);
 
 INSERT INTO fx_rates (pair, rate, updated_at) VALUES
@@ -944,6 +966,145 @@ export async function openStore(filename, { poolMax } = {}) {
       GROUP BY reference_id, reason ON CONFLICT DO NOTHING;
     CREATE INDEX IF NOT EXISTS agent_history_owner ON agent_runs(workspace_id, principal_id, created_at);
     CREATE INDEX IF NOT EXISTS companion_task_owner ON records(workspace_id, (data::jsonb->>'ownerId'), seq) WHERE kind = 'companion_task';`);
+    // tasks/project_change_requests were originally added only inside SCHEMA_SQL above, which never
+    // re-runs once migration 1 is recorded — so on any database that had already migrated, these
+    // tables would silently never be created. CREATE TABLE IF NOT EXISTS here is idempotent and
+    // reaches both fresh and already-migrated databases, same fix pattern as the agent_manifests
+    // blocks above.
+    await client.query(`CREATE TABLE IF NOT EXISTS tasks (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+      title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', status TEXT NOT NULL,
+      assignee_user_id TEXT REFERENCES users(id), due_at TEXT,
+      blocked INTEGER NOT NULL DEFAULT 0, blocked_reason TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS tasks_project ON tasks(project_id, status);
+    CREATE TABLE IF NOT EXISTS project_change_requests (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+      title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+      requested_by TEXT NOT NULL REFERENCES users(id), status TEXT NOT NULL,
+      decided_by TEXT REFERENCES users(id), decided_at TEXT, decision_reason TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS project_change_requests_project ON project_change_requests(project_id, status);`);
+    // Goal lifecycle + subscriptions. Deliberately separate from the existing 'objective' record
+    // kind (records table) rather than folding into it: objectives already have a stable 3-value
+    // status (Active/Paused/Complete) that a lot of existing code/tests depend on, and the spec's
+    // 12-stage lifecycle is an additive, optional refinement layered on top of a goal (= objective),
+    // not a replacement for that status. One lifecycle row per goal; many subscription rows per goal.
+    await client.query(`CREATE TABLE IF NOT EXISTS goal_lifecycle (
+      goal_id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      stage TEXT NOT NULL DEFAULT 'captured', updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS goal_lifecycle_workspace ON goal_lifecycle(workspace_id);
+    CREATE TABLE IF NOT EXISTS goal_subscriptions (
+      id TEXT PRIMARY KEY, goal_id TEXT NOT NULL, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      signal_classes TEXT NOT NULL, constraints TEXT NOT NULL DEFAULT '{}',
+      attention_policy TEXT NOT NULL DEFAULT 'digest', created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS goal_subscriptions_goal ON goal_subscriptions(goal_id);`);
+    // Growth engine domain tables. kpi_definitions/kpi_observations already existed in SCHEMA_SQL
+    // but had no application code behind them; opportunities/experiments are new. All three are
+    // additive here (idempotent, unconditional) rather than in SCHEMA_SQL, per the same
+    // migration-gating lesson as tasks/goal_lifecycle above.
+    await client.query(`CREATE TABLE IF NOT EXISTS opportunities (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
+      source TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'identified',
+      value_estimate DOUBLE PRECISION, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS opportunities_workspace ON opportunities(workspace_id, status);
+    CREATE TABLE IF NOT EXISTS experiments (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      title TEXT NOT NULL, hypothesis TEXT NOT NULL, metric TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'draft', result TEXT NOT NULL DEFAULT '',
+      started_at TEXT, ended_at TEXT, created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS experiments_workspace ON experiments(workspace_id, status);`);
+    // Signal Gateway: persisted matches found for a goal_subscriptions row. Evaluation itself is
+    // on-demand (POST /api/goal-subscriptions/:id/scan in signals.mjs), not a cron job — there is
+    // no background worker infrastructure in this codebase yet, and an on-demand scan is honest
+    // about being pull-based rather than silently pretending to be push/real-time.
+    await client.query(`CREATE TABLE IF NOT EXISTS signal_matches (
+      id TEXT PRIMARY KEY, subscription_id TEXT NOT NULL REFERENCES goal_subscriptions(id),
+      goal_id TEXT NOT NULL, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      signal_class TEXT NOT NULL, source_kind TEXT NOT NULL, source_id TEXT NOT NULL,
+      title TEXT NOT NULL, summary TEXT NOT NULL DEFAULT '', matched_at TEXT NOT NULL,
+      seen INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (subscription_id, source_kind, source_id)
+    );
+    CREATE INDEX IF NOT EXISTS signal_matches_subscription ON signal_matches(subscription_id, matched_at DESC);`);
+    // Real file upload storage. This app's CSRF middleware requires every mutation to be
+    // application/json (see app.mjs), so uploads are JSON-with-base64 rather than multipart —
+    // consistent with the rest of the API instead of carving out a CSRF exception for one route.
+    // Bytes are stored in Postgres (BYTEA), not local disk, since this app has no durable local
+    // filesystem guarantee between deploys. kyc_cases/identity_evidence already existed in
+    // SCHEMA_SQL with zero application code behind them (see kyc.mjs); users.kyc_verified_at is
+    // new and deliberately separate from users.verified_at, which only gates AI-feature access.
+    await client.query(`CREATE TABLE IF NOT EXISTS uploaded_files (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      uploaded_by TEXT NOT NULL REFERENCES users(id),
+      filename TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,
+      content BYTEA NOT NULL, created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS uploaded_files_workspace ON uploaded_files(workspace_id);
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_verified_at TEXT;`);
+    // Creation Studio: persisted, versioned output for the document-drafting agents
+    // (proposal-drafter, scope-builder, sow-builder, brief-builder, deliverable-builder,
+    // acceptance-builder, contract-builder, change-order), which previously returned one-shot AI
+    // text with nothing saved. root_asset_id is null on a document's first version and points to
+    // that first version's id on every later revision, so "all versions of this document" is one
+    // query regardless of how many revisions exist.
+    await client.query(`CREATE TABLE IF NOT EXISTS creation_assets (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      created_by TEXT NOT NULL REFERENCES users(id),
+      kind TEXT NOT NULL, title TEXT NOT NULL, content TEXT NOT NULL,
+      version INTEGER NOT NULL DEFAULT 1, root_asset_id TEXT,
+      job_id TEXT REFERENCES job_posts(id), proposal_id TEXT REFERENCES proposals(id),
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS creation_assets_workspace ON creation_assets(workspace_id, kind);
+    CREATE INDEX IF NOT EXISTS creation_assets_root ON creation_assets(root_asset_id);`);
+    // Expert-initiated engagement: today an expert can only pull work (browse the marketplace,
+    // claim a review-queue entry) — nothing lets an expert register interest and be told about
+    // new matching jobs. This is the same on-demand-scan pattern as the Signal Gateway
+    // (goal_subscriptions/signal_matches above), applied to job_posts instead of goal signals.
+    await client.query(`CREATE TABLE IF NOT EXISTS expert_watches (
+      id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id),
+      categories TEXT NOT NULL DEFAULT '[]', keywords TEXT NOT NULL DEFAULT '',
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS expert_watches_user ON expert_watches(user_id);
+    CREATE TABLE IF NOT EXISTS expert_watch_matches (
+      id TEXT PRIMARY KEY, watch_id TEXT NOT NULL REFERENCES expert_watches(id),
+      job_id TEXT NOT NULL REFERENCES job_posts(id), matched_at TEXT NOT NULL,
+      seen INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (watch_id, job_id)
+    );
+    CREATE INDEX IF NOT EXISTS expert_watch_matches_watch ON expert_watch_matches(watch_id, matched_at DESC);`);
+    // Shared Intelligence & Result Fabric: a typed, freshness-tracked result any agent/engine can
+    // write and any other agent/engine (or the UI) can read back instead of recomputing — the
+    // cross-engine reuse piece that was entirely absent before. One row per (subject, agent);
+    // expires_at makes staleness explicit instead of silently trusting an old computation forever.
+    // intelligence_conflicts is populated when two different agents reach a different conclusion
+    // about the same subject while both results are still fresh — surfaced for a human to resolve,
+    // never auto-reconciled, per "the human enforces AI controls" rather than another AI arbitrating.
+    await client.query(`CREATE TABLE IF NOT EXISTS intelligence_results (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL, agent_id TEXT NOT NULL,
+      conclusion TEXT NOT NULL, summary TEXT NOT NULL,
+      computed_at TEXT NOT NULL, expires_at TEXT NOT NULL,
+      UNIQUE (workspace_id, subject_kind, subject_id, agent_id)
+    );
+    CREATE INDEX IF NOT EXISTS intelligence_results_subject ON intelligence_results(workspace_id, subject_kind, subject_id);
+    CREATE TABLE IF NOT EXISTS intelligence_conflicts (
+      id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+      subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL,
+      agent_a TEXT NOT NULL, conclusion_a TEXT NOT NULL,
+      agent_b TEXT NOT NULL, conclusion_b TEXT NOT NULL,
+      detected_at TEXT NOT NULL, resolved INTEGER NOT NULL DEFAULT 0
+    );
+    CREATE INDEX IF NOT EXISTS intelligence_conflicts_subject ON intelligence_conflicts(workspace_id, subject_kind, subject_id, resolved);`);
     await client.query(
       `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),
@@ -967,6 +1128,32 @@ export async function openStore(filename, { poolMax } = {}) {
       `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
       ('companion-opportunity-signals-v1', 'openai', 'companion.opportunity-signals', 'approved', $1),
       ('companion-experiment-builder-v1', 'openai', 'companion.experiment-builder', 'approved', $1)
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
+    // Added after the v1 seed migration, same reason as the opportunity-signals/experiment-builder
+    // block above — a plain SEED_SQL edit never reaches a database that already ran migration 1.
+    await client.query(
+      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+      ('contract-builder', 'Contract Builder', 'Capability', 'A1', 'none', '[]', $1, 65)
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
+    await client.query(
+      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+      ('companion-contract-v1', 'openai', 'companion.contract-builder', 'approved', $1)
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
+    await client.query(
+      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+      ('goal-advisor', 'Goal Advisor', 'Clarity', 'A1', 'none', '[]', $1, 65)
+      ON CONFLICT (id) DO NOTHING`,
+      [new Date().toISOString()],
+    );
+    await client.query(
+      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+      ('companion-goal-advisor-v1', 'openai', 'companion.goal-advisor', 'approved', $1)
       ON CONFLICT (id) DO NOTHING`,
       [new Date().toISOString()],
     );

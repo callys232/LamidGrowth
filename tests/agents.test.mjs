@@ -84,10 +84,12 @@ test('companion agent catalog lists the seeded agents', async () => {
     'companion',
     'consistency',
     'context-curator',
+    'contract-builder',
     'deliverable-builder',
     'diagnostic-intelligence',
     'estimate-generator',
     'experiment-builder',
+    'goal-advisor',
     'invoice-generator',
     'market-intelligence',
     'onboarding',
@@ -180,9 +182,22 @@ test('a workflow command routes to the orchestration agent and never bypasses ap
   assert.equal(listMessage.status, 201);
   assert.equal(listMessage.data.agentId, 'workflow-orchestration');
 
-  const startMessage = await request(
+  // A mutating workflow command is consequential (humanGate: 'approve') and now requires an
+  // explicit confirm:true beyond the command word itself — real enforcement, not catalog metadata.
+  const unconfirmed = await request(
     '/companion/messages',
     { message: `start workflow ${created.data.id}` },
+    cookie,
+  );
+  assert.equal(unconfirmed.status, 201);
+  assert.equal(unconfirmed.data.confirmationRequired, true);
+  assert.equal(unconfirmed.data.runId, null);
+  const unchanged = await request(`/workflows/${created.data.id}`, undefined, cookie, 'GET');
+  assert.equal(unchanged.data.state, 'draft');
+
+  const startMessage = await request(
+    '/companion/messages',
+    { message: `start workflow ${created.data.id}`, confirm: true },
     cookie,
   );
   assert.equal(startMessage.status, 201);
@@ -464,7 +479,7 @@ test('the proposal drafter grounds its draft in the real job and rejects unrelat
   assert.equal(asStranger.status, 403);
 });
 
-test('the 8 new commercial document tools reject a missing job/proposal before charging, without completing', async () => {
+test('the 9 new commercial document tools reject a missing job/proposal before charging, without completing', async () => {
   const cookie = await demo();
   const before = await request('/state', undefined, cookie, 'GET');
   const balanceBefore = before.data.user.points_balance;
@@ -477,6 +492,7 @@ test('the 8 new commercial document tools reject a missing job/proposal before c
     'generate a quote',
     'give me an estimate',
     'I need a change order',
+    'can you draft a contract for this?',
   ];
   for (const message of cases) {
     const result = await request('/companion/messages', { message }, cookie);
@@ -537,6 +553,61 @@ test('the scope builder grounds its draft in the real job and rejects unrelated 
   const asStranger = await request(
     '/companion/messages',
     { message: 'draft the scope of work', jobId: job.data.id },
+    stranger,
+  );
+  assert.equal(asStranger.status, 403);
+});
+
+test('the contract builder grounds its draft in the real job and rejects unrelated users', async () => {
+  const client = await enableAI(await signup('Contract Client', 'contract-client@example.test'));
+  const bidder = await signup('Contract Bidder', 'contract-bidder@example.test');
+  const stranger = await signup('Contract Stranger', 'contract-stranger@example.test');
+
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Backend API integration',
+      category: 'Software engineering',
+      projectType: 'Fixed-scope project',
+      description: 'We need a third-party payments API integrated into our backend.',
+      deliverables: 'A working payments integration with tests and documentation.',
+      budgetMin: 4000,
+      budgetMax: 6000,
+      currency: 'USD',
+      timeline: '3 weeks',
+    },
+    client,
+  );
+  assert.equal(job.status, 201);
+  assert.equal(
+    (
+      await request(
+        `/jobs/${job.data.id}/bids`,
+        {
+          coverLetter: 'I can integrate the payments API with full test coverage.',
+          proposedAmount: 5000,
+          currency: 'USD',
+          timeline: '3 weeks',
+        },
+        bidder,
+      )
+    ).status,
+    201,
+  );
+
+  const asClient = await request(
+    '/companion/messages',
+    { message: 'can you draft a contract for this job?', jobId: job.data.id, consent: true },
+    client,
+  );
+  assert.equal(asClient.status, 201);
+  assert.equal(asClient.data.agentId, 'contract-builder');
+  assert.ok(asClient.data.response.includes('Backend API integration'));
+  assert.ok(asClient.data.response.includes('legal review'));
+
+  const asStranger = await request(
+    '/companion/messages',
+    { message: 'can you draft a contract for this job?', jobId: job.data.id },
     stranger,
   );
   assert.equal(asStranger.status, 403);

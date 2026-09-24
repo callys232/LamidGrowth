@@ -1,0 +1,28 @@
+{
+  "city": "Sydney",
+  "locale": "en-AU",
+  "timezoneId": "Australia/Sydney",
+  "viewport": "1440x900",
+  "role": "Professional",
+  "goal": "Improve my weekly planning",
+  "simulated": true,
+  "stage": "completed evaluation",
+  "completed": [
+    "homepage",
+    "signup and development OTP",
+    "goal creation",
+    "first specialist step"
+  ],
+  "homeOverflow": false,
+  "documentLanguage": "en",
+  "accessibility": [],
+  "welcomeBalance": 100,
+  "plan": "Improve my weekly planning\n\nAwaiting Approval · Estimated Total 195 Points\n\nContext Curator\nPending\n65 points\nDiagnostic Intelligence\nPending\n65 points\nCapability Mapper\nPending\n65 points\nApprove Context Curator · 65 pointsCancel remaining steps",
+  "firstResult": "Improve my weekly planning\n\nAwaiting Approval · Estimated Total 195 Points\n\nContext Curator\nCompleted\n65 points\n\nAI is not configured, so this is a recorded-data summary only: 1 item(s) on file (0 objective(s), 0 action(s)). No automated assessment was performed.\n\nDiagnostic Intelligence\nPending\n65 points\nCapability Mapper\nPending\n65 points\nApprove Diagnostic Intelligence · 65 pointsCancel remaining steps",
+  "remainingBalance": 35,
+  "secondStepMessage": "You do not have enough points for this agent.",
+  "workspaceOverflow": false,
+  "elapsedSeconds": 61,
+  "browserErrors": [],
+  "url": "http://127.0.0.1:3129/os/companion/chat"
+}

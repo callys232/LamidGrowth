@@ -139,6 +139,7 @@ async function runScenario({
       budgetMax,
       currency,
       timeline,
+      riskConfirmed: true,
     },
     client,
   );

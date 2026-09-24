@@ -10,6 +10,9 @@ export const sourceKinds = [
   'job',
   'proposal',
   'submission',
+  'kpi',
+  'opportunity',
+  'experiment',
 ];
 export const changeModes = ['block', 'ask', 'allow'];
 export const aiRulesSchema = z
