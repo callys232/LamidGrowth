@@ -2,6 +2,65 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { openAIProvider, anthropicProvider, multiProvider } from '../src/app/ai.mjs';
 
+test('insufficient provider credits are reported as a billing issue rather than a generic server error', async () => {
+  const provider = anthropicProvider({
+    apiKey: 'test',
+    model: 'test',
+    fetchImpl: async () => ({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        error: { message: 'Your credit balance is too low to access the Anthropic API.' },
+      }),
+    }),
+  });
+  await assert.rejects(provider.review({ sources: [] }), (error) => {
+    assert.equal(error.status, 503);
+    assert.match(error.message, /insufficient API credits/);
+    assert.match(error.message, /billing settings/);
+    return true;
+  });
+});
+
+test('invalid provider workspace returns an actionable error without exposing account details', async () => {
+  const provider = anthropicProvider({
+    apiKey: 'test',
+    model: 'test',
+    workspaceId: 'invalid',
+    fetchImpl: async () => ({
+      ok: false,
+      status: 404,
+      json: async () => ({ error: { message: 'Workspace private-account-id not found.' } }),
+    }),
+  });
+  await assert.rejects(provider.review({ sources: [] }), (error) => {
+    assert.equal(error.status, 503);
+    assert.equal(error.providerStatus, 404);
+    assert.match(error.message, /configured AI workspace/);
+    assert.ok(!error.message.includes('private-account-id'));
+    return true;
+  });
+});
+
+test('provider auth, quota and gateway failures retain actionable status through failover', async () => {
+  for (const [status, expected] of [
+    [401, /credentials/],
+    [429, /usage limit/],
+    [502, /temporarily unavailable/],
+  ]) {
+    const provider = openAIProvider({
+      apiKey: 'test',
+      model: 'test',
+      fetchImpl: async () => ({ ok: false, status }),
+    });
+    await assert.rejects(multiProvider([provider, provider]).review({ sources: [] }), (error) => {
+      assert.equal(error.status, 503);
+      assert.match(error.message, expected);
+      return true;
+    });
+  }
+});
+
 /**
  * Sends a message prompt to the AI model provider, logs request/response diagnostic events,
  * and returns the reply from the model.

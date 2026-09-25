@@ -1,4 +1,5 @@
 import { useDashboardPage } from '../hooks/useDashboardPage';
+import { DashboardBriefingSlide } from '../slides/DashboardBriefingSlide';
 import { DashboardActivitySlide } from '../slides/DashboardActivitySlide';
 import { DashboardFocusSlide } from '../slides/DashboardFocusSlide';
 import { DashboardHeadingSlide } from '../slides/DashboardHeadingSlide';
@@ -12,6 +13,7 @@ export function Dashboard() {
   return (
     <>
       <DashboardHeadingSlide state={page.state} newObjective={page.newObjective} />
+      <DashboardBriefingSlide />
       <DashboardFocusSlide active={page.active} pending={page.pending} />
       <DashboardStatisticsSlide active={page.active} state={page.state} done={page.done} />
       <DashboardObjectivesSlide active={page.active} newObjective={page.newObjective} />
