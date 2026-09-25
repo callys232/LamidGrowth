@@ -13,9 +13,12 @@ const ACTIONS = ['copy', 'reference', 'promote', 'anonymize'];
 // complexity. Copy/reference/promote/anonymize cover the reviewable, testable transfer semantics.
 
 // Per-kind allow-list for 'anonymize': only structural fields survive, narrative/free-text fields
-// that could carry personal identifying detail are dropped rather than guessed at.
+// that could carry personal identifying detail are dropped rather than guessed at. `title` was
+// previously included — it is free text ('title: text' in the objective schema, same shape as
+// description/constraints/success, all deliberately excluded here) and can name a specific
+// person, client or deal, so "anonymize" could not actually promise anonymity while it leaked.
 const ANONYMIZE_ALLOWLIST = {
-  objective: ['title', 'context', 'priority', 'status'],
+  objective: ['context', 'priority', 'status'],
 };
 
 const createSchema = z
@@ -65,6 +68,9 @@ export function mountContextTransfer(app, store) {
           const allowlist = ANONYMIZE_ALLOWLIST[input.recordKind];
           if (!allowlist) fail(`Anonymize is not defined for record kind "${input.recordKind}".`, 400);
           payload = Object.fromEntries(allowlist.map((field) => [field, sourceData[field]]));
+          // A generic, non-leaking label replaces the dropped free-text title — never the real
+          // one, and never a guess at a "safe" version of it.
+          if (input.recordKind === 'objective') payload.title = 'Anonymized objective';
         }
         const created = await insert(input.targetWorkspaceId, input.recordKind, payload);
         targetRecordId = created.id;

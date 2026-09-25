@@ -151,3 +151,36 @@ test('changing a goal stage invalidates stale intelligence results and open reco
   const recAfter = await request(`/recommendations?subjectKind=goal&subjectId=${created.id}`, undefined, cookie, 'GET');
   assert.equal(recAfter.data.find((r) => r.id === recId).status, 'invalidated');
 });
+
+test('F-SI-05: moving a recommendation to scheduled requires and records a scheduledFor date, and a completed recommendation survives later invalidation', async () => {
+  const cookie = await enableAI(await signup());
+  const created = await goal(cookie);
+  await advanceToActive(cookie, created.id);
+  await action(cookie, created.id, 'Done');
+
+  const advice = await request('/companion/messages', { message: 'give me goal advice', objectiveId: created.id, agentId: 'goal-advisor', consent: true }, cookie);
+  const recId = advice.data.evidence.recommendationId;
+  assert.ok(recId);
+
+  const accepted = await request(`/recommendations/${recId}/status`, { status: 'accepted' }, cookie, 'PATCH');
+  assert.equal(accepted.status, 200);
+
+  const missingDate = await request(`/recommendations/${recId}/status`, { status: 'scheduled' }, cookie, 'PATCH');
+  assert.equal(missingDate.status, 400, 'scheduling without a date is rejected');
+
+  const scheduledFor = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString();
+  const scheduled = await request(`/recommendations/${recId}/status`, { status: 'scheduled', scheduledFor }, cookie, 'PATCH');
+  assert.equal(scheduled.status, 200);
+  assert.equal(scheduled.data.scheduled_for, scheduledFor);
+
+  const inProgress = await request(`/recommendations/${recId}/status`, { status: 'in_progress' }, cookie, 'PATCH');
+  assert.equal(inProgress.status, 200);
+  const completed = await request(`/recommendations/${recId}/status`, { status: 'completed' }, cookie, 'PATCH');
+  assert.equal(completed.status, 200);
+
+  // A later material change to the goal must not overwrite the completed historical evidence.
+  const moved = await request(`/objectives/${created.id}/goal/stage`, { stage: 'achieved', reason: 'Delivered.' }, cookie, 'PATCH');
+  assert.equal(moved.status, 200);
+  const recAfter = await request(`/recommendations?subjectKind=goal&subjectId=${created.id}`, undefined, cookie, 'GET');
+  assert.equal(recAfter.data.find((r) => r.id === recId).status, 'completed', 'a completed recommendation is preserved history, not silently invalidated');
+});

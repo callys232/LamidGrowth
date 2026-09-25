@@ -52,6 +52,11 @@ export function useScopingPage() {
   const [isJurisdictionAdmin, setIsJurisdictionAdmin] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Publish is two server requests (create the job post, then link it to the scoping case) — if
+  // the first succeeds and the second fails (dropped connection, closed tab, etc.), retrying used
+  // to create a second, orphaned job post charged separately. Remembering the created job id here
+  // means a retry only retries the link step, never re-creates the job.
+  const [pendingJobId, setPendingJobId] = useState<string | null>(null);
 
   async function loadJurisdictionRules() {
     try {
@@ -107,6 +112,20 @@ export function useScopingPage() {
   useEffect(() => {
     api<Options>('/job-options', undefined, 'GET')
       .then(setOptions)
+      .catch(() => {});
+  }, []);
+
+  // Scoping Wizard restore: the backend already persists every in-progress case
+  // (GET /scoping-cases lists the caller's own), but the page previously never asked for it on
+  // mount — leaving and returning silently dropped a real, saved draft back to the start screen.
+  // Resume the most recent non-published case automatically; a fully published one is a finished
+  // artifact, not something to resume editing.
+  useEffect(() => {
+    api<ScopingCase[]>('/scoping-cases', undefined, 'GET')
+      .then((cases) => {
+        const resumable = cases.find((c) => c.status !== 'published');
+        if (resumable) setScopingCase((current) => current ?? resumable);
+      })
       .catch(() => {});
   }, []);
 
@@ -170,29 +189,37 @@ export function useScopingPage() {
     setBusy(true);
     setError('');
     try {
-      const created = await api<{ id: string }>('/jobs', {
-        title: job.title,
-        category: scopingCase.category,
-        projectType: job.projectType,
-        description:
-          [scopingCase.objective, scopingCase.problem_statement, scopingCase.desired_outcome]
-            .filter(Boolean)
-            .join('\n\n')
-            .slice(0, 10000) || scopingCase.objective,
-        deliverables: scopingCase.deliverables || scopingCase.objective,
-        budgetMin: job.budgetMin,
-        budgetMax: job.budgetMax,
-        currency: job.currency,
-        timeline: job.timeline,
-      });
+      // If a prior attempt already created the job but the link step then failed, reuse that job
+      // instead of creating a second one.
+      const jobId =
+        pendingJobId ??
+        (
+          await api<{ id: string }>('/jobs', {
+            title: job.title,
+            category: scopingCase.category,
+            projectType: job.projectType,
+            description:
+              [scopingCase.objective, scopingCase.problem_statement, scopingCase.desired_outcome]
+                .filter(Boolean)
+                .join('\n\n')
+                .slice(0, 10000) || scopingCase.objective,
+            deliverables: scopingCase.deliverables || scopingCase.objective,
+            budgetMin: job.budgetMin,
+            budgetMax: job.budgetMax,
+            currency: job.currency,
+            timeline: job.timeline,
+          })
+        ).id;
+      setPendingJobId(jobId);
       const published = await api<ScopingCase>(
         `/scoping-cases/${scopingCase.id}/publish`,
         {
-          publishedJobId: created.id,
+          publishedJobId: jobId,
           confirmed: job.confirmed,
         },
         'PATCH',
       );
+      setPendingJobId(null);
       setScopingCase(published);
       notify('Project published from your scoping case.');
       return published;

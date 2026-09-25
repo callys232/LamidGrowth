@@ -188,6 +188,21 @@ test('an out-of-range rating is rejected', async () => {
   assert.equal(bad.status, 400);
 });
 
+test('F-EX-03: a milestone that actually reached paid status can still be reviewed, not only approved', async () => {
+  const client = await signup('Paid Review Client', 'paid-review-client@example.test');
+  const freelancer = await signup('Paid Review Freelancer', 'paid-review-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const { milestoneId } = await approvedMilestone(client, freelancer, freelancerState.user.id);
+
+  // Simulate the real post-payout terminal state a webhook sets (payments.mjs), without running
+  // a full mock provider round trip — this test is specifically about the review gate, not the
+  // payment flow already covered elsewhere.
+  await store.db.prepare("UPDATE milestones SET status = 'paid' WHERE id = ?").run(milestoneId);
+
+  const review = await request(`/milestones/${milestoneId}/review`, { rating: 5, comment: 'Paid and great work.' }, client);
+  assert.equal(review.status, 201, 'a paid milestone must remain reviewable, not silently excluded');
+});
+
 test('a restricted conflict disclosure removes an expert from matching results', async () => {
   const admin = await signup('Reputation Admin', adminEmail);
   const freelancer = await signup('Restricted Freelancer', 'restricted-freelancer@example.test');

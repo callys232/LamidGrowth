@@ -36,8 +36,15 @@ export function mountReputation(app, store) {
 
   app.post('/api/milestones/:id/review', async (req, res) => {
     const row = await partiesFor(req.params.id);
-    if (row.milestone_status !== 'approved')
-      return res.status(400).json({ error: 'Only an approved milestone can be reviewed.' });
+    // F-EX-03 (reputation gap): a milestone's terminal state after real payout is 'paid', not
+    // 'approved' (see payments.mjs's webhook handler) — requiring exactly 'approved' silently
+    // locked out review submission for every milestone that actually got paid, the one case
+    // reputation evidence matters most for, while aggregate stats elsewhere still counted that
+    // same paid work.
+    if (!['approved', 'paid'].includes(row.milestone_status))
+      return res
+        .status(400)
+        .json({ error: 'Only an approved or paid milestone can be reviewed.' });
     const isClient = row.client_user_id === req.user.id;
     const isFreelancer = row.freelancer_user_id === req.user.id;
     if (!isClient && !isFreelancer)

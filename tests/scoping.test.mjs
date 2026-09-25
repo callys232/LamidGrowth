@@ -298,3 +298,113 @@ test('a job posted directly (skipping the guided scoping pre-flow) is still risk
   assert.equal(clean.status, 201);
   assert.equal(clean.data.riskBand, 'green');
 });
+
+test('F-SC-03: a reviewer can propose field-level changes, the owner sees a real diff, and reconciles them field by field', async () => {
+  const client = await signup('Reconcile Client', 'reconcile-client@example.test');
+  const created = await request(
+    '/scoping-cases',
+    { objective: 'Provide legal advice on vendor contracts', problemStatement: '' },
+    client,
+  );
+  assert.equal(created.data.risk_band, 'red');
+
+  const requested = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+  assert.equal(requested.status, 201);
+  const expert = await signup('Reconcile Reviewer', 'reconcile-reviewer@example.test');
+  await request('/talent/profile', { headline: 'Reviewer', skills: ['Legal'], domains: ['Legal and compliance'] }, expert);
+  const expertState = await request('/state', undefined, expert, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(expertState.data.user.id);
+  await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+
+  // No diff exists yet — nothing has been proposed.
+  const noDiff = await request(`/scoping-cases/${created.data.id}/review/diff`, undefined, client, 'GET');
+  assert.equal(noDiff.data, null);
+
+  const completed = await request(
+    `/review-queue/${requested.data.id}/complete`,
+    {
+      notes: 'Needs a narrower out-of-scope and a jurisdiction fix.',
+      proposedChanges: { outOfScope: 'Excludes litigation support.', jurisdiction: 'Germany' },
+    },
+    expert,
+  );
+  assert.equal(completed.status, 200);
+
+  const diff = await request(`/scoping-cases/${created.data.id}/review/diff`, undefined, client, 'GET');
+  assert.equal(diff.status, 200);
+  assert.equal(diff.data.fields.outOfScope.proposed, 'Excludes litigation support.');
+  assert.equal(diff.data.fields.outOfScope.current, '');
+  assert.equal(diff.data.fields.jurisdiction.proposed, 'Germany');
+
+  // Reject an unknown field name.
+  const badAccept = await request(
+    `/scoping-cases/${created.data.id}/reconcile`,
+    { accept: ['objective'] },
+    client,
+  );
+  assert.equal(badAccept.status, 400);
+
+  // Accept only outOfScope; jurisdiction is implicitly rejected (left unchanged).
+  const reconciled = await request(
+    `/scoping-cases/${created.data.id}/reconcile`,
+    { accept: ['outOfScope'] },
+    client,
+  );
+  assert.equal(reconciled.status, 200);
+  assert.equal(reconciled.data.out_of_scope, 'Excludes litigation support.');
+  assert.equal(reconciled.data.jurisdiction, null, 'a field not accepted stays as it was, not silently applied');
+
+  // The proposal is now closed — reconciling again finds nothing pending.
+  const again = await request(
+    `/scoping-cases/${created.data.id}/reconcile`,
+    { accept: ['outOfScope'] },
+    client,
+  );
+  assert.equal(again.status, 400);
+
+  const versions = await request(`/scoping-cases/${created.data.id}/versions`, undefined, client, 'GET');
+  assert.ok(versions.data.some((v) => v.source === 'expert_reconciled'));
+});
+
+test('F-SC-03: a review left past its SLA deadline is escalated back to the open pool, not left silently overdue', async () => {
+  const { escalateOverdueReviews } = await import('../src/app/scoping.mjs');
+  const client = await signup('SLA Client', 'sla-client@example.test');
+  const created = await request(
+    '/scoping-cases',
+    { objective: 'Provide legal advice on employment policy', problemStatement: '' },
+    client,
+  );
+  const requested = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+  const expert = await signup('SLA Reviewer', 'sla-reviewer@example.test');
+  await request('/talent/profile', { headline: 'Reviewer', skills: ['Legal'], domains: ['Legal and compliance'] }, expert);
+  await request('/talent/profile/review-availability', { expectedResponseHours: 4 }, expert, 'PATCH');
+  const expertState = await request('/state', undefined, expert, 'GET');
+  await store.db
+    .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
+    .run(expertState.data.user.id);
+  const claimed = await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+  assert.equal(claimed.status, 200);
+  assert.ok(claimed.data.sla_due_at, 'a reviewer with a declared response window gets a real SLA deadline');
+
+  // Force the deadline into the past to simulate a missed SLA.
+  await store.db
+    .prepare("UPDATE review_queue_entries SET sla_due_at = ? WHERE id = ?")
+    .run(new Date(Date.now() - 1000).toISOString(), requested.data.id);
+
+  const escalatedCount = await escalateOverdueReviews(store);
+  assert.ok(escalatedCount >= 1);
+
+  const afterEscalation = await store.db
+    .prepare('SELECT * FROM review_queue_entries WHERE id = ?')
+    .get(requested.data.id);
+  assert.equal(afterEscalation.status, 'pending', 'returned to the open pool for another reviewer');
+  assert.equal(afterEscalation.claimed_by, null);
+  assert.equal(afterEscalation.escalation_count, 1);
+  assert.ok(afterEscalation.escalated_at);
+
+  // A second sweep with nothing overdue is a no-op.
+  const secondSweep = await escalateOverdueReviews(store);
+  assert.equal(secondSweep, 0);
+});

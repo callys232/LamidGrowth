@@ -1,0 +1,508 @@
+{
+  "at": "2026-09-24T14:41:24.767Z",
+  "summary": {
+    "tests": 317,
+    "pass": 317,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "entries": [
+    {
+      "tool": "Financial Visibility (F01)",
+      "duty": "Calculates financial summaries from supplied figures; the API test independently checks gross margin and point charging.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/engines.test.mjs",
+      "line": 93,
+      "testNumbers": [
+        98
+      ],
+      "limit": "Does not establish real-time bank integration or every financial metric’s correctness."
+    },
+    {
+      "tool": "Assessment scoring (tested through S01)",
+      "duty": "Accepts declared dimensions, rejects unknown dimensions and charges only an accepted run.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/engines.test.mjs",
+      "line": 126,
+      "testNumbers": [
+        99
+      ],
+      "limit": "Does not establish the accuracy of the business diagnosis or the full Strategic Identity Statement promise."
+    },
+    {
+      "tool": "Quote Generator",
+      "duty": "Computes a quote from the recorded job budget range.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 616,
+      "testNumbers": [
+        20
+      ],
+      "limit": "Deterministic budget arithmetic; not market-price validation."
+    },
+    {
+      "tool": "Estimate Generator",
+      "duty": "Returns the recorded lower/upper budget range for the job.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 616,
+      "testNumbers": [
+        20
+      ],
+      "limit": "Not a verified delivery-cost forecast."
+    },
+    {
+      "tool": "Invoice Generator",
+      "duty": "Invoices approved milestones using the exact recorded amount.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/projects.test.mjs",
+      "line": 327,
+      "testNumbers": [
+        231
+      ],
+      "limit": "Actual payment collection is a separate provider-dependent operation."
+    },
+    {
+      "tool": "Indicative FX Converter",
+      "duty": "Converts using the stored rate; handles same currency and rejects missing pairs.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/fx.test.mjs",
+      "line": 51,
+      "testNumbers": [
+        153
+      ],
+      "limit": "Display-only indicative conversion; no claim of live exchange-rate freshness."
+    },
+    {
+      "tool": "Creation Asset Manager",
+      "duty": "Persists a generated asset, lists it, creates revisions and removes the version chain.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/creation-studio.test.mjs",
+      "line": 105,
+      "testNumbers": [
+        81
+      ],
+      "limit": "Concurrent editing and immutable retention are separate acceptance concerns."
+    },
+    {
+      "tool": "Document PDF Export",
+      "duty": "Exports a completed document as a PDF and rejects another workspace’s access.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/documents.test.mjs",
+      "line": 83,
+      "testNumbers": [
+        90
+      ],
+      "limit": "Tests verify valid PDF header/access; not visual layout of every possible document."
+    },
+    {
+      "tool": "Document Attestation",
+      "duty": "Records a signer and a content-hash-bound attestation.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/documents.test.mjs",
+      "line": 105,
+      "testNumbers": [
+        92
+      ],
+      "limit": "An in-app attestation; not a qualified electronic signature."
+    },
+    {
+      "tool": "Workflow Runtime",
+      "duty": "Applies block/ask/allow rules, version-bound approval, tenant/principal checks, pause/expiry, bounded retry and restart recovery.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/workflows.test.mjs",
+      "line": 63,
+      "testNumbers": [
+        312
+      ],
+      "limit": "Verified built-in runtime behavior; not every canonical workflow/connector/compensation capability."
+    },
+    {
+      "tool": "Task Manager",
+      "duty": "Creates, lists, updates and deletes tasks for project parties.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/tasks.test.mjs",
+      "line": 113,
+      "testNumbers": [
+        300
+      ],
+      "limit": "This does not independently certify all assignment/edit concurrency edge cases."
+    },
+    {
+      "tool": "Deadline / Blocker Attention",
+      "duty": "Surfaces overdue or blocked open tasks and excludes completed tasks.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/tasks.test.mjs",
+      "line": 146,
+      "testNumbers": [
+        301
+      ],
+      "limit": "Computed attention feed; not continuous external notifications."
+    },
+    {
+      "tool": "Change Request Manager",
+      "duty": "Allows parties to request changes and only the owner to decide them; rejects a repeated decision.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/tasks.test.mjs",
+      "line": 185,
+      "testNumbers": [
+        302
+      ],
+      "limit": "Approval recording does not itself prove every downstream scope/money effect."
+    },
+    {
+      "tool": "Milestone / Deliverable Workflow",
+      "duty": "Persists the project–milestone–deliverable–submission–review–approval sequence and checks client/freelancer roles.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/projects.test.mjs",
+      "line": 100,
+      "testNumbers": [
+        227
+      ],
+      "limit": "Content verification in this test does not certify actual external artifact quality."
+    },
+    {
+      "tool": "Dispute Record Manager",
+      "duty": "Creates a dispute record and changes the milestone to disputed.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/projects.test.mjs",
+      "line": 292,
+      "testNumbers": [
+        230
+      ],
+      "limit": "Resolution fairness and actual funds recovery require separate validation."
+    },
+    {
+      "tool": "Project Closeout / Completion Certificate",
+      "duty": "Requires fully paid milestones before closing and issuing the completion certificate.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/tasks.test.mjs",
+      "line": 235,
+      "testNumbers": [
+        303
+      ],
+      "limit": "Uses test-controlled payment state; not evidence of live settlement."
+    },
+    {
+      "tool": "Project Messaging",
+      "duty": "Stores ordered messages between project parties and rejects unrelated accounts.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/messaging.test.mjs",
+      "line": 85,
+      "testNumbers": [
+        195
+      ],
+      "limit": "No claim of delivery to external chat/email providers."
+    },
+    {
+      "tool": "Goal Pathway Templates",
+      "duty": "Produces family-appropriate steps while retaining supplied success conditions and constraints.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/goal-pathways.test.mjs",
+      "line": 5,
+      "testNumbers": [
+        157
+      ],
+      "limit": "Template behavior; not validation of live AI advice."
+    },
+    {
+      "tool": "Goal Lifecycle Manager",
+      "duty": "Starts a goal at captured and enforces allowed lifecycle transitions and terminal states.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/goals.test.mjs",
+      "line": 112,
+      "testNumbers": [
+        160
+      ],
+      "limit": "The broader dependency/change-propagation contract is separate."
+    },
+    {
+      "tool": "Goal Subscription Manager",
+      "duty": "Creates, lists and removes goal subscriptions.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/goals.test.mjs",
+      "line": 145,
+      "testNumbers": [
+        161
+      ],
+      "limit": "This does not certify matching relevance, constraint enforcement or continuous scanning."
+    },
+    {
+      "tool": "Intelligence Result Retrieval",
+      "duty": "Reads fresh stored results and excludes expired results; rejects other-workspace access.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/intelligence.test.mjs",
+      "line": 54,
+      "testNumbers": [
+        169
+      ],
+      "limit": "Not certification of the full typed result/lineage fabric."
+    },
+    {
+      "tool": "Intelligence Conflict Flagging",
+      "duty": "Flags different conclusions for the same subject for human review.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/intelligence.test.mjs",
+      "line": 86,
+      "testNumbers": [
+        170
+      ],
+      "limit": "A conflict flag is not automatic evidence reconciliation."
+    },
+    {
+      "tool": "Recommendation Tracking",
+      "duty": "Persists an advisor recommendation and accepts it; stage changes invalidate linked stale results/recommendations.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/recommendations.test.mjs",
+      "line": 93,
+      "testNumbers": [
+        236
+      ],
+      "limit": "Execution scheduling, causal validity and ordinary edit/delete propagation need their own proof."
+    },
+    {
+      "tool": "Scoping Draft Manager",
+      "duty": "Starts a saved scope from an objective without requiring all fields first.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/scoping.test.mjs",
+      "line": 51,
+      "testNumbers": [
+        247
+      ],
+      "limit": "Qualified review/publication and resume UX are separate."
+    },
+    {
+      "tool": "Field Guidance",
+      "duty": "Returns Explain, Example, Suggest and Help-me-decide responses and rejects unsupported fields/strangers.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/field-guidance.test.mjs",
+      "line": 49,
+      "testNumbers": [
+        138
+      ],
+      "limit": "Tests prove the contract and non-destructive suggestions, not expert-quality reasoning."
+    },
+    {
+      "tool": "Scope Version History",
+      "duty": "Stores distinct attributed snapshots on successive saves.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/scope-versions.test.mjs",
+      "line": 49,
+      "testNumbers": [
+        246
+      ],
+      "limit": "Does not certify simultaneous edits or expert proposal reconciliation."
+    },
+    {
+      "tool": "Reviewer Response-Window Calculation",
+      "duty": "Computes an SLA from declared availability and leaves it absent when none is declared.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/reviewer-sla.test.mjs",
+      "line": 65,
+      "testNumbers": [
+        241
+      ],
+      "limit": "This does not prove qualification, deadline monitoring or delivery within that SLA."
+    },
+    {
+      "tool": "Expert Profile Manager",
+      "duty": "Creates and updates a profile.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/talent.test.mjs",
+      "line": 56,
+      "testNumbers": [
+        292
+      ],
+      "limit": "Profile persistence does not verify credentials or eligibility."
+    },
+    {
+      "tool": "Skills Assessment Grader",
+      "duty": "Grades the supported quiz banks deterministically and rejects unsupported skills.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/talent.test.mjs",
+      "line": 117,
+      "testNumbers": [
+        294
+      ],
+      "limit": "Limited to supported assessments, not all professions."
+    },
+    {
+      "tool": "Scoped Expert Context Package",
+      "duty": "Grants a package to the engaged expert, resolves it, rejects foreign objects and blocks resolution after revocation.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/expert-context-package.test.mjs",
+      "line": 81,
+      "testNumbers": [
+        125
+      ],
+      "limit": "Expiry, purpose and broader delegation semantics are separate."
+    },
+    {
+      "tool": "Explicit Context Transfer",
+      "duty": "Copies records or grants revocable reference/promote pointers between permitted workspaces.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/context-transfer.test.mjs",
+      "line": 61,
+      "testNumbers": [
+        76
+      ],
+      "limit": "The anonymize operation is not certified to remove identifying information."
+    },
+    {
+      "tool": "Learning Path / Enrollment Manager",
+      "duty": "Creates paths/modules, tracks module completion and blocks enrollment until prerequisites are met.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/learning.test.mjs",
+      "line": 143,
+      "testNumbers": [
+        188
+      ],
+      "limit": "Completion/score tracking is not independently verified mastery."
+    },
+    {
+      "tool": "Learning Assignment / Compliance Tracker",
+      "duty": "Assigns paths with due dates and restricts compliance requirement creation to administrators.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/learning.test.mjs",
+      "line": 166,
+      "testNumbers": [
+        189
+      ],
+      "limit": "Does not establish organization-wide compliance certification."
+    },
+    {
+      "tool": "KPI Observation Tracker",
+      "duty": "Creates KPI definitions, records observations, lists and deletes them.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 73,
+      "testNumbers": [
+        163
+      ],
+      "limit": "Does not certify metric source quality or causal impact."
+    },
+    {
+      "tool": "Opportunity Pipeline Tracker",
+      "duty": "Creates, changes pipeline status and deletes opportunities.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 95,
+      "testNumbers": [
+        164
+      ],
+      "limit": "Not certification of goal-aware opportunity discovery."
+    },
+    {
+      "tool": "Experiment Tracker",
+      "duty": "Enforces draft → running → complete transitions.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 112,
+      "testNumbers": [
+        165
+      ],
+      "limit": "Not validation of experiment design/statistical conclusions."
+    },
+    {
+      "tool": "Experiment Builder — persistence duty",
+      "duty": "Creates a persisted draft experiment.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 161,
+      "testNumbers": [
+        168
+      ],
+      "limit": "AI-generated hypothesis quality is not certified."
+    },
+    {
+      "tool": "Performance Analytics — data retrieval duty",
+      "duty": "Includes actual stored KPI data in the analytics context.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 140,
+      "testNumbers": [
+        166
+      ],
+      "limit": "Not independent validation of live model conclusions."
+    },
+    {
+      "tool": "Opportunity Signals — pipeline retrieval duty",
+      "duty": "Includes actual stored opportunity pipeline data.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/growth.test.mjs",
+      "line": 152,
+      "testNumbers": [
+        167
+      ],
+      "limit": "Not validation of continuous external signal monitoring."
+    },
+    {
+      "tool": "Human AI Rules",
+      "duty": "Rejects unknown permissions, bounds feature/cost/source access and rejects an AI result when policy changes during the request.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/ai-rules.test.mjs",
+      "line": 41,
+      "testNumbers": [
+        30
+      ],
+      "limit": "Tests use controlled providers; full cross-service lane governance is separate."
+    },
+    {
+      "tool": "Agent Points Charging / Refunds",
+      "duty": "Debits successful runs, refunds failed runs and rejects insufficient balance.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 280,
+      "testNumbers": [
+        13
+      ],
+      "limit": "Not certification of fiat ledger retention or settlement."
+    },
+    {
+      "tool": "Proposal Drafter — integration duty",
+      "duty": "Grounds its input in the real job, rejects unrelated users and persists the resulting draft.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 428,
+      "testNumbers": [
+        16
+      ],
+      "limit": "Provider-controlled tests do not establish live writing or commercial quality."
+    },
+    {
+      "tool": "Scope Builder — integration duty",
+      "duty": "Uses the real job and rejects unrelated users.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 506,
+      "testNumbers": [
+        18
+      ],
+      "limit": "Complete scoping/review requirements are broader."
+    },
+    {
+      "tool": "Contract Builder — integration duty",
+      "duty": "Uses the real job and rejects unrelated users.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 561,
+      "testNumbers": [
+        19
+      ],
+      "limit": "No legal correctness or enforceability certification."
+    },
+    {
+      "tool": "Change Order Generator — integration duty",
+      "duty": "Uses the real proposal and rejects unrelated users.",
+      "status": "PASS for stated duty",
+      "testFile": "tests/agents.test.mjs",
+      "line": 655,
+      "testNumbers": [
+        21
+      ],
+      "limit": "No live drafting-quality or downstream commitment certification."
+    }
+  ],
+  "failures": []
+}

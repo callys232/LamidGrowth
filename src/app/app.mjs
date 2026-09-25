@@ -21,8 +21,8 @@ import { mountFiles } from './files.mjs';
 import { mountKyc, mountKycWebhook, genericKycProvider } from './kyc.mjs';
 import { mountCreationStudio } from './creationStudio.mjs';
 import { mountExpertWatches } from './expertWatches.mjs';
-import { mountIntelligence } from './intelligence.mjs';
-import { mountRecommendations } from './recommendations.mjs';
+import { mountIntelligence, markResultsStale } from './intelligence.mjs';
+import { mountRecommendations, invalidateRecommendations } from './recommendations.mjs';
 import { mountOutcomeAttribution } from './outcomeAttribution.mjs';
 import { mountExpertContextPackage } from './expertContextPackage.mjs';
 import { mountContextTransfer } from './contextTransfer.mjs';
@@ -1598,6 +1598,11 @@ export async function createApp({
           "UPDATE records SET kind = 'deleted_objective', version = version + 1 WHERE id = ?",
         )
         .run(row.id);
+      // F-SI-02: a deleted goal must stop being monitored and stop backing cached intelligence/
+      // recommendations — previously only an explicit stage transition did this cascade.
+      await db.prepare('UPDATE goal_subscriptions SET active = 0 WHERE goal_id = ?').run(row.id);
+      await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
+      await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
       await log(
         req.workspace.id,
         req.user.name,
@@ -1638,6 +1643,13 @@ export async function createApp({
       await db
         .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
         .run(JSON.stringify(updated), row.id);
+      // F-SI-02: any edit invalidates prior intelligence/recommendations computed against the
+      // old state — the goal/stage route already did this on a stage change; ordinary edits
+      // (objective text, constraints, etc.) did not. Completing a goal also stops its monitoring.
+      await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
+      await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
+      if (updated.status === 'Complete')
+        await db.prepare('UPDATE goal_subscriptions SET active = 0 WHERE goal_id = ?').run(row.id);
       await log(
         req.workspace.id,
         req.user.name,

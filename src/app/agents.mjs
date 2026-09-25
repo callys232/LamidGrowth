@@ -38,7 +38,7 @@ const messageInput = z
 const permissionForBand = { A1: 'work:write', A2: 'workspace:manage', A3: 'workspace:manage' };
 
 async function reviewSources(ctx, deps, useCase, question, extraKinds = []) {
-  const model = await requireApprovedModel(ctx.store, useCase);
+  const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
   const sources = await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds);
   if (!deps.aiProvider) {
     return {
@@ -138,7 +138,7 @@ async function saveCreationAsset(ctx, { kind, title, content, jobId = null, prop
 }
 
 async function draftJobDocument(ctx, deps, useCase, job, question, templateFallback) {
-  const model = await requireApprovedModel(ctx.store, useCase);
+  const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
   const kind = useCase.replace('companion.', '');
   const response = deps.aiProvider ? null : templateFallback(job);
   const result = deps.aiProvider
@@ -288,6 +288,10 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      // F-SI-01: requireApprovedModel is called before the KPI loop (rather than after, as
+      // before) so the approved model registry id is available to attach as real provenance on
+      // each intelligence result the loop writes below.
+      const model = await requireApprovedModel(ctx.store, 'companion.performance-analytics', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
       const defs = await ctx.store.db
         .prepare('SELECT * FROM kpi_definitions WHERE workspace_id = ? ORDER BY created_at')
         .all(ctx.workspace.id);
@@ -297,7 +301,7 @@ const agents = {
           .prepare('SELECT * FROM kpi_observations WHERE kpi_id = ? ORDER BY observed_at DESC LIMIT 2')
           .all(def.id);
         const trend = latest && previous ? (latest.value > previous.value ? 'up' : latest.value < previous.value ? 'down' : 'flat') : null;
-        kpis.push({ id: def.id, name: def.name, unit: def.unit, target: def.target, latest: latest?.value ?? null, trend });
+        kpis.push({ id: def.id, name: def.name, unit: def.unit, target: def.target, latest: latest?.value ?? null, trend, latestObservationId: latest?.id ?? null, previousObservationId: previous?.id ?? null });
       }
       for (const k of kpis) {
         if (!k.trend) continue;
@@ -308,9 +312,14 @@ const agents = {
           agentId: 'performance-analytics',
           conclusion: k.trend,
           summary: `${k.name}: ${k.latest}${k.unit ? ` ${k.unit}` : ''} (${k.trend})`,
+          sources: [
+            { kind: 'kpi_definition', id: k.id },
+            ...(k.latestObservationId ? [{ kind: 'kpi_observation', id: k.latestObservationId }] : []),
+            ...(k.previousObservationId ? [{ kind: 'kpi_observation', id: k.previousObservationId }] : []),
+          ],
+          modelRegistryId: model.id,
         });
       }
-      const model = await requireApprovedModel(ctx.store, 'companion.performance-analytics');
       const summaryFacts = kpis.length
         ? kpis
             .map((k) => `${k.name}: ${k.latest ?? 'no data'}${k.unit ? ` ${k.unit}` : ''}${k.trend ? ` (${k.trend})` : ''}`)
@@ -366,7 +375,7 @@ const agents = {
       const open = await ctx.store.db
         .prepare("SELECT * FROM opportunities WHERE workspace_id = ? AND status NOT IN ('won', 'lost') ORDER BY value_estimate DESC NULLS LAST, created_at DESC")
         .all(ctx.workspace.id);
-      const model = await requireApprovedModel(ctx.store, 'companion.opportunity-signals');
+      const model = await requireApprovedModel(ctx.store, 'companion.opportunity-signals', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
       const summaryFacts = open.length
         ? `${open.length} open opportunit${open.length === 1 ? 'y' : 'ies'} on file: ${open
             .slice(0, 5)
@@ -402,7 +411,7 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
-      const model = await requireApprovedModel(ctx.store, 'companion.experiment-builder');
+      const model = await requireApprovedModel(ctx.store, 'companion.experiment-builder', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
       const title = input.message.slice(0, 120);
       const id = randomUUID();
       const createdAt = new Date().toISOString();
@@ -574,7 +583,7 @@ const agents = {
           evidence: null,
         };
       const { proposal, job } = await loadAuthorizedProposal(ctx, input.proposalId);
-      const model = await requireApprovedModel(ctx.store, 'companion.change-order');
+      const model = await requireApprovedModel(ctx.store, 'companion.change-order', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
       const requestedChange = input.message;
       const result = deps.aiProvider
         ? await deps.aiProvider.review(
@@ -788,10 +797,10 @@ const agents = {
         .get(goal.id);
       const stage = lifecycle?.stage || 'captured';
       const actionRows = await ctx.store.db
-        .prepare("SELECT data FROM records WHERE workspace_id = ? AND kind = 'action'")
+        .prepare("SELECT id, version, data FROM records WHERE workspace_id = ? AND kind = 'action'")
         .all(ctx.workspace.id);
       const actions = actionRows
-        .map((row) => JSON.parse(row.data))
+        .map((row) => ({ id: row.id, version: row.version, ...JSON.parse(row.data) }))
         .filter((action) => action.objectiveId === goal.id);
       const done = actions.filter((action) => action.status === 'Done').length;
       const allowedNext = TRANSITIONS[stage] || [];
@@ -800,7 +809,7 @@ const agents = {
         if (done === actions.length && allowedNext.includes('achieved')) suggestedStage = 'achieved';
         else if (stage === 'active' && allowedNext.includes('progressing')) suggestedStage = 'progressing';
       }
-      const model = await requireApprovedModel(ctx.store, 'companion.goal-advisor');
+      const model = await requireApprovedModel(ctx.store, 'companion.goal-advisor', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
       const summaryFacts = `Goal "${goal.title}" is at stage "${stage}" with ${actions.length} linked action(s), ${done} done.`;
       const conclusion = suggestedStage || stage;
       await upsertIntelligenceResult(ctx.store, {
@@ -810,6 +819,11 @@ const agents = {
         agentId: 'goal-advisor',
         conclusion,
         summary: summaryFacts,
+        sources: [
+          { kind: 'objective', id: goal.id, version: goal.version },
+          ...actions.map((action) => ({ kind: 'action', id: action.id, version: action.version })),
+        ],
+        modelRegistryId: model.id,
       });
       let recommendation = null;
       if (suggestedStage) {

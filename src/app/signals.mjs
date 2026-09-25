@@ -113,6 +113,68 @@ async function evaluateSubscription(db, subscription) {
   return { found, unsupported };
 }
 
+// Shared by the manual scan endpoint and the scheduled sweep below, so both insert matches the
+// same way (dedup on conflict, same log entry shape).
+async function runScan(store, subscription, actorName) {
+  const { db, transaction, log } = store;
+  const { found, unsupported } = await evaluateSubscription(db, subscription);
+  const now = new Date().toISOString();
+  const inserted = [];
+  await transaction(async () => {
+    for (const match of found) {
+      const id = randomUUID();
+      const result = await db
+        .prepare(
+          `INSERT INTO signal_matches VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+           ON CONFLICT (subscription_id, source_kind, source_id) DO NOTHING`,
+        )
+        .run(
+          id,
+          subscription.id,
+          subscription.goal_id,
+          subscription.workspace_id,
+          match.signalClass,
+          match.sourceKind,
+          match.sourceId,
+          match.title,
+          match.summary,
+          now,
+        );
+      if (result.changes > 0) inserted.push({ id, ...match });
+    }
+    if (inserted.length)
+      await log(
+        subscription.workspace_id,
+        actorName,
+        'Signal scan found new matches',
+        subscription.id,
+        `${inserted.length} new match(es)`,
+      );
+  });
+  return { scannedAt: now, newMatches: inserted, unsupportedSignalClasses: unsupported };
+}
+
+// F-SI-04 (spec-review audit): scans were endpoint-triggered only — a subscription with nobody
+// clicking "scan" was never evaluated. Called from the leased workflow-scheduler tick in
+// server/index.mjs, this makes monitoring actually continuous. Only active subscriptions on a
+// still-live (not deleted/completed) goal are scanned — F-SI-02 disables `active` on the rest.
+export async function scanAllSubscriptions(store) {
+  const { db } = store;
+  const subscriptions = await db
+    .prepare(
+      `SELECT gs.* FROM goal_subscriptions gs
+       JOIN records r ON r.id = gs.goal_id AND r.kind = 'objective'
+       WHERE gs.active = 1 AND r.data::jsonb ->> 'status' != 'Complete'`,
+    )
+    .all();
+  let scanned = 0;
+  for (const subscription of subscriptions) {
+    await runScan(store, subscription, 'Scheduled scan');
+    scanned += 1;
+  }
+  return scanned;
+}
+
 export function mountSignals(app, store) {
   const { db, transaction, log } = store;
 
@@ -126,45 +188,11 @@ export function mountSignals(app, store) {
 
   app.post('/api/goal-subscriptions/:id/scan', async (req, res) => {
     const subscription = await subscriptionFor(req.params.id, req.workspace.id);
-    const { found, unsupported } = await evaluateSubscription(db, subscription);
-    const now = new Date().toISOString();
-    const inserted = [];
-    await transaction(async () => {
-      for (const match of found) {
-        const id = randomUUID();
-        const result = await db
-          .prepare(
-            `INSERT INTO signal_matches VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
-             ON CONFLICT (subscription_id, source_kind, source_id) DO NOTHING`,
-          )
-          .run(
-            id,
-            subscription.id,
-            subscription.goal_id,
-            subscription.workspace_id,
-            match.signalClass,
-            match.sourceKind,
-            match.sourceId,
-            match.title,
-            match.summary,
-            now,
-          );
-        if (result.changes > 0) inserted.push({ id, ...match });
-      }
-      if (inserted.length)
-        await log(
-          subscription.workspace_id,
-          req.user.name,
-          'Signal scan found new matches',
-          subscription.id,
-          `${inserted.length} new match(es)`,
-        );
-    });
-    res.json({
-      scannedAt: now,
-      newMatches: inserted,
-      unsupportedSignalClasses: unsupported,
-    });
+    if (!subscription.active)
+      return res
+        .status(400)
+        .json({ error: 'This subscription is no longer active (its goal was deleted or completed).' });
+    res.json(await runScan(store, subscription, req.user.name));
   });
 
   app.get('/api/goal-subscriptions/:id/matches', async (req, res) => {

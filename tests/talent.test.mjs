@@ -114,6 +114,54 @@ test('Expert Finder ranks a matching profile above a non-matching one', async ()
   assert.ok(matchingResult.score > 0);
 });
 
+test('F-EX-03: an expired verified credential no longer contributes to the match-score bonus', async () => {
+  const current = await signup('Current Credential Expert');
+  const expired = await signup('Expired Credential Expert');
+  // Identical profiles otherwise, so any score difference is attributable to the credential.
+  await request(
+    '/talent/profile',
+    { headline: 'Data privacy consultant', skills: ['privacy', 'gdpr'], languages: [] },
+    current,
+  );
+  await request(
+    '/talent/profile',
+    { headline: 'Data privacy consultant', skills: ['privacy', 'gdpr'], languages: [] },
+    expired,
+  );
+
+  const futureYear = new Date().getUTCFullYear() + 5;
+  const currentCred = await request(
+    '/talent/credentials',
+    { type: 'certification', title: 'Privacy Cert', issuer: 'IAPP', expiresAt: `${futureYear}-01-01` },
+    current,
+  );
+  const pastYear = new Date().getUTCFullYear() - 5;
+  const expiredCred = await request(
+    '/talent/credentials',
+    { type: 'certification', title: 'Privacy Cert', issuer: 'IAPP', expiresAt: `${pastYear}-01-01` },
+    expired,
+  );
+  const currentCredId = currentCred.data.find((c) => c.title === 'Privacy Cert').id;
+  const expiredCredId = expiredCred.data.find((c) => c.title === 'Privacy Cert').id;
+
+  const decideA = await request(`/admin/talent/credentials/${currentCredId}`, { decision: 'verified' }, adminCookie, 'PATCH');
+  assert.equal(decideA.status, 200);
+  const decideB = await request(`/admin/talent/credentials/${expiredCredId}`, { decision: 'verified' }, adminCookie, 'PATCH');
+  assert.equal(decideB.status, 200);
+
+  const currentUserId = (await request('/state', undefined, current, 'GET')).data.user.id;
+  const expiredUserId = (await request('/state', undefined, expired, 'GET')).data.user.id;
+
+  const results = await request('/talent/experts?skill=privacy%20gdpr', undefined, current, 'GET');
+  assert.equal(results.status, 200);
+  const currentEntry = results.data.find((r) => r.userId === currentUserId);
+  const expiredEntry = results.data.find((r) => r.userId === expiredUserId);
+  assert.ok(currentEntry, 'the expert with a still-valid verified credential must appear');
+  assert.ok(expiredEntry, 'the expert with an expired verified credential must still appear (just unbonused)');
+  assert.equal(currentEntry.breakdown.credentialBonus, 2, 'one still-valid verified credential contributes its bonus');
+  assert.equal(expiredEntry.breakdown.credentialBonus, 0, 'an expired verified credential must not contribute to the match score');
+});
+
 test('skills assessments are graded deterministically, and a bogus skill 404s', async () => {
   const user = await signup('Quiz Taker');
   await request(

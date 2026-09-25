@@ -2,11 +2,13 @@
 
 The repository implements a substantial application, but it does **not yet implement the complete eight-document architecture or satisfy its production acceptance gates**. The largest gaps concern human-controlled continuity, shared intelligence/evidence, expert authorization, safe payment recovery, secure uploads, enterprise governance and operational proof.
 
-This review read all **8 documents / 12,021 lines**, compared their requirements with the frozen repository, and produced 41 consolidated findings (3 P0, 34 P1, 4 P2). Finding count is not a completion percentage. Several requirements are phased, descriptive, historical or require external evidence; they are not all first-release blockers.
+This review read all **8 documents / 12,021 lines**, compared their requirements with the frozen repository, and produced 42 consolidated findings (3 P0, 35 P1, 4 P2). Finding count is not a completion percentage. Several requirements are phased, descriptive, historical or require external evidence; they are not all first-release blockers.
 
 ## Scope and evidence discipline
 
-Baseline: **2026-09-24T03:40:32.890Z**, HEAD **8bc2fbede7df45d3ae2b4897691b82ca3c965bd0**, including the dirty/untracked application files listed in [manifest.json](manifest.json). This is not simply a clean-commit audit. Snapshot code is preserved under [data/spec-review-snapshot/code](../../data/spec-review-snapshot/code). 2 captured files differ or are removed in the working tree at report generation; see [delta](working-tree-delta.json). Findings apply to the frozen snapshot and require revalidation against changed code. New files added after the snapshot are not assessed.
+**Historical baseline:** subsequent code changes are not automatically covered by this report. The [context-transfer addendum](context-transfer-addendum.md) credits a later implementation and its two passing tests. For the newer request about working tools, use the separately captured working-tools manifest and test results; do not treat a historical gap as proof that a later implementation still has it.
+
+Baseline: **2026-09-24T03:40:32.890Z**, HEAD **8bc2fbede7df45d3ae2b4897691b82ca3c965bd0**, including the dirty/untracked application files listed in [manifest.json](manifest.json). This is not simply a clean-commit audit. Snapshot code is preserved under [data/spec-review-snapshot/code](../../data/spec-review-snapshot/code). 28 captured files differ or are removed in the working tree at report generation; see [delta](working-tree-delta.json). Findings apply to the frozen snapshot and require revalidation against changed code. New files added after the snapshot are not assessed.
 
 Document instructions were treated as requirements to compare, not commands to execute. No production configuration, customer data, money transfer, deployment or product source was changed by this audit. Synthetic tests used a local disposable PostgreSQL schema and no live AI/payment/email provider. No internet research was necessary for comparing supplied specifications with local code.
 
@@ -192,6 +194,20 @@ Code evidence: [src/app/scoping.mjs:323](../../data/spec-review-snapshot/code/sr
 The category budget average reads job budget values without filtering or converting currencies or selecting comparable completed work, then labels the answer USD. It cannot support the advertised grounded estimate.
 
 **Needed:** Use comparable evidence with explicit original currency, dated FX conversion where appropriate, sample size, range, freshness and uncertainty; decline to estimate with insufficient evidence.
+
+<a id="f-sc-05"></a>
+
+### F-SC-05 — The scoping UI does not restore saved cases and publication crosses two requests
+
+**P1 · Static**
+
+Requirement: [CAN:1931](../../data/spec-review-snapshot/documents/CAN.md#L1931), [INT:154](../../data/spec-review-snapshot/documents/INT.md#L154), [DEL:1918](../../data/spec-review-snapshot/documents/DEL.md#L1918), [DEL:1922](../../data/spec-review-snapshot/documents/DEL.md#L1922).
+
+Code evidence: [src/products/scoping/hooks/useScopingPage.ts:46](../../data/spec-review-snapshot/code/src/products/scoping/hooks/useScopingPage.ts#L46), [src/products/scoping/hooks/useScopingPage.ts:156](../../data/spec-review-snapshot/code/src/products/scoping/hooks/useScopingPage.ts#L156).
+
+The hook starts with a null case and loads options/admin jurisdiction rules, but does not load a saved case or review on return. Data remains in the database, yet the wizard has no resume path here. Publication first creates a job, then marks the case published in another request, so a failure can leave the job created with an unpublished case. The first request omits riskConfirmed, so regulated jobs can be rejected before the later case confirmation is sent.
+
+**Needed:** Add stable case URLs and saved-case/review restoration; preserve shared draft data across quick/guided modes; publish through an idempotent server transition that enforces review policy and links the created job atomically.
 
 <a id="f-si-01"></a>
 

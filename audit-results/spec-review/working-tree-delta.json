@@ -1,13 +1,117 @@
 {
-  "checkedAt": "2026-09-24T09:21:45.655Z",
+  "checkedAt": "2026-09-24T14:37:49.601Z",
   "snapshotAt": "2026-09-24T03:40:32.890Z",
   "changedOrRemovedTrackedSnapshotFiles": [
+    {
+      "path": "src/app/accounts.mjs",
+      "state": "changed"
+    },
     {
       "path": "src/app/app.mjs",
       "state": "changed"
     },
     {
+      "path": "src/app/booking.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/files.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/handoff.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/kyc.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/outcomeAttribution.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/payments.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/scoping.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "src/app/signals.mjs",
+      "state": "changed"
+    },
+    {
       "path": "server/store.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/entitlements.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/escrow-overview.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/escrow-refund.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/escrow.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/expertNetworkExtensions.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/foundation.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/kyc.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/outcome-attribution.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/payments.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/points-purchase.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/reviewer-sla.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/schema.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/scoping.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/signals.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/support/funded-app.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/tasks.test.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "tests/workflows.test.mjs",
       "state": "changed"
     }
   ]

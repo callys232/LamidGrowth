@@ -173,3 +173,13 @@ test('an unknown engine code returns 404', async () => {
   assert.equal((await request('/engines/zz99', undefined, cookie, 'GET')).status, 404);
   assert.equal((await request('/engines/zz99/run', { input: {} }, cookie)).status, 404);
 });
+
+test('F-TF-02: a syntactically valid but never-registered code (Z-series only goes to Z15) is rejected, not given a fabricated fallback config', async () => {
+  // Z50 passes parseEngineCode's format check (letter + 2-3 digits) but Z-series only has
+  // Z01-Z15 registered — this used to silently return buildFallbackConfig's generic config
+  // instead of a 404, on the two public, unauthenticated routes.
+  const detail = await request('/engines/Z50', undefined, undefined, 'GET');
+  assert.equal(detail.status, 404);
+  const demoRun = await request('/engines/Z50/demo-run', { input: {} }, undefined, 'POST');
+  assert.equal(demoRun.status, 404);
+});

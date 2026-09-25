@@ -490,6 +490,11 @@ export function mountPublicEngines(app) {
   app.post('/api/engines/:code/demo-run', async (req, res) => {
     const ref = parseEngineCode(req.params.code);
     if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
+    // F-TF-02: a syntactically valid but never-registered code (e.g. Z50, when Z only goes to
+    // Z15) used to fall through to a fabricated generic config via buildFallbackConfig — a public,
+    // unauthenticated visitor could get what looked like a real result for a capability that was
+    // never actually built. Only a code with a real registry entry is a real engine.
+    if (!MODULE_REGISTRY[ref.code]) return res.status(404).json({ error: 'Unknown engine code.' });
     const { input } = runInput.parse(req.body ?? {});
     const result = runEngine(ref, input);
     res.json({ result, demo: true });
@@ -498,6 +503,8 @@ export function mountPublicEngines(app) {
   app.get('/api/engines/:code', async (req, res) => {
     const ref = parseEngineCode(req.params.code);
     if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
+    // F-TF-02: same registry-membership check as demo-run above.
+    if (!MODULE_REGISTRY[ref.code]) return res.status(404).json({ error: 'Unknown engine code.' });
     const config = configFor(ref);
     const kind = config.inputs?.kind ?? 'assessment';
     res.json({

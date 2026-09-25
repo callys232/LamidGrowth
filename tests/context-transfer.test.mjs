@@ -148,7 +148,11 @@ test('a copy transfer produces an independent record that cannot be revoked, and
     .get(anonymized.data.target_record_id, orgWorkspaceId);
   assert.ok(anonRow, 'the anonymized record must exist in the target workspace');
   const anonData = JSON.parse(anonRow.data);
-  assert.equal(anonData.title, 'Copy me');
+  // F-SI-06 (anonymization leak): title is free text and can name a specific person/client/deal
+  // — it must never survive an "anonymize" transfer, real or guessed-at. A generic label replaces
+  // it instead.
+  assert.notEqual(anonData.title, 'Copy me', 'the real free-text title must not survive anonymize');
+  assert.equal(anonData.title, 'Anonymized objective');
   assert.equal(anonData.description, undefined, 'narrative field must be stripped by anonymize');
   assert.equal(anonData.constraints, undefined, 'narrative field must be stripped by anonymize');
 });

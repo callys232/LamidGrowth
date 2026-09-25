@@ -118,6 +118,27 @@ test('companion agent evidence records which registry entry authorized the call'
   assert.equal(result.data.evidence.modelRegistryId, 'companion-context-v1');
 });
 
+test('F-AI-01: an executed companion call leaves real provenance of the provider/model that ran it', async () => {
+  const cookie = await authedUser();
+  const before = await request('/models/executions?useCase=companion.context-curator', undefined, cookie, 'GET');
+  assert.equal(before.status, 200);
+  const beforeCount = before.data.length;
+
+  const result = await request(
+    '/companion/messages',
+    { message: 'what is going on right now?', consent: true },
+    cookie,
+  );
+  assert.equal(result.status, 201);
+
+  const after = await request('/models/executions?useCase=companion.context-curator', undefined, cookie, 'GET');
+  assert.equal(after.status, 200);
+  assert.equal(after.data.length, beforeCount + 1, 'a real AI-backed call must leave one new execution record');
+  assert.equal(after.data[0].provider, 'test');
+  assert.equal(after.data[0].model, 'test');
+  assert.equal(after.data[0].model_registry_id, 'companion-context-v1');
+});
+
 test('deprecating a use case blocks the agent instead of silently proceeding', async () => {
   const cookie = await authedUser();
   await store.db

@@ -131,6 +131,19 @@ const QUIZ_BANK = {
   ],
 };
 
+// F-LEARN-01: exported so learning.mjs's assessment-format module completion can grade against
+// this same real answer key instead of trusting a client-supplied score, the same way this
+// module's own /api/talent/assessments route already does. One question bank, one grader, two
+// honest consumers.
+export function gradeQuiz(skill, answers) {
+  const bank = QUIZ_BANK[skill];
+  if (!bank) return null;
+  if (!Array.isArray(answers) || answers.length !== bank.length) return null;
+  const correct = bank.filter((q, i) => q.correctIndex === answers[i]).length;
+  return Math.round((correct / bank.length) * 100);
+}
+export { QUIZ_BANK };
+
 const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
@@ -484,11 +497,16 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
     const industryFilter = req.query.industry ? String(req.query.industry) : null;
     const queryWords = wordSet(skillQuery);
     const rows = await db.prepare('SELECT * FROM talent_profiles').all();
+    // F-EX-03: an expired credential was still counted toward the match-score bonus forever —
+    // verification_status only ever moves forward from 'pending', so nothing re-evaluates it once
+    // expires_at passes. A credential with no expiry (expires_at IS NULL) still counts.
     const credentialRows = await db
       .prepare(
-        "SELECT profile_id, COUNT(*) AS count FROM expert_credentials WHERE verification_status = 'verified' GROUP BY profile_id",
+        `SELECT profile_id, COUNT(*) AS count FROM expert_credentials
+         WHERE verification_status = 'verified' AND (expires_at IS NULL OR expires_at > ?)
+         GROUP BY profile_id`,
       )
-      .all();
+      .all(new Date().toISOString());
     const verifiedCredentialCounts = new Map(
       credentialRows.map((row) => [row.profile_id, row.count]),
     );

@@ -17,6 +17,8 @@ import { pruneRateLimitBuckets } from '../src/app/ratelimit.mjs';
 import { acquireServiceLease, validateProductionConfig } from '../src/app/operations.mjs';
 import { randomUUID } from 'node:crypto';
 import { createErrorLogger, errorDetails } from '../src/app/errorLog.mjs';
+import { escalateOverdueReviews } from '../src/app/scoping.mjs';
+import { scanAllSubscriptions } from '../src/app/signals.mjs';
 
 const errorLogger = createErrorLogger();
 for (const event of ['uncaughtException', 'unhandledRejection']) {
@@ -109,6 +111,10 @@ async function startServer() {
   // process from stealing the slot, not this one from re-entering itself. Same in-flight guard as
   // mailWorker below.
   let ticking = null;
+  // F-SI-04: goal-subscription scanning previously ran only when a user hit the manual scan
+  // endpoint. It's throttled to once a minute here (not every 1000ms tick) since it's a full
+  // subscription sweep, not a per-object check like the other ticks.
+  let lastSubscriptionScan = 0;
   const worker = setInterval(() => {
     if (ticking) return;
     ticking = (async () => {
@@ -116,6 +122,11 @@ async function startServer() {
         if (!(await acquireServiceLease(store, 'workflow-scheduler', owner))) return;
         await runtime.tick();
         await agentRuntime.reconcile();
+        await escalateOverdueReviews(store);
+        if (Date.now() - lastSubscriptionScan > 60_000) {
+          lastSubscriptionScan = Date.now();
+          await scanAllSubscriptions(store);
+        }
       } catch (error) {
         errorLogger('workflow_worker_error', { error: errorDetails(error) });
       }

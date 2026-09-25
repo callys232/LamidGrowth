@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { DOMAINS, FUNCTIONS, INDUSTRIES } from './expertiseTaxonomy.mjs';
+import { gradeQuiz } from './talent.mjs';
 
 const pathSchema = z
   .object({
@@ -27,7 +28,10 @@ const moduleSchema = z
   })
   .strict();
 const completeModuleSchema = z
-  .object({ score: z.number().int().min(0).max(100).nullish() })
+  .object({
+    score: z.number().int().min(0).max(100).nullish(),
+    answers: z.array(z.number().int().min(0)).max(20).nullish(),
+  })
   .strict();
 const assignSchema = z
   .object({ userId: z.string().uuid(), dueAt: z.string().datetime().nullish() })
@@ -300,8 +304,26 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     if (enrollment.status === 'completed')
       return res.status(400).json({ error: 'This path is already completed.' });
     const input = completeModuleSchema.parse(req.body ?? {});
-    if (module.format === 'assessment' && input.score == null)
-      return res.status(400).json({ error: 'An assessment module requires a score.' });
+    // F-LEARN-01: an assessment module with a real quiz attached (module.quiz_skill) is graded
+    // server-side against talent.mjs's actual answer key — the client's own claimed score is
+    // never trusted for that case. A module with no attached quiz has no way to independently
+    // verify mastery, so it falls back to the caller-supplied score, but that score is recorded
+    // as ungraded (self-reported) rather than silently presented as equivalent to a real grade.
+    let score = input.score ?? null;
+    let graded = false;
+    if (module.format === 'assessment') {
+      if (module.quiz_skill) {
+        const computed = gradeQuiz(module.quiz_skill, input.answers);
+        if (computed == null)
+          return res.status(400).json({
+            error: `This assessment requires answers matching the "${module.quiz_skill}" question bank.`,
+          });
+        score = computed;
+        graded = true;
+      } else if (input.score == null) {
+        return res.status(400).json({ error: 'An assessment module requires a score.' });
+      }
+    }
     if (
       await db
         .prepare(
@@ -313,8 +335,8 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
     const totalModules = (await modulesFor(module.path_id)).length;
     await transaction(async () => {
       await db
-        .prepare('INSERT INTO learning_module_completions VALUES (?, ?, ?, ?, ?)')
-        .run(randomUUID(), enrollment.id, module.id, input.score ?? null, new Date().toISOString());
+        .prepare('INSERT INTO learning_module_completions (id, enrollment_id, module_id, score, completed_at, graded) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(randomUUID(), enrollment.id, module.id, score, new Date().toISOString(), graded ? 1 : 0);
       const completedCountRow = await db
         .prepare(
           'SELECT COUNT(*) AS count FROM learning_module_completions WHERE enrollment_id = ?',

@@ -53,6 +53,48 @@ async function userId(cookie) {
   return (await request('/state', undefined, cookie, 'GET')).data.user.id;
 }
 
+test('F-LEARN-01: an assessment module with a real quiz attached is graded server-side, not trusted from the client', async () => {
+  const author = await signup('Quiz Path Author', 'quiz-path-author@example.test');
+  const learner = await signup('Quiz Path Learner', 'quiz-path-learner@example.test');
+
+  const path = await request(
+    '/learning/paths',
+    { title: 'JS Fundamentals', description: '', domain: 'Technology and engineering', language: 'en' },
+    author,
+  );
+  assert.equal(path.status, 201);
+  const created = await request(
+    `/learning/paths/${path.data.id}/modules`,
+    { title: 'JS Quiz', format: 'assessment', orderIndex: 0, quizSkill: 'javascript' },
+    author,
+  );
+  assert.equal(created.status, 201);
+  const [module] = created.data.modules;
+  await request(`/learning/paths/${path.data.id}/enroll`, {}, learner);
+
+  // A claimed self-reported score is ignored entirely once a real quiz is attached — the server
+  // grades the submitted answers, it never trusts `score` from the body.
+  const wrongCountAnswers = await request(
+    `/learning/modules/${module.id}/complete`,
+    { score: 100, answers: [0, 0] },
+    learner,
+  );
+  assert.equal(wrongCountAnswers.status, 400, 'an answer set not matching the bank length is rejected');
+
+  // The javascript bank's correct indices are [2, 0, 1, 1, 2] (talent.mjs QUIZ_BANK).
+  const allCorrect = await request(
+    `/learning/modules/${module.id}/complete`,
+    { score: 1, answers: [2, 0, 1, 1, 2] },
+    learner,
+  );
+  assert.equal(allCorrect.status, 200);
+  const completionRow = await store.db
+    .prepare('SELECT score, graded FROM learning_module_completions WHERE module_id = ?')
+    .get(module.id);
+  assert.equal(completionRow.score, 100, 'the real grade (all correct), not the claimed score of 1');
+  assert.equal(completionRow.graded, 1, 'a quiz-backed completion is marked graded');
+});
+
 test('a learning path can be created with modules, discovered by taxonomy, and completed module by module', async () => {
   const author = await signup('Path Author', 'path-author@example.test');
   const learner = await signup('Path Learner', 'path-learner@example.test');

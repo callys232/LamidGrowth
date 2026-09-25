@@ -8,23 +8,54 @@ const text = (max) => z.string().trim().max(max).default('');
 const createSchema = z
   .object({ objective: z.string().trim().min(1).max(2000), problemStatement: text(2000) })
   .strict();
-const updateSchema = z
-  .object({
-    objective: z.string().trim().min(1).max(2000).optional(),
-    problemStatement: text(2000).optional(),
-    desiredOutcome: text(2000).optional(),
-    inScope: text(4000).optional(),
-    outOfScope: text(4000).optional(),
-    deliverables: text(4000).optional(),
-    acceptanceCriteria: text(4000).optional(),
-    assumptions: text(4000).optional(),
-    category: z.enum(JOB_CATEGORIES).nullish(),
-    budgetContext: text(500).optional(),
-    timelineContext: text(500).optional(),
-    jurisdiction: z.string().trim().max(120).nullish(),
-    reason: text(500).optional(),
-  })
-  .strict();
+const caseFieldsShape = {
+  objective: z.string().trim().min(1).max(2000).optional(),
+  problemStatement: text(2000).optional(),
+  desiredOutcome: text(2000).optional(),
+  inScope: text(4000).optional(),
+  outOfScope: text(4000).optional(),
+  deliverables: text(4000).optional(),
+  acceptanceCriteria: text(4000).optional(),
+  assumptions: text(4000).optional(),
+  category: z.enum(JOB_CATEGORIES).nullish(),
+  budgetContext: text(500).optional(),
+  timelineContext: text(500).optional(),
+  jurisdiction: z.string().trim().max(120).nullish(),
+};
+// F-SC-03: the reviewer's proposed changes use the same shape as a user edit, so they can be
+// diffed against and reconciled into a scope with the same mergeCaseFields logic.
+const proposedChangesSchema = z.object(caseFieldsShape).strict();
+const FIELD_COLUMN = {
+  objective: 'objective',
+  problemStatement: 'problem_statement',
+  desiredOutcome: 'desired_outcome',
+  inScope: 'in_scope',
+  outOfScope: 'out_of_scope',
+  deliverables: 'deliverables',
+  acceptanceCriteria: 'acceptance_criteria',
+  assumptions: 'assumptions',
+  category: 'category',
+  budgetContext: 'budget_context',
+  timelineContext: 'timeline_context',
+  jurisdiction: 'jurisdiction',
+};
+function mergeCaseFields(existing, input) {
+  return {
+    objective: input.objective ?? existing.objective,
+    problem_statement: input.problemStatement ?? existing.problem_statement,
+    desired_outcome: input.desiredOutcome ?? existing.desired_outcome,
+    in_scope: input.inScope ?? existing.in_scope,
+    out_of_scope: input.outOfScope ?? existing.out_of_scope,
+    deliverables: input.deliverables ?? existing.deliverables,
+    acceptance_criteria: input.acceptanceCriteria ?? existing.acceptance_criteria,
+    assumptions: input.assumptions ?? existing.assumptions,
+    category: input.category !== undefined ? input.category : existing.category,
+    budget_context: input.budgetContext ?? existing.budget_context,
+    timeline_context: input.timelineContext ?? existing.timeline_context,
+    jurisdiction: input.jurisdiction !== undefined ? input.jurisdiction : existing.jurisdiction,
+  };
+}
+const updateSchema = z.object({ ...caseFieldsShape, reason: text(500).optional() }).strict();
 const publishSchema = z
   .object({ publishedJobId: z.string().uuid(), confirmed: z.boolean().default(false) })
   .strict();
@@ -37,6 +68,13 @@ const jurisdictionRuleSchema = z
   })
   .strict();
 const claimSchema = z.object({ notes: z.string().trim().max(2000).default('') }).strict();
+const completeReviewSchema = z
+  .object({
+    notes: z.string().trim().max(2000).default(''),
+    proposedChanges: proposedChangesSchema.optional(),
+  })
+  .strict();
+const reconcileSchema = z.object({ accept: z.array(z.enum(Object.keys(FIELD_COLUMN))).default([]) }).strict();
 
 // Field Guidance Contract (spec 21.2 / PS-02): every material scoping field supports four layers —
 // Explain, Example, Suggest for me, Help me decide. Explain/Example are static plain-language
@@ -236,20 +274,7 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     if (existing.status === 'published')
       return res.status(400).json({ error: 'A published scoping case cannot be edited.' });
     const input = updateSchema.parse(req.body);
-    const merged = {
-      objective: input.objective ?? existing.objective,
-      problem_statement: input.problemStatement ?? existing.problem_statement,
-      desired_outcome: input.desiredOutcome ?? existing.desired_outcome,
-      in_scope: input.inScope ?? existing.in_scope,
-      out_of_scope: input.outOfScope ?? existing.out_of_scope,
-      deliverables: input.deliverables ?? existing.deliverables,
-      acceptance_criteria: input.acceptanceCriteria ?? existing.acceptance_criteria,
-      assumptions: input.assumptions ?? existing.assumptions,
-      category: input.category !== undefined ? input.category : existing.category,
-      budget_context: input.budgetContext ?? existing.budget_context,
-      timeline_context: input.timelineContext ?? existing.timeline_context,
-      jurisdiction: input.jurisdiction !== undefined ? input.jurisdiction : existing.jurisdiction,
-    };
+    const merged = mergeCaseFields(existing, input);
     const riskBand = computeRiskBand(
       merged,
       await jurisdictionRequiresLicense(merged.jurisdiction, merged.category),
@@ -320,12 +345,20 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
         'The deliverable is reviewed and explicitly accepted by you before any payment is released.';
     }
     if (existing.category) {
+      // F-SC-04: the previous version averaged budget_min/budget_max across every currency in
+      // the category and labeled the result "USD" regardless — a USD figure and an NGN figure
+      // are not comparable, so blending them produces a number with no real meaning. Group by
+      // currency instead and only suggest from the single currency with enough samples to be
+      // evidence-based; never blend or silently convert.
       const sample = await db
-        .prepare('SELECT budget_min, budget_max FROM job_posts WHERE category = ?')
+        .prepare('SELECT budget_min, budget_max, currency FROM job_posts WHERE category = ?')
         .all(existing.category);
-      if (sample.length >= 3) {
-        const avg = (key) => Math.round(sample.reduce((sum, r) => sum + r[key], 0) / sample.length);
-        suggestions.budgetContext = `Similar "${existing.category}" projects on this platform typically range ${avg('budget_min')}-${avg('budget_max')} USD (based on ${sample.length} prior posts).`;
+      const byCurrency = {};
+      for (const row of sample) (byCurrency[row.currency] ??= []).push(row);
+      const [bestCurrency, bestRows] = Object.entries(byCurrency).sort((a, b) => b[1].length - a[1].length)[0] || [];
+      if (bestRows && bestRows.length >= 3) {
+        const avg = (key) => Math.round(bestRows.reduce((sum, r) => sum + r[key], 0) / bestRows.length);
+        suggestions.budgetContext = `Similar "${existing.category}" projects priced in ${bestCurrency} on this platform typically range ${avg('budget_min')}-${avg('budget_max')} ${bestCurrency} (based on ${bestRows.length} prior posts in that currency).`;
       }
     }
     return suggestions;
@@ -552,19 +585,132 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
     if (entry.claimed_by !== req.user.id)
       return res.status(403).json({ error: 'You have not claimed this entry.' });
-    const input = claimSchema.parse(req.body ?? {});
+    const input = completeReviewSchema.parse(req.body ?? {});
     // F-SC-01: bind this completion to the scope's current version, so a later material edit
     // (which creates a new scope_versions row) makes the case's publish check see a stale,
     // no-longer-matching reviewed_version instead of silently honoring an outdated approval.
     const versionRow = await db
       .prepare('SELECT COALESCE(MAX(version), 0) AS max_version FROM scope_versions WHERE scoping_case_id = ?')
       .get(entry.scoping_case_id);
+    // F-SC-03: the reviewer can propose concrete field-level changes, not just leave notes. These
+    // are stored as a proposal with reviewer provenance — never applied directly — so the case
+    // owner can compare and reconcile them via /reconcile below.
+    const hasProposal = input.proposedChanges && Object.keys(input.proposedChanges).length > 0;
     await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ?, reviewed_version = ? WHERE id = ?",
+        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ?, reviewed_version = ?, proposed_changes = ? WHERE id = ?",
       )
-      .run(input.notes, new Date().toISOString(), versionRow.max_version, entry.id);
+      .run(
+        input.notes,
+        new Date().toISOString(),
+        versionRow.max_version,
+        hasProposal ? JSON.stringify(input.proposedChanges) : null,
+        entry.id,
+      );
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
+  });
+
+  // F-SC-03: a real compare view — the reviewer's proposed values against the scope's current
+  // values, field by field — instead of a free-text note the owner has to interpret unaided.
+  app.get('/api/scoping-cases/:id/review/diff', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
+    const entry = await db
+      .prepare(
+        "SELECT * FROM review_queue_entries WHERE scoping_case_id = ? AND status = 'completed' AND proposed_changes IS NOT NULL AND reconciled_at IS NULL",
+      )
+      .get(existing.id);
+    if (!entry) return res.json(null);
+    const proposed = JSON.parse(entry.proposed_changes);
+    const fields = {};
+    for (const [field, proposedValue] of Object.entries(proposed)) {
+      fields[field] = { current: existing[FIELD_COLUMN[field]], proposed: proposedValue };
+    }
+    res.json({ reviewEntryId: entry.id, reviewedVersion: entry.reviewed_version, fields });
+  });
+
+  // F-SC-03: the owner reconciles each proposed field individually — accepted fields are merged
+  // into a new scope version with reviewer provenance in the reason; anything not accepted is
+  // simply left as-is (a rejection, not a silent no-op — accepted_fields records the decision).
+  app.post('/api/scoping-cases/:id/reconcile', async (req, res) => {
+    const existing = await caseFor(req.params.id, req.user.id);
+    const input = reconcileSchema.parse(req.body ?? {});
+    const entry = await db
+      .prepare(
+        "SELECT * FROM review_queue_entries WHERE scoping_case_id = ? AND status = 'completed' AND proposed_changes IS NOT NULL AND reconciled_at IS NULL",
+      )
+      .get(existing.id);
+    if (!entry)
+      return res.status(400).json({ error: 'There is no pending reviewer proposal to reconcile.' });
+    const currentVersion = (
+      await db
+        .prepare('SELECT COALESCE(MAX(version), 0) AS max_version FROM scope_versions WHERE scoping_case_id = ?')
+        .get(existing.id)
+    ).max_version;
+    if (entry.reviewed_version !== currentVersion)
+      return res.status(400).json({
+        error: 'This scope changed since the review was completed; the proposal is stale. Request a fresh review.',
+      });
+    const proposed = JSON.parse(entry.proposed_changes);
+    const invalid = input.accept.filter((field) => !(field in proposed));
+    if (invalid.length)
+      return res.status(400).json({ error: `Not proposed by this review: ${invalid.join(', ')}` });
+    const acceptedInput = {};
+    for (const field of input.accept) acceptedInput[field] = proposed[field];
+    const merged = mergeCaseFields(existing, acceptedInput);
+    const riskBand = computeRiskBand(
+      merged,
+      await jurisdictionRequiresLicense(merged.jurisdiction, merged.category),
+    );
+    const now = new Date().toISOString();
+    let newVersion;
+    await transaction(async () => {
+      await db
+        .prepare(
+          `UPDATE scoping_cases SET objective = ?, problem_statement = ?, desired_outcome = ?, in_scope = ?, out_of_scope = ?,
+         deliverables = ?, acceptance_criteria = ?, assumptions = ?, category = ?, budget_context = ?, timeline_context = ?,
+         jurisdiction = ?, risk_band = ?, updated_at = ? WHERE id = ?`,
+        )
+        .run(
+          merged.objective,
+          merged.problem_statement,
+          merged.desired_outcome,
+          merged.in_scope,
+          merged.out_of_scope,
+          merged.deliverables,
+          merged.acceptance_criteria,
+          merged.assumptions,
+          merged.category,
+          merged.budget_context,
+          merged.timeline_context,
+          merged.jurisdiction,
+          riskBand,
+          now,
+          existing.id,
+        );
+      newVersion = await snapshotVersion(
+        existing.id,
+        'expert_reconciled',
+        merged,
+        req.user.id,
+        `Reconciled from review ${entry.id}: accepted [${input.accept.join(', ')}]`,
+      );
+      // Re-stamp reviewed_version to the reconciled version, so the publish check (which requires
+      // a completed review matching the *current* version) still recognizes this review as
+      // covering the final, reconciled state rather than treating it as stale.
+      await db
+        .prepare(
+          'UPDATE review_queue_entries SET accepted_fields = ?, reconciled_at = ?, reviewed_version = ? WHERE id = ?',
+        )
+        .run(JSON.stringify(input.accept), now, newVersion, entry.id);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Reviewer proposal reconciled',
+        existing.id,
+        `Accepted: ${input.accept.join(', ') || '(none)'}`,
+      );
+    });
+    res.json(await db.prepare('SELECT * FROM scoping_cases WHERE id = ?').get(existing.id));
   });
 
   app.get('/api/admin/jurisdiction-rules', async (req, res) => {
@@ -613,4 +759,39 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     await db.prepare('DELETE FROM jurisdiction_rules WHERE id = ?').run(req.params.id);
     res.status(204).end();
   });
+}
+
+// F-SC-03: real SLA monitoring — a claimed review whose sla_due_at has passed is returned to the
+// pool (status back to 'pending', unclaimed) rather than sitting silently blown past its deadline.
+// escalated_at/escalation_count give a durable trail of the breach instead of a silent requeue.
+// Called from the leased workflow-scheduler tick in server/index.mjs, same cadence as workflow
+// runtime ticks and agent reconciliation.
+export async function escalateOverdueReviews(store) {
+  const { db, log } = store;
+  const now = new Date().toISOString();
+  const overdue = await db
+    .prepare(
+      `SELECT r.id, s.workspace_id, s.objective FROM review_queue_entries r
+       JOIN scoping_cases s ON s.id = r.scoping_case_id
+       WHERE r.status = 'claimed' AND r.sla_due_at IS NOT NULL AND r.sla_due_at < ?`,
+    )
+    .all(now);
+  for (const entry of overdue) {
+    const requeued = await db
+      .prepare(
+        `UPDATE review_queue_entries SET status = 'pending', claimed_by = NULL, claimed_at = NULL,
+         sla_due_at = NULL, escalated_at = ?, escalation_count = escalation_count + 1
+         WHERE id = ? AND status = 'claimed'`,
+      )
+      .run(now, entry.id);
+    if (requeued.changes > 0)
+      await log(
+        entry.workspace_id,
+        'System',
+        'Review SLA missed — returned to queue',
+        entry.id,
+        (entry.objective || '').slice(0, 80),
+      );
+  }
+  return overdue.length;
 }

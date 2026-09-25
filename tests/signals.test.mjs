@@ -226,3 +226,110 @@ test('a stranger cannot scan or list matches on a subscription they do not own',
     404,
   );
 });
+
+test('F-SI-04: a subscription is found and matched by the scheduled sweep, with nobody clicking scan', async () => {
+  const { scanAllSubscriptions } = await import('../src/app/signals.mjs');
+  const cookie = await signup();
+  const created = await goal(cookie);
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  assert.equal(subscription.status, 201);
+
+  const poster = await signup();
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Scheduled scan target job',
+      category: 'UX/UI design',
+      projectType: 'Fixed-scope project',
+      description: 'A job that should be found by the scheduled sweep, not a manual scan.',
+      deliverables: 'A page.',
+      budgetMin: 200,
+      budgetMax: 500,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    poster,
+  );
+  assert.equal(job.status, 201);
+
+  const scanned = await scanAllSubscriptions(store);
+  assert.ok(scanned >= 1);
+
+  const listed = await request(`/goal-subscriptions/${subscription.data.id}/matches`, undefined, cookie, 'GET');
+  assert.ok(listed.data.some((m) => m.sourceId === job.data.id), 'the scheduled sweep must find matches without the user ever calling /scan');
+});
+
+test('F-SI-02: deleting a goal disables its subscription and invalidates stale intelligence/recommendations', async () => {
+  const { scanAllSubscriptions } = await import('../src/app/signals.mjs');
+  const cookie = await signup();
+  const created = await goal(cookie);
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  assert.equal(subscription.status, 201);
+
+  const before = await store.db
+    .prepare('SELECT active FROM goal_subscriptions WHERE id = ?')
+    .get(subscription.data.id);
+  assert.equal(before.active, 1);
+
+  const deleted = await request(`/objectives/${created.id}`, { version: created.version, confirm: true }, cookie, 'DELETE');
+  assert.equal(deleted.status, 200);
+
+  const after = await store.db
+    .prepare('SELECT active FROM goal_subscriptions WHERE id = ?')
+    .get(subscription.data.id);
+  assert.equal(after.active, 0, 'a deleted goal must stop being monitored');
+
+  // The scheduled sweep must not touch a disabled subscription for a deleted goal even if a
+  // matching job exists — it should not resurrect monitoring for a goal that no longer exists.
+  const poster = await signup();
+  await request(
+    '/jobs',
+    {
+      title: 'Job posted after the goal was deleted',
+      category: 'UX/UI design',
+      projectType: 'Fixed-scope project',
+      description: 'This must not be matched — the subscribing goal was deleted.',
+      deliverables: 'A page.',
+      budgetMin: 200,
+      budgetMax: 500,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    poster,
+  );
+  await scanAllSubscriptions(store);
+  const listed = await request(`/goal-subscriptions/${subscription.data.id}/matches`, undefined, cookie, 'GET');
+  assert.equal(listed.data.length, 0, 'a disabled subscription must not accumulate new matches');
+});
+
+test('F-SI-02: completing a goal disables its subscription monitoring', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie);
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  assert.equal(subscription.status, 201);
+
+  const completed = await request(
+    `/objectives/${created.id}`,
+    { version: created.version, status: 'Complete' },
+    cookie,
+    'PATCH',
+  );
+  assert.equal(completed.status, 200);
+
+  const row = await store.db
+    .prepare('SELECT active FROM goal_subscriptions WHERE id = ?')
+    .get(subscription.data.id);
+  assert.equal(row.active, 0, 'a completed goal must stop being monitored');
+});

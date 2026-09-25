@@ -1303,6 +1303,74 @@ export async function openStore(filename, { poolMax } = {}) {
     await client.query(`
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS reviewed_version INTEGER;
     `);
+    // F-SC-03 (spec-review audit): reviewer proposals need real field-level provenance and a
+    // compare/accept/reject workflow, not just free-text notes. proposed_changes holds the
+    // reviewer's suggested field values (camelCase keys matching updateSchema); accepted_fields
+    // and reconciled_at record what the case owner actually reconciled and when. escalated_at/
+    // escalation_count give a real, monitored SLA-breach trail instead of a silent requeue.
+    await client.query(`
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS proposed_changes TEXT;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS accepted_fields TEXT;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS reconciled_at TEXT;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS escalated_at TEXT;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS escalation_count INTEGER NOT NULL DEFAULT 0;
+    `);
+    // F-LEARN-01: distinguishes a score the platform actually graded (against a real question
+    // bank via talent.mjs's gradeQuiz, same mechanism as /api/talent/assessments) from one the
+    // learner self-reported for a module with no attached quiz — completion no longer implies
+    // "independently established mastery" when it wasn't.
+    await client.query(`
+      ALTER TABLE learning_module_completions ADD COLUMN IF NOT EXISTS graded INTEGER NOT NULL DEFAULT 0;
+    `);
+    // F-SI-02 (spec-review audit): ordinary objective edits/deletion previously left dependent
+    // goal_subscriptions monitoring a goal that no longer exists or is already complete. `active`
+    // lets a deleted/completed goal's subscriptions be disabled rather than silently scanned
+    // forever or force-deleted (history is kept for the goal's dashboard).
+    await client.query(`
+      ALTER TABLE goal_subscriptions ADD COLUMN IF NOT EXISTS active INTEGER NOT NULL DEFAULT 1;
+    `);
+    // F-SI-05 (spec-review audit): resolving a conflict previously only flipped a boolean; these
+    // columns record what was actually decided (which side, or a custom reconciled conclusion)
+    // and by whom, so the reconciled result has real provenance.
+    await client.query(`
+      ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolution TEXT;
+      ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_conclusion TEXT;
+      ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_by TEXT;
+      ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_at TEXT;
+    `);
+    // F-AI-01 (spec-review audit): model_registry records what's *approved* for a use case, but
+    // nothing recorded what actually executed — env-selected providers/fallback determine real
+    // execution independently of approval. model_executions is real provenance: which provider/
+    // model actually served a call, under which approved registry row, for which workspace.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS model_executions (
+        id TEXT PRIMARY KEY, model_registry_id TEXT NOT NULL REFERENCES model_registry(id),
+        workspace_id TEXT NOT NULL REFERENCES workspaces(id), use_case TEXT NOT NULL,
+        provider TEXT, model TEXT, executed_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS model_executions_workspace ON model_executions(workspace_id, use_case, executed_at);
+    `);
+    // F-SI-01 (spec-review audit): intelligence_results was overwrite-only — no history, no
+    // record of what data fed a conclusion, no model provenance. intelligence_results stays the
+    // fast "current" pointer (gains version/sources/model/confidence columns); the new
+    // intelligence_result_versions table is the append-only, immutable log of every computation
+    // ever made — same two-table shape as scoping_cases + scope_versions elsewhere in this file.
+    await client.query(`
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS sources TEXT NOT NULL DEFAULT '[]';
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS model_registry_id TEXT REFERENCES model_registry(id);
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS confidence REAL;
+      CREATE TABLE IF NOT EXISTS intelligence_result_versions (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL, agent_id TEXT NOT NULL,
+        version INTEGER NOT NULL, conclusion TEXT NOT NULL, summary TEXT NOT NULL,
+        confidence REAL, sources TEXT NOT NULL DEFAULT '[]',
+        model_registry_id TEXT REFERENCES model_registry(id),
+        computed_at TEXT NOT NULL, derived_from TEXT
+      );
+      CREATE INDEX IF NOT EXISTS intelligence_result_versions_subject
+        ON intelligence_result_versions(workspace_id, subject_kind, subject_id, agent_id, version);
+    `);
     await client.query(
       `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),

@@ -245,6 +245,77 @@ test('expert teams: a team led by the engaged freelancer can be assigned to thei
   assert.equal(unassigned.data.assignedTeam, null);
 });
 
+test('F-EX-04: a non-lead pod member assigned to a project can see it and submit work; a stranger still cannot', async () => {
+  const client = await signup('Pod Access Client', 'pod-access-client@example.test');
+  const lead = await makeExpert('Pod Access Lead', 'pod-access-lead@example.test');
+  const podMember = await makeExpert('Pod Access Member', 'pod-access-member@example.test');
+  const stranger = await makeExpert('Pod Access Stranger', 'pod-access-stranger@example.test');
+
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Pod access test project',
+      category: 'Marketing and growth',
+      projectType: 'Advisory engagement',
+      description: 'A project used to test pod-member scoped access.',
+      deliverables: 'A summary report.',
+      budgetMin: 500,
+      budgetMax: 1000,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    client,
+  );
+  await request(
+    `/jobs/${job.data.id}/bids`,
+    { coverLetter: 'My pod can deliver this.', proposedAmount: 750, currency: 'USD', timeline: '1 week' },
+    lead,
+  );
+  const leadUserId = await userId(lead);
+  const project = await request(
+    '/projects',
+    { jobId: job.data.id, title: 'Pod access test project', freelancerUserId: leadUserId },
+    client,
+  );
+  const team = await request('/expert-teams', { name: 'Access Pod' }, lead);
+  const memberUserId = await userId(podMember);
+  await request(`/expert-teams/${team.data.id}/members`, { userId: memberUserId, role: 'Analyst' }, lead);
+  await request(`/projects/${project.data.id}/team`, { teamId: team.data.id }, client, 'PATCH');
+
+  // Before pod fix, a stranger and a pod member were treated identically — both 403.
+  const strangerRead = await request(`/projects/${project.data.id}`, undefined, stranger, 'GET');
+  assert.equal(strangerRead.status, 403, 'someone outside the pod and not the client is still denied');
+
+  const memberRead = await request(`/projects/${project.data.id}`, undefined, podMember, 'GET');
+  assert.equal(memberRead.status, 200, 'a pod member assigned to the project can now see it');
+
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 750, currency: 'USD' },
+    client,
+  );
+  const deliverable = await request(
+    `/milestones/${milestone.data.id}/deliverables`,
+    { title: 'Deliverable', description: '', criteria: ['Work is complete'] },
+    client,
+  );
+  void deliverable;
+
+  const strangerSubmit = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: 'Trying to submit as a stranger.' },
+    stranger,
+  );
+  assert.equal(strangerSubmit.status, 403);
+
+  const memberSubmit = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: 'Submitted by the pod member, not the lead.' },
+    podMember,
+  );
+  assert.equal(memberSubmit.status, 201, 'a pod member can submit work on the project, not only the lead');
+});
+
 test('AI-human handoff: the Companion agent automatically raises a handoff for a regulated-sounding message', async () => {
   const client = await signup('Auto Handoff Client', 'auto-handoff-client@example.test');
   const expert = await makeExpert('Auto Handoff Expert', 'auto-handoff-expert@example.test');
