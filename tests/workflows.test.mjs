@@ -282,6 +282,218 @@ test('unfinished authorized work survives reopening the database without repeati
   }
 });
 
+test('F-WF-01: a workflow definition template is versioned and snapshotted into each run created from it', async () => {
+  const f = await setup();
+  try {
+    const definitionId = randomUUID();
+    await f.store.db
+      .prepare('INSERT INTO workflow_definitions VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .run(
+        randomUUID(),
+        f.workspace,
+        'Standard review',
+        1,
+        definitionId,
+        JSON.stringify([{ id: 'context', toolId: 'context.snapshot', input: {}, dependsOn: [] }]),
+        new Date().toISOString(),
+      );
+    const run = await f.runtime.create(f.workspace, f.user, {
+      title: 'From template',
+      objectiveId: f.objective.id,
+      definitionId,
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    });
+    assert.equal(run.steps.length, 1);
+    assert.equal(run.steps[0].toolId, 'context.snapshot');
+
+    // A later template version must not reach back and mutate the already-created run.
+    await f.store.db
+      .prepare('INSERT INTO workflow_definitions VALUES (?, ?, ?, ?, ?, ?, ?)')
+      .run(
+        randomUUID(),
+        f.workspace,
+        'Standard review',
+        2,
+        definitionId,
+        JSON.stringify([write]),
+        new Date().toISOString(),
+      );
+    assert.equal((await f.read(run)).steps[0].toolId, 'context.snapshot');
+
+    const runV2 = await f.runtime.create(f.workspace, f.user, {
+      title: 'From v2',
+      objectiveId: f.objective.id,
+      definitionId,
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    });
+    assert.equal(runV2.steps[0].toolId, 'action.prepare');
+
+    await assert.rejects(
+      () =>
+        f.runtime.create(f.workspace, f.user, {
+          title: 'Both',
+          objectiveId: f.objective.id,
+          definitionId,
+          steps: [write],
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+        }),
+      /either steps or definitionId/,
+    );
+  } finally {
+    await f.store.dropSchema();
+  }
+});
+
+test('F-WF-01: a step with a condition only runs when its dependency output matches, and downstream skips cascade', async () => {
+  const f = await setup();
+  try {
+    const run = await f.runtime.create(
+      f.workspace,
+      f.user,
+      f.spec([
+        { id: 'review', toolId: 'capability.review' },
+        {
+          id: 'takenBranch',
+          toolId: 'review.reminder',
+          input: { message: 'taken' },
+          dependsOn: ['review'],
+          condition: {
+            dependsOnStepId: 'review',
+            field: 'method',
+            equals: 'Recorded user inputs; no automated assessment',
+          },
+        },
+        {
+          id: 'untakenBranch',
+          toolId: 'review.reminder',
+          input: { message: 'untaken' },
+          dependsOn: ['review'],
+          condition: { dependsOnStepId: 'review', field: 'method', equals: 'something-else' },
+        },
+        {
+          id: 'afterUntaken',
+          toolId: 'action.prepare',
+          input: { title: 'downstream of untaken' },
+          dependsOn: ['untakenBranch'],
+        },
+      ]),
+    );
+    await f.command(run, 'start');
+    await f.runtime.tick(); // 'review' (writes: false) executes immediately
+    assert.equal((await f.read(run)).steps[0].state, 'completed');
+    await f.runtime.tick(); // resolveSkips: untakenBranch skipped; takenBranch -> needs_approval
+    const afterResolve = await f.read(run);
+    assert.equal(afterResolve.state, 'needs_approval');
+    assert.equal(afterResolve.steps.find((s) => s.id === 'untakenBranch').state, 'skipped');
+    assert.equal(afterResolve.steps.find((s) => s.id === 'takenBranch').state, 'pending');
+    await f.command(run, 'approve');
+    await f.runtime.tick(); // takenBranch executes
+    await f.runtime.tick(); // resolveSkips: afterUntaken cascades to skipped (its dependency never ran)
+    const final = await f.read(run);
+    assert.equal(final.steps.find((s) => s.id === 'takenBranch').state, 'completed');
+    assert.equal(final.steps.find((s) => s.id === 'afterUntaken').state, 'skipped');
+    assert.equal(final.state, 'completed');
+  } finally {
+    await f.store.dropSchema();
+  }
+});
+
+test('F-WF-01: an event.wait step blocks the run until a matching event is posted', async () => {
+  const f = await setup();
+  try {
+    const run = await f.runtime.create(
+      f.workspace,
+      f.user,
+      f.spec([
+        { id: 'wait', toolId: 'event.wait', input: { correlationKey: 'external-approval-123' } },
+        { id: 'after', toolId: 'context.snapshot', dependsOn: ['wait'] },
+      ]),
+    );
+    await f.command(run, 'start');
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).steps[0].state, 'waiting');
+    assert.equal((await f.read(run)).state, 'running', 'a waiting step must not be mistaken for run failure');
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).state, 'running', 'a waiting step must not falsely complete the run');
+    assert.equal((await f.read(run)).steps[1].state, 'pending');
+
+    await assert.rejects(
+      () => f.runtime.resolveEvent(run.id, f.workspace, f.user, { correlationKey: 'wrong-key' }),
+      /waiting for that event/,
+    );
+    const resolved = await f.runtime.resolveEvent(run.id, f.workspace, f.user, {
+      correlationKey: 'external-approval-123',
+      payload: { approved: true },
+    });
+    assert.equal(resolved.steps[0].state, 'completed');
+    assert.deepEqual(resolved.steps[0].output.result.payload, { approved: true });
+    await f.runtime.tick();
+    assert.equal((await f.read(run)).state, 'completed');
+  } finally {
+    await f.store.dropSchema();
+  }
+});
+
+test('F-WF-01: exhausting the retry budget runs compensating actions for already-completed steps', async () => {
+  const f = await setup();
+  try {
+    const run = await f.runtime.create(
+      f.workspace,
+      f.user,
+      f.spec([
+        {
+          id: 'prep',
+          toolId: 'action.prepare',
+          input: { title: 'Prepare report' },
+          compensateToolId: 'review.reminder',
+          compensateInput: { message: 'Undo: report prep' },
+        },
+        { id: 'progress', toolId: 'progress.snapshot', dependsOn: ['prep'] },
+      ]),
+    );
+    await f.command(run, 'start');
+    await f.runtime.tick(); // 'prep' -> needs_approval
+    await f.command(run, 'approve');
+    await f.runtime.tick(); // 'prep' executes and completes
+    assert.equal((await f.read(run)).steps[0].state, 'completed');
+
+    await f.store.db.exec(`
+      CREATE OR REPLACE FUNCTION reject_progress() RETURNS trigger AS $$
+      BEGIN
+        IF NEW.kind = 'progress' THEN
+          RAISE EXCEPTION 'simulated storage rejection';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+      CREATE TRIGGER reject_progress BEFORE INSERT ON records FOR EACH ROW EXECUTE FUNCTION reject_progress();
+    `);
+    await f.runtime.tick(); // 'progress' -> needs_approval
+    await f.command(run, 'approve');
+    for (let i = 0; i < 3; i++) {
+      await f.runtime.tick();
+      if (i < 2) {
+        assert.equal((await f.read(run)).state, 'failed');
+        await f.command(run, 'retry');
+        await f.runtime.tick();
+        await f.command(run, 'approve');
+      }
+    }
+    const final = await f.read(run);
+    assert.equal(final.state, 'compensated');
+    assert.equal(final.steps[1].attempts, 3);
+    // The compensating action (review.reminder) actually ran, recorded with a distinct
+    // step_id so it never collides with the original step's own tool_invocations row.
+    const invocation = await f.store.db
+      .prepare("SELECT * FROM tool_invocations WHERE run_id = ? AND step_id = 'prep:compensate'")
+      .get(run.id);
+    assert.ok(invocation, 'the compensating action must be recorded as a real tool invocation');
+    assert.equal(invocation.tool_id, 'review.reminder');
+  } finally {
+    await f.store.dropSchema();
+  }
+});
+
 test('a workflow can only be deleted once it has actually finished, and only by its own authorizing owner', async () => {
   const f = await setup();
   try {

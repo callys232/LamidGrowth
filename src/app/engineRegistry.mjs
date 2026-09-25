@@ -6817,6 +6817,19 @@ for (const [id, cfg] of Object.entries(MODULE_REGISTRY)) {
        weighted by importance and discounted for missing evidence. */
     cfg.inputs = { kind: 'assessment', dimensions: cfg.dimensionLabels };
   }
+  // F-TF-01 (spec-review audit): the 247 registry entries were never individually verified
+  // against, or mapped onto, the 202 canonical T-### capability names — and that gap was
+  // invisible, since no field even existed to record it. capabilities-202.md's own prior audit
+  // pass explicitly cites *other* files (engines.mjs, agents.mjs, projects.mjs, etc.) as each
+  // T-### capability's "related implementation evidence," never a specific MODULE_REGISTRY code
+  // — the two catalogs are largely disjoint namespaces, not a clean 1:1 mapping. Fabricating a
+  // specific T-### match per entry without real domain verification would be inventing a false
+  // claim, the exact thing this finding criticizes. So every entry is honestly `verified: false,
+  // canonicalCapabilityId: null` by default — a real, queryable "not yet verified" state instead
+  // of a silently absent one. A future pass that genuinely certifies a specific entry's semantics
+  // against a specific canonical capability can set both fields on that one entry explicitly.
+  if (cfg.canonicalCapabilityId === undefined) cfg.canonicalCapabilityId = null;
+  if (cfg.verified === undefined) cfg.verified = false;
 }
 
 export function buildFallbackConfig(moduleId, seriesName, engineName) {
@@ -6861,6 +6874,8 @@ export function buildFallbackConfig(moduleId, seriesName, engineName) {
     ],
     backHref: '/intelligence-hub',
     backLabel: 'Intelligence Hub',
+    canonicalCapabilityId: null,
+    verified: false,
   };
 }
 

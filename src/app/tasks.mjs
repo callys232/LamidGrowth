@@ -37,7 +37,7 @@ const ATTENTION_WINDOW_MS = 48 * 60 * 60 * 1000;
 
 // Deadline Intelligence + Blocker Detector, computed rather than stored: a task's attention state
 // is always derived fresh from its current due date and blocked flag, so it can never drift stale.
-function attentionFor(task) {
+export function attentionFor(task) {
   if (task.status === 'done' || task.status === 'cancelled') return null;
   if (task.blocked) return 'blocked';
   if (!task.due_at) return null;
@@ -47,6 +47,23 @@ function attentionFor(task) {
   if (due < now) return 'overdue';
   if (due - now <= ATTENTION_WINDOW_MS) return 'due_soon';
   return null;
+}
+
+// Return-State/Attention Service (F-CORE-02): the real, already-computed signal this lane
+// contributes to the unified aggregation — same query the /api/tasks/attention route already
+// runs, factored out so returnState.mjs calls the same logic instead of re-deriving it.
+export async function getTasksNeedingAttention(store, userId) {
+  const rows = await store.db
+    .prepare(
+      `SELECT tasks.*, projects.title AS project_title FROM tasks
+       JOIN projects ON projects.id = tasks.project_id
+       JOIN job_posts ON job_posts.id = projects.job_id
+       WHERE (job_posts.client_user_id = ? OR projects.freelancer_user_id = ?)
+         AND tasks.status NOT IN ('done', 'cancelled')
+       ORDER BY tasks.due_at ASC NULLS LAST`,
+    )
+    .all(userId, userId);
+  return rows.map((task) => ({ ...task, attention: attentionFor(task) })).filter((task) => task.attention !== null);
 }
 
 export function mountTasks(app, store) {
@@ -170,17 +187,7 @@ export function mountTasks(app, store) {
   // workspace_member of the client's workspace (see requireParty above), so a workspace filter
   // here would silently hide every attention item from the freelancer's own view.
   app.get('/api/tasks/attention', async (req, res) => {
-    const rows = await db
-      .prepare(
-        `SELECT tasks.*, projects.title AS project_title FROM tasks
-         JOIN projects ON projects.id = tasks.project_id
-         JOIN job_posts ON job_posts.id = projects.job_id
-         WHERE (job_posts.client_user_id = ? OR projects.freelancer_user_id = ?)
-           AND tasks.status NOT IN ('done', 'cancelled')
-         ORDER BY tasks.due_at ASC NULLS LAST`,
-      )
-      .all(req.user.id, req.user.id);
-    res.json(rows.map(withAttention).filter((task) => task.attention !== null));
+    res.json(await getTasksNeedingAttention(store, req.user.id));
   });
 
   // Change Request Manager

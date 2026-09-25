@@ -183,3 +183,28 @@ test('F-TF-02: a syntactically valid but never-registered code (Z-series only go
   const demoRun = await request('/engines/Z50/demo-run', { input: {} }, undefined, 'POST');
   assert.equal(demoRun.status, 404);
 });
+
+test('F-TF-01: a real engine reports honest, unfabricated canonical-capability verification fields', async () => {
+  const detail = await request('/engines/S01', undefined, undefined, 'GET');
+  assert.equal(detail.status, 200);
+  // No entry is fabricated as individually verified against a canonical T-### capability — the
+  // codebase's own prior audit pass never established a genuine per-entry crosswalk, so claiming
+  // one now without real verification would be inventing a false claim.
+  assert.equal(detail.data.verified, false);
+  assert.equal(detail.data.canonicalCapabilityId, null);
+
+  const catalog = await request('/engines/catalog', undefined, undefined, 'GET');
+  assert.equal(catalog.status, 200);
+  assert.ok(catalog.data.engines.length > 200, 'the full registry is present');
+  assert.ok(catalog.data.engines.every((e) => e.verified === false && e.canonicalCapabilityId === null));
+});
+
+test('F-TF-01: the coverage report gives real, computed counts per compute archetype', async () => {
+  const coverage = await request('/engines/catalog/coverage', undefined, undefined, 'GET');
+  assert.equal(coverage.status, 200);
+  assert.ok(coverage.data.totalEntries > 200);
+  assert.equal(coverage.data.verifiedCount, 0, 'honestly reflects that nothing has been individually verified yet');
+  assert.ok(coverage.data.byArchetype.assessment > 0, 'the generic assessment archetype covers the bulk of entries');
+  const sumByArchetype = Object.values(coverage.data.byArchetype).reduce((a, b) => a + b, 0);
+  assert.equal(sumByArchetype, coverage.data.totalEntries, 'every entry is counted in exactly one archetype bucket');
+});

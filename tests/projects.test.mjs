@@ -391,3 +391,190 @@ test('the invoice generator only invoices approved milestones, with an exact det
   assert.equal(strangerAttempt.status, 403);
   void deliverable;
 });
+
+async function uploadTextFile(cookie, text, filename = 'evidence.txt') {
+  const uploaded = await request(
+    '/files',
+    { filename, mimeType: 'text/plain', base64Content: Buffer.from(text, 'utf-8').toString('base64') },
+    cookie,
+  );
+  assert.equal(uploaded.status, 201, JSON.stringify(uploaded.data));
+  return uploaded.data.id;
+}
+// A minimal valid 1x1 PNG (real signature bytes, per files.mjs's SIGNATURE_CHECKS).
+const PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAAC0lEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
+test('Deliverable Verification: an uploaded text file is really inspected, not just labeled', async () => {
+  const client = await signup('DelivEvid Client', 'deliv-evid-client@example.test');
+  const freelancer = await signup('DelivEvid Freelancer', 'deliv-evid-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Evidence project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  const deliverable = await request(
+    `/milestones/${milestone.data.id}/deliverables`,
+    { title: 'Export', description: '', criteria: ['Dashboard supports export to CSV'] },
+    client,
+  );
+  assert.equal(deliverable.status, 201);
+
+  const fileId = await uploadTextFile(
+    freelancer,
+    'Dashboard supports export to CSV exactly as requested, verified working end to end.',
+  );
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ uploadedFileId: fileId, kind: 'proof' }] },
+    freelancer,
+  );
+  assert.equal(submission.status, 201, JSON.stringify(submission.data));
+
+  const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
+  assert.equal(verification.status, 201, JSON.stringify(verification.data));
+  assert.equal(verification.data.assets.length, 1);
+  assert.equal(verification.data.assets[0].inspected, true);
+  assert.equal(verification.data.assets[0].mimeType, 'text/plain');
+  assert.ok(verification.data.assets[0].contentHash, 'a real content hash must be recorded');
+  // The deterministic path never claims "satisfied" (no confidence score exists for keyword
+  // overlap), but the rationale must now honestly reflect that real file content — not just
+  // notes/labels — was evaluated.
+  assert.match(verification.data.results[0].rationale, /real content of at least one uploaded text file/);
+});
+
+test('Deliverable Verification: a url-only asset is still never fetched, and reports honestly', async () => {
+  const client = await signup('DelivUrl Client', 'deliv-url-client@example.test');
+  const freelancer = await signup('DelivUrl Freelancer', 'deliv-url-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'URL project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  await request(
+    `/milestones/${milestone.data.id}/deliverables`,
+    { title: 'Export', description: '', criteria: ['Dashboard supports export to CSV'] },
+    client,
+  );
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ url: 'https://example.test/proof.png', kind: 'screenshot' }] },
+    freelancer,
+  );
+  assert.equal(submission.status, 201);
+
+  const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
+  assert.equal(verification.status, 201);
+  assert.equal(verification.data.assets[0].inspected, false);
+  assert.equal(verification.data.assets[0].contentHash, null);
+  assert.match(verification.data.results[0].rationale, /Only submission notes and asset labels/);
+});
+
+test('Deliverable Verification: a non-text uploaded file is accepted but honestly reported as not inspected', async () => {
+  const client = await signup('DelivPng Client', 'deliv-png-client@example.test');
+  const freelancer = await signup('DelivPng Freelancer', 'deliv-png-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'PNG project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  await request(
+    `/milestones/${milestone.data.id}/deliverables`,
+    { title: 'Export', description: '', criteria: ['Dashboard supports export to CSV'] },
+    client,
+  );
+  const uploaded = await request(
+    '/files',
+    { filename: 'screenshot.png', mimeType: 'image/png', base64Content: PNG_BASE64 },
+    freelancer,
+  );
+  assert.equal(uploaded.status, 201, JSON.stringify(uploaded.data));
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ uploadedFileId: uploaded.data.id, kind: 'screenshot' }] },
+    freelancer,
+  );
+  assert.equal(submission.status, 201);
+
+  const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
+  assert.equal(verification.status, 201);
+  assert.equal(verification.data.assets[0].inspected, false, 'no fabricated image-content analysis');
+  assert.equal(verification.data.assets[0].mimeType, 'image/png');
+  assert.ok(verification.data.assets[0].contentHash, 'the hash is still recorded even though content was not decoded as text');
+});
+
+test('Deliverable Verification: an uploadedFileId the submitter does not own is rejected', async () => {
+  const client = await signup('DelivOwn Client', 'deliv-own-client@example.test');
+  const freelancer = await signup('DelivOwn Freelancer', 'deliv-own-freelancer@example.test');
+  const outsider = await signup('DelivOwn Outsider', 'deliv-own-outsider@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Ownership project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  const outsiderFileId = await uploadTextFile(outsider, 'Not yours.');
+  const submission = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ uploadedFileId: outsiderFileId, kind: 'proof' }] },
+    freelancer,
+  );
+  assert.equal(submission.status, 404);
+});
+
+test('Deliverable Verification: an asset needs exactly one of url or uploadedFileId', async () => {
+  const client = await signup('DelivBoth Client', 'deliv-both-client@example.test');
+  const freelancer = await signup('DelivBoth Freelancer', 'deliv-both-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Both project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 500, currency: 'USD' },
+    client,
+  );
+  const neither = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ kind: 'proof' }] },
+    freelancer,
+  );
+  assert.equal(neither.status, 400);
+  const fileId = await uploadTextFile(freelancer, 'Some text.');
+  const both = await request(
+    `/milestones/${milestone.data.id}/submissions`,
+    { notes: '', assets: [{ url: 'https://example.test/x', uploadedFileId: fileId, kind: 'proof' }] },
+    freelancer,
+  );
+  assert.equal(both.status, 400);
+});

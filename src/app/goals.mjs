@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { markResultsStale } from './intelligence.mjs';
 import { invalidateRecommendations } from './recommendations.mjs';
+import { emitDomainEvent } from './connectors.mjs';
 
 // Canonical 12-stage goal lifecycle. A goal (= an 'objective' record) starts 'captured' and moves
 // forward; from 'active' onward it may branch across health states (progressing/at_risk/blocked)
@@ -161,6 +162,12 @@ export function mountGoals(app, store) {
       // recommendation about this goal was computed against a now-outdated state.
       await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: goal.id });
       await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: goal.id });
+      // Connector Platform (F-CORE-01): a real domain event, pollable via GET /api/events.
+      await emitDomainEvent(store, {
+        workspaceId: req.workspace.id,
+        eventType: 'goal.stage_changed',
+        payload: { goalId: goal.id, fromStage: currentStage, toStage: input.stage },
+      });
       return { goalId: goal.id, stage: input.stage, updatedAt: now };
     });
     res.json(result);

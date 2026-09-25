@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { emitDomainEvent } from './connectors.mjs';
 
 // Recommendation Lifecycle Manager (spec 20.8, Book 24 SI-10): recommended -> accepted/declined/
 // deferred -> scheduled -> in_progress -> completed -> superseded, with invalidated reachable from
@@ -120,6 +121,12 @@ export function mountRecommendations(app, store) {
         .status(409)
         .json({ error: 'This recommendation changed concurrently. Reload and retry.' });
     await log(req.workspace.id, req.user.name, 'Recommendation status changed', row.id, `${row.status} -> ${input.status}${input.reason ? `: ${input.reason}` : ''}`);
+    // Connector Platform (F-CORE-01): a real domain event, pollable via GET /api/events.
+    await emitDomainEvent(store, {
+      workspaceId: req.workspace.id,
+      eventType: 'recommendation.status_changed',
+      payload: { recommendationId: row.id, fromStatus: row.status, toStatus: input.status },
+    });
     res.json(await db.prepare('SELECT * FROM recommendations WHERE id = ?').get(row.id));
   });
 }

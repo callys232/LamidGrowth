@@ -16,6 +16,8 @@ import { mountProjects } from './projects.mjs';
 import { mountTasks } from './tasks.mjs';
 import { mountGoals } from './goals.mjs';
 import { mountGrowth } from './growth.mjs';
+import { mountConnectors, mountConnectorWebhook } from './connectors.mjs';
+import { mountReturnState } from './returnState.mjs';
 import { mountSignals } from './signals.mjs';
 import { mountFiles } from './files.mjs';
 import { mountKyc, mountKycWebhook, genericKycProvider } from './kyc.mjs';
@@ -315,6 +317,7 @@ export async function createApp({
   );
   mountPaystackWebhook(app, store, { paymentProvider });
   mountKycWebhook(app, store, { kycProvider });
+  mountConnectorWebhook(app, store);
   app.use('/api', apiLimiter);
   app.use('/api/auth', (req, res, next) => {
     if (req.method === 'GET') return next();
@@ -1773,6 +1776,8 @@ export async function createApp({
   mountTasks(app, store);
   mountGoals(app, store);
   mountGrowth(app, store);
+  mountConnectors(app, store);
+  mountReturnState(app, store);
   mountSignals(app, store);
   mountFiles(app, store);
   mountKyc(app, store, { ecosystemAdminEmails });

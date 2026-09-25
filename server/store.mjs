@@ -1338,6 +1338,83 @@ export async function openStore(filename, { poolMax } = {}) {
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_by TEXT;
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_at TEXT;
     `);
+    // F-GROW-01 (spec-review audit): KPI definitions had no version/provenance, observations
+    // carried a free-text source instead of real evidence, opportunities had no typed model, and
+    // experiments had no variant/guardrail design or structured completion. All additions are
+    // nullable/defaulted so existing simple KPIs/opportunities/experiments keep working unchanged.
+    await client.query(`
+      ALTER TABLE kpi_definitions ADD COLUMN IF NOT EXISTS calculation_method TEXT NOT NULL DEFAULT '';
+      ALTER TABLE kpi_definitions ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;
+      CREATE TABLE IF NOT EXISTS kpi_definition_versions (
+        id TEXT PRIMARY KEY, kpi_id TEXT NOT NULL REFERENCES kpi_definitions(id),
+        workspace_id TEXT NOT NULL REFERENCES workspaces(id), version INTEGER NOT NULL,
+        name TEXT NOT NULL, unit TEXT NOT NULL DEFAULT '', target DOUBLE PRECISION,
+        calculation_method TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL, created_by TEXT
+      );
+      CREATE INDEX IF NOT EXISTS kpi_definition_versions_kpi ON kpi_definition_versions(kpi_id, version);
+      ALTER TABLE kpi_observations ADD COLUMN IF NOT EXISTS evidence_file_id TEXT REFERENCES uploaded_files(id);
+      ALTER TABLE opportunities ADD COLUMN IF NOT EXISTS type TEXT;
+      ALTER TABLE experiments ADD COLUMN IF NOT EXISTS variants TEXT;
+      ALTER TABLE experiments ADD COLUMN IF NOT EXISTS guardrail_metric_ids TEXT;
+      ALTER TABLE experiments ADD COLUMN IF NOT EXISTS winning_variant TEXT;
+      ALTER TABLE experiments ADD COLUMN IF NOT EXISTS per_variant_observed_value TEXT;
+    `);
+    // F-CORE-01 (spec-review audit): a real connector registry (governance layer, useful
+    // regardless of which external providers get wired up later) plus a minimal internal event
+    // outbox — no OAuth flow or specific external provider is fabricated (this codebase has none
+    // to ground one in); the 'webhook' connector type is a genuinely working, HMAC-signed inbound
+    // endpoint instead. `seq` (not `id`) is the real monotonic cursor for GET /events?since=,
+    // same BIGSERIAL-alongside-a-UUID-id pattern as `records.seq` elsewhere in this file.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS connectors (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        name TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'disconnected',
+        secret TEXT, last_sync_at TEXT, created_by TEXT NOT NULL, created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS connectors_workspace ON connectors(workspace_id);
+      CREATE TABLE IF NOT EXISTS connector_grants (
+        id TEXT PRIMARY KEY, connector_id TEXT NOT NULL REFERENCES connectors(id),
+        scope TEXT NOT NULL, granted_by TEXT NOT NULL, granted_at TEXT NOT NULL, revoked_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS connector_grants_connector ON connector_grants(connector_id);
+      CREATE TABLE IF NOT EXISTS event_outbox (
+        id TEXT PRIMARY KEY, seq BIGSERIAL, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        event_type TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL, delivered_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS event_outbox_workspace ON event_outbox(workspace_id, seq);
+    `);
+    // F-CORE-02 (spec-review audit): no per-user "last visited" record existed anywhere in this
+    // codebase (confirmed this session) — every domain's "attention" was computed fresh with no
+    // way to tell what's new since the user last looked. One row per (user, workspace, lane).
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS return_state_checkpoints (
+        user_id TEXT NOT NULL REFERENCES users(id), workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        lane TEXT NOT NULL, last_reviewed_at TEXT NOT NULL,
+        PRIMARY KEY (user_id, workspace_id, lane)
+      );
+    `);
+    // F-WF-01 (spec-review audit): reusable, versioned workflow templates — a saved, named
+    // steps sequence a workspace can start many runs from, instead of resupplying the same JSON
+    // every time. definition_id groups every version of the same named template together (same
+    // MAX(version)+1 pattern as scope_versions/intelligence_result_versions); each row is one
+    // immutable version's snapshot.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS workflow_definitions (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        name TEXT NOT NULL, version INTEGER NOT NULL, definition_id TEXT NOT NULL,
+        steps TEXT NOT NULL, created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS workflow_definitions_lookup ON workflow_definitions(workspace_id, definition_id, version);
+    `);
+    // Deliverable Verification (spec-review audit): a submission asset was always an unfetched
+    // URL string — no way to reference an already-uploaded, already-validated file (files.mjs)
+    // whose real content could actually be inspected. content_hash is a durable integrity record
+    // computed once at submission time from the real bytes, not re-derived per verify call.
+    await client.query(`
+      ALTER TABLE submission_assets ALTER COLUMN url DROP NOT NULL;
+      ALTER TABLE submission_assets ADD COLUMN IF NOT EXISTS uploaded_file_id TEXT REFERENCES uploaded_files(id);
+      ALTER TABLE submission_assets ADD COLUMN IF NOT EXISTS content_hash TEXT;
+    `);
     // F-AI-01 (spec-review audit): model_registry records what's *approved* for a use case, but
     // nothing recorded what actually executed — env-selected providers/fallback determine real
     // execution independently of approval. model_executions is real provenance: which provider/

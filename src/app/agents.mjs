@@ -416,8 +416,8 @@ const agents = {
       const id = randomUUID();
       const createdAt = new Date().toISOString();
       await ctx.store.db
-        .prepare('INSERT INTO experiments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(id, ctx.workspace.id, title, input.message, 'To be defined — refine via PATCH before starting.', 'draft', '', null, null, createdAt);
+        .prepare('INSERT INTO experiments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(id, ctx.workspace.id, title, input.message, 'To be defined — refine via PATCH before starting.', 'draft', '', null, null, createdAt, null, null, null, null);
       await ctx.store.log(ctx.workspace.id, ctx.principal.name, 'Experiment drafted', id, title);
       const created = { id, title, hypothesis: input.message, metric: 'To be defined', status: 'draft', createdAt };
       if (!deps.aiProvider) {

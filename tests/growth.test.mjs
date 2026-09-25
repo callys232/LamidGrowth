@@ -137,6 +137,168 @@ test('an experiment moves through draft -> running -> complete and rejects out-o
   assert.equal(completed.data.result, 'Conversion rose 12%');
 });
 
+test('F-GROW-01: a KPI redefinition is a new immutable version, not a silent overwrite', async () => {
+  const cookie = await signup();
+  const created = await request(
+    '/kpis',
+    { name: 'Monthly recurring revenue', unit: 'USD', target: 10000, calculationMethod: 'Sum of active subscription plans' },
+    cookie,
+  );
+  assert.equal(created.status, 201);
+  assert.equal(created.data.version, 1);
+  assert.equal(created.data.calculation_method, 'Sum of active subscription plans');
+
+  const redefined = await request(
+    `/kpis/${created.data.id}`,
+    { calculationMethod: 'Sum of active subscription plans, excluding trials' },
+    cookie,
+    'PATCH',
+  );
+  assert.equal(redefined.status, 200);
+  assert.equal(redefined.data.version, 2);
+  assert.equal(redefined.data.name, 'Monthly recurring revenue', 'unspecified fields carry over');
+
+  const versions = await request(`/kpis/${created.data.id}/versions`, undefined, cookie, 'GET');
+  assert.equal(versions.status, 200);
+  assert.equal(versions.data.length, 2);
+  assert.equal(versions.data[0].version, 1);
+  assert.equal(versions.data[0].calculation_method, 'Sum of active subscription plans', 'the first version is preserved, not overwritten');
+  assert.equal(versions.data[1].version, 2);
+});
+
+test('F-GROW-01: a KPI observation backed by a real uploaded file is distinguishable from a bare text claim', async () => {
+  const cookie = await signup();
+  const kpi = await request('/kpis', { name: 'Active users', unit: 'users' }, cookie);
+
+  const textOnly = await request(`/kpis/${kpi.data.id}/observations`, { value: 100, source: 'Analytics dashboard screenshot' }, cookie);
+  assert.equal(textOnly.status, 201);
+  assert.equal(textOnly.data.hasEvidence, false);
+
+  const uploaded = await request(
+    '/files',
+    { filename: 'analytics.txt', mimeType: 'text/plain', base64Content: Buffer.from('100 active users this month').toString('base64') },
+    cookie,
+  );
+  assert.equal(uploaded.status, 201);
+  const withEvidence = await request(
+    `/kpis/${kpi.data.id}/observations`,
+    { value: 150, evidenceFileId: uploaded.data.id },
+    cookie,
+  );
+  assert.equal(withEvidence.status, 201);
+  assert.equal(withEvidence.data.hasEvidence, true);
+
+  const stranger = await signup();
+  const strangerUpload = await request(
+    '/files',
+    { filename: 'fake.txt', mimeType: 'text/plain', base64Content: Buffer.from('x').toString('base64') },
+    stranger,
+  );
+  const rejected = await request(
+    `/kpis/${kpi.data.id}/observations`,
+    { value: 200, evidenceFileId: strangerUpload.data.id },
+    cookie,
+  );
+  assert.equal(rejected.status, 404, 'a file the observer does not own cannot be cited as evidence');
+
+  const listed = await request(`/kpis/${kpi.data.id}/observations`, undefined, cookie, 'GET');
+  assert.deepEqual(
+    listed.data.map((o) => o.hasEvidence),
+    [false, true],
+  );
+});
+
+test('F-GROW-01: opportunity readiness reflects its real fields, not a fabricated probability', async () => {
+  const cookie = await signup();
+  // A brand-new bare opportunity is 'partial', not 'not_ready' — it's still fresh (not stale)
+  // even with no value estimate or source yet; readiness is never a fabricated probability, only
+  // what's actually true about its real, present fields.
+  const bare = await request('/opportunities', { title: 'Cold lead', description: '' }, cookie);
+  assert.equal(bare.status, 201);
+  assert.equal(bare.data.readiness, 'partial');
+
+  // Backdating it past the staleness window (with still no value/source) is the real 'not_ready'
+  // case — every one of the three real readiness signals is false.
+  await store.db.prepare('UPDATE opportunities SET updated_at = ? WHERE id = ?').run(
+    new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(),
+    bare.data.id,
+  );
+  const stale = await request('/opportunities', undefined, cookie, 'GET');
+  assert.equal(stale.data.find((o) => o.id === bare.data.id).readiness, 'not_ready');
+
+  const ready = await request(
+    '/opportunities',
+    { title: 'Warm referral', description: '', source: 'Referred by existing client', valueEstimate: 5000, type: 'referral' },
+    cookie,
+  );
+  assert.equal(ready.status, 201);
+  assert.equal(ready.data.readiness, 'ready');
+  assert.equal(ready.data.type, 'referral');
+
+  const listed = await request('/opportunities', undefined, cookie, 'GET');
+  assert.ok(listed.data.every((o) => ['ready', 'partial', 'not_ready'].includes(o.readiness)));
+});
+
+test('F-GROW-01: an experiment with variants requires workspace:manage to start, and completes with structured per-variant results', async () => {
+  const cookie = await signup();
+  const created = await request(
+    '/experiments',
+    {
+      title: 'Pricing page A/B',
+      hypothesis: 'Shorter copy converts better',
+      metric: 'Signup rate',
+      variants: [
+        { name: 'control', trafficWeightPercent: 50 },
+        { name: 'short-copy', trafficWeightPercent: 50 },
+      ],
+    },
+    cookie,
+  );
+  assert.equal(created.status, 201, JSON.stringify(created.data));
+  assert.equal(created.data.variants.length, 2);
+
+  const badWeights = await request(
+    '/experiments',
+    {
+      title: 'Bad weights',
+      hypothesis: 'x',
+      metric: 'y',
+      variants: [
+        { name: 'a', trafficWeightPercent: 50 },
+        { name: 'b', trafficWeightPercent: 40 },
+      ],
+    },
+    cookie,
+  );
+  assert.equal(badWeights.status, 400);
+
+  const started = await request(`/experiments/${created.data.id}/start`, {}, cookie, 'PATCH');
+  assert.equal(started.status, 200, JSON.stringify(started.data));
+  assert.equal(started.data.status, 'running');
+
+  const badVariant = await request(
+    `/experiments/${created.data.id}/complete`,
+    { result: 'Short copy won', winningVariant: 'not-a-real-variant' },
+    cookie,
+    'PATCH',
+  );
+  assert.equal(badVariant.status, 400);
+
+  const completed = await request(
+    `/experiments/${created.data.id}/complete`,
+    {
+      result: 'Short copy converted 12% better',
+      winningVariant: 'short-copy',
+      perVariantObservedValue: { control: 0.08, 'short-copy': 0.09 },
+    },
+    cookie,
+    'PATCH',
+  );
+  assert.equal(completed.status, 200, JSON.stringify(completed.data));
+  assert.equal(completed.data.winning_variant, 'short-copy');
+  assert.deepEqual(completed.data.per_variant_observed_value, { control: 0.08, 'short-copy': 0.09 });
+});
+
 test('performance-analytics reports real KPI data, not just generic records', async () => {
   const cookie = await enableAI(await signup());
   const kpi = await request('/kpis', { name: 'Active users', unit: 'users' }, cookie);

@@ -54,6 +54,25 @@ const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
 
+// Return-State/Attention Service (F-CORE-02): the real, already-computed signal this lane
+// contributes to the unified aggregation — same logic the /api/learning/enrollments/attention
+// route already runs, factored out so returnState.mjs calls it instead of re-deriving it.
+export async function getLearningAttention(store, userId) {
+  const enrollments = await store.db
+    .prepare(
+      `SELECT e.*, p.title AS path_title FROM learning_enrollments e
+       JOIN learning_paths p ON p.id = e.path_id
+       WHERE e.user_id = ? AND e.status = 'in_progress' ORDER BY e.due_at IS NULL, e.due_at`,
+    )
+    .all(userId);
+  const now = Date.now();
+  const soon = now + 7 * 24 * 60 * 60 * 1000;
+  return {
+    needsYou: enrollments.filter((e) => e.due_at && new Date(e.due_at).getTime() <= soon),
+    stalled: enrollments.filter((e) => e.progress === 0 && (!e.due_at || new Date(e.due_at).getTime() > soon)),
+  };
+}
+
 export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
   const { db, transaction, log } = store;
   const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
@@ -474,21 +493,7 @@ export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
   // Attention — reuses the app-wide Needs You / Stalled attention model instead of inventing a
   // second notification concept: due-soon enrollments need you, zero-progress ones are stalled.
   app.get('/api/learning/enrollments/attention', async (req, res) => {
-    const enrollments = await db
-      .prepare(
-        `SELECT e.*, p.title AS path_title FROM learning_enrollments e
-         JOIN learning_paths p ON p.id = e.path_id
-         WHERE e.user_id = ? AND e.status = 'in_progress' ORDER BY e.due_at IS NULL, e.due_at`,
-      )
-      .all(req.user.id);
-    const now = Date.now();
-    const soon = now + 7 * 24 * 60 * 60 * 1000;
-    res.json({
-      needsYou: enrollments.filter((e) => e.due_at && new Date(e.due_at).getTime() <= soon),
-      stalled: enrollments.filter(
-        (e) => e.progress === 0 && (!e.due_at || new Date(e.due_at).getTime() > soon),
-      ),
-    });
+    res.json(await getLearningAttention(store, req.user.id));
   });
 
   // Admin/manager reporting — completion rate and stalled enrollments per path, feeding the

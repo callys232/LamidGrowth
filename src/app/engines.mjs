@@ -460,6 +460,11 @@ function manifestSummary(code) {
     dimensionLabels: config.dimensionLabels,
     kind: config.inputs?.kind ?? 'assessment',
     pointsCost: ENGINE_POINTS_COST,
+    // F-TF-01: honest crosswalk fields — most entries are genuinely unverified against the 202
+    // canonical capability names (see engineRegistry.mjs), surfaced here rather than silently
+    // absent.
+    canonicalCapabilityId: config.canonicalCapabilityId ?? null,
+    verified: config.verified ?? false,
   };
 }
 
@@ -484,6 +489,22 @@ export function mountPublicEngines(app) {
     res.json({
       engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
       count: list.length,
+    });
+  });
+
+  // F-TF-01: a real, computed crosswalk report — counts per compute archetype (`kind`, the
+  // genuine implementation family each entry shares) and how many of the 247 registry entries
+  // are individually verified against a canonical capability. Honest by construction: it reports
+  // what's actually true in the data (currently 0 verified), rather than the audit's "neither
+  // counts nor names prove completeness."
+  app.get('/api/engines/catalog/coverage', async (req, res) => {
+    const summaries = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
+    const byKind = {};
+    for (const entry of summaries) byKind[entry.kind] = (byKind[entry.kind] || 0) + 1;
+    res.json({
+      totalEntries: summaries.length,
+      verifiedCount: summaries.filter((entry) => entry.verified).length,
+      byArchetype: byKind,
     });
   });
 
@@ -518,6 +539,8 @@ export function mountPublicEngines(app) {
       correctionProtocols: config.correctionProtocols,
       inputs: config.inputs,
       pointsCost: ENGINE_POINTS_COST,
+      canonicalCapabilityId: config.canonicalCapabilityId ?? null,
+      verified: config.verified ?? false,
       // The fixed question bank Q44 (decision-quality) is scored against — the frontend needs
       // this to render the form at all, since it isn't user-defined like the other archetypes.
       ...(kind === 'decision-quality'
