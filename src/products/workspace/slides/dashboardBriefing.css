@@ -1,0 +1,80 @@
+.dashboard-briefing {
+  margin-bottom: 24px;
+  padding: 24px;
+}
+.briefing-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+}
+.briefing-columns h3 {
+  margin: 16px 0 8px;
+  font-size: 17px;
+}
+.briefing-columns p {
+  line-height: 1.6;
+  margin: 10px 0;
+}
+.briefing-note {
+  font-size: 13px;
+  opacity: 0.8;
+}
+.briefing-count {
+  font-size: 13px;
+  margin-left: 6px;
+}
+.briefing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.briefing-record {
+  display: block;
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #8883;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.briefing-record:hover {
+  text-decoration: underline;
+}
+.briefing-record small {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+.briefing-record:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+.briefing-result {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px solid #8883;
+  overflow-wrap: anywhere;
+}
+.briefing-result h4 {
+  margin: 14px 0 6px;
+}
+.briefing-result details {
+  margin-top: 14px;
+}
+.briefing-ai .checkbox-field {
+  margin: 16px 0;
+}
+@media (max-width: 760px) {
+  .briefing-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .dashboard-briefing {
+    padding: 18px;
+  }
+}

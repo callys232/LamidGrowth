@@ -1,4 +1,5 @@
 import express from 'express';
+import { mountDashboardBriefing } from './dashboardBriefing.mjs';
 import { createReadinessCheck } from './readiness.mjs';
 import { mountAccounts } from './accounts.mjs';
 import { mountPublicCompanion } from './companionTasks.mjs';
@@ -1232,6 +1233,7 @@ export async function createApp({
     };
   };
   app.get('/api/state', async (req, res) => res.json(await state(req)));
+  mountDashboardBriefing(app, store, aiProvider);
   app.get('/api/activity', async (req, res) => {
     const agentName = (agentId) => agentManifests.find((a) => a.id === agentId)?.name || agentId;
     const [objectives, actions, jobs, bids, proposals, agentRuns, points, invitations, workflows] =

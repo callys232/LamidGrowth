@@ -10,6 +10,31 @@ import { aiRulesSchema, rulesFor, enforceFeature, scopeAIPayload } from './aiRul
 // above the lighter Companion tools in agents.mjs, which route through scopedProvider instead.
 export const engineReviewCost = 100;
 export const promptVersion = 'objective-review-v1';
+
+async function providerRequestError(response, provider) {
+  let detail = '';
+  try {
+    detail = (await response.json())?.error?.message || '';
+  } catch {
+    /* Non-JSON gateway response. */
+  }
+  const message =
+    response.status === 404
+      ? /workspace/i.test(detail)
+        ? `${provider} could not find the configured AI workspace. The server operator needs to correct the provider workspace setting.`
+        : `${provider} could not find the configured AI model or resource. The server operator needs to check the provider settings.`
+      : [401, 403].includes(response.status)
+        ? `${provider} rejected the server's AI credentials or permissions. The server operator needs to check the provider settings.`
+        : response.status === 400 && /credit balance|purchase credits|billing/i.test(detail)
+          ? `${provider} has insufficient API credits. The account owner needs to add credits in the provider's billing settings before AI requests can run.`
+          : response.status === 400
+            ? `${provider} rejected the AI request configuration. The server operator needs to check the provider settings.`
+            : response.status === 429
+              ? `${provider} is at its request or usage limit. Please try again later.`
+              : `${provider} is temporarily unavailable (upstream ${response.status}). Please try again.`;
+  // Never expose raw provider bodies, which may contain credentials or account identifiers.
+  return Object.assign(new Error(message), { status: 503, providerStatus: response.status });
+}
 export const reviewSchema = z
   .object({
     summary: z.string().max(4000),
@@ -81,7 +106,7 @@ export function openAIProvider({
           },
         }),
       });
-      if (!response.ok) throw new Error(`AI provider request failed (${response.status}).`);
+      if (!response.ok) throw await providerRequestError(response, 'OpenAI');
       const body = await response.json();
       const content = (body.output || [])
         .filter((item) => item.type === 'message')
@@ -156,7 +181,7 @@ export function anthropicProvider({
           tool_choice: { type: 'tool', name: 'objective_review' },
         }),
       });
-      if (!response.ok) throw new Error(`AI provider request failed (${response.status}).`);
+      if (!response.ok) throw await providerRequestError(response, 'Anthropic');
       const body = await response.json();
       if (body.stop_reason === 'refusal') throw new Error('The AI provider declined this request.');
       const toolUse = (body.content || []).find((item) => item.type === 'tool_use');
@@ -194,7 +219,9 @@ export function multiProvider(providers) {
           if (options.signal?.aborted) break;
         }
       }
-      throw new Error(`All AI providers failed. ${failures.join(' | ')}`);
+      throw Object.assign(new Error(`All AI providers failed. ${failures.join(' | ')}`), {
+        status: 503,
+      });
     },
   };
 }
