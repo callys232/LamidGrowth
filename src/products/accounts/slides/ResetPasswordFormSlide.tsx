@@ -54,7 +54,7 @@ export function ResetPasswordFormSlide({
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  minLength={12}
+                  minLength={8}
                   maxLength={128}
                   required
                   autoComplete="new-password"
@@ -65,7 +65,7 @@ export function ResetPasswordFormSlide({
                   type="password"
                   value={confirm}
                   onChange={(event) => setConfirm(event.target.value)}
-                  minLength={12}
+                  minLength={8}
                   maxLength={128}
                   required
                   autoComplete="new-password"

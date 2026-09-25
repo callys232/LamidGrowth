@@ -38,13 +38,13 @@ export function AccountCredentialsForm({
             placeholder="you@example.com"
           />
         </Field>
-        <Field label="Password" hint={login ? undefined : 'Use at least 12 characters.'}>
+        <Field label="Password" hint={login ? undefined : 'Use at least 8 characters.'}>
           <div className="password-field">
             <input
               name="password"
               type={visible ? 'text' : 'password'}
               autoComplete={login ? 'current-password' : 'new-password'}
-              minLength={login ? 1 : 12}
+              minLength={login ? 1 : 8}
               maxLength={128}
               required
               placeholder={login ? 'Your password' : 'Create a strong password'}
@@ -72,9 +72,6 @@ export function AccountCredentialsForm({
             <ArrowLeft size={14} /> Change starting context
           </button>
         )}
-        <p className="auth-footnote">
-          Local development edition. Account data is saved on this computer.
-        </p>
       </form>
     </>
   );

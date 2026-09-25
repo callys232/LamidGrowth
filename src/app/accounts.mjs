@@ -27,7 +27,7 @@ const emailSchema = z
   .email()
   .max(254)
   .transform((s) => s.toLowerCase());
-const passwordSchema = z.string().min(12).max(128);
+const passwordSchema = z.string().min(8).max(128);
 const digest = (s) => createHash('sha256').update(s).digest('hex');
 const fail = (message, status = 400) => {
   throw Object.assign(new Error(message), { status });
