@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonLine } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { useFinancePage } from '../hooks/useFinancePage';
 
@@ -36,7 +37,10 @@ export function FinancePage() {
       <section className="panel settings-card">
         <h3>Your points</h3>
         {!page.points ? (
-          <Empty title="Loading…">Fetching your points position.</Empty>
+          <div style={{ display: 'flex', gap: 24 }}>
+            <SkeletonLine width={80} height={28} />
+            <SkeletonLine width={120} height={28} />
+          </div>
         ) : (
           <>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>

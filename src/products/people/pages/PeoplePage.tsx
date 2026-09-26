@@ -1,4 +1,5 @@
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { usePeoplePage } from '../hooks/usePeoplePage';
 
@@ -34,7 +35,7 @@ export function PeoplePage() {
       )}
 
       {!page.data ? (
-        <Empty title="Loading…">Fetching workspace roster and capability data.</Empty>
+        <SkeletonList rows={6} />
       ) : (
         <>
           <section className="panel settings-card">

@@ -9,6 +9,7 @@ import {
   Workflow,
 } from 'lucide-react';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import type { ActivityItem } from '../hooks/useActivityFeed';
 import { useActivityFeed } from '../hooks/useActivityFeed';
@@ -45,7 +46,7 @@ export function DashboardActivitySlide() {
           </span>
         </div>
       </div>
-      {loading && <p className="activity-feed-status">Loading…</p>}
+      {loading && <SkeletonList rows={6} />}
       {error && <p className="activity-feed-status activity-feed-error">{error}</p>}
       {!loading && !error && items.length === 0 && (
         <Empty title="Nothing here yet">

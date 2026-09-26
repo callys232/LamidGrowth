@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Users } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 
 type TeamMember = {
   id: string;
@@ -85,7 +86,7 @@ export function TeamsPage() {
         </div>
       </div>
       {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {page.loading && <p className="activity-feed-status">Loading…</p>}
+      {page.loading && <SkeletonList rows={4} />}
       {!page.loading && page.teams.length === 0 && (
         <Empty title="No teams yet">Create a team below to start assigning pod work.</Empty>
       )}

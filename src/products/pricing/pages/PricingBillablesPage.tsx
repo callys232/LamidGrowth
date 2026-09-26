@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/ui/Button';
 import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { usePricingPage } from '../hooks/usePricingPage';
 import { clearPendingBundle, readPendingBundle } from '../pendingBundle';
@@ -177,9 +178,7 @@ export function PricingBillablesPage() {
               )}
             </p>
             {!page.billables ? (
-              <Empty title="Loading billables…">
-                Fetching the current tool and engine price list.
-              </Empty>
+              <SkeletonList rows={6} />
             ) : (
               <ol className="activity-feed-list">
                 {page.billables.tools.map((tool) => (

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 
 type Lane = 'tasks' | 'learning' | 'goals' | 'audit' | 'workflows';
 type ReturnStateResponse = Record<Lane, { lastReviewedAt: string | null; items: Record<string, unknown>[] }>;
@@ -80,7 +81,7 @@ export function ReturnStatePage() {
         </div>
       </div>
       {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {page.loading && <p className="activity-feed-status">Loading…</p>}
+      {page.loading && <SkeletonList rows={5} />}
       {!page.loading &&
         page.data &&
         LANES.map((lane) => {

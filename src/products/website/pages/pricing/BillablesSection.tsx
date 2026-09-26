@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePublicBillables, formatMinor } from './usePublicBillables';
 import { BundleBuilder } from './BundleBuilder';
+import { SkeletonCards, SkeletonLine } from '../../../../shared/ui/Skeleton';
 import './pricing-billables.css';
 
 /** The concrete, live-priced half of /pricing — every registered tool and bundle, pulled straight
@@ -33,7 +34,7 @@ export function BillablesSection() {
         <h3>{filter === 'bundle' ? 'Create a Bundle' : 'Every billable, in the open'}</h3>
         <p>
           {!billables ? (
-            'Loading live pricing…'
+            <SkeletonLine width={260} height={12} />
           ) : filter === 'bundle' ? (
             'Grow your business in the areas that matter most with a custom toolkit.'
           ) : (
@@ -52,7 +53,9 @@ export function BillablesSection() {
         </p>
       )}
 
-      {filter !== 'bundle' && (
+      {filter !== 'bundle' && !billables && <SkeletonCards count={3} />}
+
+      {filter !== 'bundle' && billables && (
         <div className="pricing-billables-plans">
           <article className="pricing-plan-card">
             <h4>Pay as you go</h4>

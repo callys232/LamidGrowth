@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
+import { SkeletonCards } from '../../../../shared/ui/Skeleton';
 import './intelligence-catalog.css';
 
 const HOME_ENGINES = [
@@ -47,7 +48,7 @@ export function IntelligenceCatalogSection() {
         </div>
 
         {error && <p className="engine-catalog-error">{error}</p>}
-        {!catalog && <p className="engine-catalog-loading">Loading the live catalog…</p>}
+        {!catalog && <SkeletonCards count={6} />}
 
         {grouped.map(({ homeEngine, count, series }) => (
           <div key={homeEngine} className="engine-catalog-group">

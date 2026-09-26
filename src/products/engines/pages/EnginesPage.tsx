@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { useEngineCatalog, type EngineSummary } from '../hooks/useEngineCatalog';
 import { useEngineRun } from '../hooks/useEngineRun';
 import { AssessmentForm } from '../components/AssessmentForm';
@@ -93,7 +94,9 @@ export function EnginesPage() {
       </div>
 
       {!catalog ? (
-        <Empty title="Loading…">Fetching the engine catalog.</Empty>
+        <div className="engines-layout">
+          <SkeletonList rows={8} />
+        </div>
       ) : (
         <div className="engines-layout">
           <ul className="engines-list">
@@ -186,7 +189,7 @@ function EngineDetailPanel({
       )}
 
       {!manifest ? (
-        <Empty title="Loading…">Fetching this diagnostic's input form.</Empty>
+        <SkeletonList rows={3} />
       ) : result ? (
         <EngineResultView
           pointsCharged={result.pointsCharged}
@@ -262,7 +265,7 @@ export function EngineForm({
           submitting={submitting}
         />
       ) : (
-        <Empty title="Loading…">Fetching the question bank.</Empty>
+        <SkeletonList rows={3} />
       );
     case 'growth-pathways':
       return <GrowthPathwaysForm onSubmit={onSubmit} submitting={submitting} />;

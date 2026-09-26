@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BarChart3, FlaskConical } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 
 type Kpi = {
@@ -191,7 +192,7 @@ export function GrowthPage() {
         </div>
       </div>
       {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {page.loading && <p className="activity-feed-status">Loading…</p>}
+      {page.loading && <SkeletonList rows={4} />}
 
       <h3>KPIs</h3>
       {!page.loading && page.kpis.length === 0 && <Empty title="No KPIs yet">Define one below.</Empty>}

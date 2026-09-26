@@ -1,6 +1,7 @@
 import { Briefcase, HandHelping } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Empty } from '../../../shared/ui/Empty';
+import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { useHandoffsList, useProjectsList } from '../hooks/useProjectsPage';
 
@@ -16,7 +17,7 @@ export function ProjectsListPage() {
           <span>Milestones, deliverables, and approvals for awarded work.</span>
         </div>
       </div>
-      {loading && <p className="activity-feed-status">Loading…</p>}
+      {loading && <SkeletonList rows={3} />}
       {error && <p className="activity-feed-status activity-feed-error">{error}</p>}
       {!loading && !error && projects.length === 0 && (
         <Empty title="No projects yet">
@@ -47,7 +48,7 @@ export function ProjectsListPage() {
           </span>
         </div>
       </div>
-      {handoffsList.loading && <p className="activity-feed-status">Loading…</p>}
+      {handoffsList.loading && <SkeletonList rows={2} />}
       {!handoffsList.loading && handoffsList.handoffs.length === 0 && (
         <Empty title="No handoffs yet">
           When an agent needs qualified human judgment mid-workflow, it can hand off the exact

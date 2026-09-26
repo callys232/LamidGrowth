@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '../../../shared/ui/Button';
+import { SkeletonBlock, SkeletonLine } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
 import { MilestoneCard } from '../components/MilestoneCard';
@@ -42,7 +43,15 @@ export function ProjectDetailPage() {
     void loadMessages().then(setMessages);
   }, [loadMessages]);
 
-  if (loading) return <p className="activity-feed-status">Loading…</p>;
+  if (loading)
+    return (
+      <section className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <SkeletonLine width={260} height={22} />
+        <SkeletonLine width={380} height={12} />
+        <SkeletonBlock height={100} />
+        <SkeletonBlock height={100} />
+      </section>
+    );
   if (error) return <p className="activity-feed-status activity-feed-error">{error}</p>;
   if (!project) return null;
 

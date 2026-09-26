@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Empty } from '../../../../shared/ui/Empty';
+import { SkeletonList } from '../../../../shared/ui/Skeleton';
 import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
 import { useEngineRun } from '../../../engines/hooks/useEngineRun';
 import { EngineForm } from '../../../engines/pages/EnginesPage';
@@ -64,7 +65,9 @@ export function DemoToolsPage() {
         </div>
 
         {!catalog ? (
-          <Empty title="Loading…">Fetching the tool catalog.</Empty>
+          <div className="engines-layout">
+            <SkeletonList rows={8} />
+          </div>
         ) : (
           <div className="engines-layout">
             <ul className="engines-list">
@@ -123,7 +126,7 @@ function DemoDetailPanel({
       )}
 
       {!manifest ? (
-        <Empty title="Loading…">Fetching this tool's input form.</Empty>
+        <SkeletonList rows={3} />
       ) : result ? (
         <>
           <EngineResultView result={result.result} />
