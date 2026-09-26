@@ -23,6 +23,7 @@ export function Workflows() {
         busy={page.busy}
         command={page.command}
         remove={page.remove}
+        resolveEvent={page.resolveEvent}
       />
     </>
   );

@@ -34,6 +34,11 @@ export type ReviewQueueEntry = {
   notes: string;
   created_at: string;
 };
+export type ReviewDiff = {
+  reviewEntryId: string;
+  reviewedVersion: number;
+  fields: Record<string, { current: unknown; proposed: unknown }>;
+};
 export type JurisdictionRule = {
   id: string;
   jurisdiction: string;
@@ -48,6 +53,7 @@ export function useScopingPage() {
   const [scopingCase, setScopingCase] = useState<ScopingCase | null>(null);
   const [options, setOptions] = useState<Options | null>(null);
   const [reviewEntry, setReviewEntry] = useState<ReviewQueueEntry | null>(null);
+  const [reviewDiff, setReviewDiff] = useState<ReviewDiff | null>(null);
   const [jurisdictionRules, setJurisdictionRules] = useState<JurisdictionRule[]>([]);
   const [isJurisdictionAdmin, setIsJurisdictionAdmin] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -249,10 +255,41 @@ export function useScopingPage() {
     }
   }
 
+  async function loadReviewDiff() {
+    if (!scopingCase) return;
+    try {
+      const diff = await api<ReviewDiff | null>(
+        `/scoping-cases/${scopingCase.id}/review/diff`,
+        undefined,
+        'GET',
+      );
+      setReviewDiff(diff);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+
+  async function reconcile(accept: string[]) {
+    if (!scopingCase) return;
+    setBusy(true);
+    setError('');
+    try {
+      const updated = await api<ScopingCase>(`/scoping-cases/${scopingCase.id}/reconcile`, { accept });
+      setScopingCase(updated);
+      setReviewDiff(null);
+      notify('Reviewer proposal reconciled.');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return {
     scopingCase,
     options,
     reviewEntry,
+    reviewDiff,
     jurisdictionRules,
     isJurisdictionAdmin,
     busy,
@@ -262,6 +299,8 @@ export function useScopingPage() {
     suggest,
     publish,
     requestReview,
+    loadReviewDiff,
+    reconcile,
     addJurisdictionRule,
     removeJurisdictionRule,
   };

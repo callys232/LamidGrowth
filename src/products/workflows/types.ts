@@ -3,7 +3,7 @@ export interface Step {
   toolId: string;
   state: string;
   attempts: number;
-  input: { title?: string; notes?: string; message?: string };
+  input: { title?: string; notes?: string; message?: string; correlationKey?: string };
   output: {
     observedAt: string;
     result: { completed?: number; total?: number; action?: { title: string } };
@@ -26,4 +26,5 @@ export const labels: Record<string, string> = {
   'action.prepare': 'Prepare a next action',
   'progress.snapshot': 'Record progress evidence',
   'review.reminder': 'Create a review reminder',
+  'event.wait': 'Wait for an external event',
 };

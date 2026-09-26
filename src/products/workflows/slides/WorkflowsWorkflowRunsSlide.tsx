@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '../../../shared/ui/Button';
 import { Empty } from '../../../shared/ui/Empty';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
@@ -11,10 +12,12 @@ export function WorkflowsWorkflowRunsSlide({
   busy,
   command,
   remove,
+  resolveEvent,
 }: Pick<
   ReturnType<typeof useWorkflowsPage>,
-  'runs' | 'state' | 'canManage' | 'busy' | 'command' | 'remove'
+  'runs' | 'state' | 'canManage' | 'busy' | 'command' | 'remove' | 'resolveEvent'
 >) {
+  const [payloadDrafts, setPayloadDrafts] = useState<Record<string, string>>({});
   return (
     <>
       {!runs.length && (
@@ -60,6 +63,26 @@ export function WorkflowsWorkflowRunsSlide({
                     {step.output.result.action && ` · Created “${step.output.result.action.title}”`}
                   </p>
                 )}
+                {step.state === 'waiting' && canManage && (
+                  <div className="modal-actions">
+                    <input
+                      type="text"
+                      placeholder="Payload JSON (optional)"
+                      value={payloadDrafts[step.id] || ''}
+                      onChange={(e) =>
+                        setPayloadDrafts((prev) => ({ ...prev, [step.id]: e.target.value }))
+                      }
+                    />
+                    <Button
+                      disabled={busy}
+                      onClick={() =>
+                        void resolveEvent(run, step.input.correlationKey || '', payloadDrafts[step.id] || '')
+                      }
+                    >
+                      Resolve event ({step.input.correlationKey})
+                    </Button>
+                  </div>
+                )}
               </li>
             ))}
           </ol>
@@ -94,7 +117,7 @@ export function WorkflowsWorkflowRunsSlide({
                   Retry failed step
                 </Button>
               )}
-              {!['completed', 'cancelled', 'expired'].includes(run.state) && (
+              {!['completed', 'cancelled', 'expired', 'compensated'].includes(run.state) && (
                 <Button
                   variant="secondary"
                   disabled={busy}
@@ -103,7 +126,7 @@ export function WorkflowsWorkflowRunsSlide({
                   Cancel workflow
                 </Button>
               )}
-              {['completed', 'cancelled', 'expired'].includes(run.state) && (
+              {['completed', 'cancelled', 'expired', 'compensated'].includes(run.state) && (
                 <Button
                   variant="secondary"
                   disabled={busy}

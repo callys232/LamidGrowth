@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
-import { useScopingPage } from '../hooks/useScopingPage';
+import { useScopingPage, type ReviewDiff } from '../hooks/useScopingPage';
 
 type Step = 'objective' | 'scope' | 'review';
 
@@ -300,8 +300,14 @@ export function ScopingWizardPage() {
           {page.reviewEntry && (
             <p>
               Sent to the expert review queue — <StatusPill status={page.reviewEntry.status} />. You
-              can still publish yourself once you're ready.
+              can still publish yourself once you're ready.{' '}
+              <Button variant="secondary" disabled={page.busy} onClick={() => void page.loadReviewDiff()}>
+                Check for a reviewer proposal
+              </Button>
             </p>
+          )}
+          {page.reviewDiff && (
+            <ReviewReconciliation diff={page.reviewDiff} busy={page.busy} reconcile={page.reconcile} />
           )}
           <Button
             disabled={
@@ -330,6 +336,43 @@ export function ScopingWizardPage() {
           {c.status === 'published' && <p>Published — this scoping case is now a live project.</p>}
         </section>
       )}
+    </section>
+  );
+}
+
+/** Compare-accept-reject for a reviewer's proposed field changes (F-SC-03). Fields not checked
+ * stay as they are — rejection is the implicit default, never applied silently. */
+function ReviewReconciliation({
+  diff,
+  busy,
+  reconcile,
+}: {
+  diff: ReviewDiff;
+  busy: boolean;
+  reconcile: (accept: string[]) => Promise<void>;
+}) {
+  const [accepted, setAccepted] = useState<Record<string, boolean>>({});
+  return (
+    <section className="settings-card">
+      <h4>Reviewer's proposed changes</h4>
+      {Object.entries(diff.fields).map(([field, { current, proposed }]) => (
+        <label key={field} style={{ display: 'block', marginBottom: 8 }}>
+          <input
+            type="checkbox"
+            checked={Boolean(accepted[field])}
+            onChange={(e) => setAccepted((prev) => ({ ...prev, [field]: e.target.checked }))}
+          />{' '}
+          <strong>{field}</strong>: <span style={{ textDecoration: 'line-through' }}>{String(current)}</span>
+          {' → '}
+          {String(proposed)}
+        </label>
+      ))}
+      <Button
+        disabled={busy}
+        onClick={() => void reconcile(Object.keys(accepted).filter((field) => accepted[field]))}
+      >
+        Reconcile accepted fields
+      </Button>
     </section>
   );
 }

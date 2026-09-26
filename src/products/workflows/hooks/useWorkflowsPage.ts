@@ -121,6 +121,29 @@ export function useWorkflowsPage() {
       mutating.current = false;
     }
   }
+  async function resolveEvent(run: Run, correlationKey: string, payloadJson: string) {
+    setBusy(true);
+    mutating.current = true;
+    ++requests.current;
+    setError('');
+    try {
+      let payload = {};
+      if (payloadJson.trim()) {
+        try {
+          payload = JSON.parse(payloadJson);
+        } catch {
+          throw new Error('Payload must be valid JSON (or left blank).');
+        }
+      }
+      await api(`/workflows/${run.id}/events`, { correlationKey, payload });
+      await load();
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setBusy(false);
+      mutating.current = false;
+    }
+  }
   async function remove(run: Run) {
     setBusy(true);
     mutating.current = true;
@@ -137,5 +160,5 @@ export function useWorkflowsPage() {
       mutating.current = false;
     }
   }
-  return { error, canManage, state, create, busy, runs, command, remove };
+  return { error, canManage, state, create, busy, runs, command, remove, resolveEvent };
 }

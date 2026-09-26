@@ -4,6 +4,7 @@ import { IntelligencePolicySlide } from '../slides/IntelligencePolicySlide';
 import { IntelligenceProviderStatusSlide } from '../slides/IntelligenceProviderStatusSlide';
 import { IntelligenceReviewHistorySlide } from '../slides/IntelligenceReviewHistorySlide';
 import { IntelligenceReviewRequestSlide } from '../slides/IntelligenceReviewRequestSlide';
+import { IntelligenceModelExecutionsSlide } from '../slides/IntelligenceModelExecutionsSlide';
 
 /** Compose the page in reading order. Edit each section in ../slides. */
 export function Intelligence(props: { settings?: boolean }) {
@@ -37,6 +38,7 @@ export function Intelligence(props: { settings?: boolean }) {
         setError={page.setError}
         newAction={page.newAction}
       />
+      <IntelligenceModelExecutionsSlide settings={page.settings} />
     </>
   );
 }

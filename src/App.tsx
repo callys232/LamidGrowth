@@ -27,6 +27,9 @@ import { Notifications } from './products/notifications/pages/NotificationsPage'
 import { Members } from './products/organizations/pages/MembersPage';
 import { TeamsPage } from './products/organizations/pages/TeamsPage';
 import { OpportunitiesPage } from './products/commercial/pages/OpportunitiesPage';
+import { GrowthPage } from './products/commercial/pages/GrowthPage';
+import { ConnectorsPage } from './products/integrations/pages/ConnectorsPage';
+import { ReturnStatePage } from './products/workspace/pages/ReturnStatePage';
 import { PricingBillablesPage } from './products/pricing/pages/PricingBillablesPage';
 import { Progress } from './products/progress/pages/ProgressPage';
 import { Rhythm } from './products/rhythm/pages/RhythmPage';
@@ -153,6 +156,9 @@ export function App() {
           <Route path="notifications" element={<Notifications />} />
           <Route path="teams" element={<TeamsPage />} />
           <Route path="opportunities" element={<OpportunitiesPage />} />
+          <Route path="growth" element={<GrowthPage />} />
+          <Route path="integrations" element={<ConnectorsPage />} />
+          <Route path="whats-new" element={<ReturnStatePage />} />
           <Route path="rhythm" element={<Rhythm />} />
           <Route path="progress" element={<Progress />} />
           <Route path="governance" element={<Governance />} />

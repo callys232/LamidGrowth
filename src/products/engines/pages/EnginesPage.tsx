@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
 import { useEngineCatalog, type EngineSummary } from '../hooks/useEngineCatalog';
 import { useEngineRun } from '../hooks/useEngineRun';
@@ -25,11 +26,19 @@ const HOME_ENGINES = ['All', 'Clarity', 'Capability', 'Consistency', 'Growth', '
  * deterministic compute (see server: src/app/engines.mjs, src/app/engineIntelligence/*), ported
  * from LamidOne's src/lib/intelligence layer. Every run charges points and returns arithmetic —
  * no engine on this page produces a number a model invented. */
+type Coverage = { totalEntries: number; verifiedCount: number; byArchetype: Record<string, number> };
+
 export function EnginesPage() {
   const { catalog, error } = useEngineCatalog();
   const [tab, setTab] = useState('All');
   const [selected, setSelected] = useState<EngineSummary | null>(null);
   const run = useEngineRun(selected?.code ?? null);
+  const [coverage, setCoverage] = useState<Coverage | null>(null);
+  useEffect(() => {
+    api<Coverage>('/engines/catalog/coverage', undefined, 'GET')
+      .then(setCoverage)
+      .catch(() => {});
+  }, []);
 
   const filtered = useMemo(() => {
     if (!catalog) return [];
@@ -48,6 +57,14 @@ export function EnginesPage() {
       {error && (
         <p className="form-error" role="alert">
           {error}
+        </p>
+      )}
+
+      {coverage && (
+        <p className="activity-feed-status">
+          {coverage.totalEntries} registered entries · {coverage.verifiedCount} individually
+          verified against a canonical capability — the rest share {Object.keys(coverage.byArchetype).length}{' '}
+          real compute archetypes, honestly unverified per-entry rather than fabricated.
         </p>
       )}
 
