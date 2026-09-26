@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { openAIProvider, anthropicProvider, multiProvider } from '../src/app/ai.mjs';
+import {
+  openAIProvider,
+  anthropicProvider,
+  geminiProvider,
+  multiProvider,
+} from '../src/app/ai.mjs';
 
 test('insufficient provider credits are reported as a billing issue rather than a generic server error', async () => {
   const provider = anthropicProvider({
@@ -436,4 +441,118 @@ test('Unconfigured AI provider returns unconfigured status and logs error', asyn
   assert.equal(logs.length, 2);
   assert.equal(logs[0].event, 'ai_message_sent');
   assert.equal(logs[1].event, 'ai_message_failed');
+});
+
+test('geminiProvider returns structured review when the upstream API responds with JSON candidate', async () => {
+  const provider = geminiProvider({
+    apiKey: 'test-key',
+    model: 'gemini-2.5-flash',
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        candidates: [
+          {
+            content: {
+              parts: [
+                {
+                  text: JSON.stringify({
+                    summary: 'Strategic objective is well grounded.',
+                    assumptions: ['Market remains stable.'],
+                    suggestions: [
+                      { title: 'First Action', rationale: 'Validate customer problem.' },
+                    ],
+                    evidenceIds: ['src_1'],
+                  }),
+                },
+              ],
+            },
+            finishReason: 'STOP',
+          },
+        ],
+        usageMetadata: { promptTokenCount: 150, candidatesTokenCount: 80, totalTokenCount: 230 },
+        responseId: 'resp_gemini_123',
+      }),
+    }),
+  });
+
+  const res = await provider.review({ question: 'How to scale?', sources: [{ id: 'src_1' }] });
+  assert.equal(res.review.summary, 'Strategic objective is well grounded.');
+  assert.equal(res.review.suggestions.length, 1);
+  assert.equal(res.review.suggestions[0].title, 'First Action');
+  assert.equal(res.usage.total_tokens, 230);
+  assert.equal(res.responseId, 'resp_gemini_123');
+});
+
+test('geminiProvider rejects when candidate is declined due to safety or recitation', async () => {
+  const provider = geminiProvider({
+    apiKey: 'test-key',
+    model: 'gemini-2.5-flash',
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        candidates: [{ finishReason: 'SAFETY' }],
+      }),
+    }),
+  });
+
+  await assert.rejects(provider.review({ sources: [] }), /declined this request/);
+});
+
+test('geminiProvider handles upstream 429 quota exhaustion', async () => {
+  const provider = geminiProvider({
+    apiKey: 'test-key',
+    model: 'gemini-2.5-flash',
+    fetchImpl: async () => ({
+      ok: false,
+      status: 429,
+      json: async () => ({ error: { message: 'Quota exceeded for QuotaId: generate-content' } }),
+    }),
+  });
+
+  await assert.rejects(provider.review({ sources: [] }), (error) => {
+    assert.equal(error.status, 503);
+    assert.match(error.message, /usage limit/);
+    return true;
+  });
+});
+
+test('multiProvider seamlessly fails over from Gemini to OpenAI', async () => {
+  const geminiFailing = geminiProvider({
+    apiKey: 'test-key',
+    model: 'gemini-2.5-flash',
+    fetchImpl: async () => ({ ok: false, status: 503 }),
+  });
+  const openAISucceeding = openAIProvider({
+    apiKey: 'test-key',
+    model: 'gpt-4o',
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        id: 'resp_openai_failover',
+        status: 'completed',
+        output: [
+          {
+            type: 'message',
+            content: [
+              {
+                type: 'output_text',
+                text: JSON.stringify({
+                  summary: 'OpenAI failover summary.',
+                  assumptions: [],
+                  suggestions: [],
+                  evidenceIds: [],
+                }),
+              },
+            ],
+          },
+        ],
+      }),
+    }),
+  });
+
+  const combined = multiProvider([geminiFailing, openAISucceeding]);
+  assert.equal(combined.name, 'Gemini → OpenAI');
+  const res = await combined.review({ sources: [] });
+  assert.equal(res.review.summary, 'OpenAI failover summary.');
+  assert.equal(res.responseId, 'resp_openai_failover');
 });

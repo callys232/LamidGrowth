@@ -21,7 +21,8 @@
     "format:check": "prettier --check .",
     "content:generate": "node scripts/generate-content.mjs",
     "docs:products": "node scripts/update-product-index.mjs",
-    "content:catalog": "node scripts/sync-page-catalog.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts"
+    "seo:sitemap": "node scripts/generate-sitemap.mjs",
+    "content:catalog": "node scripts/sync-page-catalog.mjs && node scripts/generate-sitemap.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.2.0",

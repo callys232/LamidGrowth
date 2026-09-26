@@ -19,6 +19,8 @@ export interface DocumentPage {
   route: string;
   source_paragraph: number;
   gates: string[];
+  indexing?: string;
+  canonical?: string;
   seo_title: string;
   meta_description: string;
   title: string;

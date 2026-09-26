@@ -45,29 +45,120 @@ function RouteEffects() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     // A hash target (e.g. a CTA linking to a section on the current page) scrolls to that
-    // element instead of always forcing the scroll back to the top — previously this effect
-    // only kept `pathname` as a dependency and always called scrollTo(0, 0), so a hash link
-    // to a section further down the SAME page was a silent no-op (no pathname change to
-    // re-trigger the effect) and a hash link to a DIFFERENT page would still jump to its top.
+    // element instead of always forcing the scroll back to the top.
     const target = hash && document.getElementById(hash.slice(1));
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     else window.scrollTo(0, 0);
+
     const page = pages.find((p) => p.route === pathname);
-    document.title = page?.seo_title || 'LAMID ONE';
+    const siteUrl = 'https://lamid.one';
+    const canonicalPath = page?.canonical || pathname;
+    const fullCanonicalUrl = `${siteUrl}${canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`}`;
+    const pageTitle = page?.seo_title || 'LAMID ONE — Continuous Human–AI Growth Operating System';
+    const pageDescription =
+      page?.meta_description ||
+      'A connected space for your context, decisions, and continuous human-AI growth.';
+
+    document.title = pageTitle;
+
+    // Indexing control: allow public editorial pages to be indexed, while keeping authenticated
+    // workspace /os/* and account routes strictly noindex.
     let robots = document.querySelector('meta[name="robots"]');
     if (!robots) {
       robots = document.createElement('meta');
       robots.setAttribute('name', 'robots');
       document.head.appendChild(robots);
     }
-    robots.setAttribute('content', 'noindex, nofollow');
-    const description = document.querySelector('meta[name="description"]');
-    if (description)
-      description.setAttribute(
-        'content',
-        page?.meta_description ||
-          'A connected space for your context, decisions, and next chapter.',
-      );
+    const isPrivate =
+      pathname.startsWith('/os') ||
+      pathname.startsWith('/workspace') ||
+      [
+        '/start',
+        '/signup',
+        '/login',
+        '/password-recovery',
+        '/reset-password',
+        '/verify-account',
+      ].includes(pathname);
+
+    const indexing = isPrivate ? 'noindex, nofollow' : page?.indexing || 'index, follow';
+    robots.setAttribute('content', indexing);
+
+    let description = document.querySelector('meta[name="description"]');
+    if (!description) {
+      description = document.createElement('meta');
+      description.setAttribute('name', 'description');
+      document.head.appendChild(description);
+    }
+    description.setAttribute('content', pageDescription);
+
+    // Canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', fullCanonicalUrl);
+
+    // OpenGraph & Twitter helpers
+    const setMetaTag = (attr: 'name' | 'property', key: string, val: string) => {
+      let tag = document.querySelector(`meta[${attr}="${key}"]`);
+      if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute(attr, key);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute('content', val);
+    };
+
+    setMetaTag('property', 'og:title', pageTitle);
+    setMetaTag('property', 'og:description', pageDescription);
+    setMetaTag('property', 'og:url', fullCanonicalUrl);
+    setMetaTag('property', 'og:type', pathname === '/' ? 'website' : 'article');
+    setMetaTag('property', 'og:site_name', 'LAMID ONE');
+
+    setMetaTag('name', 'twitter:card', 'summary_large_image');
+    setMetaTag('name', 'twitter:title', pageTitle);
+    setMetaTag('name', 'twitter:description', pageDescription);
+
+    // Structured JSON-LD
+    let script = document.getElementById('ld-json-schema') as HTMLScriptElement | null;
+    if (!script) {
+      script = document.createElement('script');
+      script.id = 'ld-json-schema';
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          '@id': 'https://lamid.one/#organization',
+          name: 'LAMID Consulting',
+          url: 'https://lamid.one',
+          logo: 'https://lamid.one/favicon.svg',
+          description:
+            'Continuous Human–AI Growth Operating System built from 35+ years of consulting experience.',
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://lamid.one/#website',
+          url: 'https://lamid.one',
+          name: 'LAMID ONE',
+          publisher: { '@id': 'https://lamid.one/#organization' },
+        },
+        {
+          '@type': 'WebPage',
+          '@id': `${fullCanonicalUrl}#webpage`,
+          url: fullCanonicalUrl,
+          name: pageTitle,
+          description: pageDescription,
+          isPartOf: { '@id': 'https://lamid.one/#website' },
+        },
+      ],
+    });
   }, [pathname, hash]);
   return null;
 }
