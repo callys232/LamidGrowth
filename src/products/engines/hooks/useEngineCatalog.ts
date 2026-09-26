@@ -28,7 +28,7 @@ export type EngineSummary = {
   pointsCost: number;
 };
 
-export type EngineCatalog = { engines: EngineSummary[]; count: number };
+export type EngineCatalog = { engines: EngineSummary[]; count: number; locked?: EngineSummary[] };
 
 /** Two different catalogs share this shape (see server: src/app/engines.mjs,
  * src/app/engineRegistry.mjs):

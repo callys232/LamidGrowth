@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Lock } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
 import { useEngineCatalog, type EngineSummary } from '../hooks/useEngineCatalog';
@@ -43,6 +45,10 @@ export function EnginesPage() {
   const filtered = useMemo(() => {
     if (!catalog) return [];
     return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.homeEngine === tab);
+  }, [catalog, tab]);
+  const filteredLocked = useMemo(() => {
+    if (!catalog?.locked) return [];
+    return tab === 'All' ? catalog.locked : catalog.locked.filter((e) => e.homeEngine === tab);
   }, [catalog, tab]);
 
   return (
@@ -120,6 +126,38 @@ export function EnginesPage() {
               <EngineDetailPanel key={selected.code} engine={selected} run={run} />
             )}
           </div>
+        </div>
+      )}
+
+      {filteredLocked.length > 0 && (
+        <div className="engines-locked" style={{ marginTop: 24 }}>
+          <div className="panel-heading">
+            <div>
+              <h3>Locked for your plan</h3>
+              <span>
+                These engines exist but aren't included in your current tier or bundles — unlock
+                the matching seat to get access without a full tier upgrade.
+              </span>
+            </div>
+          </div>
+          <ul className="engines-list">
+            {filteredLocked.map((engine) => (
+              <li key={engine.code}>
+                <div className="engines-list-item" style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Lock size={14} />
+                  <span>
+                    <strong>{engine.engineName}</strong>
+                    <small>
+                      {engine.code} · {engine.seriesName} · requires the {engine.homeEngine} seat
+                    </small>
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <Link to="/os/pricing" className="button button-secondary">
+            See seats and bundles on Pricing
+          </Link>
         </div>
       )}
     </section>

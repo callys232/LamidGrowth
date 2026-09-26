@@ -562,9 +562,16 @@ export function mountEngines(app, store) {
     const list = ENGINE_CODES.filter((code) => accessible.has(code))
       .map(manifestSummary)
       .filter(Boolean);
+    // Engine seats: a locked engine used to be silently omitted, so a workspace had no way to
+    // discover it exists at all. Surfaced here (never fetched, never counted as "count") so the
+    // catalog page can show what it's missing and link to the seat bundle that would unlock it.
+    const locked = ENGINE_CODES.filter((code) => !accessible.has(code))
+      .map(manifestSummary)
+      .filter(Boolean);
     res.json({
       engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
       count: list.length,
+      locked: filter ? locked.filter((m) => m.homeEngine === filter) : locked,
     });
   });
 

@@ -208,3 +208,56 @@ test('F-TF-01: the coverage report gives real, computed counts per compute arche
   const sumByArchetype = Object.values(coverage.data.byArchetype).reduce((a, b) => a + b, 0);
   assert.equal(sumByArchetype, coverage.data.totalEntries, 'every entry is counted in exactly one archetype bucket');
 });
+
+test('Engine seats: all six home-engine seat bundles exist, published, with real member engines', async () => {
+  const result = await request('/bundles', undefined, undefined, 'GET');
+  assert.equal(result.status, 200);
+  const seatNames = ['Clarity Seat', 'Consistency Seat', 'Growth Seat', 'Finance Seat', 'Capability Seat', 'Shared Seat'];
+  for (const name of seatNames) {
+    const seat = result.data.find((b) => b.name === name);
+    assert.ok(seat, `${name} must be seeded`);
+    assert.equal(seat.status, 'active', `${name} must be published`);
+    assert.ok(seat.items.length > 0, `${name} must have real member engines`);
+    assert.ok(seat.price_minor > 0);
+    assert.equal(seat.points_included, seat.items.reduce((sum, i) => sum + i.points_cost, 0));
+    // An individually rank-escalated engine (its own name implies "enterprise", regardless of
+    // home_engine) must never ride along in a cheap home-engine seat at the group's base price.
+    assert.ok(
+      seat.items.every((i) => !/enterprise/i.test(i.name)),
+      `${name} must exclude any engine whose name implies enterprise-rank escalation`,
+    );
+    if (name !== 'Shared Seat') {
+      // Shared's own base rank (Institution) already sits above "team," so a "team" keyword match
+      // there is not an escalation — only checked for the groups with a lower base rank.
+      assert.ok(
+        seat.items.every((i) => !/\bteam\b/i.test(i.name)),
+        `${name} must exclude a "team"-escalated engine, since its base rank is below Team`,
+      );
+    }
+  }
+});
+
+test('Engine seats: a locked engine is now visible (not silently omitted) with its homeEngine, and an enterprise workspace has nothing locked', async () => {
+  const cookie = await demo();
+  const state = await request('/state', undefined, cookie, 'GET');
+  const workspaceId = state.data.workspace.id;
+
+  const enterpriseView = await request('/engines', undefined, cookie, 'GET');
+  assert.equal(enterpriseView.status, 200);
+  assert.deepEqual(enterpriseView.data.locked, [], 'enterprise already sees everything, so nothing is locked');
+
+  await store.db
+    .prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?")
+    .run(workspaceId);
+  const individualView = await request('/engines', undefined, cookie, 'GET');
+  assert.equal(individualView.status, 200);
+  assert.ok(individualView.data.locked.length > 0, 'a locked engine must actually be returned, not silently dropped');
+  assert.ok(
+    individualView.data.locked.some((e) => e.homeEngine === 'Finance'),
+    'a Finance engine (SME-rank) must show up as locked for an Individual-context workspace',
+  );
+  assert.ok(
+    individualView.data.engines.every((e) => e.homeEngine !== 'Finance'),
+    'a locked engine must not also appear in the accessible list',
+  );
+});

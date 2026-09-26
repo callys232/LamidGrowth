@@ -11,6 +11,13 @@ function formatMinor(amountMinor: number, currency: string) {
   return `${(amountMinor / 100).toFixed(2)} ${currency}`;
 }
 
+// Engine seats are auto-generated bundles named "<HomeEngine> Seat" (see server/store.mjs) —
+// this heuristic just flags them for a distinguishing badge; it never changes what they do,
+// since a seat is a completely ordinary bundle under the hood.
+function isSeatBundle(name: string) {
+  return /\sSeat$/.test(name);
+}
+
 /** /os/pricing — kept to the one thing every member needs here: buying points, plus browsing
  * published bundles. The tool/engine price list and bundle-authoring tools (ecosystem-admin
  * only) live under the "Create a Bundle" tab instead of being shown to every visitor by default.
@@ -129,6 +136,7 @@ export function PricingBillablesPage() {
                   <li key={bundle.id} className="activity-feed-row">
                     <span className="activity-feed-title">
                       <strong>{bundle.name}</strong>
+                      {isSeatBundle(bundle.name) && <StatusPill status="Seat" />}
                       <br />
                       <small>
                         {bundle.description} · {bundle.points_included} points ·{' '}
@@ -203,6 +211,14 @@ export function PricingBillablesPage() {
           <section className="panel settings-card">
             <h3>Bundle builder</h3>
             <p>Create a new bundle from the billables above.</p>
+            <p>
+              <small>
+                The six "…Seat" bundles below (Clarity/Consistency/Growth/Finance/Capability/
+                Shared) are auto-generated — one per engine home group — so a workspace can unlock
+                a whole engine family without a full tier upgrade. They're ordinary bundles: adjust
+                their price or items below like any other.
+              </small>
+            </p>
             <form onSubmit={page.createBundle}>
               <Field label="Name">
                 <input name="name" required maxLength={120} placeholder="e.g. Growth Starter" />
@@ -267,6 +283,7 @@ export function PricingBillablesPage() {
                   <li key={bundle.id} className="activity-feed-row">
                     <span className="activity-feed-title">
                       <strong>{bundle.name}</strong>
+                      {isSeatBundle(bundle.name) && <StatusPill status="Seat" />}
                       <br />
                       <small>
                         {formatMinor(bundle.price_minor, bundle.currency)} ·{' '}

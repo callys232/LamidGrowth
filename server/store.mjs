@@ -1758,6 +1758,102 @@ export async function openStore(filename, { poolMax } = {}) {
       ON CONFLICT (id) DO NOTHING`,
       [new Date().toISOString()],
     );
+    // Engine seats: a bundle scoped to one home_engine group, so a workspace can unlock a whole
+    // engine family without a full tier upgrade — reuses the existing bundle/entitlement/purchase
+    // machinery completely unchanged (grantBundleEntitlements, POST /api/points/purchase). Seeded
+    // after the engine manifests directly above so home_engine membership is real, not empty.
+    // created_by is nullable for these system-seeded rows only — it's never read anywhere, just
+    // written, so relaxing it is safe.
+    //
+    // An individual engine's *own* name can escalate it above its home_engine's base rank (e.g. a
+    // Clarity engine named "Enterprise-Wide Decision Map" — see engineRegistry.mjs's
+    // ESCALATION_KEYWORDS/BASE_RANK_BY_HOME_ENGINE, mirrored here exactly since server/store.mjs
+    // doesn't import src/app modules). A cheap home-engine seat must never smuggle in an
+    // escalated engine at the group's base price — that engine stays gated behind a full tier
+    // upgrade (or an individual entitlement), same as before seats existed.
+    await client.query(`ALTER TABLE bundles ALTER COLUMN created_by DROP NOT NULL;`);
+    {
+      const CONTEXT_RANK = {
+        Individual: 0,
+        Creator: 1,
+        Professional: 2,
+        Founder: 3,
+        SME: 4,
+        Team: 5,
+        Institution: 6,
+        Enterprise: 7,
+      };
+      const BASE_RANK_BY_HOME_ENGINE = {
+        Clarity: CONTEXT_RANK.Individual,
+        Consistency: CONTEXT_RANK.Professional,
+        Growth: CONTEXT_RANK.Founder,
+        Finance: CONTEXT_RANK.SME,
+        Capability: CONTEXT_RANK.Team,
+        Shared: CONTEXT_RANK.Institution,
+      };
+      const ESCALATION_KEYWORDS = [
+        [/enterprise|etos\b/i, CONTEXT_RANK.Enterprise],
+        [
+          /\b(department|business unit|multi-team|cross-team|organi[sz]ation-wide|organi[sz]ational)\b/i,
+          CONTEXT_RANK.Institution,
+        ],
+        [/\bteam\b/i, CONTEXT_RANK.Team],
+      ];
+      function isEscalated(homeEngine, engineName) {
+        const baseRank = BASE_RANK_BY_HOME_ENGINE[homeEngine] ?? CONTEXT_RANK.Individual;
+        return ESCALATION_KEYWORDS.some(
+          ([pattern, escalatedRank]) => escalatedRank > baseRank && pattern.test(engineName),
+        );
+      }
+      const pointsUnitPriceMinor = Math.max(
+        1,
+        Number.parseInt(process.env.POINTS_UNIT_PRICE_MINOR || '10', 10) || 10,
+      );
+      const autoDescription = (homeEngine) =>
+        `Unlocks every ${homeEngine} engine for this workspace, regardless of your signup tier — the fastest way to access an engine you need without a full tier upgrade.`;
+      const homeEngines = ['Clarity', 'Consistency', 'Growth', 'Finance', 'Capability', 'Shared'];
+      for (const homeEngine of homeEngines) {
+        const bundleName = `${homeEngine} Seat`;
+        const allMembers = await client.query(
+          "SELECT id, name, points_cost FROM agent_manifests WHERE home_engine = $1 AND id ~ '^[a-z][0-9]{2,3}$'",
+          [homeEngine],
+        );
+        const normalMembers = allMembers.rows.filter((row) => !isEscalated(homeEngine, row.name));
+        if (normalMembers.length === 0) continue;
+        const totalPoints = normalMembers.reduce((sum, row) => sum + (row.points_cost || 0), 0);
+        const priceMinor = Math.max(1, totalPoints * pointsUnitPriceMinor);
+        const now = new Date().toISOString();
+        const existing = await client.query('SELECT id, description FROM bundles WHERE name = $1', [bundleName]);
+        let bundleId;
+        if (existing.rowCount === 0) {
+          bundleId = randomUUID();
+          await client.query(
+            `INSERT INTO bundles (id, name, description, price_minor, currency, points_included, billing_cycle, status, created_by, created_at, updated_at)
+             VALUES ($1, $2, $3, $4, 'USD', $5, 'one_time', 'active', NULL, $6, $6)`,
+            [bundleId, bundleName, autoDescription(homeEngine), priceMinor, totalPoints, now],
+          );
+        } else if (existing.rows[0].description === autoDescription(homeEngine)) {
+          // Still auto-managed (an admin hasn't customized its description) — reconcile its
+          // membership/price/points to the current, correctly rank-filtered roster every startup,
+          // so a previously-seeded seat (from before this rank check existed, or before new
+          // engines were registered) self-corrects instead of staying wrong forever.
+          bundleId = existing.rows[0].id;
+          await client.query(
+            'UPDATE bundles SET price_minor = $1, points_included = $2, updated_at = $3 WHERE id = $4',
+            [priceMinor, totalPoints, now, bundleId],
+          );
+          await client.query('DELETE FROM bundle_items WHERE bundle_id = $1', [bundleId]);
+        } else {
+          continue; // an admin customized this seat's description — leave their edits alone.
+        }
+        for (const member of normalMembers) {
+          await client.query(
+            'INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES ($1, $2, $3, $4)',
+            [randomUUID(), bundleId, member.id, now],
+          );
+        }
+      }
+    }
     // Real entitlement gating (see src/app/entitlements.mjs): a workspace's access to a paid
     // tool comes from either enterprise tier or an actually-purchased bundle, not just points.
     // `source` records which bundle purchase granted the row (composite PK lets more than one
