@@ -1,0 +1,1488 @@
+[
+  {
+    "page": 1,
+    "name": "HOME",
+    "start": 1,
+    "end": 102,
+    "route": "/",
+    "content": "src/products/website/pages/home/content.json",
+    "component": "src/products/website/pages/home/HomeDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 49,
+    "unmatched": []
+  },
+  {
+    "page": 2,
+    "name": "PRODUCT OVERVIEW",
+    "start": 103,
+    "end": 132,
+    "route": "/product",
+    "content": "src/products/website/pages/product/content.json",
+    "component": "src/products/website/pages/product/ProductDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 13,
+    "unmatched": []
+  },
+  {
+    "page": 3,
+    "name": "LAMID ONE COMPANION",
+    "start": 133,
+    "end": 164,
+    "route": "/product/companion",
+    "content": "src/products/companion/pages/product-companion/content.json",
+    "component": "src/products/companion/pages/product-companion/ProductCompanionDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 4,
+    "name": "ADAPTIVE PRODUCT EXPERIENCE",
+    "start": 165,
+    "end": 192,
+    "route": "/product/experience",
+    "content": "src/products/experience/pages/product-experience/content.json",
+    "component": "src/products/experience/pages/product-experience/ProductExperienceDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 5,
+    "name": "CONTEXTUAL INTELLIGENCE",
+    "start": 193,
+    "end": 226,
+    "route": "/product/intelligence",
+    "content": "src/products/intelligence/pages/product-intelligence/content.json",
+    "component": "src/products/intelligence/pages/product-intelligence/ProductIntelligenceDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 15,
+    "unmatched": []
+  },
+  {
+    "page": 6,
+    "name": "WORKFLOWS & EXECUTION",
+    "start": 227,
+    "end": 254,
+    "route": "/product/workflows",
+    "content": "src/products/workflows/pages/product-workflows/content.json",
+    "component": "src/products/workflows/pages/product-workflows/ProductWorkflowsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 7,
+    "name": "ORGANIZATIONS",
+    "start": 255,
+    "end": 282,
+    "route": "/product/organizations",
+    "content": "src/products/organizations/pages/product-organizations/content.json",
+    "component": "src/products/organizations/pages/product-organizations/ProductOrganizationsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 8,
+    "name": "HOW IT WORKS",
+    "start": 283,
+    "end": 310,
+    "route": "/how-it-works",
+    "content": "src/products/website/pages/how-it-works/content.json",
+    "component": "src/products/website/pages/how-it-works/HowItWorksDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 9,
+    "name": "CLARITY",
+    "start": 311,
+    "end": 338,
+    "route": "/how-it-works/clarity",
+    "content": "src/products/clarity/pages/how-it-works-clarity/content.json",
+    "component": "src/products/clarity/pages/how-it-works-clarity/HowItWorksClarityDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 10,
+    "name": "CAPABILITY",
+    "start": 339,
+    "end": 378,
+    "route": "/how-it-works/capability",
+    "content": "src/products/capability/pages/how-it-works-capability/content.json",
+    "component": "src/products/capability/pages/how-it-works-capability/HowItWorksCapabilityDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 18,
+    "unmatched": []
+  },
+  {
+    "page": 11,
+    "name": "CONSISTENCY",
+    "start": 379,
+    "end": 406,
+    "route": "/how-it-works/consistency",
+    "content": "src/products/consistency/pages/how-it-works-consistency/content.json",
+    "component": "src/products/consistency/pages/how-it-works-consistency/HowItWorksConsistencyDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 12,
+    "name": "GROWTH",
+    "start": 407,
+    "end": 438,
+    "route": "/how-it-works/growth",
+    "content": "src/products/progress/pages/how-it-works-growth/content.json",
+    "component": "src/products/progress/pages/how-it-works-growth/HowItWorksGrowthDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 13,
+    "name": "OPERATING RHYTHM",
+    "start": 439,
+    "end": 466,
+    "route": "/how-it-works/rhythm",
+    "content": "src/products/rhythm/pages/how-it-works-rhythm/content.json",
+    "component": "src/products/rhythm/pages/how-it-works-rhythm/HowItWorksRhythmDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 14,
+    "name": "WHO IT'S FOR",
+    "start": 467,
+    "end": 494,
+    "route": "/who-its-for",
+    "content": "src/products/website/pages/who-its-for/content.json",
+    "component": "src/products/website/pages/who-its-for/WhoItsForDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 15,
+    "name": "INDIVIDUALS",
+    "start": 495,
+    "end": 522,
+    "route": "/who-its-for/individuals",
+    "content": "src/products/website/pages/who-its-for-individuals/content.json",
+    "component": "src/products/website/pages/who-its-for-individuals/WhoItsForIndividualsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 16,
+    "name": "PROFESSIONALS",
+    "start": 523,
+    "end": 558,
+    "route": "/who-its-for/professionals",
+    "content": "src/products/website/pages/who-its-for-professionals/content.json",
+    "component": "src/products/website/pages/who-its-for-professionals/WhoItsForProfessionalsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 16,
+    "unmatched": []
+  },
+  {
+    "page": 17,
+    "name": "CREATORS",
+    "start": 559,
+    "end": 586,
+    "route": "/who-its-for/creators",
+    "content": "src/products/website/pages/who-its-for-creators/content.json",
+    "component": "src/products/website/pages/who-its-for-creators/WhoItsForCreatorsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 18,
+    "name": "FOUNDERS",
+    "start": 587,
+    "end": 614,
+    "route": "/who-its-for/founders",
+    "content": "src/products/website/pages/who-its-for-founders/content.json",
+    "component": "src/products/website/pages/who-its-for-founders/WhoItsForFoundersDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 19,
+    "name": "TEAMS",
+    "start": 615,
+    "end": 642,
+    "route": "/who-its-for/teams",
+    "content": "src/products/website/pages/who-its-for-teams/content.json",
+    "component": "src/products/website/pages/who-its-for-teams/WhoItsForTeamsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 20,
+    "name": "SMES",
+    "start": 643,
+    "end": 670,
+    "route": "/who-its-for/smes",
+    "content": "src/products/website/pages/who-its-for-smes/content.json",
+    "component": "src/products/website/pages/who-its-for-smes/WhoItsForSmesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 21,
+    "name": "ENTERPRISES",
+    "start": 671,
+    "end": 698,
+    "route": "/who-its-for/enterprises",
+    "content": "src/products/website/pages/who-its-for-enterprises/content.json",
+    "component": "src/products/website/pages/who-its-for-enterprises/WhoItsForEnterprisesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 22,
+    "name": "INSTITUTIONS",
+    "start": 699,
+    "end": 726,
+    "route": "/who-its-for/institutions",
+    "content": "src/products/website/pages/who-its-for-institutions/content.json",
+    "component": "src/products/website/pages/who-its-for-institutions/WhoItsForInstitutionsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 23,
+    "name": "ENTERPRISE PLATFORM & DEPLOYMENT",
+    "start": 727,
+    "end": 758,
+    "route": "/enterprise",
+    "content": "src/products/organizations/pages/enterprise/content.json",
+    "component": "src/products/organizations/pages/enterprise/EnterpriseDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 24,
+    "name": "SECURITY",
+    "start": 759,
+    "end": 786,
+    "route": "/security",
+    "content": "src/products/website/pages/security/content.json",
+    "component": "src/products/website/pages/security/SecurityDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 25,
+    "name": "RESPONSIBLE AI",
+    "start": 787,
+    "end": 820,
+    "route": "/responsible-ai",
+    "content": "src/products/website/pages/responsible-ai/content.json",
+    "component": "src/products/website/pages/responsible-ai/ResponsibleAiDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 15,
+    "unmatched": []
+  },
+  {
+    "page": 26,
+    "name": "PRIVACY & DATA",
+    "start": 821,
+    "end": 848,
+    "route": "/trust/privacy",
+    "content": "src/products/governance/pages/trust-privacy/content.json",
+    "component": "src/products/governance/pages/trust-privacy/TrustPrivacyDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 27,
+    "name": "GOVERNANCE",
+    "start": 849,
+    "end": 876,
+    "route": "/trust/governance",
+    "content": "src/products/governance/pages/trust-governance/content.json",
+    "component": "src/products/governance/pages/trust-governance/TrustGovernanceDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 28,
+    "name": "PRICING",
+    "start": 877,
+    "end": 904,
+    "route": "/pricing",
+    "content": "src/products/website/pages/pricing/content.json",
+    "component": "src/products/website/pages/pricing/PricingDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": [
+      {
+        "line": 885,
+        "text": "View Plan Details \\| Talk to Our Team"
+      },
+      {
+        "line": 903,
+        "text": "View Plan Details"
+      }
+    ]
+  },
+  {
+    "page": 29,
+    "name": "ENTERPRISE CONTACT",
+    "start": 905,
+    "end": 944,
+    "route": "/enterprise/contact",
+    "content": "src/products/organizations/pages/enterprise-contact/content.json",
+    "component": "src/products/organizations/pages/enterprise-contact/EnterpriseContactDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 18,
+    "unmatched": []
+  },
+  {
+    "page": 30,
+    "name": "DEMO",
+    "start": 945,
+    "end": 980,
+    "route": "/demo",
+    "content": "src/products/website/pages/demo/content.json",
+    "component": "src/products/website/pages/demo/DemoDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 16,
+    "unmatched": []
+  },
+  {
+    "page": 31,
+    "name": "REQUEST DEMO",
+    "start": 981,
+    "end": 1012,
+    "route": "/demo/request",
+    "content": "src/products/website/pages/demo-request/content.json",
+    "component": "src/products/website/pages/demo-request/DemoRequestDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 32,
+    "name": "START",
+    "start": 1013,
+    "end": 1044,
+    "route": "/start",
+    "content": "src/products/accounts/pages/start/content.json",
+    "component": "src/products/accounts/pages/start/StartDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 33,
+    "name": "RESOURCES",
+    "start": 1045,
+    "end": 1068,
+    "route": "/resources",
+    "content": "src/products/website/pages/resources/content.json",
+    "component": "src/products/website/pages/resources/ResourcesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 34,
+    "name": "INSIGHTS",
+    "start": 1069,
+    "end": 1096,
+    "route": "/insights",
+    "content": "src/products/website/pages/insights/content.json",
+    "component": "src/products/website/pages/insights/InsightsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 35,
+    "name": "GUIDES",
+    "start": 1097,
+    "end": 1124,
+    "route": "/guides",
+    "content": "src/products/website/pages/guides/content.json",
+    "component": "src/products/website/pages/guides/GuidesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 36,
+    "name": "CASE STUDIES",
+    "start": 1125,
+    "end": 1152,
+    "route": "/case-studies",
+    "content": "src/products/website/pages/case-studies/content.json",
+    "component": "src/products/website/pages/case-studies/CaseStudiesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 37,
+    "name": "RESEARCH",
+    "start": 1153,
+    "end": 1180,
+    "route": "/research",
+    "content": "src/products/website/pages/research/content.json",
+    "component": "src/products/website/pages/research/ResearchDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 38,
+    "name": "HELP CENTER",
+    "start": 1181,
+    "end": 1204,
+    "route": "/help",
+    "content": "src/products/website/pages/help/content.json",
+    "component": "src/products/website/pages/help/HelpDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 39,
+    "name": "GETTING STARTED HELP",
+    "start": 1205,
+    "end": 1228,
+    "route": "/help/getting-started",
+    "content": "src/products/website/pages/help-getting-started/content.json",
+    "component": "src/products/website/pages/help-getting-started/HelpGettingStartedDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 10,
+    "unmatched": [
+      {
+        "line": 1219,
+        "text": "## 4. Review Progress"
+      }
+    ]
+  },
+  {
+    "page": 40,
+    "name": "PRODUCT GUIDES",
+    "start": 1229,
+    "end": 1260,
+    "route": "/help/product",
+    "content": "src/products/website/pages/help-product/content.json",
+    "component": "src/products/website/pages/help-product/HelpProductDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 41,
+    "name": "ACCOUNT & BILLING HELP",
+    "start": 1261,
+    "end": 1292,
+    "route": "/help/account",
+    "content": "src/products/website/pages/help-account/content.json",
+    "component": "src/products/website/pages/help-account/HelpAccountDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 42,
+    "name": "SUPPORT",
+    "start": 1293,
+    "end": 1320,
+    "route": "/support",
+    "content": "src/products/website/pages/support/content.json",
+    "component": "src/products/website/pages/support/SupportDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 43,
+    "name": "DEVELOPERS",
+    "start": 1321,
+    "end": 1344,
+    "route": "/developers",
+    "content": "src/products/website/pages/developers/content.json",
+    "component": "src/products/website/pages/developers/DevelopersDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 44,
+    "name": "API DOCUMENTATION",
+    "start": 1345,
+    "end": 1376,
+    "route": "/developers/api",
+    "content": "src/products/website/pages/developers-api/content.json",
+    "component": "src/products/website/pages/developers-api/DevelopersApiDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 45,
+    "name": "SDKS",
+    "start": 1377,
+    "end": 1404,
+    "route": "/developers/sdks",
+    "content": "src/products/website/pages/developers-sdks/content.json",
+    "component": "src/products/website/pages/developers-sdks/DevelopersSdksDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 46,
+    "name": "INTEGRATIONS",
+    "start": 1405,
+    "end": 1432,
+    "route": "/integrations",
+    "content": "src/products/website/pages/integrations/content.json",
+    "component": "src/products/website/pages/integrations/IntegrationsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 47,
+    "name": "WEBHOOKS & EVENTS",
+    "start": 1433,
+    "end": 1460,
+    "route": "/developers/webhooks",
+    "content": "src/products/website/pages/developers-webhooks/content.json",
+    "component": "src/products/website/pages/developers-webhooks/DevelopersWebhooksDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 48,
+    "name": "DEVELOPER CHANGELOG",
+    "start": 1461,
+    "end": 1482,
+    "route": "/developers/changelog",
+    "content": "src/products/website/pages/developers-changelog/content.json",
+    "component": "src/products/website/pages/developers-changelog/DevelopersChangelogDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 9,
+    "unmatched": []
+  },
+  {
+    "page": 49,
+    "name": "ABOUT",
+    "start": 1483,
+    "end": 1538,
+    "route": "/about",
+    "content": "src/products/website/pages/about/content.json",
+    "component": "src/products/website/pages/about/AboutDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 26,
+    "unmatched": []
+  },
+  {
+    "page": 50,
+    "name": "OUR STORY",
+    "start": 1539,
+    "end": 1598,
+    "route": "/about/story",
+    "content": "src/products/website/pages/about-story/content.json",
+    "component": "src/products/website/pages/about-story/AboutStoryDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 28,
+    "unmatched": []
+  },
+  {
+    "page": 51,
+    "name": "FOUNDER & LEADERSHIP",
+    "start": 1599,
+    "end": 1620,
+    "route": "/about/leadership",
+    "content": "src/products/website/pages/about-leadership/content.json",
+    "component": "src/products/website/pages/about-leadership/AboutLeadershipDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 9,
+    "unmatched": []
+  },
+  {
+    "page": 52,
+    "name": "CAREERS",
+    "start": 1621,
+    "end": 1652,
+    "route": "/careers",
+    "content": "src/products/website/pages/careers/content.json",
+    "component": "src/products/website/pages/careers/CareersDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 53,
+    "name": "PRESS & MEDIA",
+    "start": 1653,
+    "end": 1674,
+    "route": "/press",
+    "content": "src/products/website/pages/press/content.json",
+    "component": "src/products/website/pages/press/PressDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 9,
+    "unmatched": []
+  },
+  {
+    "page": 54,
+    "name": "CONTACT",
+    "start": 1675,
+    "end": 1696,
+    "route": "/contact",
+    "content": "src/products/website/pages/contact/content.json",
+    "component": "src/products/website/pages/contact/ContactDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 9,
+    "unmatched": []
+  },
+  {
+    "page": 55,
+    "name": "PRIVACY POLICY",
+    "start": 1697,
+    "end": 1716,
+    "route": "/legal/privacy",
+    "content": "src/products/website/pages/legal-privacy/content.json",
+    "component": "src/products/website/pages/legal-privacy/LegalPrivacyDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 56,
+    "name": "TERMS OF SERVICE",
+    "start": 1717,
+    "end": 1736,
+    "route": "/legal/terms",
+    "content": "src/products/website/pages/legal-terms/content.json",
+    "component": "src/products/website/pages/legal-terms/LegalTermsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 57,
+    "name": "COOKIE POLICY",
+    "start": 1737,
+    "end": 1756,
+    "route": "/legal/cookies",
+    "content": "src/products/website/pages/legal-cookies/content.json",
+    "component": "src/products/website/pages/legal-cookies/LegalCookiesDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 58,
+    "name": "ACCEPTABLE USE POLICY",
+    "start": 1757,
+    "end": 1776,
+    "route": "/legal/acceptable-use",
+    "content": "src/products/website/pages/legal-acceptable-use/content.json",
+    "component": "src/products/website/pages/legal-acceptable-use/LegalAcceptableUseDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 59,
+    "name": "DATA PROCESSING ADDENDUM",
+    "start": 1777,
+    "end": 1796,
+    "route": "/legal/dpa",
+    "content": "src/products/website/pages/legal-dpa/content.json",
+    "component": "src/products/website/pages/legal-dpa/LegalDpaDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 60,
+    "name": "ACCESSIBILITY",
+    "start": 1797,
+    "end": 1820,
+    "route": "/accessibility",
+    "content": "src/products/website/pages/accessibility/content.json",
+    "component": "src/products/website/pages/accessibility/AccessibilityDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 61,
+    "name": "SIGN IN",
+    "start": 1821,
+    "end": 1850,
+    "route": "/login",
+    "content": "src/products/accounts/pages/login/content.json",
+    "component": "src/products/accounts/pages/login/LoginDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 13,
+    "unmatched": []
+  },
+  {
+    "page": 62,
+    "name": "CREATE ACCOUNT",
+    "start": 1851,
+    "end": 1878,
+    "route": "/signup",
+    "content": "src/products/accounts/pages/signup/content.json",
+    "component": "src/products/accounts/pages/signup/SignupDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 63,
+    "name": "FORGOT PASSWORD",
+    "start": 1879,
+    "end": 1898,
+    "route": "/forgot-password",
+    "content": "src/products/accounts/pages/forgot-password/content.json",
+    "component": "src/products/accounts/pages/forgot-password/ForgotPasswordDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 64,
+    "name": "RESET PASSWORD",
+    "start": 1899,
+    "end": 1922,
+    "route": "/reset-password",
+    "content": "src/products/accounts/pages/reset-password/content.json",
+    "component": "src/products/accounts/pages/reset-password/ResetPasswordDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 65,
+    "name": "VERIFY ACCOUNT",
+    "start": 1923,
+    "end": 1948,
+    "route": "/verify",
+    "content": "src/products/accounts/pages/verify/content.json",
+    "component": "src/products/accounts/pages/verify/VerifyDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 11,
+    "unmatched": []
+  },
+  {
+    "page": 66,
+    "name": "ONBOARDING",
+    "start": 1949,
+    "end": 1980,
+    "route": "/onboarding",
+    "content": "src/products/accounts/pages/onboarding/content.json",
+    "component": "src/products/accounts/pages/onboarding/OnboardingDocumentPage.tsx",
+    "dispatch": "ContentPage + working controls",
+    "copyLines": 14,
+    "unmatched": []
+  },
+  {
+    "page": 67,
+    "name": "OS HOME",
+    "start": 1981,
+    "end": 2000,
+    "route": "/os",
+    "content": "src/products/workspace/pages/os/content.json",
+    "component": "src/products/workspace/pages/os/OsDocumentPage.tsx",
+    "dispatch": "Dashboard",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 68,
+    "name": "TODAY",
+    "start": 2001,
+    "end": 2024,
+    "route": "/os/today",
+    "content": "src/products/consistency/pages/os-today/content.json",
+    "component": "src/products/consistency/pages/os-today/OsTodayDocumentPage.tsx",
+    "dispatch": "ActionsPage",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 69,
+    "name": "CLARITY WORKSPACE",
+    "start": 2025,
+    "end": 2048,
+    "route": "/os/clarity",
+    "content": "src/products/clarity/pages/os-clarity/content.json",
+    "component": "src/products/clarity/pages/os-clarity/OsClarityDocumentPage.tsx",
+    "dispatch": "Clarity",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 70,
+    "name": "CAPABILITY WORKSPACE",
+    "start": 2049,
+    "end": 2076,
+    "route": "/os/capability",
+    "content": "src/products/capability/pages/os-capability/content.json",
+    "component": "src/products/capability/pages/os-capability/OsCapabilityDocumentPage.tsx",
+    "dispatch": "Capability",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 71,
+    "name": "CONSISTENCY WORKSPACE",
+    "start": 2077,
+    "end": 2100,
+    "route": "/os/consistency",
+    "content": "src/products/consistency/pages/os-consistency/content.json",
+    "component": "src/products/consistency/pages/os-consistency/OsConsistencyDocumentPage.tsx",
+    "dispatch": "ActionsPage",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 72,
+    "name": "PROGRESS",
+    "start": 2101,
+    "end": 2120,
+    "route": "/os/progress",
+    "content": "src/products/progress/pages/os-progress/content.json",
+    "component": "src/products/progress/pages/os-progress/OsProgressDocumentPage.tsx",
+    "dispatch": "Progress",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 73,
+    "name": "RHYTHM WORKSPACE",
+    "start": 2121,
+    "end": 2140,
+    "route": "/os/rhythm",
+    "content": "src/products/rhythm/pages/os-rhythm/content.json",
+    "component": "src/products/rhythm/pages/os-rhythm/OsRhythmDocumentPage.tsx",
+    "dispatch": "Rhythm",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 74,
+    "name": "COMPANION WORKSPACE",
+    "start": 2141,
+    "end": 2168,
+    "route": "/os/companion",
+    "content": "src/products/companion/pages/os-companion/content.json",
+    "component": "src/products/companion/pages/os-companion/OsCompanionDocumentPage.tsx",
+    "dispatch": "Companion",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 75,
+    "name": "INSIGHTS",
+    "start": 2169,
+    "end": 2194,
+    "route": "/os/insights",
+    "content": "src/products/intelligence/pages/os-insights/content.json",
+    "component": "src/products/intelligence/pages/os-insights/OsInsightsDocumentPage.tsx",
+    "dispatch": "Intelligence",
+    "copyLines": 11,
+    "unmatched": []
+  },
+  {
+    "page": 76,
+    "name": "BUSINESS",
+    "start": 2195,
+    "end": 2214,
+    "route": "/os/business",
+    "content": "src/products/business/pages/os-business/content.json",
+    "component": "src/products/business/pages/os-business/OsBusinessDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 77,
+    "name": "OPPORTUNITIES",
+    "start": 2215,
+    "end": 2242,
+    "route": "/os/opportunities",
+    "content": "src/products/commercial/pages/os-opportunities/content.json",
+    "component": "src/products/commercial/pages/os-opportunities/OsOpportunitiesDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 78,
+    "name": "FINANCE",
+    "start": 2243,
+    "end": 2262,
+    "route": "/os/finance",
+    "content": "src/products/finance/pages/os-finance/content.json",
+    "component": "src/products/finance/pages/os-finance/OsFinanceDocumentPage.tsx",
+    "dispatch": "FinancePage",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 79,
+    "name": "PEOPLE & CAPABILITY",
+    "start": 2263,
+    "end": 2290,
+    "route": "/os/people",
+    "content": "src/products/talent/pages/os-people/content.json",
+    "component": "src/products/talent/pages/os-people/OsPeopleDocumentPage.tsx",
+    "dispatch": "PeoplePage",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 80,
+    "name": "WORKFLOWS",
+    "start": 2291,
+    "end": 2314,
+    "route": "/os/workflows",
+    "content": "src/products/workflows/pages/os-workflows/content.json",
+    "component": "src/products/workflows/pages/os-workflows/OsWorkflowsDocumentPage.tsx",
+    "dispatch": "Workflows",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 81,
+    "name": "WORKFLOW BUILDER",
+    "start": 2315,
+    "end": 2334,
+    "route": "/os/workflows/[id]",
+    "content": "src/products/workflows/pages/os-workflows-detail/content.json",
+    "component": "src/products/workflows/pages/os-workflows-detail/OsWorkflowsDetailDocumentPage.tsx",
+    "dispatch": "Workflows",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 82,
+    "name": "ORGANIZATION",
+    "start": 2335,
+    "end": 2354,
+    "route": "/os/organization",
+    "content": "src/products/organizations/pages/os-organization/content.json",
+    "component": "src/products/organizations/pages/os-organization/OsOrganizationDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 83,
+    "name": "TEAMS",
+    "start": 2355,
+    "end": 2374,
+    "route": "/os/teams",
+    "content": "src/products/organizations/pages/os-teams/content.json",
+    "component": "src/products/organizations/pages/os-teams/OsTeamsDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 84,
+    "name": "ORGANIZATIONAL RHYTHM",
+    "start": 2375,
+    "end": 2394,
+    "route": "/os/organization/rhythm",
+    "content": "src/products/organizations/pages/os-organization-rhythm/content.json",
+    "component": "src/products/organizations/pages/os-organization-rhythm/OsOrganizationRhythmDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 85,
+    "name": "ANALYTICS",
+    "start": 2395,
+    "end": 2422,
+    "route": "/os/analytics",
+    "content": "src/products/analytics/pages/os-analytics/content.json",
+    "component": "src/products/analytics/pages/os-analytics/OsAnalyticsDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 86,
+    "name": "OS INTEGRATIONS",
+    "start": 2423,
+    "end": 2442,
+    "route": "/os/integrations",
+    "content": "src/products/integrations/pages/os-integrations/content.json",
+    "component": "src/products/integrations/pages/os-integrations/OsIntegrationsDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 87,
+    "name": "OS GOVERNANCE",
+    "start": 2443,
+    "end": 2462,
+    "route": "/os/governance",
+    "content": "src/products/governance/pages/os-governance/content.json",
+    "component": "src/products/governance/pages/os-governance/OsGovernanceDocumentPage.tsx",
+    "dispatch": "Governance",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 88,
+    "name": "AUDIT",
+    "start": 2463,
+    "end": 2482,
+    "route": "/os/audit",
+    "content": "src/products/governance/pages/os-audit/content.json",
+    "component": "src/products/governance/pages/os-audit/OsAuditDocumentPage.tsx",
+    "dispatch": "Governance",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 89,
+    "name": "ADMIN",
+    "start": 2483,
+    "end": 2502,
+    "route": "/os/admin",
+    "content": "src/products/organizations/pages/os-admin/content.json",
+    "component": "src/products/organizations/pages/os-admin/OsAdminDocumentPage.tsx",
+    "dispatch": "Members",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 90,
+    "name": "PROFILE",
+    "start": 2503,
+    "end": 2522,
+    "route": "/os/profile",
+    "content": "src/products/accounts/pages/os-profile/content.json",
+    "component": "src/products/accounts/pages/os-profile/OsProfileDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 91,
+    "name": "SETTINGS",
+    "start": 2523,
+    "end": 2542,
+    "route": "/os/settings",
+    "content": "src/products/settings/pages/os-settings/content.json",
+    "component": "src/products/settings/pages/os-settings/OsSettingsDocumentPage.tsx",
+    "dispatch": "Settings",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 92,
+    "name": "AI & MEMORY",
+    "start": 2543,
+    "end": 2566,
+    "route": "/os/settings/ai",
+    "content": "src/products/settings/pages/os-settings-ai/content.json",
+    "component": "src/products/settings/pages/os-settings-ai/OsSettingsAiDocumentPage.tsx",
+    "dispatch": "Intelligence",
+    "copyLines": 10,
+    "unmatched": []
+  },
+  {
+    "page": 93,
+    "name": "PRIVACY & DATA CONTROLS",
+    "start": 2567,
+    "end": 2586,
+    "route": "/os/settings/privacy",
+    "content": "src/products/settings/pages/os-settings-privacy/content.json",
+    "component": "src/products/settings/pages/os-settings-privacy/OsSettingsPrivacyDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 94,
+    "name": "NOTIFICATIONS",
+    "start": 2587,
+    "end": 2614,
+    "route": "/os/notifications",
+    "content": "src/products/notifications/pages/os-notifications/content.json",
+    "component": "src/products/notifications/pages/os-notifications/OsNotificationsDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 12,
+    "unmatched": []
+  },
+  {
+    "page": 95,
+    "name": "WORKSPACE SETTINGS",
+    "start": 2615,
+    "end": 2634,
+    "route": "/os/settings/workspace",
+    "content": "src/products/settings/pages/os-settings-workspace/content.json",
+    "component": "src/products/settings/pages/os-settings-workspace/OsSettingsWorkspaceDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 96,
+    "name": "MEMBERS & ROLES",
+    "start": 2635,
+    "end": 2654,
+    "route": "/os/settings/members",
+    "content": "src/products/settings/pages/os-settings-members/content.json",
+    "component": "src/products/settings/pages/os-settings-members/OsSettingsMembersDocumentPage.tsx",
+    "dispatch": "Members",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 97,
+    "name": "BILLING",
+    "start": 2655,
+    "end": 2674,
+    "route": "/os/settings/billing",
+    "content": "src/products/settings/pages/os-settings-billing/content.json",
+    "component": "src/products/settings/pages/os-settings-billing/OsSettingsBillingDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 98,
+    "name": "PLAN & USAGE",
+    "start": 2675,
+    "end": 2694,
+    "route": "/os/settings/plan",
+    "content": "src/products/settings/pages/os-settings-plan/content.json",
+    "component": "src/products/settings/pages/os-settings-plan/OsSettingsPlanDocumentPage.tsx",
+    "dispatch": "PlannedModule",
+    "copyLines": 8,
+    "unmatched": []
+  },
+  {
+    "page": 99,
+    "name": "EXPERT NETWORK",
+    "start": 2695,
+    "end": 2734,
+    "route": "/experts",
+    "content": "src/products/experts/pages/experts/content.json",
+    "component": "src/products/experts/pages/experts/ExpertsDocumentPage.tsx",
+    "dispatch": "ContentPage (document composition)",
+    "copyLines": 18,
+    "unmatched": []
+  },
+  {
+    "page": 100,
+    "name": "EXPERT MATCHING",
+    "start": 2735,
+    "end": 2766,
+    "route": null,
+    "content": null,
+    "component": null,
+    "dispatch": "Missing catalog entry",
+    "copyLines": 14,
+    "unmatched": [
+      {
+        "line": 2739,
+        "text": "## Match Expertise to the Work - Not Just a Keyword."
+      },
+      {
+        "line": 2741,
+        "text": "Start from the objective, context and capability gap, then compare experts using evidence relevant to the actual work."
+      },
+      {
+        "line": 2743,
+        "text": "## Define the Expertise Requirement"
+      },
+      {
+        "line": 2745,
+        "text": "Capability, domain, function, industry, seniority, jurisdiction, timing and engagement model."
+      },
+      {
+        "line": 2747,
+        "text": "## Evaluate Fit"
+      },
+      {
+        "line": 2749,
+        "text": "Relevant experience, verified claims, credentials where required, evidence, availability, language, geography, engagement preferences and conflicts."
+      },
+      {
+        "line": 2751,
+        "text": "## See Why a Match Appears"
+      },
+      {
+        "line": 2753,
+        "text": "Show the factors behind the recommendation and distinguish verified evidence from self-declared profile information."
+      },
+      {
+        "line": 2755,
+        "text": "## Select the Expert Yourself"
+      },
+      {
+        "line": 2757,
+        "text": "Review the shortlist, compare fit, invite or decline, and approve the final scope."
+      },
+      {
+        "line": 2759,
+        "text": "## Build an Expert Team"
+      },
+      {
+        "line": 2761,
+        "text": "Compose complementary specialists around a complex objective while preserving responsibilities and access boundaries."
+      },
+      {
+        "line": 2763,
+        "text": "## CTA"
+      },
+      {
+        "line": 2765,
+        "text": "Start an Expert Match"
+      }
+    ]
+  },
+  {
+    "page": 101,
+    "name": "VERIFIED EXPERTISE",
+    "start": 2767,
+    "end": 2798,
+    "route": null,
+    "content": null,
+    "component": null,
+    "dispatch": "Missing catalog entry",
+    "copyLines": 14,
+    "unmatched": [
+      {
+        "line": 2771,
+        "text": "## Know What Has Been Verified."
+      },
+      {
+        "line": 2773,
+        "text": "Verification should state exactly what was checked, how, when and what remains self-declared."
+      },
+      {
+        "line": 2775,
+        "text": "## Identity"
+      },
+      {
+        "line": 2777,
+        "text": "Confirm the person or organization behind the expert profile at the appropriate verification level."
+      },
+      {
+        "line": 2779,
+        "text": "## Expertise Claims"
+      },
+      {
+        "line": 2781,
+        "text": "Support skills, roles, methods and specialist claims with work history, portfolio evidence, assessments, references or other proof."
+      },
+      {
+        "line": 2783,
+        "text": "## Credentials & Licensing"
+      },
+      {
+        "line": 2785,
+        "text": "Where required, record scope, issuer, jurisdiction, status and expiry. A badge never implies more than was actually verified."
+      },
+      {
+        "line": 2787,
+        "text": "## Experience & Outcomes"
+      },
+      {
+        "line": 2789,
+        "text": "Show relevant work and permitted outcome evidence without fabricating proof or exposing confidential information."
+      },
+      {
+        "line": 2791,
+        "text": "## Ongoing Status"
+      },
+      {
+        "line": 2793,
+        "text": "Verification may expire, be revoked, require refresh, or become inapplicable when jurisdiction or scope changes."
+      },
+      {
+        "line": 2795,
+        "text": "## CTA"
+      },
+      {
+        "line": 2797,
+        "text": "Explore Experts \\| View Verification Principles"
+      }
+    ]
+  },
+  {
+    "page": 102,
+    "name": "TALENT & CAPABILITY",
+    "start": 2799,
+    "end": 2830,
+    "route": null,
+    "content": null,
+    "component": null,
+    "dispatch": "Missing catalog entry",
+    "copyLines": 14,
+    "unmatched": [
+      {
+        "line": 2803,
+        "text": "## Strengthen Capability - Then Keep Building It."
+      },
+      {
+        "line": 2805,
+        "text": "Not every gap requires the same answer. Use experts, hiring, learning, coaching, tools, role redesign or a blended route according to the need."
+      },
+      {
+        "line": 2807,
+        "text": "## Diagnose the Gap"
+      },
+      {
+        "line": 2809,
+        "text": "Identify missing knowledge, specialist capacity, leadership, methods, tools, funding, data or authority."
+      },
+      {
+        "line": 2811,
+        "text": "## Choose the Right Route"
+      },
+      {
+        "line": 2813,
+        "text": "Compare expert engagement, recruitment, fractional leadership, upskilling, reskilling, mentoring, coaching, learning and Tool Fabric options."
+      },
+      {
+        "line": 2815,
+        "text": "## Build Workforce Capability"
+      },
+      {
+        "line": 2817,
+        "text": "Connect role architecture, capability maps, skills gaps, workforce planning, succession and learning where needed."
+      },
+      {
+        "line": 2819,
+        "text": "## Learn From the Engagement"
+      },
+      {
+        "line": 2821,
+        "text": "With permission, capture reusable methods, evidence, decisions and lessons so external expertise strengthens internal capability."
+      },
+      {
+        "line": 2823,
+        "text": "## Measure the Change"
+      },
+      {
+        "line": 2825,
+        "text": "Review whether the capability gap narrowed and the intended outcome improved."
+      },
+      {
+        "line": 2827,
+        "text": "## CTA"
+      },
+      {
+        "line": 2829,
+        "text": "Strengthen Capability"
+      }
+    ]
+  },
+  {
+    "page": 103,
+    "name": "BECOME AN EXPERT",
+    "start": 2831,
+    "end": 2866,
+    "route": null,
+    "content": null,
+    "component": null,
+    "dispatch": "Missing catalog entry",
+    "copyLines": 16,
+    "unmatched": [
+      {
+        "line": 2835,
+        "text": "## Bring Your Expertise Into Better-Defined Work."
+      },
+      {
+        "line": 2837,
+        "text": "Create a cross-domain expert profile, evidence your capabilities and choose how you want to engage."
+      },
+      {
+        "line": 2839,
+        "text": "## Create Your Expert Profile"
+      },
+      {
+        "line": 2841,
+        "text": "Add domains, functions, industries, specialist capabilities, seniority, languages, geography and engagement preferences."
+      },
+      {
+        "line": 2843,
+        "text": "## Evidence What You Claim"
+      },
+      {
+        "line": 2845,
+        "text": "Add work history, portfolio evidence, credentials, assessments, references or other proof appropriate to your claims."
+      },
+      {
+        "line": 2847,
+        "text": "## Set How You Work"
+      },
+      {
+        "line": 2849,
+        "text": "Define availability and supported advisory, project, retainer, fractional, coaching, workshop or assessment models."
+      },
+      {
+        "line": 2851,
+        "text": "## Receive Relevant Opportunities"
+      },
+      {
+        "line": 2853,
+        "text": "Matching prioritizes fit with the objective and requirements rather than generic visibility."
+      },
+      {
+        "line": 2855,
+        "text": "## Deliver in Context"
+      },
+      {
+        "line": 2857,
+        "text": "Use structured scope, milestones, evidence, communication and acceptance criteria where the engagement requires them."
+      },
+      {
+        "line": 2859,
+        "text": "## Build a Traceable Record"
+      },
+      {
+        "line": 2861,
+        "text": "Completed work and permitted outcome signals can strengthen future matching without exposing confidential client information."
+      },
+      {
+        "line": 2863,
+        "text": "## CTA"
+      },
+      {
+        "line": 2865,
+        "text": "Apply to Join the Expert Network"
+      }
+    ]
+  }
+]

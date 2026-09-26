@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-09-24T09:21:45.655Z",
+  "snapshotAt": "2026-09-24T03:40:32.890Z",
+  "changedOrRemovedTrackedSnapshotFiles": [
+    {
+      "path": "src/app/app.mjs",
+      "state": "changed"
+    },
+    {
+      "path": "server/store.mjs",
+      "state": "changed"
+    }
+  ]
+}

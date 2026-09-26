@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-24T09:09:20.137Z",
+  "scope": "Frozen snapshot; synthetic records in disposable local PostgreSQL schema; external providers disabled",
+  "observations": [
+    {
+      "finding": "EX-02",
+      "probe": "Unrelated account without expert profile reads unassigned handoff",
+      "status": 200,
+      "observed": true
+    },
+    {
+      "finding": "EX-02",
+      "probe": "Unrelated account declines another workspace handoff",
+      "status": 200,
+      "observed": true
+    },
+    {
+      "finding": "SEC-UPLOAD",
+      "probe": "HTML MIME accepted without quarantine",
+      "status": 201,
+      "observed": true
+    },
+    {
+      "finding": "SEC-UPLOAD",
+      "probe": "Uploaded HTML served inline on application origin",
+      "status": 200,
+      "mime": "text/html",
+      "disposition": "inline; filename=\"audit.html\"",
+      "observed": true
+    },
+    {
+      "finding": "SI-SIGNALS",
+      "probe": "Free-only language-constrained subscription matches paid unrelated-language learning",
+      "status": 200,
+      "observed": true
+    },
+    {
+      "finding": "SI-03",
+      "probe": "Verified causal outcome accepted without evidence or existing subject",
+      "status": 201,
+      "observed": true
+    }
+  ]
+}
