@@ -10,4 +10,4 @@ Disallow: /reset-password
 Disallow: /password-recovery
 Disallow: /verify-account
 
-Sitemap: https://lamid.one/sitemap.xml
+Sitemap: https://lamidconsulting.com/sitemap.xml

@@ -2,7 +2,11 @@ import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { readProductPages } from './lib/page-content.mjs';
 
-const siteUrl = 'https://lamid.one';
+if (existsSync('.env')) process.loadEnvFile('.env');
+// Matches the same PUBLIC_ORIGIN the server's own production-config gate requires — a
+// canonical URL / sitemap self-reference pointing at the wrong domain is actively wrong SEO
+// plumbing, not just a missed nice-to-have, so this must never drift from the real origin.
+const siteUrl = (process.env.PUBLIC_ORIGIN || 'https://lamid.one').replace(/\/$/, '');
 const today = new Date().toISOString().split('T')[0];
 
 function getPriority(route) {

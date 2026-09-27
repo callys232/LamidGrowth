@@ -51,7 +51,10 @@ function RouteEffects() {
     else window.scrollTo(0, 0);
 
     const page = pages.find((p) => p.route === pathname);
-    const siteUrl = 'https://lamid.one';
+    // Must match the server's PUBLIC_ORIGIN (.env) — a canonical URL, sitemap, or JSON-LD
+    // identity pointing at the wrong domain actively confuses search engines, it doesn't just
+    // miss an optimization.
+    const siteUrl = 'https://lamidconsulting.com';
     const canonicalPath = page?.canonical || pathname;
     const fullCanonicalUrl = `${siteUrl}${canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`}`;
     const pageTitle = page?.seo_title || 'LAMID ONE — Continuous Human–AI Growth Operating System';
@@ -135,19 +138,19 @@ function RouteEffects() {
       '@graph': [
         {
           '@type': 'Organization',
-          '@id': 'https://lamid.one/#organization',
+          '@id': `${siteUrl}/#organization`,
           name: 'LAMID Consulting',
-          url: 'https://lamid.one',
-          logo: 'https://lamid.one/favicon.svg',
+          url: siteUrl,
+          logo: `${siteUrl}/favicon.svg`,
           description:
             'Continuous Human–AI Growth Operating System built from 35+ years of consulting experience.',
         },
         {
           '@type': 'WebSite',
-          '@id': 'https://lamid.one/#website',
-          url: 'https://lamid.one',
+          '@id': `${siteUrl}/#website`,
+          url: siteUrl,
           name: 'LAMID ONE',
-          publisher: { '@id': 'https://lamid.one/#organization' },
+          publisher: { '@id': `${siteUrl}/#organization` },
         },
         {
           '@type': 'WebPage',
@@ -155,7 +158,7 @@ function RouteEffects() {
           url: fullCanonicalUrl,
           name: pageTitle,
           description: pageDescription,
-          isPartOf: { '@id': 'https://lamid.one/#website' },
+          isPartOf: { '@id': `${siteUrl}/#website` },
         },
       ],
     });
