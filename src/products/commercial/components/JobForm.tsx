@@ -14,6 +14,7 @@ type EstimateResponse =
       basis: string;
       sampleSize: number;
       note?: string;
+      excludedForCurrency?: number;
     }
   | { available: false; sampleSize: number; message: string };
 
@@ -35,6 +36,7 @@ export function JobForm({
   const [tagsText, setTagsText] = useState('');
   const [budgetMin, setBudgetMin] = useState('');
   const [budgetMax, setBudgetMax] = useState('');
+  const [currency, setCurrency] = useState('USD');
   const [estimate, setEstimate] = useState<EstimateResponse | null>(null);
   const [estimating, setEstimating] = useState(false);
   const key = useRef(crypto.randomUUID());
@@ -48,7 +50,13 @@ export function JobForm({
     setEstimating(true);
     setEstimate(null);
     try {
-      const result = await api<EstimateResponse>('/jobs/estimate', { category, projectType, tags });
+      const result = await api<EstimateResponse>('/jobs/estimate', {
+        category,
+        projectType,
+        tags,
+        // Estimates come back in the job's own currency, converted from other jobs' currencies.
+        ...(/^[A-Z]{3}$/.test(currency) ? { currency } : {}),
+      });
       setEstimate(result);
       if (result.available) {
         setBudgetMin(String(result.budgetMin));
@@ -156,10 +164,14 @@ export function JobForm({
           <p style={{ fontSize: 12 }}>
             {estimate.available ? (
               <>
-                Based on {estimate.sampleSize} real{' '}
+                Based on the posted budgets of {estimate.sampleSize}{' '}
                 {estimate.basis === 'tag-matched-history' ? 'tag-matched' : 'category'} job
                 {estimate.sampleSize === 1 ? '' : 's'}: {estimate.budgetMin}–{estimate.budgetMax}{' '}
-                {estimate.currency}.{estimate.note ? ` ${estimate.note}` : ''} This is a starting
+                {estimate.currency}.{estimate.note ? ` ${estimate.note}` : ''}
+                {estimate.excludedForCurrency
+                  ? ` ${estimate.excludedForCurrency} job${estimate.excludedForCurrency === 1 ? ' was' : 's were'} left out because no exchange rate is set for ${estimate.excludedForCurrency === 1 ? 'its' : 'their'} currency.`
+                  : ''}{' '}
+                Posted budgets are what clients offered, not agreed prices. This is a starting
                 suggestion — adjust it below as needed.
               </>
             ) : (
@@ -192,7 +204,14 @@ export function JobForm({
           </Field>
         </div>
         <Field label="Currency">
-          <input name="currency" defaultValue="USD" pattern="[A-Z]{3}" required maxLength={3} />
+          <input
+            name="currency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+            pattern="[A-Z]{3}"
+            required
+            maxLength={3}
+          />
         </Field>
         <Field label="Timeline">
           <input name="timeline" required maxLength={200} />

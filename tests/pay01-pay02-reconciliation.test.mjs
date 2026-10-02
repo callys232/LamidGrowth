@@ -259,7 +259,7 @@ test('PAY-02: a definite (4xx) rejection on /release frees the milestone for ret
   const fund = await request(`/milestones/${milestone.id}/fund`, {}, client);
   const fundEvent = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    data: { reference: fund.data.reference, amount: fund.data.providerAmountMinor, currency: fund.data.providerCurrency },
   };
   const fundRawBody = Buffer.from(JSON.stringify(fundEvent));
   await fetch(`${base}/api/webhooks/paystack`, {

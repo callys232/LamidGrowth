@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
+import { EngineScope } from '../../../engines/components/EngineScope';
 import { SkeletonCards } from '../../../../shared/ui/Skeleton';
 import './intelligence-catalog.css';
 
@@ -65,6 +66,7 @@ export function IntelligenceCatalogSection() {
                       <span className="engine-catalog-code">{engine.code}</span>
                       <strong>{engine.engineName}</strong>
                       <p>{engine.purpose}</p>
+                      <EngineScope computes={engine.computes} limits={engine.limits} />
                     </li>
                   ))}
                 </ul>

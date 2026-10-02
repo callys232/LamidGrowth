@@ -37,6 +37,8 @@ const pct = (part, whole) => (whole === 0 ? 0 : r2((part / whole) * 100));
  */
 export function computeFinancials(input) {
   const warnings = [];
+  // The form always sends one; an API caller may not. "Period" keeps every sentence readable.
+  const periodLabel = String(input.periodLabel || 'Period');
   const periods = input.periods.map((p) => ({
     revenue: safe(p.revenue),
     cogs: safe(p.cogs),
@@ -87,7 +89,7 @@ export function computeFinancials(input) {
   }
   if (runwayPeriods !== null && runwayPeriods < 6) {
     warnings.push(
-      `Runway is ${runwayPeriods} ${input.periodLabel.toLowerCase()}s at current burn — inside the typical fundraise window.`,
+      `Runway is ${runwayPeriods} ${periodLabel.toLowerCase()}s at current burn — inside the typical fundraise window.`,
     );
   }
   const opexRatio = pct(totalOpex, totalRevenue);
@@ -117,7 +119,7 @@ export function computeFinancials(input) {
 
   return {
     currency: input.currency,
-    periodLabel: input.periodLabel,
+    periodLabel,
     totalRevenue,
     totalCogs,
     totalOpex,

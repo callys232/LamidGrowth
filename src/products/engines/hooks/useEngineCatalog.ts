@@ -25,6 +25,9 @@ export type EngineSummary = {
   purpose: string;
   dimensionLabels: string[];
   kind: EngineKind;
+  /** What the engine actually calculates, and what it does not — see describeEngine on the server. */
+  computes: string;
+  limits: string;
   pointsCost: number;
 };
 

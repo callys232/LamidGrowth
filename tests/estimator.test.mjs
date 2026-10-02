@@ -202,3 +202,45 @@ test('an invalid category is rejected, matching job-posting validation', async (
   );
   assert.equal(result.status, 400);
 });
+
+test('budgets posted in different currencies are converted, never averaged together raw', async () => {
+  const user = await signup('Mixed Currency History');
+  // 1,450 NGN per USD is the seeded USD_NGN rate; these NGN jobs are the same budgets as the
+  // USD ones. Averaged raw, they would dominate the estimate by three orders of magnitude.
+  for (let i = 0; i < 3; i++)
+    await postJob(user, { category: 'UX/UI design', budgetMin: 1000, budgetMax: 2000, currency: 'USD' });
+  for (let i = 0; i < 3; i++)
+    await postJob(user, {
+      category: 'UX/UI design',
+      budgetMin: 1450000,
+      budgetMax: 2900000,
+      currency: 'NGN',
+    });
+
+  const inUsd = await request('/jobs/estimate', { category: 'UX/UI design', tags: [] }, user);
+  assert.equal(inUsd.status, 200);
+  assert.equal(inUsd.data.currency, 'USD');
+  assert.equal(inUsd.data.sampleSize, 6);
+  assert.ok(Math.abs(inUsd.data.budgetMin - 1000) <= 1, JSON.stringify(inUsd.data));
+  assert.ok(Math.abs(inUsd.data.budgetMax - 2000) <= 1, JSON.stringify(inUsd.data));
+
+  const inNgn = await request(
+    '/jobs/estimate',
+    { category: 'UX/UI design', tags: [], currency: 'NGN' },
+    user,
+  );
+  assert.equal(inNgn.data.currency, 'NGN');
+  assert.equal(inNgn.data.budgetMin, 1450000);
+  assert.equal(inNgn.data.budgetMax, 2900000);
+});
+
+test('a job in a currency with no exchange rate is left out of the estimate, not averaged in', async () => {
+  const user = await signup('Unconvertible History');
+  for (let i = 0; i < 3; i++)
+    await postJob(user, { category: 'Research', budgetMin: 1000, budgetMax: 2000, currency: 'USD' });
+  await postJob(user, { category: 'Research', budgetMin: 900000, budgetMax: 900000, currency: 'JPY' });
+  const result = await request('/jobs/estimate', { category: 'Research', tags: [] }, user);
+  assert.equal(result.data.sampleSize, 3);
+  assert.equal(result.data.budgetMin, 1000);
+  assert.equal(result.data.excludedForCurrency, 1);
+});

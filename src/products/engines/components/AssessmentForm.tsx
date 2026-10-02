@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Button } from '../../../shared/ui/Button';
 import './engine-forms.css';
 
-type Row = { label: string; rating: number; weight: number; evidence: number; note?: string };
+/** `rating: null` means "not rated" — the server leaves it out of the score and reports it as a
+ * coverage gap, instead of treating an untouched control as a rating of 0. */
+type Row = { label: string; rating: number | null; weight: number; evidence: number; note?: string };
 
 /** Renders the module's own declared dimensions (not a generic questionnaire) — the
  * engine supplies the questions, the caller supplies ratings. Matches the server's
@@ -17,14 +19,14 @@ export function AssessmentForm({
   submitting: boolean;
 }) {
   const [rows, setRows] = useState<Row[]>(
-    dimensionLabels.map((label) => ({ label, rating: 0, weight: 2, evidence: 0 })),
+    dimensionLabels.map((label) => ({ label, rating: null, weight: 2, evidence: 0 })),
   );
 
   function update(i: number, patch: Partial<Row>) {
     setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   }
 
-  const hasRating = rows.some((r) => r.rating > 0);
+  const hasRating = rows.some((r) => r.rating !== null);
 
   return (
     <form
@@ -39,15 +41,20 @@ export function AssessmentForm({
           <legend>{row.label}</legend>
           <label>
             Rating (0–5)
-            <input
-              type="range"
-              min={0}
-              max={5}
-              step={1}
-              value={row.rating}
-              onChange={(e) => update(i, { rating: Number(e.target.value) })}
-            />
-            <span className="engine-form-value">{row.rating}</span>
+            <select
+              value={row.rating === null ? '' : String(row.rating)}
+              onChange={(e) =>
+                update(i, { rating: e.target.value === '' ? null : Number(e.target.value) })
+              }
+            >
+              <option value="">Not rated</option>
+              <option value={0}>0 — not true at all</option>
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={3}>3</option>
+              <option value={4}>4</option>
+              <option value={5}>5 — consistently true across the organisation</option>
+            </select>
           </label>
           <label>
             Weight (1–3)
@@ -85,7 +92,12 @@ export function AssessmentForm({
       <Button type="submit" disabled={submitting || !hasRating}>
         {submitting ? 'Running…' : 'Run diagnostic'}
       </Button>
-      {!hasRating && <p className="engine-form-hint">Rate at least one dimension above zero.</p>}
+      {!hasRating && (
+        <p className="engine-form-hint">
+          Rate at least one dimension. Dimensions you leave unrated are reported as not assessed,
+          not scored as zero.
+        </p>
+      )}
     </form>
   );
 }

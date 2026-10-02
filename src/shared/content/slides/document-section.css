@@ -1,0 +1,323 @@
+/* Section layouts for document pages (DocumentSectionSlide). Short sections form an icon
+   feature grid; single statements use a heading-left / text-right split; long sections pin
+   their heading beside structured content; the closing section is a dark call-to-action band. */
+
+.content-page .canonical-copy.showcase-copy .editorial-sections:has(> .doc-section) {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0 32px;
+  padding-top: 32px;
+}
+
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-section {
+  grid-column: 1 / -1;
+  display: grid;
+  margin: 0;
+  padding: 72px 0;
+  border: 0;
+  border-top: 1px solid var(--border, #e3e4e0);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-section::before {
+  content: none;
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-section h2 {
+  margin: 0;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(32px, 3.4vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.content-page .canonical-copy.showcase-copy .doc-section p {
+  margin: 0 0 18px;
+  max-width: 64ch;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-secondary, #4a5560);
+}
+.content-page .canonical-copy.showcase-copy .doc-section .canonical-ctas {
+  margin: 12px 0 0;
+}
+.doc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--page-accent, #c12129);
+}
+.doc-eyebrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Feature grid: icon, title, one line (three across) ─────────────────── */
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-feature {
+  grid-column: span 2;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  gap: 16px;
+  padding: 40px 28px 40px 24px;
+  border-top: 0;
+  border-left: 1px solid var(--border, #e3e4e0);
+  transition: background-color 0.25s ease;
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-feature:hover {
+  background: var(--page-tint, rgb(0 0 0 / 3%));
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-feature h2 {
+  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.content-page .canonical-copy.showcase-copy .doc-feature p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.doc-feature-icon {
+  margin-top: 2px;
+  color: var(--page-accent, #c12129);
+}
+/* The first feature after a full-width block starts a fresh row. */
+.content-page .canonical-copy.showcase-copy .doc-section:not(.doc-feature) + .doc-feature,
+.content-page .canonical-copy.showcase-copy .editorial-sections > .doc-feature:first-child {
+  grid-column: 1 / span 2;
+}
+.content-page .canonical-copy.showcase-copy .doc-feature + .doc-section:not(.doc-feature) {
+  margin-top: 40px;
+}
+
+/* ── Split: heading left, statement right ──────────────────────────────── */
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-split {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.content-page .canonical-copy.showcase-copy .doc-split-body p:first-child {
+  font-size: 19px;
+  color: var(--ink, #0d1a2b);
+}
+
+/* ── Story: pinned heading beside structured content ──────────────────── */
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-story {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.doc-story-heading {
+  position: sticky;
+  top: 120px;
+}
+.content-page .canonical-copy.showcase-copy .doc-story-body > p:first-child {
+  font-size: 19px;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy.showcase-copy .doc-label {
+  margin: 28px 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink, #0d1a2b);
+}
+.doc-list {
+  display: grid;
+  gap: 0;
+  margin: 8px 0 28px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border, #e3e4e0);
+}
+.doc-list li {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border, #e3e4e0);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink, #0d1a2b);
+}
+.doc-list strong {
+  font-weight: 700;
+}
+.doc-list-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--page-accent, #c12129);
+  transform: translateY(-2px);
+}
+.doc-steps {
+  display: grid;
+  gap: 16px;
+  margin: 8px 0 28px;
+  padding: 0;
+  list-style: none;
+}
+.doc-steps li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 14px;
+  background: var(--surface-2, #fbfaf7);
+}
+.content-page .canonical-copy.showcase-copy .doc-steps p {
+  margin: 0;
+  font-size: 16px;
+}
+.doc-step-number {
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: 36px;
+  line-height: 1;
+  color: var(--page-accent, #c12129);
+}
+
+/* Read more */
+.doc-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.4s ease;
+}
+.doc-more.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.doc-more > div {
+  min-height: 0;
+  overflow: hidden;
+}
+.doc-more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 8px;
+  padding: 0 0 4px;
+  border: 0;
+  border-bottom: 2px solid var(--page-accent, #c12129);
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+}
+.doc-more-toggle svg {
+  transition: transform 0.35s ease;
+}
+.doc-more-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.doc-more-toggle:focus-visible {
+  outline: 2px solid var(--page-accent, #c12129);
+  outline-offset: 4px;
+}
+
+/* ── Closing: dark call-to-action band ─────────────────────────────────── */
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-closing {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: center;
+  margin-top: 40px;
+  padding: clamp(48px, 7vw, 88px) clamp(28px, 6vw, 80px);
+  border: 0;
+  border-radius: 24px;
+  background: var(--midnight, #0d1a2b);
+  color: #fff;
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-closing h2 {
+  margin-bottom: 18px;
+  color: #fff;
+}
+.content-page .canonical-copy.showcase-copy .doc-closing p {
+  color: rgb(255 255 255 / 78%);
+}
+.doc-closing-actions .canonical-ctas {
+  justify-content: flex-end;
+}
+.content-page .canonical-copy.showcase-copy .doc-closing .canonical-ctas .button {
+  border: 1px solid #bc202c;
+  background: #bc202c;
+  color: #fff;
+}
+.content-page .canonical-copy.showcase-copy .doc-closing .canonical-ctas .button + .button {
+  border-color: rgb(255 255 255 / 55%);
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-feature {
+    grid-column: span 3;
+  }
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-split,
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-story,
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-closing {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .doc-story-heading {
+    position: static;
+  }
+  .doc-closing-actions .canonical-ctas {
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 600px) {
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-feature {
+    grid-column: 1 / -1;
+    padding: 28px 0;
+    border-left: 0;
+    border-top: 1px solid var(--border, #e3e4e0);
+  }
+  .content-page
+    .canonical-copy.showcase-copy
+    .editorial-section.doc-section:not(.doc-feature, .doc-closing) {
+    padding: 48px 0;
+  }
+  .doc-steps li {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .doc-more,
+  .doc-more-toggle svg,
+  .content-page .canonical-copy.showcase-copy .editorial-section.doc-feature {
+    transition: none;
+  }
+}
+
+/* Neutralise the older alternating section tint and the divider above section actions. */
+.content-page
+  .canonical-copy.showcase-copy
+  .editorial-section.doc-section:not(.dark-section):nth-child(even) {
+  background: none;
+}
+.content-page
+  .canonical-copy.showcase-copy
+  .editorial-section.doc-feature:not(.dark-section):hover {
+  background: var(--page-tint, rgb(0 0 0 / 3%));
+}
+.content-page .canonical-copy.showcase-copy .editorial-section.doc-section .canonical-ctas {
+  padding-top: 0;
+  border-top: 0;
+}

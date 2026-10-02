@@ -241,9 +241,14 @@ export function mountPayments(app, store, deps) {
           error:
             'The paystack payment provider is not configured on this server. No funds have been held.',
         });
+      const amountMinor = milestone.amount * 100;
+      const charge = await settlementAmount(db, amountMinor, milestone.currency);
+      if (!charge)
+        return res.status(503).json({
+          error: `No ${milestone.currency} to NGN exchange rate is configured. No funds have been held.`,
+        });
       const fundingId = randomUUID();
       const reference = `LMD-FUND-${fundingId.slice(0, 8)}`;
-      const amountMinor = milestone.amount * 100;
       // PAY-01: the record is persisted, with its reference, BEFORE the provider is ever called
       // — a crash or DB hiccup between "Paystack accepted this" and "we saved that" would
       // otherwise leave a real pending transaction with no local trace to reconcile against.
@@ -252,7 +257,12 @@ export function mountPayments(app, store, deps) {
       // same as 'pending'/'held' do, so a genuine retry is not blocked) if dispatch never happens.
       await transaction(async () => {
         await db
-          .prepare('INSERT INTO milestone_fundings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .prepare(
+            `INSERT INTO milestone_fundings
+               (id, milestone_id, workspace_id, provider, amount_minor, currency, provider_reference,
+                status, created_at, held_at, released_at, refunded_at, provider_amount_minor, provider_currency)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          )
           .run(
             fundingId,
             milestone.id,
@@ -266,13 +276,15 @@ export function mountPayments(app, store, deps) {
             null,
             null,
             null,
+            charge.amountMinor,
+            charge.currency,
           );
       });
       let init;
       try {
         init = await provider.initializeTransaction({
-          amountMinor,
-          currency: milestone.currency,
+          amountMinor: charge.amountMinor,
+          currency: charge.currency,
           email: req.user.email || `${req.user.id}@lamidgrowth.internal`,
           reference,
         });
@@ -302,6 +314,8 @@ export function mountPayments(app, store, deps) {
         reference,
         amountMinor,
         currency: milestone.currency,
+        providerAmountMinor: charge.amountMinor,
+        providerCurrency: charge.currency,
       });
     } catch (error) {
       next(error);
@@ -353,7 +367,7 @@ export function mountPayments(app, store, deps) {
       try {
         await provider.refundTransaction({
           reference: funding.provider_reference,
-          amountMinor: funding.amount_minor,
+          amountMinor: funding.provider_amount_minor ?? funding.amount_minor,
         });
         await transaction(async () => {
           await db
@@ -447,11 +461,23 @@ export function mountPayments(app, store, deps) {
           .status(409)
           .json({ error: 'This milestone payment is already being processed.' });
 
+      // Pay out exactly what escrow holds, in the currency it was charged in — not a re-conversion
+      // at today's rate, which could pay more (or less) than the client actually put in.
+      const payout = {
+        amountMinor: funding.provider_amount_minor ?? milestone.amount * 100,
+        currency: funding.provider_currency ?? milestone.currency,
+      };
       const transferId = randomUUID();
       const reference = `LMD-${transferId.slice(0, 8)}`;
       await transaction(async () => {
         await db
-          .prepare('INSERT INTO payment_transfers VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .prepare(
+            `INSERT INTO payment_transfers
+               (id, workspace_id, milestone_id, provider, amount_minor, currency, recipient_code,
+                status, provider_reference, failure_reason, created_at, updated_at,
+                provider_amount_minor, provider_currency)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          )
           .run(
             transferId,
             project.workspace_id,
@@ -465,13 +491,15 @@ export function mountPayments(app, store, deps) {
             null,
             new Date().toISOString(),
             new Date().toISOString(),
+            payout.amountMinor,
+            payout.currency,
           );
       });
 
       try {
         const result = await provider.initiateTransfer({
-          amountMinor: milestone.amount * 100,
-          currency: milestone.currency,
+          amountMinor: payout.amountMinor,
+          currency: payout.currency,
           recipientCode: account.recipient_code,
           reference,
           reason: `Milestone payment: ${milestone.title}`,
@@ -560,19 +588,12 @@ export function mountPointsPurchase(app, store, deps) {
       // row and points ledger stay in the canonical USD amount; the webhook reconciles by
       // `reference` and credits `purchase.points` (currency-independent), not by amount, so this
       // conversion can't desync them.
-      let paystackAmountMinor = amountMinor;
-      let paystackCurrency = currency;
-      if (currency !== 'NGN') {
-        const fxRow = await db
-          .prepare('SELECT * FROM fx_rates WHERE pair = ?')
-          .get(`${currency}_NGN`);
-        if (!fxRow)
-          return res.status(503).json({
-            error: `No ${currency} to NGN exchange rate is configured. No purchase has been made.`,
-          });
-        paystackAmountMinor = Math.round(amountMinor * fxRow.rate);
-        paystackCurrency = 'NGN';
-      }
+      const charge = await settlementAmount(db, amountMinor, currency);
+      if (!charge)
+        return res.status(503).json({
+          error: `No ${currency} to NGN exchange rate is configured. No purchase has been made.`,
+        });
+      const { amountMinor: paystackAmountMinor, currency: paystackCurrency } = charge;
       const purchaseId = randomUUID();
       const reference = `LMD-PTS-${purchaseId.slice(0, 8)}`;
       // PAY-01: persisted before the provider is ever called — see the identical reasoning in
@@ -646,6 +667,17 @@ export function mountPointsPurchase(app, store, deps) {
   });
 }
 
+/** What Paystack is actually asked to move for a canonical amount: this merchant's account
+ * settles in NGN only, so other currencies are converted with the fx_rates table (the same
+ * rates /api/fx/convert reads). Null when no rate is configured — callers must refuse rather
+ * than send an unsettleable currency. */
+async function settlementAmount(db, amountMinor, currency) {
+  if (currency === 'NGN') return { amountMinor, currency };
+  const fxRow = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get(`${currency}_NGN`);
+  if (!fxRow) return null;
+  return { amountMinor: Math.round(amountMinor * fxRow.rate), currency: 'NGN' };
+}
+
 // PAY-02: a webhook reporting success is only trustworthy if it says the provider moved the
 // amount and currency we actually asked it to move — otherwise a compromised/misconfigured
 // provider integration (or a forged-but-signature-valid replay from a rotated key) could credit
@@ -708,13 +740,15 @@ export function mountPaystackWebhook(app, store, deps) {
         .get(eventId);
       if (transfer) {
         if (event.event === 'transfer.success') {
-          if (!providerAmountMatches(event, transfer.amount_minor, transfer.currency)) {
+          const expectedAmount = transfer.provider_amount_minor ?? transfer.amount_minor;
+          const expectedCurrency = transfer.provider_currency ?? transfer.currency;
+          if (!providerAmountMatches(event, expectedAmount, expectedCurrency)) {
             await db
               .prepare(
                 "UPDATE payment_transfers SET status = 'amount_mismatch', failure_reason = ?, updated_at = ? WHERE id = ?",
               )
               .run(
-                `Webhook reported ${event.data?.amount} ${event.data?.currency}, expected ${transfer.amount_minor} ${transfer.currency}. Requires manual reconciliation.`,
+                `Webhook reported ${event.data?.amount} ${event.data?.currency}, expected ${expectedAmount} ${expectedCurrency}. Requires manual reconciliation.`,
                 new Date().toISOString(),
                 transfer.id,
               );
@@ -784,7 +818,13 @@ export function mountPaystackWebhook(app, store, deps) {
           )
           .get(eventId);
         if (funding) {
-          if (!providerAmountMatches(event, funding.amount_minor, funding.currency)) {
+          if (
+            !providerAmountMatches(
+              event,
+              funding.provider_amount_minor ?? funding.amount_minor,
+              funding.provider_currency ?? funding.currency,
+            )
+          ) {
             await db
               .prepare("UPDATE milestone_fundings SET status = 'amount_mismatch' WHERE id = ?")
               .run(funding.id);

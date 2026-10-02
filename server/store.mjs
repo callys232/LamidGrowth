@@ -1865,6 +1865,32 @@ export async function openStore(filename, { poolMax } = {}) {
       granted_at TEXT NOT NULL,
       PRIMARY KEY (workspace_id, agent_id, source)
     )`);
+    // One invoice per milestone, numbered per issuer (the freelancer) and calendar year. The
+    // number used to be derived from a count of agent_runs, which included the in-flight run,
+    // failed runs and "not yet approved" replies — so the first invoice was 0002 and re-invoicing
+    // the same milestone minted a new number each time.
+    await client.query(`CREATE TABLE IF NOT EXISTS invoices (
+      id TEXT PRIMARY KEY,
+      milestone_id TEXT NOT NULL UNIQUE REFERENCES milestones(id),
+      issuer_user_id TEXT NOT NULL REFERENCES users(id),
+      year INTEGER NOT NULL,
+      sequence INTEGER NOT NULL,
+      number TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      currency TEXT NOT NULL,
+      issued_at TEXT NOT NULL,
+      UNIQUE (issuer_user_id, year, sequence)
+    )`);
+    // Escrow in the settlement currency: the Paystack account settles in NGN only, so a milestone
+    // priced in another currency is charged (and later paid out/refunded) in NGN. As with
+    // points_purchases, amount_minor/currency stay canonical and these record what was actually
+    // dispatched to the provider — the figures a webhook must match.
+    await client.query(`
+      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+    `);
     await client.query('COMMIT');
   } catch (error) {
     try {

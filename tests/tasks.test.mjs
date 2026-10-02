@@ -284,7 +284,7 @@ test('a project can only be closed once every milestone is fully paid, and only 
   assert.equal(fund.status, 201);
   const fundEvent = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    data: { reference: fund.data.reference, amount: fund.data.providerAmountMinor, currency: fund.data.providerCurrency },
   };
   const fundRaw = Buffer.from(JSON.stringify(fundEvent));
   await fetch(`${base}/api/webhooks/paystack`, {
@@ -301,8 +301,8 @@ test('a project can only be closed once every milestone is fully paid, and only 
     event: 'transfer.success',
     data: {
       reference: release.data.provider_reference,
-      amount: release.data.amount_minor,
-      currency: release.data.currency,
+      amount: release.data.provider_amount_minor,
+      currency: release.data.provider_currency,
     },
   };
   const transferRaw = Buffer.from(JSON.stringify(transferEvent));

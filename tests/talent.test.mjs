@@ -188,10 +188,18 @@ test('skills assessments are graded deterministically, and a bogus skill 404s', 
   assert.equal(perfect.data.score, 100);
   assert.equal(perfect.data.passed, true);
 
+  // A second attempt by the same person is subject to the retake cooldown (tested separately),
+  // so the all-wrong grading is checked on a fresh account.
+  const second = await signup('Quiz Taker Two');
+  await request(
+    '/talent/profile',
+    { headline: 'JS dev', skills: ['javascript'], languages: [] },
+    second,
+  );
   const zero = await request(
     '/talent/assessments',
     { skill: 'javascript', answers: [0, 1, 2, 0, 1] },
-    user,
+    second,
   );
   assert.equal(zero.status, 201);
   assert.equal(zero.data.score, 0);
@@ -411,4 +419,27 @@ test("job-matches ranks open jobs by fit to the freelancer's own profile", async
   assert.equal(matches.status, 200);
   assert.ok(matches.data.some((m) => m.jobId === matchingJob.data.id));
   assert.ok(!matches.data.some((m) => m.jobId === unrelatedJob.data.id));
+});
+
+test('a skill assessment cannot be retaken within 24 hours, so a badge cannot be won by trial and error', async () => {
+  const user = await signup('Quiz Retaker');
+  await request(
+    '/talent/profile',
+    { headline: 'PM', skills: ['javascript'], languages: [] },
+    user,
+  );
+  const first = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [0, 1, 2, 0, 1] },
+    user,
+  );
+  assert.equal(first.status, 201);
+  const retry = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [2, 0, 1, 1, 2] },
+    user,
+  );
+  assert.equal(retry.status, 429);
+  assert.match(retry.data.error, /again after/i);
+  assert.ok(retry.data.retryAfter);
 });

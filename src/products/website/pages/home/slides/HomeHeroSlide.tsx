@@ -1,9 +1,9 @@
 import { BrainCircuit, Layers3, ShieldCheck, Workflow } from 'lucide-react';
 import type { MouseEvent } from 'react';
-import { CopyLine } from '../../../../../shared/content/CopyLine';
 import content from '../content.json';
 import { HomeOperatingCycle } from '../components/HomeOperatingCycle';
 import { CompanionExample } from '../components/CompanionExample';
+import { HomeSkyline } from '../components/HomeSkyline';
 
 const SCROLL_DURATION_MS = 1100;
 
@@ -29,9 +29,9 @@ function slowScrollTo(event: MouseEvent<HTMLAnchorElement>) {
   requestAnimationFrame(step);
 }
 
+/** Follows the video hero: the Companion example, operating cycle, human-control card and page nav. */
 export function HomeHeroSlide() {
-  const [title, description, , actions, continuity, control] = content.hero.paragraphs;
-  const emphasis = title.text.indexOf('Growth');
+  const [continuity, control] = content.continuity.paragraphs;
   const [continuityIntro, ...continuityBody] = continuity.text.split(': ');
   const progression = continuityBody
     .join(': ')
@@ -44,26 +44,9 @@ export function HomeHeroSlide() {
   ];
   return (
     <>
-      <section className="home-premium-hero">
+      <section className="home-premium-hero home-continuation">
+        <HomeSkyline />
         <div className="home-container">
-          <h1 data-source-paragraph={title.sourceParagraph}>
-            {emphasis >= 0 ? (
-              <>
-                {title.text.slice(0, emphasis)}
-                <br />
-                <em>{title.text.slice(emphasis)}</em>
-              </>
-            ) : (
-              title.text
-            )}
-          </h1>
-          <p className="home-hero-description" data-source-paragraph={description.sourceParagraph}>
-            {description.text}
-          </p>
-          <CopyLine text={actions.text} paragraph={actions.sourceParagraph} />
-          <p className="home-action-expectation">
-            Choose your context, then create an account or explore a sample workspace.
-          </p>
           <p className="home-hero-assurance">
             <ShieldCheck size={15} />
             <span data-source-paragraph={control.sourceParagraph}>{control.text}</span>

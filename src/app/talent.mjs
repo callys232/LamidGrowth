@@ -49,6 +49,7 @@ const assessmentSchema = z
   .strict();
 
 const PASS_THRESHOLD = 0.8;
+const RETAKE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 // Deterministic multiple-choice quiz bank — a skills assessment is graded purely against
 // this bank, never by an AI, so a score can never be hallucinated. Modeled on LinkedIn's
@@ -588,6 +589,22 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       return res
         .status(400)
         .json({ error: 'Create your talent profile before taking an assessment.' });
+    // The bank is a small fixed set of questions graded instantly, so unlimited retakes let
+    // anyone reach a pass by trial and error — a badge that proves nothing. One attempt per skill
+    // per cooldown window keeps a pass meaningful.
+    const last = await db
+      .prepare(
+        'SELECT created_at FROM talent_assessments WHERE profile_id = ? AND skill = ? ORDER BY created_at DESC LIMIT 1',
+      )
+      .get(profile.id, input.skill);
+    if (last) {
+      const retryAfter = new Date(new Date(last.created_at).getTime() + RETAKE_COOLDOWN_MS);
+      if (retryAfter > new Date())
+        return res.status(429).json({
+          error: `You can take the ${input.skill} assessment again after ${retryAfter.toISOString()}.`,
+          retryAfter: retryAfter.toISOString(),
+        });
+    }
     const id = randomUUID();
     await transaction(async () => {
       await db

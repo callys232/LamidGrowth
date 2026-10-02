@@ -8,83 +8,103 @@
   "canonical": "/who-its-for",
   "seo_title": "Who It's For | LAMID ONE",
   "meta_description": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
-  "title": "One OS. Different Contexts.",
-  "description": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
+  "title": "Who It’s For",
+  "description": "LAMID ONE is built for people and organizations who want growth to be clear, structured, and dependable — without navigating multiple tools or complex systems.",
   "hero": {
-    "title": "One OS. Different Contexts.",
+    "title": "Who It’s For",
     "paragraphs": [
       {
-        "text": "One OS. Different Contexts.",
-        "sourceParagraph": 339
+        "text": "Who It’s For",
+        "sourceParagraph": 6505
       },
       {
-        "text": "Your needs change with the work you do, the responsibility you carry, and the scale at which you operate. LAMID ONE adapts accordingly.",
-        "sourceParagraph": 340
-      },
-      {
-        "text": "CTA: Choose Your Context",
-        "sourceParagraph": 341
+        "text": "LAMID ONE is built for people and organizations who want growth to be clear, structured, and dependable — without navigating multiple tools or complex systems.",
+        "sourceParagraph": 6507
       }
     ]
   },
   "sections": [
     {
-      "label": "Individual",
-      "title": "Individual",
+      "label": "Professionals",
+      "title": "Professionals",
       "paragraphs": [
         {
-          "text": "Individual",
-          "sourceParagraph": 342
+          "text": "Professionals",
+          "sourceParagraph": 6509
         },
         {
-          "text": "Find clarity and make progress.",
-          "sourceParagraph": 343
+          "text": "If you want clarity, capability, and consistent execution in your work, LAMID ONE gives you a single place to grow with confidence.",
+          "sourceParagraph": 6511
         }
       ]
     },
     {
-      "label": "Professional",
-      "title": "Professional",
+      "label": "Founders & Creators",
+      "title": "Founders & Creators",
       "paragraphs": [
         {
-          "text": "Professional",
-          "sourceParagraph": 344
+          "text": "Founders & Creators",
+          "sourceParagraph": 6513
         },
         {
-          "text": "Strengthen decisions, capability, and execution.",
-          "sourceParagraph": 345
+          "text": "If you build, lead, or create, the portal helps you stay focused, aligned, and supported as your ideas move into action.",
+          "sourceParagraph": 6515
         }
       ]
     },
     {
-      "label": "Creator",
-      "title": "Creator",
+      "label": "Business Owners & Leaders",
+      "title": "Business Owners & Leaders",
       "paragraphs": [
         {
-          "text": "Creator",
-          "sourceParagraph": 346
+          "text": "Business Owners & Leaders",
+          "sourceParagraph": 6517
         },
         {
-          "text": "Turn ideas into clearer action and opportunity.",
-          "sourceParagraph": 347
+          "text": "If you manage teams, projects, or operations, LAMID ONE provides structure that keeps goals, actions, and progress connected.",
+          "sourceParagraph": 6519
         }
       ]
     },
     {
-      "label": "One Master Proposition",
-      "title": "One Master Proposition",
+      "label": "Teams & Departments",
+      "title": "Teams & Departments",
       "paragraphs": [
         {
-          "text": "One Master Proposition",
-          "sourceParagraph": 348
+          "text": "Teams & Departments",
+          "sourceParagraph": 6521
         },
         {
-          "text": "Different context changes the emphasis, not the product.",
-          "sourceParagraph": 349
+          "text": "If you work together toward shared outcomes, the portal strengthens alignment, execution, and dependable follow‑through.",
+          "sourceParagraph": 6523
+        }
+      ]
+    },
+    {
+      "label": "Enterprises & Institutions",
+      "title": "Enterprises & Institutions",
+      "paragraphs": [
+        {
+          "text": "Enterprises & Institutions",
+          "sourceParagraph": 6525
         },
         {
-          "text": "CTA: Choose Your Context",
-          "sourceParagraph": 350
+          "text": "If you need clarity, capability, and consistent performance across large groups, LAMID ONE offers a unified environment that scales without complexity.",
+          "sourceParagraph": 6527
+        }
+      ]
+    },
+    {
+      "label": "Social Organizations & Community Initiatives",
+      "title": "Social Organizations & Community Initiatives",
+      "paragraphs": [
+        {
+          "text": "Social Organizations & Community Initiatives",
+          "sourceParagraph": 6529
+        },
+        {
+          "text": "If you serve people or communities, the portal supports structured growth, reliable execution, and aligned impact.",
+          "sourceParagraph": 6531
         }
       ]
     }

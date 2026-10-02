@@ -15,45 +15,104 @@ function parseBudgetCeiling(text) {
   return Number(match[1].replace(/,/g, ''));
 }
 
+// Relevance: a signal used to match anything new of its class — every open job, every learning
+// path — whatever the goal was. Matches now need at least one specific term in common with the
+// goal (title, description, success statement), after dropping filler and generic goal words.
+// A goal with no specific terms at all ("Land a new client") still gets every new item, but the
+// scan says so, rather than pretending the results were matched to it.
+const GENERIC_WORDS = new Set(
+  `about after again also and any are because been before being better both but can could each
+  every first for from further get getting goal goals grow growth have having help improve increase
+  into just land make more most much must need next new our out over own per plan same should some
+  such than that the their them then there these they this those through too under until very want
+  was were what when where which while who why will with within would year years your you
+  client clients customer customers business work works job jobs project projects start started`
+    .split(/\s+/)
+    .filter(Boolean),
+);
+
+/** Lowercase words of 3+ letters, crudely stemmed so "onboarding"/"onboard" and
+ * "analysts"/"analysis" meet. Maps each stem to the first word it came from, for display. */
+function terms(text) {
+  const stems = new Map();
+  for (const word of String(text || '').toLowerCase().match(/[a-z][a-z0-9+#-]{2,}/g) ?? []) {
+    if (GENERIC_WORDS.has(word)) continue;
+    const stem = word.replace(/(ings|ing|ers|er|ists|ist|ysis|yses|es|ed|s)$/, '').slice(0, 8) || word;
+    if (!stems.has(stem)) stems.set(stem, word);
+  }
+  return stems;
+}
+
+async function goalTerms(db, subscription) {
+  const row = await db
+    .prepare("SELECT data FROM records WHERE id = ? AND kind = 'objective'")
+    .get(subscription.goal_id);
+  const goal = row ? JSON.parse(row.data) : {};
+  return terms([goal.title, goal.description, goal.success].join(' '));
+}
+
+/** Keeps candidates sharing at least one goal term and records which. With no goal terms,
+ * everything passes (the scan reports that separately). */
+function relevantTo(goal, candidates, textOf) {
+  if (goal.size === 0) return candidates;
+  const kept = [];
+  for (const candidate of candidates) {
+    const shared = [...terms(textOf(candidate))]
+      .filter(([stem]) => goal.has(stem))
+      .map(([, word]) => word);
+    if (shared.length > 0) kept.push({ candidate, matchedOn: `Matched on: ${shared.slice(0, 5).join(', ')}` });
+  }
+  return kept.map(({ candidate, matchedOn }) => ({ ...candidate, matchedOn }));
+}
+
 // Signal classes with a real internal data source today. The rest of the enum in goals.mjs
 // (grants, tenders, events, funding, market_changes, requirement_changes) has no data source
 // anywhere in this codebase — scanning for them returns an explicit "not yet supported" note
 // instead of fabricating matches, per the same evidence-only discipline as the AI agents.
-async function findJobMatches(db, subscription, constraints) {
+const withMatch = (summary, row) => [summary, row.matchedOn].filter(Boolean).join(' · ');
+
+async function findJobMatches(db, subscription, constraints, goal) {
   const rows = await db
     .prepare(
       `SELECT job_posts.* FROM job_posts
        WHERE status = 'open' AND created_at > ?
-       ORDER BY created_at DESC LIMIT 25`,
+       ORDER BY created_at DESC LIMIT 200`,
     )
     .all(new Date(subscription.created_at).getTime());
   const ceiling = parseBudgetCeiling(constraints.budget);
-  return rows
-    .filter((row) => ceiling === null || row.budget_min <= ceiling)
+  const affordable = rows.filter((row) => ceiling === null || row.budget_min <= ceiling);
+  return relevantTo(goal, affordable, (row) =>
+    [row.title, row.description, row.deliverables, row.category, row.tags].join(' '),
+  )
+    .slice(0, 25)
     .map((row) => ({
       sourceKind: 'job',
       sourceId: row.id,
       title: row.title,
-      summary: `${row.category} · budget ${row.budget_min}-${row.budget_max} ${row.currency}`,
+      summary: withMatch(
+        `${row.category} · budget ${row.budget_min}-${row.budget_max} ${row.currency}`,
+        row,
+      ),
     }));
 }
 
-async function findTrainingMatches(db, subscription, constraints) {
+async function findTrainingMatches(db, subscription, constraints, goal) {
   const rows = await db
-    .prepare('SELECT * FROM learning_paths WHERE created_at > ? ORDER BY created_at DESC LIMIT 25')
+    .prepare('SELECT * FROM learning_paths WHERE created_at > ? ORDER BY created_at DESC LIMIT 200')
     .all(subscription.created_at);
-  return rows
-    .filter((row) => {
-      if (constraints.freeOrPaid === 'free' && row.points_cost) return false;
-      if (constraints.freeOrPaid === 'paid' && !row.points_cost) return false;
-      if (constraints.language && row.language && row.language.toLowerCase() !== constraints.language.toLowerCase()) return false;
-      return true;
-    })
+  const allowed = rows.filter((row) => {
+    if (constraints.freeOrPaid === 'free' && row.points_cost) return false;
+    if (constraints.freeOrPaid === 'paid' && !row.points_cost) return false;
+    if (constraints.language && row.language && row.language.toLowerCase() !== constraints.language.toLowerCase()) return false;
+    return true;
+  });
+  return relevantTo(goal, allowed, (row) => [row.title, row.description].join(' '))
+    .slice(0, 25)
     .map((row) => ({
       sourceKind: 'learning_path',
       sourceId: row.id,
       title: row.title,
-      summary: row.description,
+      summary: withMatch(row.description, row),
     }));
 }
 
@@ -76,19 +135,21 @@ async function findInternalProgressMatches(db, subscription) {
     }));
 }
 
-async function findExpertMatches(db, subscription) {
+async function findExpertMatches(db, subscription, _constraints, goal) {
   const rows = await db
     .prepare(
       `SELECT * FROM expert_credentials WHERE verification_status = 'verified' AND verified_at > ?
-       ORDER BY verified_at DESC LIMIT 25`,
+       ORDER BY verified_at DESC LIMIT 200`,
     )
     .all(subscription.created_at);
-  return rows.map((row) => ({
-    sourceKind: 'expert_credential',
-    sourceId: row.id,
-    title: `${row.title} (${row.issuer})`,
-    summary: '',
-  }));
+  return relevantTo(goal, rows, (row) => [row.title, row.issuer, row.type].join(' '))
+    .slice(0, 25)
+    .map((row) => ({
+      sourceKind: 'expert_credential',
+      sourceId: row.id,
+      title: `${row.title} (${row.issuer})`,
+      summary: withMatch('', row),
+    }));
 }
 
 const FINDERS = {
@@ -103,21 +164,22 @@ async function evaluateSubscription(db, subscription) {
   const signalClasses = JSON.parse(subscription.signal_classes);
   const constraints = JSON.parse(subscription.constraints || '{}');
   const unsupported = signalClasses.filter((cls) => !FINDERS[cls]);
+  const goal = await goalTerms(db, subscription);
   const found = [];
   for (const cls of signalClasses) {
     const finder = FINDERS[cls];
     if (!finder) continue;
-    const matches = await finder(db, subscription, constraints);
+    const matches = await finder(db, subscription, constraints, goal);
     for (const match of matches) found.push({ ...match, signalClass: cls });
   }
-  return { found, unsupported };
+  return { found, unsupported, generalGoal: goal.size === 0 };
 }
 
 // Shared by the manual scan endpoint and the scheduled sweep below, so both insert matches the
 // same way (dedup on conflict, same log entry shape).
 async function runScan(store, subscription, actorName) {
   const { db, transaction, log } = store;
-  const { found, unsupported } = await evaluateSubscription(db, subscription);
+  const { found, unsupported, generalGoal } = await evaluateSubscription(db, subscription);
   const now = new Date().toISOString();
   const inserted = [];
   await transaction(async () => {
@@ -151,7 +213,17 @@ async function runScan(store, subscription, actorName) {
         `${inserted.length} new match(es)`,
       );
   });
-  return { scannedAt: now, newMatches: inserted, unsupportedSignalClasses: unsupported };
+  return {
+    scannedAt: now,
+    newMatches: inserted,
+    unsupportedSignalClasses: unsupported,
+    ...(generalGoal
+      ? {
+          relevanceNote:
+            'Your goal has no specific terms to match on, so every new item is shown. Add detail to the goal (what, for whom, which skill) to narrow the matches.',
+        }
+      : {}),
+  };
 }
 
 // F-SI-04 (spec-review audit): scans were endpoint-triggered only — a subscription with nobody

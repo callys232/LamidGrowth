@@ -63,7 +63,14 @@ const EVIDENCE_FACTOR = { 0: 0.6, 1: 0.85, 2: 1 };
 /** @param {AssessmentRow[]} rows */
 export function computeAssessment(rows) {
   const warnings = [];
-  const clean = rows.filter((r) => r.label?.trim());
+  const labelled = rows.filter((r) => r.label?.trim());
+  // Only dimensions the user actually rated are scored. An unrated dimension is reported as a
+  // gap in coverage, never as a 0 — "nobody assessed this" and "this is not true at all" are
+  // different findings.
+  const isRated = (r) => r.rating !== null && r.rating !== undefined && r.rating !== '';
+  const clean = labelled.filter(isRated);
+  const unrated = labelled.filter((r) => !isRated(r)).map((r) => r.label.trim());
+  const dimensionCount = labelled.length;
 
   if (clean.length === 0) {
     return {
@@ -76,6 +83,9 @@ export function computeAssessment(rows) {
       spreadPts: 0,
       priorities: [],
       documentedCount: 0,
+      ratedCount: 0,
+      dimensionCount,
+      unrated,
       warnings: ['Rate at least one dimension to produce a score.'],
     };
   }
@@ -122,6 +132,11 @@ export function computeAssessment(rows) {
   const unsupported = dimensions.filter((d) => d.unsupported);
 
   /* ── Checks a reviewer would raise ── */
+  if (unrated.length > 0) {
+    warnings.push(
+      `Only ${dimensions.length} of ${dimensionCount} dimensions were rated, so the index covers those alone. Not rated: ${unrated.join(', ')}.`,
+    );
+  }
   if (unsupported.length > 0) {
     warnings.push(
       `${unsupported.length} dimension${unsupported.length > 1 ? 's are' : ' is'} rated 4 or above with no evidence: ${unsupported.map((d) => d.label).join(', ')}. Those scores rest on assertion.`,
@@ -158,6 +173,9 @@ export function computeAssessment(rows) {
     spreadPts,
     priorities,
     documentedCount,
+    ratedCount: dimensions.length,
+    dimensionCount,
+    unrated,
     warnings,
   };
 }
@@ -179,6 +197,7 @@ export function assessmentToPrompt(s) {
   lines.push(`• Spread between best and worst: ${s.spreadPts} points`);
   if (s.priorities.length) lines.push(`• Highest-return priorities: ${s.priorities.join(', ')}`);
   lines.push(`• ${s.documentedCount} of ${s.dimensions.length} dimensions documented`);
+  if (s.unrated?.length) lines.push(`• Not rated: ${s.unrated.join(', ')}`);
 
   return lines.join('\n');
 }

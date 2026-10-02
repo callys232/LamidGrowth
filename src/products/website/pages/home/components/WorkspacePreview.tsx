@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { sourcePage } from '../../../../../shared/content/sourcePage';
-import home from '../content.json';
 import { DemoAccessSlide } from '../../../slides/DemoAccessSlide';
 
 const previews = [
@@ -81,7 +80,7 @@ export function WorkspacePreview() {
           </div>
           <div className="home-preview-sidebar-note">
             <ShieldCheck size={20} />
-            <p>{home.hero.paragraphs[5].text}</p>
+            <p>Progress keeps moving. Control stays with you.</p>
           </div>
         </div>
         <div
@@ -111,7 +110,7 @@ export function WorkspacePreview() {
           </div>
           <div className="home-preview-companion">
             <Sparkles size={17} />
-            <p>{home.sections[0].paragraphs[1].text}</p>
+            <p>A decision. An opportunity. A challenge. A plan.</p>
           </div>
         </div>
       </div>

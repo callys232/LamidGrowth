@@ -1,4 +1,5 @@
 import type { EngineResult } from '../hooks/useEngineRun';
+import { EngineScope } from './EngineScope';
 import './engine-result.css';
 
 /** Renders a computed EngineResult: the narrative summary every engine produces, its warnings,
@@ -36,6 +37,8 @@ export function EngineResultView({
       )}
 
       <pre className="engine-result-working">{result.working}</pre>
+
+      <EngineScope computes={result.computes} limits={result.limits} />
 
       {flatFields.length > 0 && (
         <dl className="engine-result-fields">

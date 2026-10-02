@@ -21,6 +21,7 @@ import { OptimisationForm } from '../components/OptimisationForm';
 import { SelectorForm } from '../components/SelectorForm';
 import { ConflictForm } from '../components/ConflictForm';
 import { EngineResultView } from '../components/EngineResultView';
+import { EngineScope } from '../components/EngineScope';
 import './engines-page.css';
 
 const HOME_ENGINES = ['All', 'Clarity', 'Capability', 'Consistency', 'Growth', 'Finance', 'Shared'];
@@ -180,6 +181,7 @@ function EngineDetailPanel({
     <div className="engines-detail-inner">
       <h3>{engine.engineName}</h3>
       <p className="engines-detail-purpose">{manifest?.purpose ?? engine.purpose}</p>
+      <EngineScope computes={manifest?.computes ?? engine.computes} limits={manifest?.limits ?? engine.limits} />
       {manifest?.driverContext && <p className="engines-detail-driver">{manifest.driverContext}</p>}
 
       {error && (

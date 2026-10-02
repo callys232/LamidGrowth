@@ -1,4 +1,9 @@
 export const destinations: Record<string, string> = {
+  'Start Growing as ONE': '/start',
+  'Explore the Portal': '/product',
+  'Start Free': '/signup',
+  'Limited Access': '/start',
+  'Book a Demo': '/demo/request',
   'Experience LAMID ONE': '/start',
   'See How It Works': '/how-it-works',
   'Explore the Companion': '/product/companion',

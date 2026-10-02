@@ -163,17 +163,20 @@ function alignToDimensions(config, input) {
       (anyLabelled ? undefined : supplied[i]) ??
       {};
 
+    // A dimension the caller did not rate stays unrated (null) — scoring it as 0 would claim
+    // "not true at all" for something nobody assessed, and drag the index down with it.
+    const rated = match.rating !== undefined && match.rating !== null && match.rating !== '';
     return {
       id: String(i + 1),
       label,
-      rating: clamp(match.rating, 0, 5, 0),
+      rating: rated ? clamp(match.rating, 0, 5, null) : null,
       weight: clamp(match.weight, 1, 3, 2),
       evidence: clamp(match.evidence, 0, 2, 0),
       ...(match.note ? { note: String(match.note).slice(0, 400) } : {}),
     };
   });
 
-  if (rows.every((r) => r.rating === 0)) {
+  if (rows.every((r) => r.rating === null)) {
     throw new EngineInputError(
       `This engine assesses: ${labels.join(', ')}. Supply a rating (0-5) for at least one, as ` +
         `rows: [{ label, rating, weight, evidence }] or ratings: { "<dimension>": { rating } }.`,
@@ -191,7 +194,104 @@ function alignToDimensions(config, input) {
  * assessment compute rather than on a model, exactly as `buildFallbackConfig`
  * intends.
  */
+/**
+ * What each compute archetype actually does, in plain words, and what it does not. Engine names
+ * and purposes (ported from LamidOne) often promise more than their archetype computes — e.g. a
+ * "Budgeting & Forecasting" engine that only does historical P&L arithmetic, or thirty "Cadence"
+ * engines that share one trend-statistics function. This is shown next to the name in the
+ * catalog, the detail view and every result, so nobody pays for an engine believing it does more.
+ */
+const DISCLOSURES = {
+  assessment: (config) => ({
+    computes: `Scores your own 0–5 ratings of this engine's dimensions (${(config.dimensionLabels ?? []).join(', ')}), weighted by how much each matters and discounted where you have no evidence.`,
+    limits: `It works only from your ratings: it does not produce the "${config.engineName}" itself, research your organisation, or check your ratings against outside data.`,
+  }),
+  timeseries: () => ({
+    computes:
+      'Trend statistics for the numbers you enter per period: change, volatility, trend direction and gap to target.',
+    limits:
+      'It is not connected to live data and does not diagnose causes: it reads only the values you type in, so it is as current as your last entry.',
+  }),
+  financial: () => ({
+    computes:
+      'Profit-and-loss arithmetic on the periods you enter: gross and operating margin, revenue growth, net burn, runway and revenue per head.',
+    limits:
+      'It does not forecast future periods and does not value the business: every figure describes the historical periods you entered.',
+  }),
+  roster: () => ({
+    computes:
+      'Workforce figures from the roles you enter: headcount, capability, attrition risk and successor coverage per role.',
+    limits:
+      'It does not assess individual people or read HR systems; it works only from the role figures you enter.',
+  }),
+  scenario: () => ({
+    computes:
+      'Expected value and downside risk for each option from the probability, upside and downside you enter.',
+    limits:
+      'The probabilities and values are your own estimates; it does not predict outcomes or supply market data.',
+  }),
+  'scenario-decision': () => ({
+    computes:
+      'Compares your options across the futures you define under three decision rules, and reports what perfect information about the future would be worth.',
+    limits:
+      'The futures, their likelihoods and payoffs are yours; it does not forecast which future will happen.',
+  }),
+  roadmap: () => ({
+    computes:
+      'Sequences the initiatives you enter into periods, respecting dependencies and per-period capacity, and reports the critical path.',
+    limits:
+      'Effort, value and dependencies are your estimates; it does not estimate the work or assign people.',
+  }),
+  optimisation: () => ({
+    computes:
+      'Finds the bottleneck step from the capacities you enter for each step, and where improvement would actually raise throughput.',
+    limits:
+      'It works on the step figures you enter; it does not measure your process or its costs.',
+  }),
+  selection: () => ({
+    computes:
+      'Weighted scoring of your options against your criteria, normalised for scale, with a check on how sensitive the winner is to the weights.',
+    limits: 'Criteria, weights and scores are yours; it does not research or verify the options.',
+  }),
+  conflict: () => ({
+    computes:
+      'Checks the objectives you enter pair by pair and flags tensions that have no stated trade-off.',
+    limits:
+      'It only finds conflicts among the objectives you enter; it does not know your other goals.',
+  }),
+  'decision-quality': () => ({
+    computes:
+      'Scores one decision against a fixed set of requirements (options, criteria, owner, information and more), limited by its weakest requirement.',
+    limits: 'It rates how the decision is being made, not whether the eventual choice is right.',
+  }),
+  'growth-pathways': () => ({
+    computes:
+      'Compares the growth pathways you enter and returns a sequenced portfolio that fits your capacity.',
+    limits:
+      'Pathway values and costs are your estimates; it does not find new pathways or supply market data.',
+  }),
+  'bench-strength': () => ({
+    computes:
+      'Measures succession coverage for each critical seat from the successors and readiness you enter.',
+    limits: 'It works from the figures you enter; it does not assess the people themselves.',
+  }),
+  narrative: () => ({
+    computes: "Organises the text you enter into this engine's sections.",
+    limits: 'It performs no scoring or analysis of what you write.',
+  }),
+};
+
+export function describeEngine(ref) {
+  const config = configFor(ref);
+  const disclose = DISCLOSURES[config.inputs?.kind ?? 'assessment'] ?? DISCLOSURES.assessment;
+  return disclose(config);
+}
+
 export function runEngine(ref, input) {
+  return { ...computeEngineRun(ref, input), ...describeEngine(ref) };
+}
+
+function computeEngineRun(ref, input) {
   const config = configFor(ref);
   const kind = config.inputs?.kind ?? 'assessment';
   const warnings = [];
@@ -346,6 +446,9 @@ export function runEngine(ref, input) {
          supplies the questions. */
       summary = computeAssessment(alignToDimensions(config, input));
       working = assessmentToPrompt(summary);
+      // The reviewer checks live on the summary; the result's top-level warnings are what the
+      // app shows, so they were computed and then never seen.
+      warnings.push(...summary.warnings);
       break;
     }
 
@@ -459,6 +562,7 @@ function manifestSummary(code) {
     purpose: config.purpose,
     dimensionLabels: config.dimensionLabels,
     kind: config.inputs?.kind ?? 'assessment',
+    ...describeEngine(ref),
     pointsCost: ENGINE_POINTS_COST,
     // F-TF-01: honest crosswalk fields — most entries are genuinely unverified against the 202
     // canonical capability names (see engineRegistry.mjs), surfaced here rather than silently
@@ -538,6 +642,7 @@ export function mountPublicEngines(app) {
       driverContext: config.driverContext,
       correctionProtocols: config.correctionProtocols,
       inputs: config.inputs,
+      ...describeEngine(ref),
       pointsCost: ENGINE_POINTS_COST,
       canonicalCapabilityId: config.canonicalCapabilityId ?? null,
       verified: config.verified ?? false,

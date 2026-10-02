@@ -37,6 +37,8 @@ export type EngineDetail = {
   driverContext: string;
   correctionProtocols: string[];
   inputs: EngineInputSpec;
+  computes: string;
+  limits: string;
   pointsCost: number;
   decisionQuality?: {
     requirements: DecisionQualityRequirement[];
@@ -53,6 +55,8 @@ export type EngineResult = {
   summary: unknown;
   working: string;
   warnings: string[];
+  computes?: string;
+  limits?: string;
 };
 
 export type EngineRunResponse = {
