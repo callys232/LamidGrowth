@@ -1,0 +1,28 @@
+import { chromium } from '@playwright/test';
+const S = process.argv[2];
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const base = 'http://127.0.0.1:3431/';
+await p.goto(base + 'who-its-for/enterprises'); await p.locator('.flow-accordion-trigger').first().waitFor();
+const t = p.locator('.flow-accordion-trigger').first();
+await t.scrollIntoViewIfNeeded(); await t.click(); await p.waitForTimeout(700);
+console.log('accordion', await t.getAttribute('aria-expanded'), await p.locator('.flow-accordion .doc-more.is-open p').first().isVisible());
+await p.locator('.flow-accordion').first().screenshot({ path: `${S}/i_acc.png` });
+await p.goto(base + 'about/story'); await p.locator('.clamp-toggle').first().waitFor();
+const c = p.locator('.clamp-toggle').first(); await c.scrollIntoViewIfNeeded();
+const before = await c.locator('xpath=..').innerText(); await c.click(); await p.waitForTimeout(300);
+console.log('clamp', before.length, '->', (await c.locator('xpath=..').innerText()).length);
+const l = p.locator('.list-toggle').first(); await l.scrollIntoViewIfNeeded();
+const n0 = await p.locator('#' + (await l.getAttribute('aria-controls')).replace(/:/g, '\:') + ' li').count();
+await l.click(); await p.waitForTimeout(300);
+console.log('list', n0, '->', await p.locator('#' + (await l.getAttribute('aria-controls')).replace(/:/g, '\:') + ' li').count());
+const m = p.locator('.doc-more-toggle').first(); await m.scrollIntoViewIfNeeded(); await m.click(); await p.waitForTimeout(700);
+console.log('readmore', await m.getAttribute('aria-expanded'));
+// hover lift and press on a card
+await p.goto(base + 'about'); const card = p.locator('.flow-checklist, .flow-grid, .flow-chapter-cards > li').first();
+await card.scrollIntoViewIfNeeded(); await p.waitForTimeout(800);
+await card.hover(); await p.waitForTimeout(600);
+console.log('hover translate', await card.evaluate((e) => getComputedStyle(e).translate));
+await p.mouse.down(); await p.waitForTimeout(250);
+console.log('pressed', await card.evaluate((e) => getComputedStyle(e).translate + ' / ' + getComputedStyle(e).scale));
+await p.mouse.up(); await b.close();

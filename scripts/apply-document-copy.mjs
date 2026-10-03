@@ -94,9 +94,18 @@ const actions = {
   text: `CTA: ${primary.text} | ${secondary.text}`,
   sourceParagraph: primary.sourceParagraph,
 };
+// The long-form homepage's Why LAMID ONE, Portal Experience and Philosophy sections join the
+// approved flow ahead of the closing Narrative. Its hero, audience and CTA sections are not used:
+// the approved hero stays, /who-its-for carries the audience copy, and Narrative closes the page.
+const longFormHome = [2, 4, 5].map((number) => {
+  const b = blocks.find((x) => x.page === 'HOMEPAGE' && x.number === number);
+  if (!b?.paragraphs.length) throw new Error(`Incomplete copy: HOMEPAGE ${number}`);
+  return { label: b.label, title: b.paragraphs[0].text, paragraphs: b.paragraphs };
+});
 const homeUpdates = [
   section('Value Pillars', pillars),
   section('How It Works', mechanics),
+  ...longFormHome,
   section('Narrative', [
     ...narrative,
     { text: actions.text, sourceParagraph: secondary.sourceParagraph },
@@ -131,13 +140,98 @@ const audienceSections = [];
 for (let i = 2; i < audience.length; i += 2)
   audienceSections.push(section(audience[i].text, audience.slice(i, i + 2)));
 commit('/who-its-for', audience.slice(0, 2), audienceSections);
+// The original Pithy copy of the pages above is kept after the document copy, unchanged.
+// document-study/pithy-replaced-pages.json holds it as it was before the document was applied.
+const PITHY = 'Pithy';
+const pithyKept = JSON.parse(fs.readFileSync('document-study/pithy-replaced-pages.json', 'utf8'));
+for (const [route, original] of Object.entries(pithyKept)) {
+  const entry = manifest.find((p) => p.route === route);
+  const page = JSON.parse(fs.readFileSync(entry.content, 'utf8'));
+  const opening = original.hero.paragraphs;
+  page.sections = [
+    ...page.sections.filter((s) => s.addedFrom !== PITHY),
+    { label: opening[0].text, title: opening[0].text, paragraphs: opening, addedFrom: PITHY },
+    ...original.sections.map((s) => ({ ...s, addedFrom: PITHY })),
+  ];
+  fs.writeFileSync(entry.content, JSON.stringify(page, null, 2) + '\n');
+}
+// Standalone drafts are added after the existing page copy. The page keeps its own heading,
+// summary, SEO metadata and every original section; only the document's copy is added.
+const SOURCE = 'Tagline_Review_and_Refinement.md';
+const additiveRoutes = [];
+function append(route, sections) {
+  const entry = manifest.find((p) => p.route === route);
+  const page = JSON.parse(fs.readFileSync(entry.content, 'utf8'));
+  page.sections = [
+    ...page.sections.filter((s) => s.addedFrom !== SOURCE),
+    ...sections.map((s) => ({ ...s, addedFrom: SOURCE })),
+  ];
+  fs.writeFileSync(entry.content, JSON.stringify(page, null, 2) + '\n');
+  additiveRoutes.push(route);
+  for (const s of sections)
+    for (const p of s.paragraphs) applied.push([route, s.label, p.sourceParagraph, p.text]);
+}
+function draft(heading) {
+  const start = lines.findIndex((l) => l === `**⭐ ${heading}**`);
+  const end = lines.findIndex((l, i) => i > start && l.startsWith('**⭐ Why this'));
+  if (start < 0 || end < 0) throw new Error(`Missing source draft: ${heading}`);
+  // Italic document annotations such as "(Definitive Narrative • Publication‑Ready)" are not copy.
+  return nonblank(start + 1, end).filter((p) => !/^\(.*\)$/.test(p.text));
+}
+// Overviews: the title and intro open the addition; each heading and its paragraph follow.
+function overview(heading, route) {
+  const [title, intro, ...rest] = draft(heading);
+  const sections = [section(title.text, [title, intro])];
+  for (let i = 0; i < rest.length; i += 2)
+    sections.push(section(rest[i].text, rest.slice(i, i + 2)));
+  append(route, sections);
+}
+overview('ENTERPRISE OVERVIEW', '/who-its-for/enterprises');
+overview('SOCIAL IMPACT OVERVIEW', '/who-its-for/institutions');
+// The Founder's Letter has no headings: it is added as one section.
+const letter = draft('FOUNDER’S LETTER');
+append('/about/leadership', [section(letter[0].text, letter)]);
+// The long-form Founder's Message: its introduction, then one section per heading.
+const messageHeadings = [
+  'The Journey That Led Here',
+  'Why LAMID ONE Exists',
+  'The Principles Behind the Portal',
+  'What LAMID ONE Represents',
+  'A Future Built on Coherence',
+  'An Invitation',
+];
+const message = draft('FOUNDER’S MESSAGE (LONG‑FORM)');
+const messageParts = [[]];
+for (const p of message) {
+  if (messageHeadings.includes(p.text)) messageParts.push([]);
+  messageParts.at(-1).push(p);
+}
+if (messageParts.length !== messageHeadings.length + 1)
+  throw new Error('Founder’s Message headings not found');
+// The original story already has "Why We Call It an Operating System" and similar headings, so
+// the message's own labels are prefixed to keep every section label unique on the page.
+append(
+  '/about/story',
+  messageParts.map((paragraphs) => ({
+    ...section(paragraphs[0].text, paragraphs),
+    label: `Founder’s Message: ${paragraphs[0].text}`,
+  })),
+);
 const escape = (s) => String(s).replace(/\|/g, '\\|');
-const updatedRoutes = [...new Set(applied.map((row) => row[0]))];
+const updatedRoutes = [...new Set(applied.map((row) => row[0]))].filter(
+  (route) => !additiveRoutes.includes(route),
+);
 const rawLines = Object.fromEntries(applied.map((row) => [row[2], lines[row[2] - 1]]));
 fs.writeFileSync(
   'document-study/tagline-refinement-source.json',
   JSON.stringify(
-    { document: 'Tagline_Review_and_Refinement.md', routes: updatedRoutes, lines: rawLines },
+    {
+      document: SOURCE,
+      routes: updatedRoutes,
+      additiveRoutes,
+      pithyRetained: Object.keys(pithyKept),
+      lines: rawLines,
+    },
     null,
     2,
   ) + '\n',
@@ -148,4 +242,6 @@ fs.writeFileSync(
     applied.map((row) => '| ' + row.map(escape).join(' | ') + ' |').join('\n') +
     '\n',
 );
-console.log(`Recorded ${applied.length} copy rows across ${mappings.length + 2} pages.`);
+console.log(
+  `Recorded ${applied.length} copy rows across ${new Set(applied.map((row) => row[0])).size} pages.`,
+);

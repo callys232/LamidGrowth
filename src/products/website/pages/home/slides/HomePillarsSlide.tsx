@@ -1,11 +1,11 @@
 import { Compass, Gauge, Layers3, LifeBuoy, Repeat, Sprout } from 'lucide-react';
-import content from '../content.json';
+import { homeSection } from './HomeLongFormSlides';
 
 const icons = [Compass, Layers3, Gauge, Repeat, Sprout, LifeBuoy];
 
 /** Value Pillars: the six pillars as cards, split into name and description at the em dash. */
 export function HomePillarsSlide() {
-  const [title, intro, ...pillars] = content.sections[7].paragraphs;
+  const [title, intro, ...pillars] = homeSection('Value Pillars').paragraphs;
   return (
     <section
       className="home-section home-objective-section"

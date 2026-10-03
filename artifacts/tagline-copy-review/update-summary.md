@@ -9,7 +9,7 @@ Only supplied replacement drafts have been applied. Homepage uses the consolidat
 | /product | 5 | 75 |
 | /product/experience | 5 | 63 |
 | /product/intelligence | 5 | 69 |
-| / | 11 | 73 |
+| / | 13 | 98 |
 | /who-its-for | 6 | 14 |
 
 The homepage footer additionally contains all nine supplied labels. Philosophy and Terms & Privacy remain labels because the document supplies no destinations; no destination has been invented. Other footer labels link to their existing matching pages. SEO titles and meta descriptions remain unchanged because the document supplies no replacements. Existing interactive catalog and workspace preview are retained.

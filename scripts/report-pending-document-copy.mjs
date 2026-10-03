@@ -3,7 +3,7 @@ import fs from 'node:fs';
 const lines = fs
   .readFileSync('C:/Users/TechBuddy/Downloads/Tagline_Review_and_Refinement.md', 'utf8')
   .split(/\r?\n/);
-const drafts = ['ENTERPRISE OVERVIEW', 'SOCIAL IMPACT OVERVIEW', 'FOUNDER’S LETTER'];
+const drafts = ['THE FOUNDER KEYNOTE'];
 const rows = [];
 for (const name of drafts) {
   const start = lines.findIndex((line) => line === `**⭐ ${name}**`);
@@ -16,7 +16,7 @@ for (const name of drafts) {
 const escape = (value) => String(value).replace(/\|/g, '\\|');
 fs.writeFileSync(
   'artifacts/tagline-copy-review/pending-content-table.md',
-  '# Document copy awaiting destination confirmation\n\nThese drafts are recorded in full. They have not been applied because their page destinations are unresolved. Enterprise Overview explicitly says it is distinct from the existing deep enterprise page. Social Impact has no existing route. The Founder’s Letter has no page with that exact name.\n\n| Draft | Document line | Supplied copy |\n| --- | --- | --- |\n' +
+  '# Document copy awaiting destination confirmation\n\nThis draft is recorded in full but not published. The Founder Keynote is a stage script; the Founder’s Letter, long-form Founder’s Message, Enterprise Overview and Social Impact Overview are applied to /about/leadership, /about/story, /who-its-for/enterprises and /who-its-for/institutions.\n\n| Draft | Document line | Supplied copy |\n| --- | --- | --- |\n' +
     rows.map((row) => '| ' + row.map(escape).join(' | ') + ' |').join('\n') +
     '\n',
 );

@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { pageTheme } from '../../pageThemes';
+import { heroScene } from './heroScene';
+import { designFor, PagePlanContext, planPage } from './pagePlan';
+import './slides/page-designs.css';
 import { SectionIndex } from './SectionIndex';
 import type { DocumentPage, DocumentPageProps } from './types';
 
@@ -14,6 +17,10 @@ export function DocumentPageLayout({
   const container = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const isProductPage = pageTheme(pathname) === 'product';
+  const plan = useMemo(
+    () => ({ plans: planPage(page.sections), scene: heroScene(page.route) }),
+    [page],
+  );
   useEffect(() => {
     setActive('');
     if (embedded) return;
@@ -34,12 +41,19 @@ export function DocumentPageLayout({
       ref={container}
       className={`canonical-copy ${embedded ? '' : 'showcase-copy'}`}
       data-source-page={page.page}
+      data-design={embedded ? undefined : designFor(page.page)}
     >
       {hero}
       {!embedded && !isProductPage && page.sections.length > 1 && (
         <SectionIndex sections={page.sections} active={active} onSelect={setActive} />
       )}
-      <section className="editorial-sections section-wrap">{children}</section>
+      {embedded ? (
+        <section className="editorial-sections section-wrap">{children}</section>
+      ) : (
+        <PagePlanContext.Provider value={plan}>
+          <section className="page-flow section-wrap">{children}</section>
+        </PagePlanContext.Provider>
+      )}
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function DocumentHeroSlide({
   // on request so the hero stays scannable. Short heroes render exactly as before.
   const [lede, ...more] = rest.filter((p) => !isAction(p.text));
   const actions = rest.filter((p) => isAction(p.text));
-  const collapsible = !embedded && more.reduce((n, p) => n + p.text.length, 0) > 240;
+  const collapsible = !embedded && more.reduce((n, p) => n + p.text.length, 0) > 120;
   return (
     <section className="content-hero section-wrap">
       <div>

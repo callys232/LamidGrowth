@@ -1,0 +1,222 @@
+/* Dropdowns, inline "More" toggles and soft micro-interactions for public page sections.
+   Motion uses the individual `translate` / `scale` properties so it layers on top of any
+   design's own transforms (e.g. the tilted bento cards) instead of replacing them. */
+
+.content-page .canonical-copy .page-flow {
+  --soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --lift: -3px;
+}
+
+/* ── Dropdown rows (long runs of short statements) ─────────────────────── */
+.content-page .canonical-copy .page-flow .flow-accordion {
+  grid-column: span 3;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border, #e3e4e0);
+}
+.content-page .canonical-copy .page-flow .flow-accordion.flow-run-start {
+  grid-column: 1 / span 3;
+}
+.content-page .canonical-copy .page-flow .flow-accordion h2 {
+  margin: 0;
+  font: inherit;
+}
+.flow-accordion-trigger {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 22px 8px;
+  border: 0;
+  border-radius: 14px;
+  background: none;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+}
+.flow-accordion-trigger:hover {
+  background: var(--flow-tint);
+}
+.flow-accordion-chevron {
+  color: var(--flow-accent);
+  transition: rotate 0.4s var(--soft);
+}
+.flow-accordion-trigger[aria-expanded='true'] .flow-accordion-chevron {
+  rotate: 180deg;
+}
+.flow-accordion-body {
+  padding: 0 8px 24px 68px;
+}
+.content-page .canonical-copy .page-flow .flow-accordion-body p {
+  margin: 0 0 12px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ── Inline "More" inside a card paragraph, "Show all" under long lists ─── */
+.clamp-toggle,
+.list-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 1px solid color-mix(in srgb, var(--flow-accent, #c12129) 35%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--flow-accent, #c12129) 6%, transparent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+  vertical-align: baseline;
+}
+.list-toggle {
+  margin: 4px 0 16px;
+  padding: 6px 14px;
+}
+.list-toggle svg {
+  transition: rotate 0.35s var(--soft);
+}
+.list-toggle[aria-expanded='true'] svg {
+  rotate: 180deg;
+}
+.clamp-toggle:hover,
+.list-toggle:hover {
+  border-color: var(--flow-accent, #c12129);
+}
+:is(.clamp-toggle, .list-toggle, .doc-more-toggle):focus-visible,
+.flow-accordion-trigger:focus-visible {
+  outline: 2px solid var(--flow-accent, #c12129);
+  outline-offset: 3px;
+}
+/* Folded copy in the dark closing panel stays readable. */
+.content-page .canonical-copy .page-flow .flow-closing :is(.doc-more-toggle, .clamp-toggle) {
+  color: #fff;
+}
+.content-page[data-hero-scene] .showcase-copy > .content-hero .content-hero-more-toggle {
+  color: inherit;
+}
+
+/* ── Soft push: lift on hover, press on click ─────────────────────────── */
+.content-page
+  .canonical-copy
+  .page-flow
+  :is(
+    .flow-grid,
+    .flow-checklist,
+    .flow-chapter-cards > li,
+    .flow-steps .doc-steps li,
+    .flow-window,
+    .flow-accordion-trigger,
+    .doc-more-toggle,
+    .clamp-toggle,
+    .list-toggle,
+    .canonical-ctas .button
+  ) {
+  transition:
+    translate 0.45s var(--soft),
+    scale 0.45s var(--soft),
+    box-shadow 0.45s var(--soft),
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-checklist, .flow-chapter-cards > li, .flow-steps .doc-steps li):hover,
+  .content-page
+    .canonical-copy[data-design]:not([data-design='ruled'], [data-design='editorial'])
+    .page-flow
+    .flow-grid:hover {
+    translate: 0 var(--lift);
+    box-shadow: 0 20px 40px -28px rgb(13 26 43 / 45%);
+  }
+  .content-page .canonical-copy .page-flow .flow-spotlight:hover .flow-window {
+    translate: 0 -5px;
+  }
+  .content-page .canonical-copy .page-flow :is(.clamp-toggle, .list-toggle):hover {
+    translate: 0 -1px;
+  }
+  .content-page .canonical-copy .page-flow .doc-more-toggle:hover {
+    translate: 0 -1px;
+  }
+  /* Checks and card icons give a small, friendly pop when their card is hovered. */
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-grid, .flow-checklist, .flow-accordion):hover
+    :is(.flow-card-icon, .flow-check) {
+    scale: 1.08;
+  }
+}
+.content-page .canonical-copy .page-flow :is(.flow-card-icon, .flow-check) {
+  transition: scale 0.4s var(--soft);
+}
+/* Press: a gentle push down that springs back on release. */
+.content-page
+  .canonical-copy
+  .page-flow
+  :is(.flow-grid, .flow-checklist, .flow-chapter-cards > li, .flow-steps .doc-steps li):active {
+  translate: 0 1px !important; /* settles below the hover lift */
+  scale: 0.992;
+  box-shadow: 0 6px 14px -12px rgb(13 26 43 / 40%);
+  transition-duration: 0.12s;
+}
+.content-page
+  .canonical-copy
+  .page-flow
+  :is(.flow-accordion-trigger, .doc-more-toggle, .clamp-toggle, .list-toggle):active {
+  translate: 0 1px !important;
+  scale: 0.97;
+  transition-duration: 0.1s;
+}
+.content-page .canonical-copy .page-flow .canonical-ctas .button:active {
+  scale: 0.97;
+}
+
+/* ── Gentle rise as sections scroll into view ─────────────────────────── */
+@supports (animation-timeline: view()) {
+  .content-page .canonical-copy .page-flow .flow-section {
+    animation: flow-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+  @keyframes flow-rise {
+    from {
+      opacity: 0.001;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .content-page .canonical-copy .page-flow .flow-accordion,
+  .content-page .canonical-copy .page-flow .flow-accordion.flow-run-start {
+    grid-column: 1 / -1;
+  }
+  .flow-accordion-body {
+    padding-left: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content-page .canonical-copy .page-flow *,
+  .content-page .canonical-copy .page-flow .flow-section {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    translate: none !important;
+    scale: none !important;
+  }
+}

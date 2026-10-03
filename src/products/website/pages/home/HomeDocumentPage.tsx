@@ -14,6 +14,11 @@ import { HomeClosingSlide } from './slides/HomeClosingSlide';
 import { HomePillarsSlide } from './slides/HomePillarsSlide';
 import { HomeHowItWorksSlide } from './slides/HomeHowItWorksSlide';
 import { HomeNarrativeSlide } from './slides/HomeNarrativeSlide';
+import {
+  HomePhilosophySlide,
+  HomePortalExperienceSlide,
+  HomeWhySlide,
+} from './slides/HomeLongFormSlides';
 import './home.css';
 
 /** Preserve the GitHub homepage's original section components and reading order.
@@ -33,6 +38,9 @@ export function HomeDocumentPage({ embedded = false }: DocumentPageProps) {
       <HomeClosingSlide />
       <HomePillarsSlide />
       <HomeHowItWorksSlide />
+      <HomeWhySlide />
+      <HomePortalExperienceSlide />
+      <HomePhilosophySlide />
       <HomeNarrativeSlide />
       <HomeFooter />
     </div>

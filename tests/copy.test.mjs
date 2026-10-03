@@ -19,7 +19,11 @@ test('product-owned pages preserve every original paragraph without clipping or 
     const block = lines.slice(start, end);
     // These page drafts were explicitly superseded by the tagline refinement document.
     // Their complete source fidelity is checked separately below.
-    if (refinement.routes.includes(page.route)) continue;
+    if (
+      refinement.routes.includes(page.route) &&
+      !(refinement.pithyRetained ?? []).includes(page.route)
+    )
+      continue;
     const expected = block
       .slice(block.findIndex((p) => p.text === 'PRIMARY MESSAGE') + 1)
       .filter((p) => p.text && !/^\u2014+$/.test(p.text) && !p.text.startsWith('Publication note:'))
@@ -62,8 +66,18 @@ test('document updates retain every supplied copy line and reference their actua
       .replace(/^(Headline |Subheadline |Section Header |Body Copy )/, '')
       .replace(/^CTA Row /, 'CTA: ')
       .replace(/ • /g, ' | ');
-  for (const page of readProductPages().filter((p) => refinement.routes.includes(p.route))) {
-    for (const paragraph of [page.hero, ...page.sections].flatMap((s) => s.paragraphs)) {
+  const additive = refinement.additiveRoutes ?? [];
+  const documentPages = readProductPages().filter(
+    (p) => refinement.routes.includes(p.route) || additive.includes(p.route),
+  );
+  for (const page of documentPages) {
+    // Pages that keep their original copy are checked only on the sections the document added;
+    // their original paragraphs are covered by the source-fidelity test above.
+    const blocks = additive.includes(page.route)
+      ? page.sections.filter((s) => s.addedFrom === refinement.document)
+      : [page.hero, ...page.sections.filter((s) => s.addedFrom !== 'Pithy')];
+    if (additive.includes(page.route)) assert.ok(blocks.length, `${page.route}: no added copy`);
+    for (const paragraph of blocks.flatMap((s) => s.paragraphs)) {
       if (page.route === '/' && !refinement.lines[paragraph.sourceParagraph]) continue;
       const raw = refinement.lines[paragraph.sourceParagraph];
       assert.ok(raw, `${page.route}: unknown source line ${paragraph.sourceParagraph}`);
@@ -100,7 +114,7 @@ test('document updates retain every supplied copy line and reference their actua
   );
 });
 
-test('homepage retains all seven original sections, then the final corrected flow', () => {
+test('homepage retains all seven original sections, then the final corrected flow with the long-form sections', () => {
   const original = JSON.parse(
     readFileSync('document-study/homepage-original-sections.json', 'utf8'),
   );
@@ -109,7 +123,14 @@ test('homepage retains all seven original sections, then the final corrected flo
   assert.deepEqual(home.sections.slice(0, original.length), original);
   assert.deepEqual(
     home.sections.slice(original.length).map((section) => section.title),
-    ['Value Pillars', 'How It Works', 'Narrative'],
+    [
+      'Value Pillars',
+      'How It Works',
+      'Growth feels complicated. It doesn’t have to.',
+      'A guided environment built around how humans grow.',
+      'Human‑directed intelligence.',
+      'Narrative',
+    ],
   );
 });
 

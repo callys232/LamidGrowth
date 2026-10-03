@@ -1,9 +1,9 @@
 import { CopyLine } from '../../../../../shared/content/CopyLine';
-import content from '../content.json';
+import { homeSection } from './HomeLongFormSlides';
 
 /** Narrative: the closing statement and the homepage's final call to action. */
 export function HomeNarrativeSlide() {
-  const [title, story, refrain, actions] = content.sections[9].paragraphs;
+  const [title, story, refrain, actions] = homeSection('Narrative').paragraphs;
   return (
     <section
       className="home-section home-closing-section"

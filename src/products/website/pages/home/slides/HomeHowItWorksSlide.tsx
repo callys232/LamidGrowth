@@ -1,8 +1,8 @@
-import content from '../content.json';
+import { homeSection } from './HomeLongFormSlides';
 
 /** How It Works: the five mechanics, each a numbered title paragraph followed by its body. */
 export function HomeHowItWorksSlide() {
-  const [title, intro, ...rest] = content.sections[8].paragraphs;
+  const [title, intro, ...rest] = homeSection('How It Works').paragraphs;
   const steps = rest.flatMap((paragraph, index) =>
     index % 2 === 0 ? [{ heading: paragraph, body: rest[index + 1] }] : [],
   );
