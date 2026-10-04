@@ -1,5 +1,5 @@
 import { Compass, Gauge, Layers3, LifeBuoy, Repeat, Sprout } from 'lucide-react';
-import { homeSection } from './HomeLongFormSlides';
+import { homeSection } from './homeSection';
 
 const icons = [Compass, Layers3, Gauge, Repeat, Sprout, LifeBuoy];
 

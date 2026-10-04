@@ -608,3 +608,17 @@
     transform: none;
   }
 }
+
+/* Phones: the bento design's left-ruled bands centre like every other section. */
+@media (max-width: 600px) {
+  .content-page .canonical-copy[data-design='bento'] .page-flow .flow-band {
+    padding-left: 0;
+    padding-top: 28px;
+    border-left: 0;
+    border-top: 4px solid var(--flow-accent);
+    text-align: center;
+  }
+  .content-page .canonical-copy[data-design='bento'] .flow-band .canonical-ctas {
+    justify-content: center;
+  }
+}

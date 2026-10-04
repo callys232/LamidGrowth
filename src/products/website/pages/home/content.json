@@ -390,7 +390,8 @@
           "text": "Just a calm, intelligent space that helps you grow with intention.",
           "sourceParagraph": 13927
         }
-      ]
+      ],
+      "longForm": true
     },
     {
       "label": "PORTAL EXPERIENCE",
@@ -428,7 +429,8 @@
           "text": "Everything works together. Everything reinforces your growth. Everything feels human.",
           "sourceParagraph": 13961
         }
-      ]
+      ],
+      "longForm": true
     },
     {
       "label": "PHILOSOPHY",
@@ -474,7 +476,8 @@
           "text": "This is growth designed for real people, real teams, and real organizations.",
           "sourceParagraph": 13983
         }
-      ]
+      ],
+      "longForm": true
     },
     {
       "label": "Narrative",

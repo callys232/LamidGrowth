@@ -2940,94 +2940,113 @@
   gap: 10px 22px;
 }
 
-/* Long-form sections: Why LAMID ONE, Portal Experience, Philosophy. */
-.lamid-home .home-longform-split {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 96px);
-  align-items: start;
-}
-.lamid-home .home-longform-section p {
-  margin: 0 0 16px;
-  font-size: 17px;
-  line-height: 1.75;
-  color: var(--home-muted);
-}
-.lamid-home .home-longform-section .home-longform-lead {
-  font-size: 19px;
-  color: var(--home-ink);
-}
-.lamid-home .home-longform-section .home-longform-label {
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--home-ink);
-}
-.lamid-home .home-longform-section .home-longform-closing {
-  color: var(--home-ink);
-  font-weight: 500;
-}
-.lamid-home .home-longform-checks,
-.lamid-home .home-longform-principles {
-  margin: 8px 0 28px;
+/* Collapsed long-form sections (HomeLongFormSlide) use the shared page-flow rows. */
+.lamid-home .home-longform .page-flow {
+  display: block;
   padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--home-line);
 }
-.lamid-home .home-longform-checks li,
-.lamid-home .home-longform-principles li {
-  display: flex;
-  background: none;
-  gap: 14px;
-  align-items: baseline;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--home-line);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--home-ink);
+.lamid-home .home-longform .flow-longform > h2 {
+  width: 100%;
 }
-.lamid-home .home-longform-checks svg {
-  flex: 0 0 auto;
-  color: var(--home-red);
-  transform: translateY(3px);
+
+/* The expansion path (Personal → Institution) stays a horizontal row on small screens: the
+   stages scroll sideways in one line, with the path tracing across as on desktop. */
+@media (max-width: 800px) {
+  .lamid-home .home-expansion-path {
+    grid-template-columns: repeat(5, minmax(128px, 1fr));
+    margin: 32px 0;
+    padding-top: 6px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .lamid-home .home-expansion-path::-webkit-scrollbar {
+    display: none;
+  }
+  .lamid-home .home-expansion-path li {
+    padding: 22px 8px 0;
+    border-top: 1px solid light-dark(#d8dfdb, #536474);
+    border-left: 0;
+    scroll-snap-align: start;
+  }
+  .lamid-home .home-expansion-path li:last-child {
+    border-top-color: transparent;
+  }
+  .lamid-home .home-expansion-path li::before {
+    top: -5px;
+    left: 0;
+  }
+  .lamid-home .home-expansion-path li:not(:last-child)::after {
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .lamid-home .home-expansion-path.is-visible li::after {
+    transform: scaleX(1);
+  }
+  .lamid-home .home-expansion-path strong {
+    font-size: 22px;
+  }
 }
-.lamid-home .home-longform-principles strong {
-  font-weight: 600;
-}
-.lamid-home .home-longform-principles span:not(.sr-only) {
-  color: var(--home-muted);
-  font-style: italic;
-}
-.lamid-home .home-longform-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  margin: 16px 0 32px;
-}
-.lamid-home .home-longform-cards article {
-  padding: 28px;
-  border: 1px solid var(--home-line);
-  border-radius: 16px;
-  background: var(--home-paper);
-}
-.lamid-home .home-longform-cards svg {
-  color: var(--home-red);
-}
-.lamid-home .home-longform-cards h3 {
-  margin: 16px 0 8px;
-  font-size: 20px;
-  font-weight: 600;
-}
-.lamid-home .home-longform-cards p {
-  margin: 0;
-  font-size: 16px;
-}
-@media (max-width: 900px) {
-  .lamid-home .home-longform-split,
-  .lamid-home .home-longform-cards {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
+
+/* Phones: headings, copy, cards and buttons centre. Lists keep left-aligned lines inside a
+   centred block; the expansion path centres each stage under its marker. */
+@media (max-width: 600px) {
+  .lamid-home .home-section,
+  .lamid-home .home-section-heading,
+  .lamid-home .homepage-hero-copy,
+  .lamid-home .home-premium-hero {
+    text-align: center;
+  }
+  .lamid-home :is(.home-eyebrow, .homepage-hero-eyebrow) {
+    justify-content: center;
+    margin-inline: auto;
+  }
+  .lamid-home .canonical-ctas,
+  .lamid-home .homepage-hero-actions .canonical-ctas {
+    justify-content: center;
+  }
+  .lamid-home .home-section :is(article, li, .home-objective-card) {
+    text-align: center;
+  }
+  .lamid-home .home-section :is(ul, ol):not(.home-expansion-path) li {
+    justify-content: center;
+  }
+  .lamid-home .home-section :is(svg, .home-red-dot) {
+    margin-inline: auto;
+  }
+  .lamid-home .home-expansion-path li {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+  }
+  .lamid-home .home-expansion-path span {
+    margin: 0;
+  }
+  .lamid-home .home-expansion-path li::before {
+    left: calc(50% - 4.5px);
+  }
+  .lamid-home .home-section details > summary {
+    justify-content: center;
+    text-align: center;
+  }
+  /* Headings and their labels centre everywhere on the page, including the example cards. */
+  .lamid-home :is(main, .home-section, .home-premium-hero, .home-permissions) :is(h1, h2, h3),
+  .lamid-home
+    :is(.home-eyebrow, .home-section-heading > p, .home-continuation > .home-container > p) {
+    text-align: center;
+  }
+  .lamid-home .home-section-nav .home-container,
+  .lamid-home .home-context-selector {
+    justify-content: center;
+    text-align: center;
+  }
+  .lamid-home :is(.home-premium-hero, .home-permissions) header,
+  .lamid-home .home-permissions-heading {
+    justify-content: center;
+    text-align: center;
   }
 }

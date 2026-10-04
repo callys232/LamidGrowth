@@ -114,7 +114,7 @@ test('document updates retain every supplied copy line and reference their actua
   );
 });
 
-test('homepage retains all seven original sections, then the final corrected flow with the long-form sections', () => {
+test('homepage retains all seven original sections, then the final corrected flow (Pithy copy and taglines, with the long-form sections collapsed)', () => {
   const original = JSON.parse(
     readFileSync('document-study/homepage-original-sections.json', 'utf8'),
   );

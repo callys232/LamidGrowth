@@ -220,3 +220,220 @@
     scale: none !important;
   }
 }
+
+/* ── Long-form copy, collapsed behind its title ───────────────────────── */
+.content-page .canonical-copy .page-flow .flow-longform {
+  display: block;
+  padding: 0;
+  border-top: 1px solid var(--border, #e3e4e0);
+}
+.content-page .canonical-copy .page-flow .flow-longform + .flow-longform {
+  border-top-color: color-mix(in srgb, var(--border, #e3e4e0) 70%, transparent);
+}
+.content-page .canonical-copy .page-flow :not(.flow-longform) + .flow-longform {
+  margin-top: clamp(24px, 3vw, 40px);
+}
+.content-page .canonical-copy .page-flow .flow-longform > h2 {
+  max-width: none;
+  margin: 0;
+  font: inherit;
+}
+.flow-longform-trigger {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 32px 0 12px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+}
+.flow-longform-title {
+  flex: 1 1 420px;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(28px, 2.8vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.flow-longform-cue {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1px solid var(--ink, #0d1a2b);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    translate 0.45s var(--soft),
+    scale 0.45s var(--soft);
+}
+.flow-longform-cue svg {
+  transition: rotate 0.4s var(--soft);
+}
+.flow-longform-trigger[aria-expanded='true'] .flow-longform-cue svg {
+  rotate: 180deg;
+}
+.flow-longform-trigger:hover .flow-longform-cue,
+.flow-longform-trigger[aria-expanded='true'] .flow-longform-cue {
+  background: var(--midnight, #0d1a2b);
+  color: #fff;
+}
+.flow-longform-trigger:hover .flow-longform-cue {
+  translate: 0 -1px;
+}
+.flow-longform-trigger:active .flow-longform-cue {
+  translate: 0 1px;
+  scale: 0.97;
+}
+.flow-longform-trigger:focus-visible {
+  outline: 2px solid var(--flow-accent, #c12129);
+  outline-offset: 4px;
+}
+.content-page .canonical-copy .page-flow .flow-longform-teaser {
+  display: -webkit-box;
+  max-width: 72ch;
+  margin: 0 0 32px;
+  overflow: hidden;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-secondary, #4a5560);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+/* Opened: the section's own layout, without its heading column or entrance animation. */
+.content-page .canonical-copy .page-flow .flow-longform .flow-section {
+  padding: 8px 0 40px;
+  animation: none;
+}
+.content-page .canonical-copy .page-flow .flow-longform :is(.flow-statement, .flow-story) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.content-page .canonical-copy .page-flow .flow-longform .flow-letter {
+  justify-items: start;
+}
+.flow-longform :is(.doc-split-heading, .doc-story-heading):not(:has(h2)),
+.flow-longform .doc-eyebrow {
+  display: none;
+}
+.flow-longform-actions {
+  padding-bottom: 32px;
+}
+.flow-longform-actions .canonical-ctas {
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .flow-longform-cue {
+    padding: 8px 14px;
+  }
+}
+
+/* ── Phones: centred text and cards ──────────────────────────────────────
+   Headings, copy, icons, buttons and cards centre on small screens. Lists stay left-aligned
+   inside a centred block so longer items remain easy to read. Text blocks keep their full width
+   and centre with text-align — never auto margins or justify-items, which shrink a block to
+   fit and, since page copy may wrap anywhere, collapse it to nothing. */
+@media (max-width: 600px) {
+  .content-page .canonical-copy.showcase-copy > .content-hero,
+  .content-page .canonical-copy .page-flow .flow-section,
+  .content-page .canonical-copy .page-flow .flow-section > div,
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.doc-split-heading, .doc-story-heading, .flow-steps-head),
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-chapter-cards > li, .doc-steps li, .flow-window-body) {
+    text-align: center;
+  }
+  .content-page .canonical-copy.showcase-copy > .content-hero > div,
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-spotlight-copy, .flow-letter-body, .flow-steps-after) {
+    text-align: center;
+  }
+  .content-page .canonical-copy :is(.content-hero, .page-flow) .canonical-ctas {
+    justify-content: center;
+  }
+  .content-page .canonical-copy .page-flow :is(.flow-grid, .flow-checklist) {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: center;
+  }
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-card-icon, .flow-window-icon, .doc-step-number) {
+    justify-self: center;
+    margin-inline: auto;
+  }
+  .content-page .canonical-copy .page-flow :is(.doc-list, .flow-checks) {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    text-align: left;
+  }
+  .content-page .canonical-copy .page-flow .flow-tags {
+    justify-content: center;
+  }
+  .content-page .canonical-copy :is(.content-hero, .page-flow) .doc-more-toggle,
+  .content-page .canonical-copy .page-flow .list-toggle,
+  .content-page .canonical-copy.showcase-copy > .content-hero .content-hero-more-toggle {
+    display: flex;
+    width: fit-content;
+    margin-inline: auto;
+  }
+  .content-page .canonical-copy .page-flow .doc-eyebrow {
+    justify-content: center;
+  }
+  .content-page .canonical-copy .page-flow .doc-label {
+    text-align: center;
+  }
+  /* Numbered rows (editorial design) stack their number above the text. */
+  .content-page .canonical-copy[data-design='editorial'] .page-flow .flow-grid,
+  .content-page .canonical-copy[data-design='editorial'] .page-flow .flow-grid.flow-cols-2,
+  .content-page .canonical-copy[data-design='editorial'] .page-flow .flow-grid.flow-run-start {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  /* Dropdown rows and collapsed long-form sections. */
+  .flow-accordion-trigger {
+    grid-template-columns: minmax(0, 1fr);
+    text-align: center;
+  }
+  .flow-accordion-body {
+    padding-inline: 8px;
+    text-align: center;
+  }
+  .flow-longform-trigger {
+    flex-direction: column;
+    text-align: center;
+  }
+  .flow-longform-title {
+    flex: 0 1 auto;
+  }
+  .content-page .canonical-copy .page-flow .flow-longform-teaser {
+    text-align: center;
+  }
+  .flow-longform-actions .canonical-ctas {
+    justify-content: center;
+  }
+  .content-page .canonical-copy .page-flow :is(.flow-closing, .flow-band) {
+    text-align: center;
+  }
+  .content-page .canonical-copy .page-flow .flow-closing-media {
+    justify-self: center;
+    margin-inline: auto;
+  }
+}

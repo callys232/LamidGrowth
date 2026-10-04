@@ -1,5 +1,5 @@
 import { CopyLine } from '../../../../../shared/content/CopyLine';
-import { homeSection } from './HomeLongFormSlides';
+import { homeSection } from './homeSection';
 
 /** Narrative: the closing statement and the homepage's final call to action. */
 export function HomeNarrativeSlide() {

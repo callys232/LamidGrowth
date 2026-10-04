@@ -1,6 +1,6 @@
-# Document copy awaiting destination confirmation
+# Document copy not published
 
-This draft is recorded in full but not published. The Founder Keynote is a stage script; the Founder’s Letter, long-form Founder’s Message, Enterprise Overview and Social Impact Overview are applied to /about/leadership, /about/story, /who-its-for/enterprises and /who-its-for/institutions.
+These drafts are recorded in full but not published. The long-form homepage hero, audience and CTA sections are not used: the homepage keeps its approved hero, /who-its-for carries the audience copy and the Narrative closes the page. (Its Why LAMID ONE, Portal Experience and Philosophy sections are published as collapsed long-form sections.) The Founder Keynote is a stage script; the Founder’s Letter, long-form Founder’s Message, Enterprise Overview and Social Impact Overview are applied to /about/leadership, /about/story, /who-its-for/enterprises and /who-its-for/institutions.
 
 | Draft | Document line | Supplied copy |
 | --- | --- | --- |
@@ -56,3 +56,18 @@ This draft is recorded in full but not published. The Founder Keynote is a stage
 | THE FOUNDER KEYNOTE | 7571 | One place. One environment. One guided experience. |
 | THE FOUNDER KEYNOTE | 7573 | Thank you. |
 | THE FOUNDER KEYNOTE | 7575 | — Richard |
+| HOMEPAGE — SECTION 1: HERO (Long‑Form Copy) | 13901 | Headline A single intelligent environment for clarity, capability, and execution. |
+| HOMEPAGE — SECTION 1: HERO (Long‑Form Copy) | 13903 | Subheadline LAMID ONE is where individuals, teams, and organizations come to grow with calm, human‑directed intelligence. Not a tool. Not a platform. A guided environment that helps you see clearly, strengthen capability, and follow through with confidence. |
+| HOMEPAGE — SECTION 1: HERO (Long‑Form Copy) | 13905 | Body Copy Growth shouldn’t feel chaotic. It shouldn’t feel overwhelming. And it shouldn’t depend on guesswork. LAMID ONE brings structure, clarity, and guided progression to the way people learn, work, and lead — creating a steady path forward no matter where you begin. |
+| HOMEPAGE — SECTION 1: HERO (Long‑Form Copy) | 13907 | This is the new category: the intelligent portal. A calm, unified space that adapts to your goals, your pace, and your reality. |
+| HOMEPAGE — SECTION 1: HERO (Long‑Form Copy) | 13909 | CTA Row Start Free • Limited Access • Book a Demo |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13931 | Section Header Designed for every kind of growth. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13933 | Body Copy LAMID ONE serves people and organizations who want to grow with clarity and confidence — without complexity. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13935 | Individuals For people seeking direction, capability, and follow‑through in their personal or professional lives. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13937 | Founders For leaders building something new and needing a structured environment to think, plan, and execute. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13939 | SMEs & Teams For organizations that want alignment, capability development, and consistent execution across every role. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13941 | Enterprises For large organizations seeking clarity, capability, and execution at scale — without losing humanity. |
+| HOMEPAGE — SECTION 3: WHO IT’S FOR (Long‑Form Copy) | 13943 | Social Organizations For mission‑driven groups that need structure and guided progression to create lasting impact. |
+| HOMEPAGE — SECTION 6: CTA (Long‑Form Copy) | 13987 | Section Header Begin inside the intelligent portal. |
+| HOMEPAGE — SECTION 6: CTA (Long‑Form Copy) | 13989 | Body Copy Whether you’re starting alone, with a team, or across an entire organization, LAMID ONE gives you a guided environment to grow with clarity, capability, and execution. |
+| HOMEPAGE — SECTION 6: CTA (Long‑Form Copy) | 13991 | CTA Row Start Free • Limited Access • Book a Demo |

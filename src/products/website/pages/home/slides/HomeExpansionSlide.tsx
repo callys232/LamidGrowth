@@ -24,6 +24,7 @@ export function HomeExpansionSlide() {
           className={`home-expansion-path${visible ? ' is-visible' : ''}`}
           data-source-paragraph={copy.paragraphs[1].sourceParagraph}
           aria-label="Expand with your context"
+          data-scroll-feedback="off"
         >
           {copy.paragraphs[1].text.split(' -> ').map((stage, index) => (
             <li key={stage}>

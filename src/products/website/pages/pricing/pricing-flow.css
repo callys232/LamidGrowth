@@ -1,0 +1,457 @@
+/* /pricing — a HubSpot-style pricing flow (PricingFlow.tsx): light centred hero over a soft
+   shape, a sticky plan bar, tier cards with growing dot markers, live price cards, the bundle
+   calculator, a filterable billables table and the closing band. */
+
+.content-page .canonical-copy:has(> .pricing-hero) {
+  --pricing-accent: var(--signature-red, #c12129);
+  --pricing-tint: color-mix(in srgb, var(--pricing-accent) 5%, var(--paper, #fbfaf7));
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.content-page .canonical-copy > .pricing-hero {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: clamp(72px, 9vw, 120px) 16px clamp(56px, 6vw, 88px);
+  text-align: center;
+  isolation: isolate;
+  clip-path: inset(0 -100vmax);
+}
+.pricing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -2;
+  background: var(--surface-alt, #f5f3ef);
+}
+/* The soft organic shape behind the hero, like HubSpot's sage blob. */
+.pricing-hero::after {
+  content: '';
+  position: absolute;
+  top: -18%;
+  right: calc(50% - 50vw - 6vw);
+  z-index: -1;
+  width: min(40vw, 540px);
+  aspect-ratio: 1;
+  border-radius: 34% 66% 58% 42% / 44% 38% 62% 56%;
+  background: color-mix(in srgb, var(--pricing-accent) 14%, transparent);
+  transform: rotate(-14deg);
+}
+.pricing-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pricing-accent);
+}
+.content-page .canonical-copy > .pricing-hero h1 {
+  max-width: 16ch;
+  margin: 0;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(44px, 6vw, 80px);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy > .pricing-hero p {
+  max-width: 620px;
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--text-secondary, #4a5560);
+}
+.pricing-hero .canonical-ctas {
+  justify-content: center;
+  margin: 10px 0 0;
+}
+.pricing-hero .canonical-ctas .button {
+  min-height: 52px;
+  padding-inline: 28px;
+  border: 1px solid var(--pricing-accent);
+  background: var(--pricing-accent);
+  color: #fff;
+  font-size: 16px;
+}
+.pricing-hero .canonical-ctas .button + .button {
+  background: transparent;
+  color: var(--pricing-accent);
+}
+
+/* ── Sticky plan bar ───────────────────────────────────────────────────── */
+.pricing-nav {
+  position: sticky;
+  top: 0; /* the site header scrolls away, so the bar pins to the top */
+  z-index: 20;
+  margin-inline: calc(50% - 50vw);
+  border-bottom: 1px solid var(--border, #e3e4e0);
+  background: color-mix(in srgb, var(--paper, #fbfaf7) 92%, transparent);
+  backdrop-filter: blur(10px);
+}
+.pricing-nav > div {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 4vw, 56px);
+  padding-inline: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.pricing-nav a {
+  position: relative;
+  flex: 0 0 auto;
+  padding: 18px 4px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary, #4a5560);
+  text-decoration: none;
+}
+.pricing-nav a::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--pricing-accent);
+  scale: 0 1;
+  transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pricing-nav a:hover,
+.pricing-nav a[aria-current] {
+  color: var(--ink, #0d1a2b);
+}
+.pricing-nav a[aria-current]::after {
+  scale: 1 1;
+}
+
+/* ── Blocks ────────────────────────────────────────────────────────────── */
+.content-page .canonical-copy .page-flow > .pricing-block {
+  padding: clamp(56px, 7vw, 96px) 0 0;
+  scroll-margin-top: 72px;
+}
+.pricing-block-head {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+.content-page .canonical-copy .pricing-block-head h2 {
+  margin: 0;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(34px, 4vw, 54px);
+  font-weight: 400;
+  line-height: 1.08;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy .pricing-block-head p {
+  max-width: 660px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-secondary, #4a5560);
+}
+
+/* ── Tier cards ────────────────────────────────────────────────────────── */
+.pricing-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.pricing-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px 30px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 22px;
+  background: var(--surface, #fff);
+}
+.pricing-tier-dots {
+  display: flex;
+  height: 24px;
+}
+.pricing-tier-dots span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--pricing-accent);
+  box-shadow: 0 0 0 3px var(--surface, #fff);
+}
+.pricing-tier-dots span + span {
+  margin-left: -8px;
+}
+.content-page .canonical-copy .pricing-tier h2 {
+  margin: 0;
+  font-family: var(--font-ui, inherit);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy .pricing-tier p {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-secondary, #4a5560);
+}
+.pricing-tier .button,
+.pricing-card .button {
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  text-align: center;
+}
+
+/* ── Live price cards ──────────────────────────────────────────────────── */
+.pricing-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 30px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 22px;
+  background: var(--surface, #fff);
+}
+.pricing-card.is-bundle {
+  border-top: 4px solid var(--pricing-accent);
+}
+.content-page .canonical-copy .pricing-card h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy .pricing-card > p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary, #4a5560);
+}
+.pricing-card-price {
+  margin: 6px 0 4px;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: 48px;
+  line-height: 1;
+  color: var(--ink, #0d1a2b);
+}
+.pricing-card-price span {
+  margin-left: 4px;
+  font-family: var(--font-ui, inherit);
+  font-size: 15px;
+  color: var(--text-secondary, #4a5560);
+}
+.pricing-card-label {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink, #0d1a2b);
+}
+.pricing-card-features {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pricing-card-features li {
+  position: relative;
+  background: none;
+  padding-left: 28px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink, #0d1a2b);
+}
+.pricing-card-features li::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 4px;
+  width: 12px;
+  height: 7px;
+  border-left: 2px solid var(--ink, #0d1a2b);
+  border-bottom: 2px solid var(--ink, #0d1a2b);
+  rotate: -45deg;
+}
+
+/* ── Bundle calculator (inherits bundle-builder.css) ───────────────────── */
+#bundle .pricing-bundle-builder {
+  padding: clamp(24px, 4vw, 44px);
+  border-radius: 26px;
+  background: var(--pricing-tint);
+}
+#bundle .pricing-bundle-intro {
+  max-width: 640px;
+  margin: 0 auto 28px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* ── Compare: filters + table ──────────────────────────────────────────── */
+.pricing-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.pricing-filters button {
+  padding: 10px 18px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+}
+.pricing-filters button[aria-pressed='true'] {
+  border-color: var(--midnight, #0d1a2b);
+  background: var(--midnight, #0d1a2b);
+  color: #fff;
+}
+.pricing-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 22px;
+  background: var(--surface, #fff);
+}
+.pricing-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+}
+.pricing-table th {
+  padding: 18px 24px;
+  background: var(--surface-alt, #f5f3ef);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--ink, #0d1a2b);
+}
+.pricing-table th:last-child,
+.pricing-table td:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+.pricing-table td {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border, #e3e4e0);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-secondary, #4a5560);
+}
+.pricing-table td:first-child {
+  font-weight: 600;
+  color: var(--ink, #0d1a2b);
+}
+.pricing-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+.pricing-table tbody tr:hover {
+  background: var(--pricing-tint);
+}
+.pricing-show-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px auto 0;
+  padding: 12px 22px;
+  border: 1px solid var(--ink, #0d1a2b);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink, #0d1a2b);
+  cursor: pointer;
+}
+.pricing-show-all svg {
+  transition: rotate 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pricing-show-all[aria-expanded='true'] svg {
+  rotate: 180deg;
+}
+
+/* ── Soft push: lift on hover, press on click ─────────────────────────── */
+:is(.pricing-tier, .pricing-card, .pricing-filters button, .pricing-show-all) {
+  transition:
+    translate 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.pricing-tier, .pricing-card):hover {
+    translate: 0 -4px;
+    box-shadow: 0 24px 48px -30px rgb(13 26 43 / 45%);
+  }
+  :is(.pricing-filters button, .pricing-show-all):hover {
+    translate: 0 -1px;
+    border-color: var(--ink, #0d1a2b);
+  }
+}
+:is(.pricing-tier, .pricing-card):active {
+  translate: 0 1px !important;
+  scale: 0.994;
+  transition-duration: 0.12s;
+}
+:is(.pricing-filters button, .pricing-show-all):active {
+  translate: 0 1px !important;
+  scale: 0.97;
+  transition-duration: 0.1s;
+}
+
+@media (max-width: 900px) {
+  .pricing-tiers {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pricing-nav > div {
+    justify-content: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .pricing-tier,
+    .pricing-card,
+    .pricing-filters button,
+    .pricing-show-all,
+    .pricing-nav a::after
+  ) {
+    transition: none;
+  }
+  :is(.pricing-tier, .pricing-card):is(:hover, :active) {
+    translate: none !important;
+    scale: none;
+  }
+}
+
+/* Phones: centred tier and price cards. */
+@media (max-width: 600px) {
+  .pricing-tier,
+  .pricing-card {
+    align-items: center;
+    text-align: center;
+  }
+  .pricing-tier-dots {
+    justify-content: center;
+  }
+  .pricing-card-features {
+    width: fit-content;
+    margin-inline: auto;
+    text-align: left;
+  }
+}

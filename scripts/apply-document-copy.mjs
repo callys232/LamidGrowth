@@ -40,7 +40,12 @@ for (const [sourceName, route] of mappings) {
   page.hero = { title: page.title, paragraphs: hero.paragraphs };
   page.sections = sourceBlocks
     .filter((b) => b !== hero)
-    .map((b) => ({ label: b.label, title: b.paragraphs[0].text, paragraphs: b.paragraphs }));
+    .map((b) => ({
+      label: b.label,
+      title: b.paragraphs[0].text,
+      paragraphs: b.paragraphs,
+      longForm: true,
+    }));
   fs.writeFileSync(entry.content, JSON.stringify(page, null, 2) + '\n');
   for (const b of sourceBlocks)
     for (const p of b.paragraphs) applied.push([route, b.label, p.sourceParagraph, p.text]);
@@ -94,13 +99,15 @@ const actions = {
   text: `CTA: ${primary.text} | ${secondary.text}`,
   sourceParagraph: primary.sourceParagraph,
 };
-// The long-form homepage's Why LAMID ONE, Portal Experience and Philosophy sections join the
-// approved flow ahead of the closing Narrative. Its hero, audience and CTA sections are not used:
-// the approved hero stays, /who-its-for carries the audience copy, and Narrative closes the page.
+// Long-form copy is published collapsed (`longForm: true` renders as an expandable section).
+// The homepage's Why LAMID ONE, Portal Experience and Philosophy sections sit ahead of the closing
+// Narrative; its long-form hero, audience and CTA sections are not used (the approved hero stays,
+// /who-its-for carries the audience copy and Narrative closes the page) and are recorded in
+// report-pending-document-copy.mjs.
 const longFormHome = [2, 4, 5].map((number) => {
   const b = blocks.find((x) => x.page === 'HOMEPAGE' && x.number === number);
   if (!b?.paragraphs.length) throw new Error(`Incomplete copy: HOMEPAGE ${number}`);
-  return { label: b.label, title: b.paragraphs[0].text, paragraphs: b.paragraphs };
+  return { label: b.label, title: b.paragraphs[0].text, paragraphs: b.paragraphs, longForm: true };
 });
 const homeUpdates = [
   section('Value Pillars', pillars),
@@ -164,7 +171,7 @@ function append(route, sections) {
   const page = JSON.parse(fs.readFileSync(entry.content, 'utf8'));
   page.sections = [
     ...page.sections.filter((s) => s.addedFrom !== SOURCE),
-    ...sections.map((s) => ({ ...s, addedFrom: SOURCE })),
+    ...sections.map((s) => ({ ...s, addedFrom: SOURCE, longForm: true })),
   ];
   fs.writeFileSync(entry.content, JSON.stringify(page, null, 2) + '\n');
   additiveRoutes.push(route);

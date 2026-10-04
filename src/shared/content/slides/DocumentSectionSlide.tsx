@@ -10,7 +10,7 @@ import {
   Users,
   Workflow,
 } from 'lucide-react';
-import { useId, useState, type ReactNode } from 'react';
+import { createContext, useContext, useId, useState, type ReactNode } from 'react';
 import { CopyLine } from '../CopyLine';
 import { chapterStarts, isAction, isBullet, isStep, useSectionPlan } from '../pagePlan';
 import type { CopySection, DocumentPageProps } from '../types';
@@ -145,10 +145,15 @@ function renderBlock(block: Block, key: number, clamp: unknown = true): ReactNod
 const length = (blocks: Block[]) =>
   blocks.reduce((n, b) => n + b.lines.reduce((m, l) => m + l.text.length, 0), 0);
 
+/** True inside an opened long-form section: its copy is already the reader's choice to expand,
+ * so nothing inside folds again. */
+const Expanded = createContext(false);
+
 /** Hidden copy behind a "Read more" toggle that unfolds softly in place. */
 function Fold({ children, label = 'Read more' }: { children: ReactNode; label?: string }) {
   const [open, setOpen] = useState(false);
   const panel = useId();
+  if (useContext(Expanded)) return <>{children}</>;
   return (
     <>
       <div id={panel} className={`doc-more${open ? ' is-open' : ''}`} inert={!open}>
@@ -172,9 +177,10 @@ function Fold({ children, label = 'Read more' }: { children: ReactNode; label?: 
 function ClampedLine({ line, limit = 150 }: { line: Line; limit?: number }) {
   const [open, setOpen] = useState(false);
   const rest = useId();
+  const expanded = useContext(Expanded);
   const text = line.text;
   const cut = text.search(/[.!?]\s/) + 1;
-  if (isAction(text) || text.length <= limit || cut <= 0 || text.length - cut < 40)
+  if (expanded || isAction(text) || text.length <= limit || cut <= 0 || text.length - cut < 40)
     return <CopyLine text={text} paragraph={line.sourceParagraph} />;
   return (
     <p data-source-paragraph={line.sourceParagraph}>
@@ -207,7 +213,7 @@ function ListBlock({
 }) {
   const [open, setOpen] = useState(false);
   const list = useId();
-  const long = lines.length > 5;
+  const long = lines.length > 5 && !useContext(Expanded);
   const shown = long && !open ? lines.slice(0, 4) : lines;
   return (
     <>
@@ -228,6 +234,52 @@ function ListBlock({
           <ChevronDown size={15} aria-hidden="true" />
         </button>
       )}
+    </>
+  );
+}
+
+/** Long-form copy, collapsed: the title and a two-line teaser, with the full section (in its
+ * usual layout) opening beneath on request. */
+function LongFormSection({
+  heading,
+  title,
+  teaser,
+  children,
+}: {
+  heading: Line;
+  title: string;
+  teaser?: string;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const panel = useId();
+  return (
+    <>
+      <h2 data-source-paragraph={heading.sourceParagraph}>
+        <button
+          type="button"
+          className="flow-longform-trigger"
+          aria-expanded={open}
+          aria-controls={panel}
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="flow-longform-title">{title}</span>
+          <span className="flow-longform-cue">
+            {open ? 'Close' : 'Read the full section'}
+            <ChevronDown size={18} aria-hidden="true" />
+          </span>
+        </button>
+      </h2>
+      {teaser && !open && (
+        <p className="flow-longform-teaser" aria-hidden="true">
+          {teaser}
+        </p>
+      )}
+      <div id={panel} className={`doc-more${open ? ' is-open' : ''}`} inert={!open}>
+        <div>
+          <Expanded.Provider value={true}>{children}</Expanded.Provider>
+        </div>
+      </div>
     </>
   );
 }
@@ -283,7 +335,7 @@ function StoryBody({ blocks }: { blocks: Block[] }) {
   const shown = blocks.slice(0, split);
   const hidden = blocks.slice(split).filter((b) => b.kind !== 'actions');
   const actions = blocks.slice(split).filter((b) => b.kind === 'actions');
-  const fold = length(hidden) > 80;
+  const fold = length(hidden) > 80 && !useContext(Expanded);
   return (
     <>
       {fold ? shown.map((b, i) => renderBlock(b, i, false)) : shown.map(renderBlock)}
@@ -324,11 +376,16 @@ export function DocumentSectionSlide({
   }
 
   const { layout } = plan;
-  const blocks = toBlocks(body);
+  const longForm = Boolean(section.longForm);
+  const actionLines = body.filter((p) => isAction(p.text));
+  const blocks = toBlocks(longForm ? body.filter((p) => !isAction(p.text)) : body);
   const copy = blocks.filter((b) => b.kind !== 'actions');
   const actions = blocks.filter((b) => b.kind === 'actions');
   const Icon = iconFor(section.title);
-  const title = <h2 data-source-paragraph={heading.sourceParagraph}>{section.title}</h2>;
+  // A collapsed long-form section shows its title on the toggle, so the body omits it.
+  const title = longForm ? null : (
+    <h2 data-source-paragraph={heading.sourceParagraph}>{section.title}</h2>
+  );
   const eyebrow = <span className="doc-eyebrow">{String(index + 1).padStart(2, '0')}</span>;
   const className = [
     'flow-section',
@@ -577,6 +634,24 @@ export function DocumentSectionSlide({
           </div>
         </>
       );
+  }
+
+  if (longForm) {
+    const teaser = body.find((p) => !isAction(p.text) && !isBullet(p.text) && !isStep(p.text));
+    return (
+      <article className="flow-section flow-longform" id={id} data-section-anchor="">
+        <LongFormSection heading={heading} title={section.title} teaser={teaser?.text}>
+          <div className={className}>{inner}</div>
+        </LongFormSection>
+        {actionLines.length > 0 && (
+          <div className="flow-longform-actions">
+            {actionLines.map((p) => (
+              <CopyLine key={p.sourceParagraph} text={p.text} paragraph={p.sourceParagraph} />
+            ))}
+          </div>
+        )}
+      </article>
+    );
   }
 
   return (

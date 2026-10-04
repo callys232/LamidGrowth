@@ -30,6 +30,15 @@ function slowScrollTo(event: MouseEvent<HTMLAnchorElement>) {
 }
 
 /** Follows the video hero: the Companion example, operating cycle, human-control card and page nav. */
+/** Shortcuts to slides that are on the homepage (the companion and intelligence slides moved to
+ * /about), looked up by label so they follow the copy. */
+const discover = [
+  'The Right Depth for Your Context',
+  'Work Toward the Outcome',
+  'Value Pillars',
+  'How It Works',
+].map((label) => content.sections.find((s) => s.label === label)!);
+
 export function HomeHeroSlide() {
   const [continuity, control] = content.continuity.paragraphs;
   const [continuityIntro, ...continuityBody] = continuity.text.split(': ');
@@ -95,7 +104,7 @@ export function HomeHeroSlide() {
       <nav className="home-section-nav" aria-label="Explore this page">
         <div className="home-container">
           <span>Discover LAMID ONE</span>
-          {content.sections.slice(0, 4).map((section) => (
+          {discover.map((section) => (
             <a
               key={section.label}
               href={`#section-${section.paragraphs[0].sourceParagraph}`}

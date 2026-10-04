@@ -18,7 +18,7 @@ import './engine.css';
  * generic document template, same as every other bespoke page this session. `extraSection` is an
  * opt-in live component (not canonical copy) a specific page can pass in — rendered between the
  * tools grid and the closing band, omitted entirely in embedded mode, same pattern as
- * BillablesSection on the pricing page. */
+ * the live price list on the pricing page (PricingFlow.tsx). */
 export function EngineDocumentPage({
   content,
   icons,

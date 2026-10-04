@@ -17,7 +17,7 @@ const HOME_ENGINES = [
  * only educate; running a diagnostic is a signed-in workspace action (POST /api/engines/:code/run
  * requires a session — see src/app/engines.mjs), never available here. Every name/count/purpose
  * below is read live from the real registry (public GET /api/engines), not written or edited as
- * marketing copy — same "use the real thing, don't restate it" rule as BillablesSection on the
+ * marketing copy — same "use the real thing, don't restate it" rule as the live price list on the
  * pricing page. */
 export function IntelligenceCatalogSection() {
   const { catalog, error } = useEngineCatalog('/engines/catalog');

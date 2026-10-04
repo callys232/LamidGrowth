@@ -56,9 +56,7 @@ details[open] > summary {
   }
   /* Navigation owns its indicators; operating-cycle cards use surface feedback. */
   :where(main, .modal)
-    a:not(.button):not(.brand):not(
-      :where(.section-index a, .home-section-nav a, .home-cycle a)
-    ):hover {
+    a:not(.button):not(.brand):not(:where(.home-section-nav a, .home-cycle a)):hover {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }

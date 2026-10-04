@@ -121,12 +121,6 @@ select {
 .content-page[data-page-theme] .showcase-copy .dark-section .section-heading .editorial-number {
   color: #fff;
 }
-.section-index a,
-.section-index a span,
-.section-index a[aria-current],
-.section-index a:hover {
-  color: var(--ink);
-}
 @media (max-width: 480px) {
   .public-header .header-container {
     padding-inline: 12px;

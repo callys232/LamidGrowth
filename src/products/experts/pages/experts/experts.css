@@ -239,4 +239,14 @@
   .expert-card-grid {
     grid-template-columns: 1fr;
   }
+  /* Phones: headings, intro copy and cards centre, as on every other public page. */
+  .expert-phase-intro,
+  .expert-card,
+  .experts-group-header {
+    text-align: center;
+  }
+  .expert-phase-intro .canonical-ctas,
+  .expert-card .canonical-ctas {
+    justify-content: center;
+  }
 }

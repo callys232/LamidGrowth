@@ -63,7 +63,8 @@ export function chapterStarts(lines: string[]) {
 
 function classify(section: CopySection, last: boolean): Layout {
   const body = section.paragraphs.slice(1).map((p) => p.text);
-  const actions = body.filter(isAction);
+  // Long-form sections keep their actions outside the collapsed body, so they never close a page.
+  const actions = section.longForm ? [] : body.filter(isAction);
   const copy = body.filter((t) => !isAction(t));
   const bullets = copy.filter(isBullet).length;
   const steps = copy.filter(isStep).length;
@@ -83,9 +84,13 @@ function classify(section: CopySection, last: boolean): Layout {
 
 /** Plan a page: classify each section, then size the runs of cards it forms. */
 export function planPage(sections: CopySection[]): Map<string, SectionPlan> {
-  const plans: SectionPlan[] = sections.map((s, i) => ({
-    layout: classify(s, i === sections.length - 1),
-  }));
+  const plans: SectionPlan[] = sections.map((s, i) => {
+    const layout = classify(s, i === sections.length - 1);
+    // Collapsed long-form sections stand alone rather than joining a card run.
+    return {
+      layout: s.longForm && (layout === 'grid' || layout === 'checklist') ? 'statement' : layout,
+    };
+  });
   for (let i = 0; i < plans.length;) {
     const { layout } = plans[i];
     let end = i + 1;

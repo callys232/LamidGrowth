@@ -1,4 +1,4 @@
-import { homeSection } from './HomeLongFormSlides';
+import { homeSection } from './homeSection';
 
 /** How It Works: the five mechanics, each a numbered title paragraph followed by its body. */
 export function HomeHowItWorksSlide() {
