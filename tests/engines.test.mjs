@@ -38,10 +38,11 @@ async function demo() {
   return result.cookie;
 }
 
-test('the full 248-tool catalog is public at /engines/catalog — the public-facing pages are where a user learns of everything', async () => {
+test('the full 63-tool catalog is public at /engines/catalog — the public-facing pages are where a user learns of everything', async () => {
   const result = await request('/engines/catalog', undefined, undefined, 'GET');
   assert.equal(result.status, 200);
-  assert.equal(result.data.count, 248);
+  assert.equal(result.data.count, 63);
+  assert.ok(result.data.engines.every((e) => e.standard && e.area));
 });
 
 test('the in-app engine catalog requires a session', async () => {
@@ -52,11 +53,11 @@ test('running an engine still requires a session even though the public catalog 
   assert.equal((await request('/engines/f01/run', { input: {} })).status, 401);
 });
 
-test('an enterprise-tier workspace (the funded-test default) sees the full 248-tool catalog in-app', async () => {
+test('an enterprise-tier workspace (the funded-test default) sees the full 63-tool catalog in-app', async () => {
   const cookie = await demo();
   const result = await request('/engines', undefined, cookie, 'GET');
   assert.equal(result.status, 200);
-  assert.equal(result.data.count, 248);
+  assert.equal(result.data.count, 63);
   assert.ok(result.data.engines.every((e) => typeof e.pointsCost === 'number' && e.pointsCost > 0));
   assert.ok(result.data.engines.some((e) => e.code === 'F01' && e.homeEngine === 'Finance'));
   assert.ok(result.data.engines.some((e) => e.code === 'Q44' && e.kind === 'decision-quality'));
@@ -72,7 +73,7 @@ test("a workspace's in-app catalog is filtered to its signup context, cumulative
     .run(workspaceId);
   const individualView = await request('/engines', undefined, cookie, 'GET');
   assert.ok(individualView.data.count > 0);
-  assert.ok(individualView.data.count < 248);
+  assert.ok(individualView.data.count < 63);
   // Clarity (S,Q) is the Individual-rank default; Finance (SME-rank) should not appear yet.
   assert.ok(individualView.data.engines.every((e) => e.homeEngine !== 'Finance'));
 
@@ -120,15 +121,20 @@ test('a financial-kind run returns arithmetically correct figures and appears on
 
   const billables = await request('/billables', undefined, undefined, 'GET');
   assert.equal(billables.status, 200);
-  assert.ok(billables.data.tools.some((t) => t.id === 'f01'));
+  const f01 = billables.data.tools.find((t) => t.id === 'f01');
+  assert.equal(f01.name, 'Financial Health Ratios', 'the price list shows the current tool name');
+  // Withdrawn (q77) and merged (r04) codes are no longer sold.
+  assert.ok(!billables.data.tools.some((t) => t.id === 'q77' || t.id === 'r04'));
+  const engineRows = billables.data.tools.filter((t) => /^[a-z][0-9]{2,3}$/.test(t.id));
+  assert.equal(engineRows.length, 63);
 });
 
-test('an assessment-kind run refuses a dimension the engine does not declare, without charging points', async () => {
+test('a questionnaire run refuses a question the tool does not ask, without charging points', async () => {
   const cookie = await demo();
   const before = await request('/finance/points', undefined, cookie, 'GET');
   const result = await request(
     '/engines/s01/run',
-    { input: { rows: [{ label: 'Not A Real Dimension', rating: 5 }] } },
+    { input: { answers: { not_a_question: { level: 5 } } } },
     cookie,
   );
   assert.equal(result.status, 400);
@@ -136,20 +142,130 @@ test('an assessment-kind run refuses a dimension the engine does not declare, wi
   assert.equal(after.data.balance, before.data.balance);
 });
 
-test("an assessment-kind run scores the module's own declared dimensions and charges points", async () => {
+test("a questionnaire run scores the tool's own anchored questions and charges points", async () => {
   const cookie = await demo();
   const detail = await request('/engines/s01', undefined, cookie, 'GET');
-  const label = detail.data.dimensionLabels[0];
-  const before = await request('/finance/points', undefined, cookie, 'GET');
-  const result = await request(
-    '/engines/s01/run',
-    { input: { rows: [{ label, rating: 4, weight: 2, evidence: 1 }] } },
-    cookie,
+  assert.equal(detail.data.inputs.kind, 'anchored');
+  const answers = Object.fromEntries(
+    detail.data.inputs.sections
+      .flatMap((s) => s.questions)
+      .map((q) => [q.id, { level: 4, evidence: 1 }]),
   );
+  const before = await request('/finance/points', undefined, cookie, 'GET');
+  const result = await request('/engines/s01/run', { input: { answers } }, cookie);
   assert.equal(result.status, 200);
+  assert.equal(result.data.status, 'completed');
   assert.equal(result.data.pointsCharged, 35);
   const after = await request('/finance/points', undefined, cookie, 'GET');
   assert.equal(after.data.balance, before.data.balance - 35);
+});
+
+test('a provisional questionnaire is saved and shown but not charged', async () => {
+  const cookie = await demo();
+  const detail = await request('/engines/s01', undefined, cookie, 'GET');
+  const questionId = detail.data.inputs.sections[0].questions[0].id;
+  const before = await request('/finance/points', undefined, cookie, 'GET');
+  const result = await request(
+    '/engines/s01/run',
+    { input: { answers: { [questionId]: { level: 4, evidence: 1 } } } },
+    cookie,
+  );
+  assert.equal(result.status, 200);
+  assert.equal(result.data.status, 'provisional');
+  assert.equal(result.data.pointsCharged, 0);
+  assert.ok(result.data.nextSteps.length > 0);
+  const after = await request('/finance/points', undefined, cookie, 'GET');
+  assert.equal(after.data.balance, before.data.balance);
+  const run = await store.db
+    .prepare('SELECT status, points_charged FROM agent_runs WHERE id = ?')
+    .get(result.data.runId);
+  assert.deepEqual({ ...run }, { status: 'provisional', points_charged: 0 });
+});
+
+test('empty input is refused before charging, for every tool on an original archetype', async () => {
+  const cookie = await demo();
+  const before = await request('/finance/points', undefined, cookie, 'GET');
+  for (const code of ['s09', 'p14', 'q44', 'q21', 'q03', 'q06', 'a22', 'g03', 'g07', 'g04']) {
+    const result = await request(`/engines/${code}/run`, { input: {} }, cookie);
+    assert.equal(result.status, 400, code);
+  }
+  const after = await request('/finance/points', undefined, cookie, 'GET');
+  assert.equal(after.data.balance, before.data.balance);
+});
+
+test('retrying with the same idempotency key returns the first run and charges once', async () => {
+  const cookie = await demo();
+  const detail = await request('/engines/f01', undefined, cookie, 'GET');
+  const body = { input: detail.data.example, idempotencyKey: 'retry-test-0001' };
+  const before = await request('/finance/points', undefined, cookie, 'GET');
+  const first = await request('/engines/f01/run', body, cookie);
+  const second = await request('/engines/f01/run', body, cookie);
+  assert.equal(first.status, 200);
+  assert.equal(second.status, 200);
+  assert.equal(second.data.runId, first.data.runId);
+  assert.equal(second.data.replayed, true);
+  const after = await request('/finance/points', undefined, cookie, 'GET');
+  assert.equal(after.data.balance, before.data.balance - 35);
+  const reused = await request(
+    '/engines/f01/run',
+    { ...body, input: { ...detail.data.example, headcount: 99 } },
+    cookie,
+  );
+  assert.equal(reused.status, 409);
+});
+
+test('a run about a goal is published as subject-bound intelligence that goes stale when its source changes', async () => {
+  const cookie = await demo();
+  const state = await request('/state', undefined, cookie, 'GET');
+  const goal = state.data.objectives[0];
+  const action = state.data.actions[0];
+  const detail = await request('/engines/r03', undefined, cookie, 'GET');
+  const run = await request(
+    '/engines/r03/run',
+    {
+      input: detail.data.example,
+      subject: { kind: 'goal', id: goal.id },
+      sources: [{ kind: 'action', id: action.id }],
+    },
+    cookie,
+  );
+  assert.equal(run.status, 200);
+  assert.equal(run.data.intelligence.version, 1);
+  const q = `/intelligence-results?subjectKind=goal&subjectId=${goal.id}`;
+  const current = await request(q, undefined, cookie, 'GET');
+  const mine = current.data.find((r) => r.agentId === 'tool:T07');
+  assert.equal(mine.status, 'completed');
+  assert.equal(mine.claim, 'T07');
+  assert.equal(mine.freshness.state, 'current');
+  assert.ok(mine.sources.some((s) => s.kind === 'action' && s.id === action.id));
+
+  // The cited action changes: the result is no longer current, and history is untouched.
+  await store.db.prepare('UPDATE records SET version = version + 1 WHERE id = ?').run(action.id);
+  const after = await request(q, undefined, cookie, 'GET');
+  assert.ok(!after.data.some((r) => r.agentId === 'tool:T07'));
+  const withStale = await request(`${q}&includeStale=true`, undefined, cookie, 'GET');
+  const stale = withStale.data.find((r) => r.agentId === 'tool:T07');
+  assert.equal(stale.freshness.state, 'stale');
+  assert.match(stale.freshness.reasons[0], /changed/);
+});
+
+test('a run cannot cite a subject or source from another workspace', async () => {
+  const a = await demo();
+  const b = await demo();
+  const goalB = (await request('/state', undefined, b, 'GET')).data.objectives[0];
+  const detail = await request('/engines/r03', undefined, a, 'GET');
+  const bySubject = await request(
+    '/engines/r03/run',
+    { input: detail.data.example, subject: { kind: 'goal', id: goalB.id } },
+    a,
+  );
+  assert.equal(bySubject.status, 404);
+  const bySource = await request(
+    '/engines/r03/run',
+    { input: detail.data.example, sources: [{ kind: 'objective', id: goalB.id }] },
+    a,
+  );
+  assert.equal(bySource.status, 404);
 });
 
 test('running an engine is rejected before charging when the workspace has too few points', async () => {
@@ -158,11 +274,8 @@ test('running an engine is rejected before charging when the workspace has too f
   await store.db
     .prepare('UPDATE users SET points_balance = 10 WHERE id = ?')
     .run(state.data.user.id);
-  const result = await request(
-    '/engines/s01/run',
-    { input: { rows: [{ label: 'Identity Clarity', rating: 4 }] } },
-    cookie,
-  );
+  const detail = await request('/engines/f01', undefined, cookie, 'GET');
+  const result = await request('/engines/f01/run', { input: detail.data.example }, cookie);
   assert.equal(result.status, 402);
   const after = await request('/finance/points', undefined, cookie, 'GET');
   assert.equal(after.data.balance, 10);
@@ -184,56 +297,105 @@ test('F-TF-02: a syntactically valid but never-registered code (Z-series only go
   assert.equal(demoRun.status, 404);
 });
 
-test('F-TF-01: a real engine reports honest, unfabricated canonical-capability verification fields', async () => {
+test('every catalog tool names the recognised method it is built on', async () => {
   const detail = await request('/engines/S01', undefined, undefined, 'GET');
   assert.equal(detail.status, 200);
-  // No entry is fabricated as individually verified against a canonical T-### capability — the
-  // codebase's own prior audit pass never established a genuine per-entry crosswalk, so claiming
-  // one now without real verification would be inventing a false claim.
-  assert.equal(detail.data.verified, false);
-  assert.equal(detail.data.canonicalCapabilityId, null);
+  // Naming a method is not validation: the record lists what has actually been established.
+  assert.equal(detail.data.verified, undefined);
+  assert.equal(detail.data.validation.implemented.status, 'current');
+  assert.equal(detail.data.validation.methodReviewed.status, 'none');
+  assert.equal(detail.data.canonicalCapabilityId, 'T01');
+  assert.match(detail.data.standard, /ISO 9001/);
+  assert.ok(detail.data.example, 'a worked example is served for the form');
 
   const catalog = await request('/engines/catalog', undefined, undefined, 'GET');
   assert.equal(catalog.status, 200);
-  assert.ok(catalog.data.engines.length > 200, 'the full registry is present');
-  assert.ok(catalog.data.engines.every((e) => e.verified === false && e.canonicalCapabilityId === null));
+  assert.ok(
+    catalog.data.engines.every(
+      (e) => e.validation?.implemented.status === 'current' && /^T\d\d$/.test(e.canonicalCapabilityId),
+    ),
+  );
 });
 
-test('F-TF-01: the coverage report gives real, computed counts per compute archetype', async () => {
+test('a withdrawn code returns 410 and names what replaced it; a merged code runs and is charged as its tool', async () => {
+  const cookie = await demo();
+  const retired = await request('/engines/q77', undefined, cookie, 'GET');
+  assert.equal(retired.status, 410);
+  assert.equal(retired.data.retired.verdict, 'RETIRE');
+  const view = await request('/engines/r29/run', { input: {} }, cookie);
+  assert.equal(view.status, 410);
+
+  // R04 "Cadence Stability Score" now runs the Drift & Stability Monitor (primary code R03).
+  const values = [5, 6, 5, 7, 6, 5, 6, 5].map((value) => ({ value }));
+  const merged = await request(
+    '/engines/r04/run',
+    { input: { metric: 'Releases', values } },
+    cookie,
+  );
+  assert.equal(merged.status, 200);
+  assert.equal(merged.data.result.code, 'R03');
+  assert.equal(merged.data.result.requestedCode, 'R04');
+  assert.equal(merged.data.result.toolId, 'T07');
+  const runs = await store.db
+    .prepare('SELECT agent_id FROM agent_runs WHERE id = ?')
+    .all(merged.data.runId);
+  assert.equal(runs[0].agent_id, 'r03');
+});
+
+test('the coverage report counts the catalog by form', async () => {
   const coverage = await request('/engines/catalog/coverage', undefined, undefined, 'GET');
   assert.equal(coverage.status, 200);
-  assert.ok(coverage.data.totalEntries > 200);
-  assert.equal(coverage.data.verifiedCount, 0, 'honestly reflects that nothing has been individually verified yet');
-  assert.ok(coverage.data.byArchetype.assessment > 0, 'the generic assessment archetype covers the bulk of entries');
+  assert.equal(coverage.data.totalEntries, 63);
+  assert.equal(coverage.data.verifiedCount, undefined);
+  assert.equal(coverage.data.validation.implemented, 63);
+  assert.ok(coverage.data.validation.calculationTested < 63);
+  assert.equal(coverage.data.originalCodes, 248);
+  assert.ok(coverage.data.byArchetype.schema > 0 && coverage.data.byArchetype.anchored > 0);
   const sumByArchetype = Object.values(coverage.data.byArchetype).reduce((a, b) => a + b, 0);
-  assert.equal(sumByArchetype, coverage.data.totalEntries, 'every entry is counted in exactly one archetype bucket');
+  assert.equal(
+    sumByArchetype,
+    coverage.data.totalEntries,
+    'every entry is counted in exactly one archetype bucket',
+  );
 });
 
-test('Engine seats: all six home-engine seat bundles exist, published, with real member engines', async () => {
+test('Engine seats: the five subject seats exist, published, with the catalog tools in each', async () => {
   const result = await request('/bundles', undefined, undefined, 'GET');
   assert.equal(result.status, 200);
-  const seatNames = ['Clarity Seat', 'Consistency Seat', 'Growth Seat', 'Finance Seat', 'Capability Seat', 'Shared Seat'];
+  // No catalog tool sits in the old Shared group, so its auto-managed seat is archived.
+  assert.ok(!result.data.some((b) => b.name === 'Shared Seat'));
+  const seatNames = [
+    'Clarity Seat',
+    'Consistency Seat',
+    'Growth Seat',
+    'Finance Seat',
+    'Capability Seat',
+  ];
+  const memberIds = result.data
+    .filter((b) => seatNames.includes(b.name))
+    .flatMap((b) => b.items.map((i) => i.id));
+  assert.equal(memberIds.length, 63, 'every catalog tool is in exactly one seat');
+  assert.equal(new Set(memberIds).size, 63);
   for (const name of seatNames) {
     const seat = result.data.find((b) => b.name === name);
     assert.ok(seat, `${name} must be seeded`);
     assert.equal(seat.status, 'active', `${name} must be published`);
     assert.ok(seat.items.length > 0, `${name} must have real member engines`);
     assert.ok(seat.price_minor > 0);
-    assert.equal(seat.points_included, seat.items.reduce((sum, i) => sum + i.points_cost, 0));
+    assert.equal(
+      seat.points_included,
+      seat.items.reduce((sum, i) => sum + i.points_cost, 0),
+    );
     // An individually rank-escalated engine (its own name implies "enterprise", regardless of
     // home_engine) must never ride along in a cheap home-engine seat at the group's base price.
     assert.ok(
       seat.items.every((i) => !/enterprise/i.test(i.name)),
       `${name} must exclude any engine whose name implies enterprise-rank escalation`,
     );
-    if (name !== 'Shared Seat') {
-      // Shared's own base rank (Institution) already sits above "team," so a "team" keyword match
-      // there is not an escalation — only checked for the groups with a lower base rank.
-      assert.ok(
-        seat.items.every((i) => !/\bteam\b/i.test(i.name)),
-        `${name} must exclude a "team"-escalated engine, since its base rank is below Team`,
-      );
-    }
+    assert.ok(
+      seat.items.every((i) => !/\bteam\b/i.test(i.name)),
+      `${name} must not include a tool whose name implies team scope`,
+    );
   }
 });
 
@@ -244,14 +406,21 @@ test('Engine seats: a locked engine is now visible (not silently omitted) with i
 
   const enterpriseView = await request('/engines', undefined, cookie, 'GET');
   assert.equal(enterpriseView.status, 200);
-  assert.deepEqual(enterpriseView.data.locked, [], 'enterprise already sees everything, so nothing is locked');
+  assert.deepEqual(
+    enterpriseView.data.locked,
+    [],
+    'enterprise already sees everything, so nothing is locked',
+  );
 
   await store.db
     .prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?")
     .run(workspaceId);
   const individualView = await request('/engines', undefined, cookie, 'GET');
   assert.equal(individualView.status, 200);
-  assert.ok(individualView.data.locked.length > 0, 'a locked engine must actually be returned, not silently dropped');
+  assert.ok(
+    individualView.data.locked.length > 0,
+    'a locked engine must actually be returned, not silently dropped',
+  );
   assert.ok(
     individualView.data.locked.some((e) => e.homeEngine === 'Finance'),
     'a Finance engine (SME-rank) must show up as locked for an Individual-context workspace',

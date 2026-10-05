@@ -487,3 +487,142 @@ body:has(.homepage-video-hero) .public-header {
 .lamid-home .homepage-video-hero .homepage-hero-video {
   filter: saturate(0.6) brightness(0.9);
 }
+
+/* ---- Polish ----
+   Same layout and copy. The hero fills the first screen; its content eases in once; the
+   bottom lines read at a comfortable size with a small red marker each. On phones the
+   headline group sits centred in the screen, the actions stack full width, and the two
+   supporting lines share one frosted card. */
+.lamid-home .homepage-video-hero {
+  min-height: calc(100svh - 78px);
+}
+.lamid-home .homepage-hero-main .homepage-hero-actions .button {
+  min-height: 52px;
+  padding-inline: 26px;
+  font-size: 15px;
+}
+.lamid-home .homepage-hero-details .homepage-hero-support,
+.lamid-home .homepage-hero-details .homepage-hero-audience {
+  color: rgb(255 255 255 / 74%);
+  font-size: clamp(14px, 1.05vw, 16px);
+  line-height: 1.7;
+}
+.lamid-home .homepage-hero-details :is(.homepage-hero-support, .homepage-hero-audience)::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  margin-bottom: 14px;
+  background: #d42935;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lamid-home
+    :is(
+      .homepage-hero-eyebrow,
+      .homepage-hero-opening,
+      .homepage-hero-promise,
+      .homepage-hero-outcome,
+      .homepage-hero-actions,
+      .homepage-hero-details
+    ) {
+    animation: hero-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .lamid-home .homepage-hero-opening,
+  .lamid-home .homepage-hero-promise {
+    display: inline-block;
+  }
+  .lamid-home .homepage-hero-opening {
+    animation-delay: 0.08s;
+  }
+  .lamid-home .homepage-hero-promise {
+    animation-delay: 0.18s;
+  }
+  .lamid-home .homepage-hero-outcome {
+    animation-delay: 0.3s;
+  }
+  .lamid-home .homepage-hero-actions {
+    animation-delay: 0.4s;
+  }
+  .lamid-home .homepage-hero-details {
+    animation-delay: 0.55s;
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .lamid-home .homepage-video-hero {
+    min-height: auto;
+  }
+  .lamid-home .homepage-hero-copy {
+    min-height: auto;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 28px 20px 20px;
+    text-align: center;
+  }
+  .lamid-home .homepage-hero-main {
+    margin-block: 0;
+  }
+  .lamid-home .homepage-hero-eyebrow {
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .lamid-home .homepage-hero-main h1 {
+    font-size: clamp(33px, 9.4vw, 40px);
+    line-height: 1.06;
+    text-wrap: balance;
+  }
+  .lamid-home .homepage-hero-main .homepage-hero-promise {
+    display: block;
+    margin-top: 4px;
+  }
+  .lamid-home .homepage-hero-main .homepage-hero-outcome {
+    margin: 16px auto 0;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .lamid-home .homepage-hero-main .homepage-hero-actions .canonical-ctas {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .lamid-home .homepage-hero-main .homepage-hero-actions .button {
+    justify-content: center;
+    width: 100%;
+    min-height: 50px;
+    font-size: 15px;
+    text-align: center;
+  }
+  .lamid-home .homepage-hero-details {
+    gap: 0;
+    padding: 4px 20px;
+    border: 1px solid rgb(255 255 255 / 14%);
+    border-radius: 18px;
+    background: rgb(255 255 255 / 6%);
+    backdrop-filter: blur(12px);
+  }
+  .lamid-home .homepage-hero-details .homepage-hero-support,
+  .lamid-home .homepage-hero-details .homepage-hero-audience {
+    max-width: none;
+    padding: 12px 0;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .lamid-home .homepage-hero-details .homepage-hero-audience {
+    border-top: 1px solid rgb(255 255 255 / 12%);
+  }
+  .lamid-home .homepage-hero-details :is(.homepage-hero-support, .homepage-hero-audience)::before {
+    content: none;
+  }
+}

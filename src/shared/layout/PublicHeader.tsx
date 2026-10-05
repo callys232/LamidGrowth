@@ -281,7 +281,7 @@ export function PublicHeader() {
                     if (
                       hoverEnabled &&
                       event.pointerType === 'mouse' &&
-                      window.matchMedia('(min-width: 761px)').matches
+                      window.matchMedia('(min-width: 901px)').matches
                     ) {
                       cancel();
                       setActive(menu.title);

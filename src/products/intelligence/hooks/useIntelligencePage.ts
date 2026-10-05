@@ -85,10 +85,9 @@ export function useIntelligencePage({ settings = false }: { settings?: boolean }
             maxPointsPerRequest: Number(form.get('maxPointsPerRequest')),
             instructions: form.get('instructions'),
             changes: Object.fromEntries(
-              ['action.prepare', 'progress.snapshot', 'review.reminder'].map((key) => [
-                key,
-                form.get(key),
-              ]),
+              ['action.prepare', 'progress.snapshot', 'review.reminder', 'capability.run'].map(
+                (key) => [key, form.get(key)],
+              ),
             ),
           },
         },

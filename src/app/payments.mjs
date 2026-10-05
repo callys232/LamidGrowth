@@ -2,6 +2,7 @@ import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
 import { grantBundleEntitlements } from './entitlements.mjs';
+import { activatePlanPayment } from './plans.mjs';
 import { logHandledError } from './errorLog.mjs';
 
 export function paystackProvider({
@@ -74,6 +75,25 @@ export function paystackProvider({
       if (!response.ok || !body.status)
         throw new Error(body.message || 'Paystack could not initialize this transaction.');
       return { authorizationUrl: body.data.authorization_url, accessCode: body.data.access_code };
+    },
+    /** Charges a saved card authorization (plan renewals). The result is only provisional: the
+     * plan is renewed by the signed charge.success webhook, never by this response. */
+    async chargeAuthorization({ authorizationCode, email, amountMinor, currency, reference }) {
+      const response = await fetchImpl('https://api.paystack.co/transaction/charge_authorization', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          authorization_code: authorizationCode,
+          email,
+          amount: amountMinor,
+          currency,
+          reference,
+        }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body.status)
+        throw new Error(body.message || 'Paystack could not charge the saved card.');
+      return { status: body.data?.status ?? 'pending' };
     },
     async refundTransaction({ reference, amountMinor }) {
       let response;
@@ -671,7 +691,7 @@ export function mountPointsPurchase(app, store, deps) {
  * settles in NGN only, so other currencies are converted with the fx_rates table (the same
  * rates /api/fx/convert reads). Null when no rate is configured — callers must refuse rather
  * than send an unsettleable currency. */
-async function settlementAmount(db, amountMinor, currency) {
+export async function settlementAmount(db, amountMinor, currency) {
   if (currency === 'NGN') return { amountMinor, currency };
   const fxRow = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get(`${currency}_NGN`);
   if (!fxRow) return null;
@@ -810,6 +830,27 @@ export function mountPaystackWebhook(app, store, deps) {
             // unpaid/pending purchase must not unlock anything. See src/app/entitlements.mjs.
             if (purchase.bundle_id)
               await grantBundleEntitlements(store, purchase.workspace_id, purchase.bundle_id);
+          }
+        }
+        // Plan payments (new subscriptions and renewals) — see src/app/plans.mjs.
+        const planPayment = await db
+          .prepare(
+            "SELECT * FROM plan_payments WHERE provider_reference = ? AND status IN ('pending', 'awaiting_provider')",
+          )
+          .get(eventId);
+        if (planPayment) {
+          if (
+            !providerAmountMatches(
+              event,
+              planPayment.provider_amount_minor ?? planPayment.amount_minor,
+              planPayment.provider_currency ?? planPayment.currency,
+            )
+          ) {
+            await db
+              .prepare("UPDATE plan_payments SET status = 'amount_mismatch' WHERE id = ?")
+              .run(planPayment.id);
+          } else {
+            await activatePlanPayment(store, planPayment, event);
           }
         }
         const funding = await db

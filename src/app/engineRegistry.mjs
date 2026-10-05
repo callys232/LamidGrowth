@@ -28,6 +28,7 @@ import {
   ROSTER_MODULES,
   SCENARIO_MODULES,
 } from './engineIntelligence/inputSpec.mjs';
+import { PRIMARY, homeEngineFor } from './toolCatalog/catalog.mjs';
 
 export const MODULE_REGISTRY = {
   /* ── S-SERIES ────────────────────────────────────────────── */
@@ -6937,6 +6938,16 @@ for (const cfg of Object.values(MODULE_REGISTRY)) {
     if (escalatedRank > rank && pattern.test(cfg.engineName)) rank = escalatedRank;
   }
   cfg.minContextRank = rank;
+}
+
+// The standards-based catalog (src/app/toolCatalog) sets each tool's seat by subject area, and
+// its plan level is that seat's base rank. The old name-keyword escalation is not applied: it was
+// written for the original module names (e.g. "Enterprise Governance") and would mis-gate the
+// renamed tools. Codes merged into a tool are run and gated as that tool's primary code.
+for (const [toolId, code] of Object.entries(PRIMARY)) {
+  const cfg = MODULE_REGISTRY[code];
+  cfg.home_engine = homeEngineFor(toolId);
+  cfg.minContextRank = BASE_RANK_BY_HOME_ENGINE[cfg.home_engine];
 }
 
 export const ENGINE_CODES = Object.keys(MODULE_REGISTRY);

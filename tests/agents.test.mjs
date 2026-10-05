@@ -740,3 +740,60 @@ test('market intelligence is told, and tells the user, that it has no external m
   assert.match(result.data.response, /only the knowledge saved in this workspace/i);
   assert.match(result.data.response, /no external market data/i);
 });
+
+test('an agent runs an allowed tool through the shared execution path and explains the saved result', async () => {
+  const cookie = await enableAI(await signup('Agent Tools', 'agent-tools@example.test'));
+  const detail = await request('/engines/r02', undefined, cookie, 'GET');
+  const before = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  const result = await request(
+    '/companion/messages',
+    {
+      message: 'Why are we delivering slowly?',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T06', input: detail.data.example },
+    },
+    cookie,
+  );
+  assert.equal(result.status, 201);
+  assert.equal(result.data.toolCalls.length, 1);
+  assert.equal(result.data.toolCalls[0].capability, 'T06');
+  const run = await store.db
+    .prepare('SELECT caller, status, points_charged FROM agent_runs WHERE id = ?')
+    .get(result.data.toolCalls[0].runId);
+  assert.equal(run.caller, 'agent:diagnostic-intelligence');
+  // The agent's own charge plus the completed tool run's — each recorded separately.
+  const after = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  assert.equal(before - after, result.data.pointsCharged + run.points_charged);
+});
+
+test('an agent cannot run a tool outside its allow-list, or with bad input, and is not charged', async () => {
+  const cookie = await enableAI(
+    await signup('Agent Tools Denied', 'agent-tools-denied@example.test'),
+  );
+  const before = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  const denied = await request(
+    '/companion/messages',
+    {
+      message: 'Value the business',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T60', input: {} },
+    },
+    cookie,
+  );
+  assert.equal(denied.status, 403);
+  const bad = await request(
+    '/companion/messages',
+    {
+      message: 'Why are we delivering slowly?',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T06', input: { periods: [] } },
+    },
+    cookie,
+  );
+  assert.equal(bad.status, 400);
+  const after = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  assert.equal(after, before);
+});

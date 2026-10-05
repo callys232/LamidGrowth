@@ -106,12 +106,12 @@
 .mega-header .nav-trigger[aria-expanded='true'] svg {
   transform: rotate(180deg);
 }
-@media (min-width: 761px) {
+@media (min-width: 901px) {
   .mega-header .public-nav {
     gap: 22px;
   }
 }
-@media (max-width: 1100px) and (min-width: 761px) {
+@media (max-width: 1100px) and (min-width: 901px) {
   .mega-header .header-container {
     gap: 16px;
   }
@@ -123,12 +123,13 @@
     margin-left: 0;
   }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .mega-header {
     height: 73px;
   }
   .mega-header .mobile-menu {
     display: flex;
+    margin-left: auto;
   }
   .mega-header .public-nav {
     display: none;

@@ -1,7 +1,5 @@
-import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { requirePermission } from './policy.mjs';
-import { hasToolAccess, accessibleEngineCodes } from './entitlements.mjs';
+import { accessibleEngineCodes } from './entitlements.mjs';
 import {
   getModuleConfig,
   MODULE_REGISTRY,
@@ -35,6 +33,21 @@ import { computeFinancials, financialsToPrompt } from './engineIntelligence/fina
 import { computeRoster, rosterToPrompt } from './engineIntelligence/roster.mjs';
 import { computeScenarios, scenariosToPrompt } from './engineIntelligence/scenario.mjs';
 import { computeSeriesStats, seriesStatsToPrompt } from './engineIntelligence/inputSpec.mjs';
+import {
+  TOOLS,
+  PRIMARY,
+  PRIMARY_CODES,
+  CODE_TO_TOOL,
+  retirement,
+  inputSpecFor,
+  disclosureFor,
+  runCatalogTool,
+  homeEngineFor,
+} from './toolCatalog/catalog.mjs';
+import { EXAMPLES } from './toolCatalog/examples.mjs';
+import { assertFinite } from './toolCatalog/schema.mjs';
+import { validationFor, validationCoverage } from './toolCatalog/validation.mjs';
+import { TOOL_TO_CANONICAL } from './toolCatalog/canonical.mjs';
 
 /**
  * THE ENGINE LAYER — ported from LamidOne's src/lib/engines.ts (+ the 12
@@ -55,7 +68,9 @@ import { computeSeriesStats, seriesStatsToPrompt } from './engineIntelligence/in
  * stop a model from inventing scores).
  */
 
-/** Which of this app's canonical engine names a module series rolls up into. */
+/** Fallback home engine by series letter, matching engineRegistry.mjs (the C "CORE Console"
+ * series was wrongly listed as Finance here while the registry and database had it as Shared).
+ * A code that runs as a catalog tool takes the tool's own seat instead — see homeOf(). */
 const SERIES_TO_HOME_ENGINE = {
   S: 'Clarity',
   Q: 'Clarity',
@@ -66,13 +81,19 @@ const SERIES_TO_HOME_ENGINE = {
   G: 'Growth',
   A: 'Capability',
   F: 'Finance',
-  C: 'Finance',
+  C: 'Shared',
 };
 
 /** Flat points cost per engine run — cheaper than the AI-backed chat agents (65pts)
  *  since no model call is involved. A placeholder judgment call, not derived from
  *  either source project (LamidOne priced these via subscription tier, not points). */
 export const ENGINE_POINTS_COST = 35;
+
+/** A code's seat: its catalog tool's seat when it runs as one, else its series default. */
+function homeOf(code, series) {
+  const toolId = CODE_TO_TOOL[code];
+  return toolId ? homeEngineFor(toolId) : (SERIES_TO_HOME_ENGINE[series] ?? 'Shared');
+}
 
 /** `q44` / `Q44` → normalised reference, or null when not a module code.
  *  2-3 digits: the registry runs past 99 for one series (Q01-Q100), which the LamidOne
@@ -85,7 +106,7 @@ export function parseEngineCode(input) {
   return {
     code: `${series}${m[2]}`,
     series,
-    homeEngine: SERIES_TO_HOME_ENGINE[series] ?? 'Shared',
+    homeEngine: homeOf(`${series}${m[2]}`, series),
   };
 }
 
@@ -98,6 +119,22 @@ export function configFor(ref) {
 }
 
 export const REGISTERED_CODES = ENGINE_CODES;
+
+/* ── Standards-based tool catalog (src/app/toolCatalog) ──────────────────────
+   The 248 ported modules were reviewed against recognised methods and consolidated into 63
+   tools. Every original code that still runs (kept, rebuilt or merged) resolves to its tool;
+   the tool is served under one primary code so manifests, bundles and history are unchanged. */
+
+/** The catalog tool an engine code now runs as, or null when the code was withdrawn. */
+export function toolFor(ref) {
+  return ref ? (CODE_TO_TOOL[ref.code] ?? null) : null;
+}
+
+/** The 63 codes the catalog lists — one per tool. */
+export const CATALOG_CODES = PRIMARY_CODES;
+
+/** Why a withdrawn code no longer runs, and what replaced it (null for a code that still runs). */
+export { retirement };
 
 export class EngineInputError extends Error {
   constructor(msg) {
@@ -282,18 +319,88 @@ const DISCLOSURES = {
 };
 
 export function describeEngine(ref) {
+  const toolId = toolFor(ref);
+  if (toolId) {
+    const own = disclosureFor(toolId);
+    if (own) return own;
+    // A tool built on an original archetype keeps that archetype's disclosure.
+    const config = configFor(parseEngineCode(PRIMARY[toolId]));
+    return (DISCLOSURES[TOOLS[toolId].kind] ?? DISCLOSURES.assessment)(config);
+  }
   const config = configFor(ref);
   const disclose = DISCLOSURES[config.inputs?.kind ?? 'assessment'] ?? DISCLOSURES.assessment;
   return disclose(config);
 }
 
+/** Runs the tool a code resolves to. The result has the same shape for every tool — summary,
+ * working (the text the agent layer reads), warnings, computes and limits — so the intelligence
+ * layer consumes catalog tools exactly as it consumed the original engines. */
 export function runEngine(ref, input) {
-  return { ...computeEngineRun(ref, input), ...describeEngine(ref) };
+  const toolId = toolFor(ref);
+  if (!toolId) return { ...computeEngineRun(ref, input), ...describeEngine(ref) };
+  const tool = TOOLS[toolId];
+  const primary = parseEngineCode(PRIMARY[toolId]);
+  const identity = {
+    code: primary.code,
+    homeEngine: primary.homeEngine,
+    engineName: tool.name,
+    seriesName: tool.area,
+    toolId,
+    standard: tool.standard,
+    ...(ref.code !== primary.code ? { requestedCode: ref.code } : {}),
+  };
+  if (tool.engine === 'existing') {
+    const run = computeEngineRun(primary, input, tool.kind);
+    assertFinite(run.summary);
+    return {
+      ...run,
+      status: 'completed',
+      missingEvidence: [],
+      ...identity,
+      ...describeEngine(primary),
+    };
+  }
+  const out = runCatalogTool(toolId, input);
+  return {
+    ...identity,
+    kind: tool.engine,
+    status: 'completed',
+    missingEvidence: [],
+    ...out,
+    ...describeEngine(primary),
+  };
 }
 
-function computeEngineRun(ref, input) {
+/** The roadmap allocates per period, so an unbounded count exhausts memory. */
+const MAX_PERIODS = 60;
+
+/** The least input each original archetype needs before its result means anything. Without it,
+ * `{}` came back as a normal (and charged) run full of "add some options" warnings. */
+const MINIMUM_INPUT = {
+  selection: (i) =>
+    (arr(i.options).length < 2 && 'Add at least 2 options to compare.') ||
+    (arr(i.criteria).length < 1 && 'Add at least 1 criterion.'),
+  optimisation: (i) => arr(i.steps).length < 2 && 'Add at least 2 process steps.',
+  'decision-quality': (i) =>
+    (!i.answers || typeof i.answers !== 'object' || !Object.keys(i.answers).length) &&
+    'Answer at least one decision-quality question.',
+  'scenario-decision': (i) =>
+    (arr(i.scenarios).length < 1 && 'Add at least 1 future scenario.') ||
+    (arr(i.options).length < 2 && 'Add at least 2 options to compare.'),
+  conflict: (i) => arr(i.objectives).length < 2 && 'Add at least 2 objectives to check.',
+  'bench-strength': (i) => arr(i.roles).length < 1 && 'Add at least 1 critical role.',
+  'growth-pathways': (i) => arr(i.pathways).length < 1 && 'Add at least 1 growth pathway.',
+  roadmap: (i) =>
+    (arr(i.initiatives).length < 1 && 'Add at least 1 initiative.') ||
+    (i.periods !== undefined &&
+      !(Number.isInteger(Number(i.periods)) && i.periods >= 1 && i.periods <= MAX_PERIODS) &&
+      `Periods must be a whole number from 1 to ${MAX_PERIODS}.`),
+};
+function computeEngineRun(ref, input, kindOverride) {
   const config = configFor(ref);
-  const kind = config.inputs?.kind ?? 'assessment';
+  const kind = kindOverride ?? config.inputs?.kind ?? 'assessment';
+  const missing = MINIMUM_INPUT[kind]?.(input);
+  if (missing) throw new EngineInputError(missing);
   const warnings = [];
 
   let summary;
@@ -538,11 +645,11 @@ function computeEngineRun(ref, input) {
   };
 }
 
-/** Engine count per home engine, derived from the registry rather than typed by hand. */
+/** Tool count per home engine, derived from the catalog rather than typed by hand. */
 export function engineCountByHomeEngine() {
   const counts = {};
-  for (const code of REGISTERED_CODES) {
-    const homeEngine = SERIES_TO_HOME_ENGINE[code[0]] ?? 'Shared';
+  for (const code of CATALOG_CODES) {
+    const homeEngine = homeEngineFor(CODE_TO_TOOL[code]);
     counts[homeEngine] = (counts[homeEngine] ?? 0) + 1;
   }
   return counts;
@@ -550,26 +657,73 @@ export function engineCountByHomeEngine() {
 
 const runInput = z.object({ input: z.record(z.string(), z.unknown()).default({}) }).strict();
 
+/** Resolves a requested code for the routes: the tool it runs as, or the reason it does not. */
+export function resolve(code) {
+  const ref = parseEngineCode(code);
+  if (!ref || !MODULE_REGISTRY[ref.code]) return { status: 404, error: 'Unknown engine code.' };
+  const toolId = toolFor(ref);
+  if (!toolId) {
+    const r = retirement(ref.code);
+    return {
+      status: 410,
+      error: r?.replacedBy
+        ? `${r.reason} Use ${r.replacedBy.name} (${r.replacedBy.code}) instead.`
+        : (r?.reason ?? 'This tool is no longer offered.'),
+      retired: r,
+    };
+  }
+  return { ref, toolId, primary: parseEngineCode(PRIMARY[toolId]) };
+}
+
 function manifestSummary(code) {
   const ref = parseEngineCode(code);
-  if (!ref) return null;
-  const config = configFor(ref);
+  const toolId = toolFor(ref);
+  if (!toolId) return null;
+  const tool = TOOLS[toolId];
+  const primary = parseEngineCode(PRIMARY[toolId]);
+  const spec = inputSpecFor(toolId);
   return {
-    code: ref.code,
-    homeEngine: ref.homeEngine,
-    seriesName: config.seriesName,
-    engineName: config.engineName,
-    purpose: config.purpose,
-    dimensionLabels: config.dimensionLabels,
-    kind: config.inputs?.kind ?? 'assessment',
-    ...describeEngine(ref),
+    code: primary.code,
+    toolId,
+    homeEngine: primary.homeEngine,
+    area: tool.area,
+    seriesName: tool.area,
+    engineName: tool.name,
+    standard: tool.standard,
+    purpose: tool.purpose,
+    dimensionLabels: [],
+    kind: spec.kind,
+    ...describeEngine(primary),
     pointsCost: ENGINE_POINTS_COST,
-    // F-TF-01: honest crosswalk fields — most entries are genuinely unverified against the 202
-    // canonical capability names (see engineRegistry.mjs), surfaced here rather than silently
-    // absent.
-    canonicalCapabilityId: config.canonicalCapabilityId ?? null,
-    verified: config.verified ?? false,
+    // Catalog id, and the canonical capabilities (T-001…T-202) this tool computes part of.
+    // See toolCatalog/canonical.mjs: a link is partial, never acceptance.
+    canonicalCapabilityId: toolId,
+    canonicalCapabilities: TOOL_TO_CANONICAL[toolId] ?? [],
+    // What has been established about this version of the tool — naming a method in `standard`
+    // is not itself validation. See toolCatalog/validation.mjs.
+    validation: validationFor(toolId),
   };
+}
+
+/** Original codes that now run as this tool (lower-case manifest ids). */
+export const sourceIds = (toolId) =>
+  Object.entries(CODE_TO_TOOL)
+    .filter(([, t]) => t === toolId)
+    .map(([c]) => c.toLowerCase());
+
+/** Codes this workspace actually bought (bundle entitlements), lower-case. */
+export async function purchasedIds(store, workspace) {
+  const rows = await store.db
+    .prepare('SELECT agent_id FROM workspace_agent_entitlements WHERE workspace_id = ?')
+    .all(workspace.id);
+  return new Set(rows.map((r) => r.agent_id.toLowerCase()));
+}
+
+/** Access to a tool follows its primary code's plan rules (tier, context rank, free, bought).
+ * An original code merged into the tool also grants it, but only when it was actually bought —
+ * never by context rank, so a merge can't move a tool down to a cheaper plan. */
+function toolAccessible(accessibleCodes, purchased, toolId) {
+  return accessibleCodes.has(PRIMARY[toolId]) || sourceIds(toolId).some((id) => purchased.has(id));
 }
 
 /** Catalog reads only — id/purpose/dimensions/points-cost, no workspace or user data anywhere in
@@ -589,63 +743,55 @@ function manifestSummary(code) {
 export function mountPublicEngines(app) {
   app.get('/api/engines/catalog', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
-    const list = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
+    const list = CATALOG_CODES.map(manifestSummary).filter(Boolean);
     res.json({
       engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
       count: list.length,
     });
   });
 
-  // F-TF-01: a real, computed crosswalk report — counts per compute archetype (`kind`, the
-  // genuine implementation family each entry shares) and how many of the 247 registry entries
-  // are individually verified against a canonical capability. Honest by construction: it reports
-  // what's actually true in the data (currently 0 verified), rather than the audit's "neither
-  // counts nor names prove completeness."
+  // Coverage report: tools per form (schema calculator/register, anchored questionnaire, or an
+  // original archetype) and how many are built on a named method — all 63, by construction.
   app.get('/api/engines/catalog/coverage', async (req, res) => {
-    const summaries = REGISTERED_CODES.map(manifestSummary).filter(Boolean);
+    const summaries = CATALOG_CODES.map(manifestSummary).filter(Boolean);
     const byKind = {};
     for (const entry of summaries) byKind[entry.kind] = (byKind[entry.kind] || 0) + 1;
     res.json({
       totalEntries: summaries.length,
-      verifiedCount: summaries.filter((entry) => entry.verified).length,
+      // Tools with current evidence for each validation state (not a single "verified" flag).
+      validation: validationCoverage(),
       byArchetype: byKind,
+      originalCodes: REGISTERED_CODES.length,
+      stillRunning: Object.keys(CODE_TO_TOOL).length,
     });
   });
 
   app.post('/api/engines/:code/demo-run', async (req, res) => {
-    const ref = parseEngineCode(req.params.code);
-    if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
-    // F-TF-02: a syntactically valid but never-registered code (e.g. Z50, when Z only goes to
-    // Z15) used to fall through to a fabricated generic config via buildFallbackConfig — a public,
-    // unauthenticated visitor could get what looked like a real result for a capability that was
-    // never actually built. Only a code with a real registry entry is a real engine.
-    if (!MODULE_REGISTRY[ref.code]) return res.status(404).json({ error: 'Unknown engine code.' });
+    // F-TF-02: only a code with a real registry entry is a real engine — never a fabricated
+    // fallback config for an unregistered code.
+    const r = resolve(req.params.code);
+    if (r.error) return res.status(r.status).json({ error: r.error, retired: r.retired });
     const { input } = runInput.parse(req.body ?? {});
-    const result = runEngine(ref, input);
+    const result = runEngine(r.ref, input);
     res.json({ result, demo: true });
   });
 
   app.get('/api/engines/:code', async (req, res) => {
-    const ref = parseEngineCode(req.params.code);
-    if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
-    // F-TF-02: same registry-membership check as demo-run above.
-    if (!MODULE_REGISTRY[ref.code]) return res.status(404).json({ error: 'Unknown engine code.' });
-    const config = configFor(ref);
-    const kind = config.inputs?.kind ?? 'assessment';
+    const r = resolve(req.params.code);
+    if (r.error) return res.status(r.status).json({ error: r.error, retired: r.retired });
+    const summary = manifestSummary(r.primary.code);
+    const kind = TOOLS[r.toolId].engine === 'existing' ? TOOLS[r.toolId].kind : null;
+    // A tool on an original archetype keeps that archetype's form spec (periods, metrics…).
+    const config = configFor(r.primary);
+    const inputs = kind ? { ...(config.inputs ?? {}), kind } : inputSpecFor(r.toolId);
     res.json({
-      code: ref.code,
-      homeEngine: ref.homeEngine,
-      seriesName: config.seriesName,
-      engineName: config.engineName,
-      purpose: config.purpose,
-      dimensionLabels: config.dimensionLabels,
-      driverContext: config.driverContext,
-      correctionProtocols: config.correctionProtocols,
-      inputs: config.inputs,
-      ...describeEngine(ref),
-      pointsCost: ENGINE_POINTS_COST,
-      canonicalCapabilityId: config.canonicalCapabilityId ?? null,
-      verified: config.verified ?? false,
+      ...summary,
+      ...(r.ref.code !== r.primary.code ? { requestedCode: r.ref.code } : {}),
+      driverContext: null,
+      correctionProtocols: [],
+      inputs,
+      // A worked example (illustrative figures) the form can load so the tool opens in a working state.
+      example: EXAMPLES[r.toolId] ?? null,
       // The fixed question bank Q44 (decision-quality) is scored against — the frontend needs
       // this to render the form at all, since it isn't user-defined like the other archetypes.
       ...(kind === 'decision-quality'
@@ -656,21 +802,19 @@ export function mountPublicEngines(app) {
 }
 
 export function mountEngines(app, store) {
-  const { db, transaction, log } = store;
-
   // Authenticated and per-workspace filtered — see accessibleEngineCodes in entitlements.mjs.
   // Distinct from the public /api/engines/catalog route (mountPublicEngines above), which always
   // returns the full 248-tool list for marketing/education purposes.
   app.get('/api/engines', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const accessible = await accessibleEngineCodes(store, req.workspace);
-    const list = ENGINE_CODES.filter((code) => accessible.has(code))
-      .map(manifestSummary)
-      .filter(Boolean);
+    const purchased = await purchasedIds(store, req.workspace);
+    const open = (code) => toolAccessible(accessible, purchased, CODE_TO_TOOL[code]);
+    const list = CATALOG_CODES.filter(open).map(manifestSummary).filter(Boolean);
     // Engine seats: a locked engine used to be silently omitted, so a workspace had no way to
     // discover it exists at all. Surfaced here (never fetched, never counted as "count") so the
     // catalog page can show what it's missing and link to the seat bundle that would unlock it.
-    const locked = ENGINE_CODES.filter((code) => !accessible.has(code))
+    const locked = CATALOG_CODES.filter((code) => !open(code))
       .map(manifestSummary)
       .filter(Boolean);
     res.json({
@@ -680,75 +824,6 @@ export function mountEngines(app, store) {
     });
   });
 
-  app.post('/api/engines/:code/run', requirePermission('work:write'), async (req, res) => {
-    const ref = parseEngineCode(req.params.code);
-    if (!ref) return res.status(404).json({ error: 'Unknown engine code.' });
-    const manifestId = ref.code.toLowerCase();
-    const manifest = await db
-      .prepare('SELECT id, points_cost FROM agent_manifests WHERE id = ?')
-      .get(manifestId);
-    if (!manifest) return res.status(404).json({ error: 'This engine is not yet available.' });
-    // Real entitlement gate — enterprise tier, a free tool, or an actually-purchased bundle. See
-    // src/app/entitlements.mjs. Checked before compute/charge, same pattern as agents.mjs's send().
-    if (!(await hasToolAccess(store, req.workspace, manifestId)))
-      return res.status(403).json({
-        error:
-          "This engine isn't included in your plan. Purchase a bundle that includes it, or upgrade to Enterprise.",
-      });
-    const { input } = runInput.parse(req.body ?? {});
-
-    const points = manifest.points_cost || 0;
-    const runId = randomUUID();
-    const createdAt = new Date().toISOString();
-
-    // Validate BEFORE charging — a malformed request must cost nothing. runEngine() itself
-    // throws EngineInputError synchronously for bad input, so calling it once here and
-    // reusing the result (rather than calling it again after charging) also avoids ever
-    // charging for a run whose compute step is about to fail.
-    const result = runEngine(ref, input);
-
-    await transaction(async () => {
-      if (points > 0) {
-        const charged = await db
-          .prepare(
-            'UPDATE users SET points_balance = points_balance - ? WHERE id = ? AND points_balance >= ?',
-          )
-          .run(points, req.user.id, points);
-        if (charged.changes !== 1)
-          throw Object.assign(new Error('You do not have enough points for this engine.'), {
-            status: 402,
-          });
-        await db
-          .prepare('INSERT INTO points_ledger VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .run(
-            randomUUID(),
-            req.user.id,
-            req.workspace.id,
-            -points,
-            'agent_run',
-            runId,
-            Date.now(),
-          );
-      }
-      await db
-        .prepare('INSERT INTO agent_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(
-          runId,
-          req.workspace.id,
-          req.user.id,
-          manifestId,
-          JSON.stringify(input),
-          JSON.stringify(result),
-          'completed',
-          createdAt,
-          createdAt,
-        );
-    });
-
-    const balance = (
-      await db.prepare('SELECT points_balance FROM users WHERE id = ?').get(req.user.id)
-    ).points_balance;
-    await log(req.workspace.id, req.user.name, 'Engine run', runId, ref.code);
-    res.json({ runId, pointsCharged: points, balance, result });
-  });
+  // POST /api/engines/:code/run is mounted by capabilities.mjs (mountCapabilityRuns): the UI,
+  // agents and workflows share one execution path for checks, charging and lineage.
 }

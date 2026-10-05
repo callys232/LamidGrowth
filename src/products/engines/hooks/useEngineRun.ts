@@ -12,10 +12,40 @@ export type SeriesMetric = {
   target?: number;
 };
 
+/** A typed input the standards-based catalog tools declare (src/app/toolCatalog/schema.mjs). The
+ * server validates against the same declaration, so the form and the server cannot drift. */
+export type SchemaField = {
+  key: string;
+  label: string;
+  type: 'number' | 'percent' | 'integer' | 'text' | 'longtext' | 'select' | 'date' | 'boolean';
+  required?: boolean;
+  min?: number;
+  max?: number;
+  default?: string | number | boolean;
+  options?: { value: string | number; label: string }[];
+};
+export type SchemaTable = {
+  key: string;
+  label: string;
+  hint?: string;
+  minRows?: number;
+  maxRows?: number;
+  columns: SchemaField[];
+};
+export type AnchoredQuestion = { id: string; text: string; low: string; high: string };
+export type AnchoredSection = { id: string; label: string; questions: AnchoredQuestion[] };
+
 export type EngineInputSpec =
   | { kind: 'timeseries'; periodLabel: string; periods: number; metrics: SeriesMetric[] }
   | { kind: 'financial'; periodLabel: string; periods: number }
-  | { kind: Exclude<EngineKind, 'timeseries' | 'financial'> };
+  | { kind: 'schema'; fields: SchemaField[]; tables: SchemaTable[] }
+  | {
+      kind: 'anchored';
+      levels: { value: number; label: string }[];
+      evidence: { value: number; label: string }[];
+      sections: AnchoredSection[];
+    }
+  | { kind: Exclude<EngineKind, 'timeseries' | 'financial' | 'schema' | 'anchored'> };
 
 export type DecisionQualityQuestion = {
   id: string;
@@ -29,12 +59,19 @@ export type DecisionQualityRequirement = { id: string; label: string; what: stri
 
 export type EngineDetail = {
   code: string;
+  toolId?: string;
+  area?: string;
+  /** The recognised method the tool follows. */
+  standard?: string;
+  /** Worked example input (illustrative figures) the form can load. */
+  example?: Record<string, unknown> | null;
+  requestedCode?: string;
   homeEngine: string;
   seriesName: string;
   engineName: string;
   purpose: string;
   dimensionLabels: string[];
-  driverContext: string;
+  driverContext: string | null;
   correctionProtocols: string[];
   inputs: EngineInputSpec;
   computes: string;
@@ -48,6 +85,9 @@ export type EngineDetail = {
 
 export type EngineResult = {
   code: string;
+  toolId?: string;
+  standard?: string;
+  requestedCode?: string;
   homeEngine: string;
   engineName: string;
   seriesName: string;
@@ -57,6 +97,10 @@ export type EngineResult = {
   warnings: string[];
   computes?: string;
   limits?: string;
+  /** How far the conclusion can be relied on; only `completed` runs are charged. */
+  status?: 'completed' | 'provisional' | 'insufficient_evidence';
+  /** What is needed for a complete result (unanswered questions, unsupported causes…). */
+  missingEvidence?: string[];
 };
 
 export type EngineRunResponse = {
@@ -64,6 +108,7 @@ export type EngineRunResponse = {
   pointsCharged?: number;
   balance?: number;
   result: EngineResult;
+  nextSteps?: string[];
 };
 
 /** Loads one engine's manifest (for form rendering) and exposes a run() call.

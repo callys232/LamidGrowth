@@ -83,3 +83,9 @@
   font-size: 12px;
   color: var(--text-muted, var(--graphite));
 }
+.engines-detail-standard {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent, var(--text-muted));
+}

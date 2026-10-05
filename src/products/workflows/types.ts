@@ -27,4 +27,5 @@ export const labels: Record<string, string> = {
   'progress.snapshot': 'Record progress evidence',
   'review.reminder': 'Create a review reminder',
   'event.wait': 'Wait for an external event',
+  'capability.run': 'Run a catalog tool on this goal',
 };

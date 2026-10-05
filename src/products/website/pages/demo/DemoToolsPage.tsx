@@ -9,7 +9,18 @@ import { EngineResultView } from '../../../engines/components/EngineResultView';
 import '../../../engines/pages/engines-page.css';
 import './demo-tools.css';
 
-const HOME_ENGINES = ['All', 'Clarity', 'Capability', 'Consistency', 'Growth', 'Finance', 'Shared'];
+const AREAS = [
+  'All',
+  'Strategy',
+  'Decisions',
+  'Operations',
+  'Risk',
+  'Governance',
+  'People',
+  'Change',
+  'Growth',
+  'Finance',
+];
 
 /** /demo — public, no signup required. "Explore the workspace" used to drop any visitor straight
  * into a real /os session with no email at all; it now sends them here instead — a real diagnostic
@@ -24,7 +35,7 @@ export function DemoToolsPage() {
 
   const filtered = useMemo(() => {
     if (!catalog) return [];
-    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.homeEngine === tab);
+    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.area === tab);
   }, [catalog, tab]);
 
   return (
@@ -35,8 +46,8 @@ export function DemoToolsPage() {
           <h1>Run a Real Diagnostic, Not a Demo Recording.</h1>
           <p>
             Pick any tool below and run it for real — the same compute the product uses, just not
-            saved and not charged. When you're ready for the full 248-tool catalog and your own
-            workspace, <Link to="/signup">create an account</Link>.
+            saved and not charged. Each tool follows a recognised method. When you're ready for all
+            63 tools and your own workspace, <Link to="/signup">create an account</Link>.
           </p>
         </div>
 
@@ -47,7 +58,7 @@ export function DemoToolsPage() {
         )}
 
         <div className="engines-tabs">
-          {HOME_ENGINES.map((name) => (
+          {AREAS.map((name) => (
             <button
               key={name}
               type="button"
@@ -57,7 +68,7 @@ export function DemoToolsPage() {
               {name}
               {catalog && name !== 'All' && (
                 <span className="engines-tab-count">
-                  {catalog.engines.filter((e) => e.homeEngine === name).length}
+                  {catalog.engines.filter((e) => e.area === name).length}
                 </span>
               )}
             </button>
@@ -83,9 +94,7 @@ export function DemoToolsPage() {
                     onClick={() => setSelected(engine)}
                   >
                     <strong>{engine.engineName}</strong>
-                    <small>
-                      {engine.code} · {engine.seriesName}
-                    </small>
+                    <small>{engine.standard ?? engine.seriesName}</small>
                   </button>
                 </li>
               ))}
@@ -117,6 +126,7 @@ function DemoDetailPanel({
   return (
     <div className="engines-detail-inner">
       <h3>{engine.engineName}</h3>
+      {engine.standard && <p className="engines-detail-standard">Method: {engine.standard}</p>}
       <p className="engines-detail-purpose">{manifest?.purpose ?? engine.purpose}</p>
 
       {error && (
@@ -132,8 +142,8 @@ function DemoDetailPanel({
           <EngineResultView result={result.result} />
           <div className="demo-tools-cta">
             <p>
-              That's a real, computed result — not a screenshot. Sign up to save it and unlock the
-              other 247 tools.
+              That's a real, computed result — not a screenshot. Sign up to save it and use all 63
+              tools.
             </p>
             <Link className="button button-primary" to="/signup">
               Create your account

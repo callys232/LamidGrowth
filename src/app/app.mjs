@@ -35,6 +35,7 @@ import {
   mountPointsPurchase,
   paystackProvider,
   cryptoUsdtProvider,
+  settlementAmount,
 } from './payments.mjs';
 import { mountDocuments } from './documents.mjs';
 import { mountFx } from './fx.mjs';
@@ -42,7 +43,10 @@ import { mountConcierge } from './concierge.mjs';
 import { mountBilling } from './billing.mjs';
 import { mountFinance } from './finance.mjs';
 import { mountPeople } from './people.mjs';
-import { mountEngines, mountPublicEngines } from './engines.mjs';
+import { mountEngines, mountPublicEngines, engineCountByHomeEngine } from './engines.mjs';
+import { mountCapabilityRuns, mountTraceability } from './capabilities.mjs';
+import { mountDelivery } from './delivery.mjs';
+import { mountPlans, mountPublicPlans } from './plans.mjs';
 import { mountPricing, mountPublicPricing } from './pricing.mjs';
 import { mountReputation } from './reputation.mjs';
 import { mountScoping, isRegulatedContent } from './scoping.mjs';
@@ -384,7 +388,9 @@ export async function createApp({
   });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
+  mountPublicPlans(app, { toolsBySeat: engineCountByHomeEngine });
   mountPublicEngines(app);
+  mountTraceability(app);
   app.use('/api', async (req, res, next) => {
     const token = (req.headers.cookie || '')
       .split(';')
@@ -404,7 +410,7 @@ export async function createApp({
     req.user = user;
     req.workspace = await db
       .prepare(
-        "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' AND (?::text IS NULL OR workspaces.id = ?) ORDER BY workspace_members.role = 'owner' DESC LIMIT 1",
+        "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit, workspaces.plan, workspaces.plan_period_end, workspaces.plan_status, workspaces.plan_extra_seats, workspaces.plan_grandfathered_seats FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' AND (?::text IS NULL OR workspaces.id = ?) ORDER BY workspace_members.role = 'owner' DESC LIMIT 1",
       )
       .get(user.id, user.sessionWorkspaceId, user.sessionWorkspaceId);
     if (!req.workspace && user.sessionWorkspaceId) {
@@ -413,7 +419,7 @@ export async function createApp({
         .run(digest(token));
       req.workspace = await db
         .prepare(
-          "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' ORDER BY workspace_members.role = 'owner' DESC LIMIT 1",
+          "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit, workspaces.plan, workspaces.plan_period_end, workspaces.plan_status, workspaces.plan_extra_seats, workspaces.plan_grandfathered_seats FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' ORDER BY workspace_members.role = 'owner' DESC LIMIT 1",
         )
         .get(user.id);
     }
@@ -1799,7 +1805,10 @@ export async function createApp({
   mountFinance(app, store);
   mountPeople(app, store);
   mountEngines(app, store);
+  mountCapabilityRuns(app, store);
+  mountDelivery(app, store);
   mountPricing(app, store, { ecosystemAdminEmails });
+  mountPlans(app, store, { paymentProvider, settlementAmount });
   mountTalent(app, store, { ecosystemAdminEmails });
   mountReputation(app, store);
   mountScoping(app, store, { ecosystemAdminEmails });

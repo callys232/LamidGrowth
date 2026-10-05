@@ -12,6 +12,13 @@ import { readAIRules, enforceFeature } from './aiRules.mjs';
 import { collectAgentSources } from './agentSources.mjs';
 import { TRANSITIONS, TERMINAL } from './goals.mjs';
 import { upsertIntelligenceResult } from './intelligence.mjs';
+import {
+  AGENT_CAPABILITIES,
+  capabilityAdapter,
+  executionRequest,
+  resolveCapability,
+} from './capabilities.mjs';
+import { runEngine } from './engines.mjs';
 import { createRecommendation } from './recommendations.mjs';
 
 const messageInput = z
@@ -28,8 +35,51 @@ const messageInput = z
     // input — distinct from and in addition to whatever authorizing words appear in `message`
     // itself. See requiresConfirmation on the agent definition and the check in send() below.
     confirm: z.boolean().optional(),
+    // A structured tool run for an agent with that tool on its allow-list. It goes through the
+    // shared execution path (validation, access, charging, lineage); the agent then explains the
+    // saved result rather than producing figures of its own.
+    toolRun: executionRequest
+      .pick({ input: true, subject: true, sources: true })
+      .extend({ capabilityId: z.string().regex(/^(T\d\d|[A-Za-z]\d{2,3})$/) })
+      .strict()
+      .optional(),
   })
   .strict();
+
+
+/** Runs the request's toolRun, if any, through the agent's adapter and returns it as a source
+ * the review can cite. The tool's own result is authoritative; the model only explains it. */
+async function runRequestedTool(ctx, agentId, input) {
+  if (!input.toolRun) return [];
+  const { capabilityId, ...request } = input.toolRun;
+  const out = await ctx.capabilities.run(capabilityId, request.input, {
+    subject: request.subject,
+    sources: request.sources,
+  });
+  return [
+    {
+      id: out.runId,
+      version: 1,
+      kind: 'tool_result',
+      data: {
+        tool: out.result.toolId,
+        status: out.status,
+        pointsCharged: out.pointsCharged,
+        result: {
+          summary: out.result.summary,
+          working: out.result.working,
+          warnings: out.result.warnings,
+          missingEvidence: out.result.missingEvidence,
+          limits: out.result.limits,
+        },
+        nextSteps: out.nextSteps,
+      },
+    },
+  ];
+}
+
+const toolCallsOf = (ran) =>
+  ran.map((r) => ({ capability: r.data.tool, runId: r.id, status: r.data.status }));
 
 // Authority band -> minimum permission required to invoke that agent.
 // A1 = observe/analyze only (work:write is enough); A2/A3 = may propose or
@@ -37,9 +87,12 @@ const messageInput = z
 // matching the same gate mountWorkflows() already applies to workflow mutation routes.
 const permissionForBand = { A1: 'work:write', A2: 'workspace:manage', A3: 'workspace:manage' };
 
-async function reviewSources(ctx, deps, useCase, question, extraKinds = []) {
+async function reviewSources(ctx, deps, useCase, question, extraKinds = [], requested = []) {
   const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
-  const sources = await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds);
+  const sources = [
+    ...requested,
+    ...(await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds)),
+  ];
   if (!deps.aiProvider) {
     return {
       response: `AI is not configured, so this is a recorded-data summary only: ${sources.length} item(s) on file (${
@@ -278,14 +331,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'diagnostic-intelligence', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.diagnostic-intelligence',
         `Run a business-health-style diagnostic based on this request: ${input.message}`,
         ['progress'],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'signal-monitoring': {
@@ -296,14 +351,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'signal-monitoring', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.signal-monitoring',
         `Summarize what changed recently and what deserves attention, based on: ${input.message}`,
         ['notification', 'progress'],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'capability-mapper': {
@@ -314,13 +371,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'capability-mapper', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.capability-mapper',
         `Identify capability gaps relevant to this request: ${input.message}`,
+        [],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'performance-analytics': {
@@ -953,6 +1013,18 @@ export function createAgentRuntime(store, deps) {
     const reject = (message) => {
       throw Object.assign(new Error(message), { status: 422 });
     };
+    if (input.toolRun) {
+      const r = resolveCapability(input.toolRun.capabilityId);
+      if (r.error || !(AGENT_CAPABILITIES[agentId] ?? []).includes(r.toolId))
+        throw Object.assign(
+          new Error(
+            `${agentFor(agentId).name} cannot run ${input.toolRun.capabilityId}. No points have been charged.`,
+          ),
+          { status: 403 },
+        );
+      // Bad tool input is refused here, before the agent's own points are charged.
+      runEngine(r.ref, input.toolRun.input ?? {});
+    }
     if (
       [
         'proposal-drafter',
@@ -1170,7 +1242,13 @@ export function createAgentRuntime(store, deps) {
     });
     if (priorResult) return priorResult;
     try {
-      const result = await agent.execute({ store, principal, workspace }, input, {
+      const capabilities = capabilityAdapter(store, {
+        agentId,
+        allowed: AGENT_CAPABILITIES[agentId] ?? [],
+        principal,
+        workspace,
+      });
+      const result = await agent.execute({ store, principal, workspace, capabilities }, input, {
         ...deps,
         aiProvider: scopedProvider(
           store,

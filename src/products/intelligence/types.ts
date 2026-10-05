@@ -11,7 +11,7 @@ export interface Policy {
     maxPointsPerRequest: number;
     instructions: string;
     changes: Record<
-      'action.prepare' | 'progress.snapshot' | 'review.reminder',
+      'action.prepare' | 'progress.snapshot' | 'review.reminder' | 'capability.run',
       'block' | 'ask' | 'allow'
     >;
   };

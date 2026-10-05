@@ -9,41 +9,32 @@ import {
 
 const run = (code, input) => runEngine(parseEngineCode(code), input);
 
-test('dimensions left unrated are reported as unrated, not scored as 0', () => {
-  const result = run('S01', {
-    ratings: { 'Identity Clarity': { rating: 4, weight: 2, evidence: 2 } },
-  });
-  const { summary } = result;
-  assert.equal(summary.indexPct, 80);
-  assert.equal(summary.ratedCount, 1);
-  assert.equal(summary.dimensionCount, 4);
-  assert.deepEqual(summary.unrated, [
-    'Strategic Alignment',
-    'Reputation Index',
-    'Market Recognition',
-  ]);
-  assert.equal(summary.weakest.label, 'Identity Clarity');
-  assert.ok(!summary.priorities.some((p) => summary.unrated.includes(p)));
+// S01 is now Purpose & Strategic Direction, an anchored questionnaire (see toolCatalog/anchored.mjs).
+test('questions left unanswered are reported as unanswered, not scored as 0', () => {
+  const { summary, warnings } = run('S01', { answers: { p1: { level: 4, evidence: 2 } } });
+  // One answer of six is too little for an overall score; the answered area is still scored.
+  assert.equal(summary.overallPct, null);
+  assert.equal(summary.sections[0].scorePct, 80);
+  assert.equal(summary.sections[0].answered, 1);
+  assert.equal(summary.sections[1].scorePct, null);
+  assert.equal(summary.unanswered.length, 5);
   assert.ok(
-    summary.warnings.some((w) => w.includes('Only 1 of 4 dimensions')),
-    JSON.stringify(summary.warnings),
+    warnings.some((w) => w.includes('5 of 6 questions unanswered')),
+    JSON.stringify(warnings),
   );
 });
 
-test('an explicit rating of 0 is a real rating, not a missing one', () => {
+test('an explicit answer of 0 is a real answer, not a missing one', () => {
   const { summary } = run('S01', {
-    ratings: {
-      'Identity Clarity': { rating: 4, evidence: 2 },
-      'Strategic Alignment': { rating: 0, evidence: 2 },
-    },
+    answers: { p1: { level: 4, evidence: 2 }, p3: { level: 0, evidence: 2 } },
   });
-  assert.equal(summary.ratedCount, 2);
-  assert.ok(!summary.unrated.includes('Strategic Alignment'));
-  assert.equal(summary.weakest.label, 'Strategic Alignment');
+  assert.equal(summary.sections[1].scorePct, 0);
+  assert.equal(summary.weakestArea, 'Strategic direction');
+  assert.equal(summary.unanswered.length, 4);
 });
 
 test('a financial engine run without a period label falls back instead of crashing', () => {
-  const result = run('F02', {
+  const result = run('F01', {
     periods: [
       { revenue: 1000, cogs: 400, opex: 900 },
       { revenue: 1000, cogs: 400, opex: 900 },
@@ -62,29 +53,30 @@ test('every registered engine states plainly what it calculates and what it does
   }
 });
 
-test('finance and time-series engines disclose that they do not forecast or read live data', () => {
-  assert.match(describeEngine(parseEngineCode('F02')).limits, /does not forecast/i);
-  assert.match(describeEngine(parseEngineCode('F05')).limits, /does not value/i);
-  assert.match(describeEngine(parseEngineCode('R11')).limits, /not connected to live data/i);
+test('finance, valuation and metric tools disclose that they do not forecast, value formally or read live data', () => {
+  assert.match(describeEngine(parseEngineCode('F01')).limits, /does not forecast/i);
+  assert.match(describeEngine(parseEngineCode('F05')).limits, /not a formal valuation opinion/i);
+  assert.match(describeEngine(parseEngineCode('R02')).limits, /not connected/i);
+  assert.match(describeEngine(parseEngineCode('R03')).limits, /not why/i);
 });
 
 test('an engine run result carries the same disclosure the catalog shows', () => {
-  const result = run('R25', { metric: 'weekly releases', values: [5, 4, 6, 2, 3] });
+  const result = run('R03', {
+    metric: 'weekly releases',
+    values: [5, 4, 6, 2, 3, 5, 4, 6].map((value) => ({ value })),
+  });
   assert.deepEqual(
     { computes: result.computes, limits: result.limits },
-    describeEngine(parseEngineCode('R25')),
+    describeEngine(parseEngineCode('R03')),
   );
 });
 
-test("an assessment's own warnings, including unrated coverage, reach the result the app displays", () => {
-  const result = run('S01', { ratings: { 'Identity Clarity': { rating: 5 } } });
+test("a questionnaire's own warnings, including unanswered coverage and unevidenced highs, reach the result", () => {
+  const result = run('S01', { answers: { p1: { level: 5, evidence: 0 } } });
   assert.ok(
-    result.warnings.some((w) => w.includes('Only 1 of 4 dimensions')),
+    result.warnings.some((w) => w.includes('unanswered')),
     JSON.stringify(result.warnings),
   );
-  assert.ok(result.warnings.some((w) => w.includes('rated 4 or above with no evidence')));
-  assert.match(
-    result.working,
-    /Not rated: Strategic Alignment, Reputation Index, Market Recognition/,
-  );
+  assert.ok(result.warnings.some((w) => w.includes('Rated 4 or 5 with no evidence')));
+  assert.match(result.working, /Purpose, vision and values: 80%/);
 });

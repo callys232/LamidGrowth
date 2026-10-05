@@ -135,14 +135,34 @@ async function findInternalProgressMatches(db, subscription) {
     }));
 }
 
-async function findExpertMatches(db, subscription, _constraints, goal) {
+// Engine audit 2026-10-05 (H6): the same credential rule as discovery — verified, unexpired
+// and not revoked — and an expert with a restricted conflict is never suggested. The goal's
+// stated constraints now apply too: language, location (as the expert's location or
+// jurisdiction), and the budget — an expert whose hourly rate alone exceeds the budget ceiling,
+// or who has stated no rate, is left out.
+async function findExpertMatches(db, subscription, constraints, goal) {
+  const now = new Date().toISOString();
   const rows = await db
     .prepare(
-      `SELECT * FROM expert_credentials WHERE verification_status = 'verified' AND verified_at > ?
-       ORDER BY verified_at DESC LIMIT 200`,
+      `SELECT c.*, p.languages, p.location, p.jurisdiction AS profile_jurisdiction, p.hourly_rate
+       FROM expert_credentials c JOIN talent_profiles p ON p.id = c.profile_id
+       WHERE c.verification_status = 'verified' AND c.verified_at > ? AND c.revoked_at IS NULL
+         AND (c.expires_at IS NULL OR c.expires_at > ?)
+         AND NOT EXISTS (SELECT 1 FROM conflict_disclosures d WHERE d.profile_id = p.id AND d.status = 'restricted')
+       ORDER BY c.verified_at DESC LIMIT 200`,
     )
-    .all(subscription.created_at);
-  return relevantTo(goal, rows, (row) => [row.title, row.issuer, row.type].join(' '))
+    .all(subscription.created_at, now);
+  const ceiling = parseBudgetCeiling(constraints.budget);
+  const lower = (v) => String(v ?? '').toLowerCase();
+  const fits = (row) =>
+    (!constraints.language ||
+      JSON.parse(row.languages || '[]').some((l) => lower(l) === lower(constraints.language))) &&
+    (!constraints.location ||
+      [row.location, row.profile_jurisdiction, row.jurisdiction].some(
+        (v) => v && lower(v).includes(lower(constraints.location)),
+      )) &&
+    (ceiling == null || (row.hourly_rate != null && row.hourly_rate <= ceiling));
+  return relevantTo(goal, rows.filter(fits), (row) => [row.title, row.issuer, row.type].join(' '))
     .slice(0, 25)
     .map((row) => ({
       sourceKind: 'expert_credential',
