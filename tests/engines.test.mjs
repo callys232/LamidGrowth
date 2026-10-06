@@ -63,27 +63,30 @@ test('an enterprise-tier workspace (the funded-test default) sees the full 63-to
   assert.ok(result.data.engines.some((e) => e.code === 'Q44' && e.kind === 'decision-quality'));
 });
 
-test("a workspace's in-app catalog is filtered to its signup context, cumulative by rank, and always includes what it's bought a bundle for", async () => {
+test("a workspace's in-app catalog is filtered to its plan's seats, cumulative by plan, and always includes what it's bought a bundle for", async () => {
   const cookie = await demo();
   const state = await request('/state', undefined, cookie, 'GET');
   const workspaceId = state.data.workspace.id;
 
+  // The plan, not the signup context, decides access; clear any seats kept from before plans.
   await store.db
-    .prepare("UPDATE workspaces SET tier = 'individual', context = 'Individual' WHERE id = ?")
+    .prepare(
+      "UPDATE workspaces SET tier = 'individual', plan = 'free', plan_period_end = NULL, plan_extra_seats = '[]', plan_grandfathered_seats = '[]' WHERE id = ?",
+    )
     .run(workspaceId);
-  const individualView = await request('/engines', undefined, cookie, 'GET');
-  assert.ok(individualView.data.count > 0);
-  assert.ok(individualView.data.count < 63);
-  // Clarity (S,Q) is the Individual-rank default; Finance (SME-rank) should not appear yet.
-  assert.ok(individualView.data.engines.every((e) => e.homeEngine !== 'Finance'));
+  const freeView = await request('/engines', undefined, cookie, 'GET');
+  assert.ok(freeView.data.count > 0);
+  assert.ok(freeView.data.count < 63);
+  // Free opens only the Clarity seat.
+  assert.ok(freeView.data.engines.every((e) => e.homeEngine === 'Clarity'));
 
-  await store.db.prepare("UPDATE workspaces SET context = 'Founder' WHERE id = ?").run(workspaceId);
-  const founderView = await request('/engines', undefined, cookie, 'GET');
-  assert.ok(founderView.data.count > individualView.data.count);
-  assert.ok(founderView.data.engines.some((e) => e.homeEngine === 'Growth'));
-  assert.ok(founderView.data.engines.every((e) => e.homeEngine !== 'Finance'));
+  await store.db.prepare("UPDATE workspaces SET plan = 'personal' WHERE id = ?").run(workspaceId);
+  const personalView = await request('/engines', undefined, cookie, 'GET');
+  assert.ok(personalView.data.count > freeView.data.count);
+  assert.ok(personalView.data.engines.some((e) => e.homeEngine === 'Consistency'));
+  assert.ok(personalView.data.engines.every((e) => e.homeEngine !== 'Finance'));
 
-  // Buying access to a Finance engine surfaces it in the catalog even though Founder < SME.
+  // Buying access to a Finance engine surfaces it in the catalog even though Personal lacks Finance.
   await store.db
     .prepare("INSERT INTO workspace_agent_entitlements VALUES (?, 'f01', 'bundle:test', ?)")
     .run(workspaceId, new Date().toISOString());

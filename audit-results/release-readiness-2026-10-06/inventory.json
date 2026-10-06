@@ -1,0 +1,1925 @@
+{
+  "date": "2026-10-06",
+  "configurationScope": "local file/process only; boolean presence does not validate deployed settings",
+  "configuration": {
+    "DATABASE_URL": true,
+    "TEST_DATABASE_URL": true,
+    "ACCOUNT_SECURITY_KEY": true,
+    "PUBLIC_ORIGIN": true,
+    "FRONTEND_ORIGINS": true,
+    "TRUST_PROXY_HOPS": true,
+    "RESEND_API_KEY": true,
+    "SENDGRID_API_KEY": true,
+    "MAIL_FROM": true,
+    "OPENAI_API_KEY": true,
+    "OPENAI_MODEL": true,
+    "ANTHROPIC_API_KEY": true,
+    "ANTHROPIC_MODEL": true,
+    "GEMINI_API_KEY": false,
+    "GEMINI_MODEL": false,
+    "PAYSTACK_SECRET_KEY": true,
+    "ECOSYSTEM_ADMIN_EMAILS": true,
+    "PG_POOL_MAX": true,
+    "WEB_CONCURRENCY": true,
+    "VITE_API_BASE_URL": false
+  },
+  "sourceFiles": 590,
+  "sourceLines": 87403,
+  "backendRouteDeclarations": 303,
+  "unitTestFiles": 82,
+  "browserTestFiles": 26,
+  "manifestPages": 99,
+  "publicManifestPages": 67,
+  "osManifestPages": 32,
+  "plannedRoutes": [
+    "/os/business",
+    "/os/organization",
+    "/os/organization/rhythm",
+    "/os/analytics",
+    "/os/profile",
+    "/os/settings/privacy",
+    "/os/settings/workspace",
+    "/os/settings/billing",
+    "/os/settings/plan"
+  ],
+  "toolCount": 63,
+  "toolValidation": [
+    {
+      "id": "T01",
+      "name": "Purpose & Strategic Direction",
+      "evidence": {
+        "toolVersion": "d45ca80763dc",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — anchored questionnaires … discount unevidenced answers"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T02",
+      "name": "Strategy Alignment Matrix",
+      "evidence": {
+        "toolVersion": "ed83e8498282",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T03",
+      "name": "Strategic Priority Ranking",
+      "evidence": {
+        "toolVersion": "8d5a3d000fe0",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T04",
+      "name": "OKR & Strategy Execution Review",
+      "evidence": {
+        "toolVersion": "cb04f5779c91",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — OKR progress handles targets that should go down"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T05",
+      "name": "External Environment Scan",
+      "evidence": {
+        "toolVersion": "0cc270103fa4",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T63",
+      "name": "Operating Model Review",
+      "evidence": {
+        "toolVersion": "e77141486175",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T06",
+      "name": "Delivery Flow Metrics",
+      "evidence": {
+        "toolVersion": "b85023cc4d07",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Delivery Flow Metrics flags data that breaks Little’s Law"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T07",
+      "name": "Drift & Stability Monitor",
+      "evidence": {
+        "toolVersion": "555bade3e049",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Drift & Stability Monitor: XmR limits …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T08",
+      "name": "Dependency Board",
+      "evidence": {
+        "toolVersion": "b249497d83df",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T09",
+      "name": "Workload & Capacity Balance",
+      "evidence": {
+        "toolVersion": "c97c5aeeb37e",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T10",
+      "name": "Bottleneck & Process Improvement",
+      "evidence": {
+        "toolVersion": "c0ec142174c9",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T11",
+      "name": "Root Cause Analysis",
+      "evidence": {
+        "toolVersion": "b2cefc788b5b",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T12",
+      "name": "Operating Rhythm & Meeting Design",
+      "evidence": {
+        "toolVersion": "2762708c573a",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T13",
+      "name": "Productivity & Output Metrics",
+      "evidence": {
+        "toolVersion": "d58420159220",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T14",
+      "name": "Collaboration Network Map",
+      "evidence": {
+        "toolVersion": "3216ae78475c",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Collaboration Network finds the people whose absence …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T15",
+      "name": "Technology ROI & Total Cost",
+      "evidence": {
+        "toolVersion": "c0b61d05fa90",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T16",
+      "name": "Innovation Funnel",
+      "evidence": {
+        "toolVersion": "0906e2c58c12",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T17",
+      "name": "Data Quality Check",
+      "evidence": {
+        "toolVersion": "353ca4a6c39e",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T18",
+      "name": "Decision Quality",
+      "evidence": {
+        "toolVersion": "230f0d3304d5",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T19",
+      "name": "Decision Register",
+      "evidence": {
+        "toolVersion": "2ff9c01e4884",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T20",
+      "name": "Decision Rights Matrix",
+      "evidence": {
+        "toolVersion": "ab212821ab3d",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Decision Rights Matrix catches missing and duplicate …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T21",
+      "name": "Option Comparison",
+      "evidence": {
+        "toolVersion": "42401351088d",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T22",
+      "name": "Scenarios & Expected Value",
+      "evidence": {
+        "toolVersion": "495f7d1ec256",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T23",
+      "name": "Decision Timing & Cost of Delay",
+      "evidence": {
+        "toolVersion": "6651681aa70a",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Cost of Delay orders by WSJF …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T24",
+      "name": "Priority Conflict Check",
+      "evidence": {
+        "toolVersion": "2d4753724881",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T25",
+      "name": "Stakeholder Map",
+      "evidence": {
+        "toolVersion": "147879759a92",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T26",
+      "name": "Force Field Analysis",
+      "evidence": {
+        "toolVersion": "a0c50a041c16",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T27",
+      "name": "Decision Method Selector",
+      "evidence": {
+        "toolVersion": "e58ef30f00a5",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T30",
+      "name": "Benefits & After-Action Review",
+      "evidence": {
+        "toolVersion": "4110aa77049a",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T35",
+      "name": "Forecast Calibration",
+      "evidence": {
+        "toolVersion": "566b0d9839df",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Forecast Calibration computes Brier scores"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T28",
+      "name": "Early Warning Indicators",
+      "evidence": {
+        "toolVersion": "37bcfcfab44d",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T29",
+      "name": "Risk Register",
+      "evidence": {
+        "toolVersion": "9d289c1d8da9",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T36",
+      "name": "Business Continuity (BIA)",
+      "evidence": {
+        "toolVersion": "a8b19eb23c7c",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T37",
+      "name": "Cyber Security Posture",
+      "evidence": {
+        "toolVersion": "0e72bedda235",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T39",
+      "name": "Organisational Resilience",
+      "evidence": {
+        "toolVersion": "1a9f1cde2c32",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T32",
+      "name": "Governance Assessment",
+      "evidence": {
+        "toolVersion": "2a89166d1e96",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T33",
+      "name": "Commitments & Obligations Register",
+      "evidence": {
+        "toolVersion": "0960ce06f047",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T34",
+      "name": "Compliance Assessment",
+      "evidence": {
+        "toolVersion": "9585e222cd34",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T38",
+      "name": "Ethics & Integrity",
+      "evidence": {
+        "toolVersion": "470ceeb8df8e",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T61",
+      "name": "Financial Controls Review",
+      "evidence": {
+        "toolVersion": "160bce32fca2",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T31",
+      "name": "Culture & Values Assessment",
+      "evidence": {
+        "toolVersion": "84d51dfe9b9a",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T40",
+      "name": "Skills Gap Analysis",
+      "evidence": {
+        "toolVersion": "ea1f7d33e613",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T41",
+      "name": "Workforce Plan",
+      "evidence": {
+        "toolVersion": "7b402445ab65",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T42",
+      "name": "Succession & Bench Strength",
+      "evidence": {
+        "toolVersion": "919b091fe40b",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T43",
+      "name": "Human Capital Metrics",
+      "evidence": {
+        "toolVersion": "aa6475ac23b9",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T44",
+      "name": "Performance–Potential Grid",
+      "evidence": {
+        "toolVersion": "a471975f2838",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T45",
+      "name": "Engagement Survey",
+      "evidence": {
+        "toolVersion": "1e34250fe859",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Engagement Survey computes eNPS …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T46",
+      "name": "Development ROI",
+      "evidence": {
+        "toolVersion": "16a902c247a4",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T47",
+      "name": "Competency & 360 Review",
+      "evidence": {
+        "toolVersion": "f886b1a67225",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T48",
+      "name": "Next-Role Readiness",
+      "evidence": {
+        "toolVersion": "52dfee2213b8",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T49",
+      "name": "Change Readiness",
+      "evidence": {
+        "toolVersion": "21a7c020a101",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Change Readiness finds each group’s weakest belief"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T50",
+      "name": "Transformation Programme Tracker",
+      "evidence": {
+        "toolVersion": "c7854474ecd0",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T51",
+      "name": "Growth Opportunity Scoring",
+      "evidence": {
+        "toolVersion": "7e78d9198120",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T52",
+      "name": "Growth Pathways",
+      "evidence": {
+        "toolVersion": "eefe5162936c",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T53",
+      "name": "Growth Plan Feasibility",
+      "evidence": {
+        "toolVersion": "3caf591da514",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T54",
+      "name": "Modernisation Roadmap",
+      "evidence": {
+        "toolVersion": "404bd86ff6b7",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T55",
+      "name": "Digital Maturity",
+      "evidence": {
+        "toolVersion": "7b403c557cd8",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T56",
+      "name": "Financial Health Ratios",
+      "evidence": {
+        "toolVersion": "b8d1ac972ba6",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T57",
+      "name": "Rolling Forecast & 13-Week Cash",
+      "evidence": {
+        "toolVersion": "e83969fabb64",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — 13-week cash finds the low point …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T58",
+      "name": "KPI Driver Tree",
+      "evidence": {
+        "toolVersion": "152b19b539e7",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T59",
+      "name": "Cost & Spend Analysis",
+      "evidence": {
+        "toolVersion": "b14c65901964",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T60",
+      "name": "Business Valuation",
+      "evidence": {
+        "toolVersion": "bb98966a8078",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — Business Valuation matches a hand-worked DCF …"
+          ]
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    },
+    {
+      "id": "T62",
+      "name": "Finance Function Maturity",
+      "evidence": {
+        "toolVersion": "a9c123bd20c5",
+        "implemented": {
+          "status": "current",
+          "evidence": [
+            "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+          ]
+        },
+        "calculationTested": {
+          "status": "none",
+          "evidence": null
+        },
+        "methodReviewed": {
+          "status": "none",
+          "evidence": null
+        },
+        "taskEvaluated": {
+          "status": "none",
+          "evidence": null
+        },
+        "operationallyTested": {
+          "status": "none",
+          "evidence": null
+        }
+      }
+    }
+  ],
+  "infrastructureFiles": [
+    {
+      "file": "vercel.json",
+      "present": false
+    },
+    {
+      "file": "Dockerfile",
+      "present": false
+    },
+    {
+      "file": "docker-compose.yml",
+      "present": false
+    },
+    {
+      "file": "deploy/deploy.sh",
+      "present": true
+    },
+    {
+      "file": "deploy/ecosystem.config.cjs",
+      "present": true
+    },
+    {
+      "file": ".github/workflows/ci.yml",
+      "present": true
+    }
+  ]
+}

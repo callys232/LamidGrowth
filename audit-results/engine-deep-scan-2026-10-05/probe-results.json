@@ -712,25 +712,9 @@
     {
       "id": "T03",
       "name": "Strategic Priority Ranking",
-      "accepted": true,
-      "summary": {
-        "ranked": [],
-        "disqualified": [],
-        "winner": null,
-        "runnerUp": null,
-        "marginPct": 0,
-        "tooCloseToCall": false,
-        "sensitivity": [],
-        "mostFragileCriterion": null,
-        "headline": "Nothing to compare yet.",
-        "guidance": [],
-        "warnings": [
-          "Add at least two options and one criterion."
-        ]
-      },
-      "warnings": [
-        "Add at least two options and one criterion."
-      ]
+      "accepted": false,
+      "error": "Add at least 2 options to compare.",
+      "status": 400
     },
     {
       "id": "T04",
@@ -784,27 +768,9 @@
     {
       "id": "T10",
       "name": "Bottleneck & Process Improvement",
-      "accepted": true,
-      "summary": {
-        "steps": [],
-        "throughput": 0,
-        "constraint": null,
-        "nextConstraint": null,
-        "upliftOptions": [],
-        "wastedImprovements": [],
-        "totalCost": null,
-        "costPerUnit": null,
-        "totalIdleCapacity": 0,
-        "idleCostEstimate": null,
-        "headline": "No process steps to analyse.",
-        "guidance": [],
-        "warnings": [
-          "Add the steps of the process, in order, with the capacity of each."
-        ]
-      },
-      "warnings": [
-        "Add the steps of the process, in order, with the capacity of each."
-      ]
+      "accepted": false,
+      "error": "Add at least 2 process steps.",
+      "status": 400
     },
     {
       "id": "T11",
@@ -858,246 +824,9 @@
     {
       "id": "T18",
       "name": "Decision Quality",
-      "accepted": true,
-      "summary": {
-        "overallPct": 0,
-        "averagePct": 0,
-        "flatteryPts": 0,
-        "requiredPct": 60,
-        "gapPts": -60,
-        "verdict": "blocked",
-        "headline": "Do not take this to the room yet — 5 fundamentals are missing.",
-        "requirements": [
-          {
-            "id": "frame",
-            "label": "Appropriate frame",
-            "what": "You are deciding the right question, at the right level, with a stated boundary.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 3,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "frame_question",
-                "prompt": "How is the decision written down?",
-                "remedy": "Write the decision as one question someone could answer yes/no or pick from. If you cannot, you are not ready to decide.",
-                "fatal": true
-              },
-              {
-                "id": "frame_outofscope",
-                "prompt": "Is what you are NOT deciding written down?",
-                "remedy": "State the adjacent decisions you are deliberately not making here. Unstated scope is where meetings go to die.",
-                "fatal": false
-              },
-              {
-                "id": "frame_level",
-                "prompt": "Are you deciding the actual issue or a symptom of it?",
-                "remedy": "Ask once: if this decision goes perfectly, does the underlying problem go away? If not, you are deciding a symptom.",
-                "fatal": false
-              }
-            ]
-          },
-          {
-            "id": "alternatives",
-            "label": "Real alternatives",
-            "what": "Genuinely distinct options exist — not one preferred answer plus decoys.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 3,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "alt_count",
-                "prompt": "How many genuinely distinct options are on the table?",
-                "remedy": "Generate at least one more option that a smart opponent would actually argue for. One option is a proposal seeking a rubber stamp.",
-                "fatal": true
-              },
-              {
-                "id": "alt_strawmen",
-                "prompt": "Could each option realistically be chosen?",
-                "remedy": "Remove the decoys. A strawman option makes the comparison look rigorous while removing the rigour.",
-                "fatal": false
-              },
-              {
-                "id": "alt_status_quo",
-                "prompt": "Is doing nothing evaluated as a real option?",
-                "remedy": "Cost the status quo properly. Sometimes it wins, and if you never price it you will never know.",
-                "fatal": false
-              }
-            ]
-          },
-          {
-            "id": "information",
-            "label": "Reliable information",
-            "what": "The key assumptions are backed, and the biggest uncertainty is named.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 3,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "info_backing",
-                "prompt": "What backs the assumptions the choice rests on?",
-                "remedy": "List the three assumptions that, if wrong, flip the decision. Then find something to back each one.",
-                "fatal": false
-              },
-              {
-                "id": "info_uncertainty",
-                "prompt": "Is the biggest uncertainty named?",
-                "remedy": "Name the single unknown with the widest consequence. An unnamed uncertainty gets treated as zero.",
-                "fatal": false
-              },
-              {
-                "id": "info_disconfirm",
-                "prompt": "Has anyone genuinely tried to disconfirm the favoured option?",
-                "remedy": "Run a pre-mortem: assume it is eighteen months later and this failed badly — write the reasons. Do it before committing, not after.",
-                "fatal": false
-              }
-            ]
-          },
-          {
-            "id": "values",
-            "label": "Clear criteria and tradeoffs",
-            "what": "What good looks like was defined BEFORE the options were scored.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 3,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "values_before",
-                "prompt": "Were the decision criteria written down before the options were scored?",
-                "remedy": "Set criteria first. Criteria written after the options are known reliably describe the option you already preferred.",
-                "fatal": true
-              },
-              {
-                "id": "values_weighted",
-                "prompt": "Are the criteria prioritised against each other?",
-                "remedy": "If everything is equally important, nothing is decidable. Rank them, even crudely.",
-                "fatal": false
-              },
-              {
-                "id": "values_sacrifice",
-                "prompt": "Is it clear what you are willing to give up?",
-                "remedy": "Name the tradeoff you are accepting. A decision with no downside written down has not been examined.",
-                "fatal": false
-              }
-            ]
-          },
-          {
-            "id": "reasoning",
-            "label": "Sound reasoning",
-            "what": "The path from evidence to choice is explicit and has been challenged.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 3,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "reason_logic",
-                "prompt": "Is the path from evidence to choice written down?",
-                "remedy": "Write the argument, not the conclusion. If nobody can reconstruct why in six months, the reasoning is lost the moment the room empties.",
-                "fatal": false
-              },
-              {
-                "id": "reason_killcriteria",
-                "prompt": "Have you stated what would change your mind?",
-                "remedy": "Write the specific evidence that would reverse this. A decision that nothing could falsify is a belief.",
-                "fatal": true
-              },
-              {
-                "id": "reason_challenge",
-                "prompt": "Has the reasoning been independently challenged?",
-                "remedy": "Get challenge from someone who is not invested in the outcome and is senior enough to be listened to.",
-                "fatal": false
-              }
-            ]
-          },
-          {
-            "id": "commitment",
-            "label": "Commitment to action",
-            "what": "One named owner, a date, and a first move the executors have accepted.",
-            "scorePct": 0,
-            "answered": 0,
-            "total": 4,
-            "blocking": true,
-            "failures": [
-              {
-                "id": "commit_owner",
-                "prompt": "Who is accountable for the outcome?",
-                "remedy": "Name one person. Shared accountability across a committee is the most reliable predictor of a decision quietly not happening.",
-                "fatal": true
-              },
-              {
-                "id": "commit_date",
-                "prompt": "Is there a date the decision takes effect?",
-                "remedy": "Put a date on it. Undated decisions are intentions.",
-                "fatal": false
-              },
-              {
-                "id": "commit_buyin",
-                "prompt": "Have the people who must execute it accepted it?",
-                "remedy": "Talk to the executors before committing. Resistance surfaced after the announcement costs several times more than resistance surfaced before it.",
-                "fatal": false
-              },
-              {
-                "id": "commit_firstmove",
-                "prompt": "Is the first concrete action defined?",
-                "remedy": "Define the first move. A decision whose first action is undefined has not really been made.",
-                "fatal": false
-              }
-            ]
-          }
-        ],
-        "nextActions": [
-          {
-            "prompt": "How is the decision written down?",
-            "remedy": "Write the decision as one question someone could answer yes/no or pick from. If you cannot, you are not ready to decide.",
-            "fatal": true
-          },
-          {
-            "prompt": "How many genuinely distinct options are on the table?",
-            "remedy": "Generate at least one more option that a smart opponent would actually argue for. One option is a proposal seeking a rubber stamp.",
-            "fatal": true
-          },
-          {
-            "prompt": "Were the decision criteria written down before the options were scored?",
-            "remedy": "Set criteria first. Criteria written after the options are known reliably describe the option you already preferred.",
-            "fatal": true
-          },
-          {
-            "prompt": "Have you stated what would change your mind?",
-            "remedy": "Write the specific evidence that would reverse this. A decision that nothing could falsify is a belief.",
-            "fatal": true
-          },
-          {
-            "prompt": "Who is accountable for the outcome?",
-            "remedy": "Name one person. Shared accountability across a committee is the most reliable predictor of a decision quietly not happening.",
-            "fatal": true
-          },
-          {
-            "prompt": "Is what you are NOT deciding written down?",
-            "remedy": "State the adjacent decisions you are deliberately not making here. Unstated scope is where meetings go to die.",
-            "fatal": false
-          }
-        ],
-        "fatalIssues": [
-          "How is the decision written down?",
-          "How many genuinely distinct options are on the table?",
-          "Were the decision criteria written down before the options were scored?",
-          "Have you stated what would change your mind?",
-          "Who is accountable for the outcome?"
-        ],
-        "answeredCount": 0,
-        "totalQuestions": 19,
-        "confidenceFlags": [
-          "19 of 19 questions unanswered — each counts as zero, because \"nobody checked\" and \"no\" have the same consequence."
-        ]
-      },
-      "warnings": [
-        "19 of 19 questions unanswered — each counts as zero, because \"nobody checked\" and \"no\" have the same consequence.",
-        "Fatal gaps: How is the decision written down?; How many genuinely distinct options are on the table?; Were the decision criteria written down before the options were scored?; Have you stated what would change your mind?; Who is accountable for the outcome?"
-      ]
+      "accepted": false,
+      "error": "Answer at least one decision-quality question.",
+      "status": 400
     },
     {
       "id": "T19",
@@ -1116,52 +845,16 @@
     {
       "id": "T21",
       "name": "Option Comparison",
-      "accepted": true,
-      "summary": {
-        "ranked": [],
-        "disqualified": [],
-        "winner": null,
-        "runnerUp": null,
-        "marginPct": 0,
-        "tooCloseToCall": false,
-        "sensitivity": [],
-        "mostFragileCriterion": null,
-        "headline": "Nothing to compare yet.",
-        "guidance": [],
-        "warnings": [
-          "Add at least two options and one criterion."
-        ]
-      },
-      "warnings": [
-        "Add at least two options and one criterion."
-      ]
+      "accepted": false,
+      "error": "Add at least 2 options to compare.",
+      "status": 400
     },
     {
       "id": "T22",
       "name": "Scenarios & Expected Value",
-      "accepted": true,
-      "summary": {
-        "scenarios": [],
-        "options": [],
-        "byRule": {
-          "expected_value": null,
-          "minimax_regret": null,
-          "maximin": null
-        },
-        "rulesAgree": false,
-        "conflict": null,
-        "evpi": 0,
-        "evpiPct": 0,
-        "dominated": [],
-        "headline": "Define at least two scenarios — a single future is a forecast, not an analysis.",
-        "guidance": [],
-        "warnings": [
-          "Define at least two scenarios — a single future is a forecast, not an analysis."
-        ]
-      },
-      "warnings": [
-        "Define at least two scenarios — a single future is a forecast, not an analysis."
-      ]
+      "accepted": false,
+      "error": "Add at least 1 future scenario.",
+      "status": 400
     },
     {
       "id": "T23",
@@ -1173,24 +866,9 @@
     {
       "id": "T24",
       "name": "Priority Conflict Check",
-      "accepted": true,
-      "summary": {
-        "conflicts": [],
-        "overloads": [],
-        "independent": [],
-        "entangled": [],
-        "conflictCount": 0,
-        "unarbitratedCount": 0,
-        "coherencePct": 0,
-        "headline": "No objectives to check.",
-        "guidance": [],
-        "warnings": [
-          "Add the objectives, the metrics each one moves, and what it claims."
-        ]
-      },
-      "warnings": [
-        "Add the objectives, the metrics each one moves, and what it claims."
-      ]
+      "accepted": false,
+      "error": "Add at least 2 objectives to check.",
+      "status": 400
     },
     {
       "id": "T25",
@@ -1321,24 +999,9 @@
     {
       "id": "T42",
       "name": "Succession & Bench Strength",
-      "accepted": true,
-      "summary": {
-        "roles": [],
-        "uncovered": [],
-        "thin": [],
-        "priorities": [],
-        "concentration": [],
-        "coveredPct": 0,
-        "criticalSeats": 0,
-        "headline": "No roles to assess yet.",
-        "planWarnings": [],
-        "warnings": [
-          "Add the seats you cannot afford to leave empty. Succession cover is measured per seat — there is nothing to average."
-        ]
-      },
-      "warnings": [
-        "Add the seats you cannot afford to leave empty. Succession cover is measured per seat — there is nothing to average."
-      ]
+      "accepted": false,
+      "error": "Add at least 1 critical role.",
+      "status": 400
     },
     {
       "id": "T43",
@@ -1406,69 +1069,23 @@
     {
       "id": "T52",
       "name": "Growth Pathways",
-      "accepted": true,
-      "summary": {
-        "scored": [],
-        "selected": [],
-        "deferred": [],
-        "capacity": 3,
-        "capacityUsed": 0,
-        "horizonMix": [],
-        "portfolioWarnings": [],
-        "headline": "No pathways to compare yet.",
-        "warnings": [
-          "Add at least two candidate pathways — a single option is a proposal, not a choice."
-        ]
-      },
-      "warnings": [
-        "Add at least two candidate pathways — a single option is a proposal, not a choice."
-      ]
+      "accepted": false,
+      "error": "Add at least 1 growth pathway.",
+      "status": 400
     },
     {
       "id": "T53",
       "name": "Growth Plan Feasibility",
-      "accepted": true,
-      "summary": {
-        "periods": [],
-        "unscheduled": [],
-        "criticalPathLength": 0,
-        "criticalPath": [],
-        "totalValue": 0,
-        "scheduledValue": 0,
-        "valueCapturedPct": 0,
-        "valueMedianPeriod": null,
-        "headline": "Nothing to schedule yet.",
-        "guidance": [],
-        "warnings": [
-          "Add initiatives to sequence."
-        ]
-      },
-      "warnings": [
-        "Add initiatives to sequence."
-      ]
+      "accepted": false,
+      "error": "Add at least 1 initiative.",
+      "status": 400
     },
     {
       "id": "T54",
       "name": "Modernisation Roadmap",
-      "accepted": true,
-      "summary": {
-        "periods": [],
-        "unscheduled": [],
-        "criticalPathLength": 0,
-        "criticalPath": [],
-        "totalValue": 0,
-        "scheduledValue": 0,
-        "valueCapturedPct": 0,
-        "valueMedianPeriod": null,
-        "headline": "Nothing to schedule yet.",
-        "guidance": [],
-        "warnings": [
-          "Add initiatives to sequence."
-        ]
-      },
-      "warnings": [
-        "Add initiatives to sequence."
-      ]
+      "accepted": false,
+      "error": "Add at least 1 initiative.",
+      "status": 400
     },
     {
       "id": "T55",
@@ -1520,40 +1137,7 @@
       "status": 400
     }
   ],
-  "fieldSweep": [
-    {
-      "id": "T04",
-      "table": "keyResults",
-      "field": "objective",
-      "error": "byObjective[k.objective].push is not a function"
-    },
-    {
-      "id": "T19",
-      "table": "decisions",
-      "field": "topic",
-      "error": "topics[d.topic.toLowerCase(...)].push is not a function"
-    },
-    {
-      "id": "T20",
-      "table": "assignments",
-      "field": "decision",
-      "error": "byDecision[a.decision].push is not a function"
-    },
-    {
-      "id": "T35",
-      "table": "predictions",
-      "field": "forecaster",
-      "error": "people[x.forecaster].push is not a function"
-    },
-    {
-      "id": "T59",
-      "table": "lines",
-      "field": "category",
-      "nonfinite": [
-        ".summary.byCategory.0.sharePct"
-      ]
-    }
-  ],
+  "fieldSweep": [],
   "migration": {
     "MERGE": 150,
     "REBUILD": 44,
@@ -1566,70 +1150,21 @@
     {
       "name": "Fractional evidence creates NaN",
       "tool": "T01",
-      "accepted": true,
-      "summary": {
-        "overallPct": null,
-        "maturityLevel": 5,
-        "maturityLabel": "Continuously improved",
-        "weakestArea": "Purpose, vision and values",
-        "sections": [
-          {
-            "id": "statement",
-            "label": "Purpose, vision and values",
-            "answered": 1,
-            "of": 2,
-            "scorePct": null,
-            "averageLevel": 5,
-            "lowest": "A written purpose and vision exist and leaders describe them the same way",
-            "unevidencedHighs": []
-          },
-          {
-            "id": "direction",
-            "label": "Strategic direction",
-            "answered": 0,
-            "of": 2,
-            "scorePct": null,
-            "averageLevel": null,
-            "lowest": null,
-            "unevidencedHighs": []
-          },
-          {
-            "id": "use",
-            "label": "Used in decisions",
-            "answered": 0,
-            "of": 2,
-            "scorePct": null,
-            "averageLevel": null,
-            "lowest": null,
-            "unevidencedHighs": []
-          }
-        ],
-        "unanswered": [
-          "Values are defined as behaviours people can observe",
-          "There is a small set of strategic priorities for the next 1–3 years",
-          "Leaders can say what the organisation will not do",
-          "Major spending decisions are checked against the priorities",
-          "Hiring and promotion reflect the stated values"
-        ]
-      },
-      "warnings": [
-        "5 of 6 questions unanswered; they are left out of the score, not counted as zero."
-      ],
-      "nonfinite": [
-        ".summary.overallPct",
-        ".summary.sections.0.scorePct"
-      ],
-      "working": "Purpose & Strategic Direction (Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation)\nOverall NaN% (maturity level 5: Continuously improved). Weakest area: Purpose, vision and values.\n- Purpose, vision and values: NaN% (1/2 answered); lowest: A written purpose and vision exist and leaders describe them the same way.\n- Strategic direction: —% (0/2 answered).\n- Used in decisions: —% (0/2 answered)."
+      "accepted": false,
+      "error": "“A written purpose and vision exist and leaders describe them the same way”: evidence must be 0, 1 or 2.",
+      "status": 400
     },
     {
       "name": "One answer produces overall 100% mature",
       "tool": "T01",
       "accepted": true,
       "summary": {
-        "overallPct": 100,
-        "maturityLevel": 5,
-        "maturityLabel": "Continuously improved",
+        "provisional": true,
+        "overallPct": null,
+        "maturityLevel": null,
+        "maturityLabel": null,
         "weakestArea": "Purpose, vision and values",
+        "evidenceBasis": "self-reported",
         "sections": [
           {
             "id": "statement",
@@ -1671,10 +1206,11 @@
         ]
       },
       "warnings": [
-        "5 of 6 questions unanswered; they are left out of the score, not counted as zero."
+        "5 of 6 questions unanswered; they are left out of the score, not counted as zero.",
+        "Provisional: answer at least 80% of the questions, including some in every area, for an overall score and maturity level. Area scores below cover only the answers given."
       ],
       "nonfinite": [],
-      "working": "Purpose & Strategic Direction (Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation)\nOverall 100% (maturity level 5: Continuously improved). Weakest area: Purpose, vision and values.\n- Purpose, vision and values: 100% (1/2 answered); lowest: A written purpose and vision exist and leaders describe them the same way.\n- Strategic direction: —% (0/2 answered).\n- Used in decisions: —% (0/2 answered)."
+      "working": "Purpose & Strategic Direction (Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation)\nProvisional: too few questions answered for an overall score. Weakest answered area: Purpose, vision and values.\n- Purpose, vision and values: 100% (1/2 answered); lowest: A written purpose and vision exist and leaders describe them the same way.\n- Strategic direction: —% (0/2 answered).\n- Used in decisions: —% (0/2 answered)."
     },
     {
       "name": "No supporting facts still names most probable root",
@@ -1694,7 +1230,8 @@
             "confidence": 0
           }
         ],
-        "mostProbable": "Bad product",
+        "outcome": "insufficient evidence",
+        "mostProbable": null,
         "categoriesConsidered": [
           "Process"
         ],
@@ -1709,28 +1246,18 @@
       "warnings": [
         "1 chain(s) stop after fewer than 3 “why” steps; keep asking why until the cause is something you can change.",
         "No root cause has strong evidence yet. Verify before fixing.",
-        "Some candidate causes do not explain where the problem does not occur; they are unlikely to be the true cause."
+        "Some candidate causes do not explain where the problem does not occur; they are unlikely to be the true cause.",
+        "No candidate cause has both some evidence and a fit with the facts, so none is put forward. Gather evidence before acting."
       ],
       "nonfinite": [],
-      "working": "Root Cause Analysis — 5 Whys, Ishikawa categories and Kepner-Tregoe testing\nProblem: Lost sales\n- Bad product | root: Bad product (Process), evidence none, fits facts: no.\nMost probable root cause: Bad product.\nFishbone categories not yet considered: People; Tools and equipment; Materials and inputs; Environment; Measurement."
+      "working": "Root Cause Analysis — 5 Whys, Ishikawa categories and Kepner-Tregoe testing\nProblem: Lost sales\n- Bad product | root: Bad product (Process), evidence none, fits facts: no.\nLeading candidate root cause: none — insufficient evidence.\nFishbone categories not yet considered: People; Tools and equipment; Materials and inputs; Environment; Measurement."
     },
     {
       "name": "Impossible active time yields efficiency above 100%",
       "tool": "T06",
-      "accepted": true,
-      "summary": {
-        "meanThroughput": 7,
-        "throughputVariationPct": 0,
-        "predictability": "high",
-        "meanCycleTimeDays": 1,
-        "cycleTimeTrendPct": 0,
-        "meanWip": 1,
-        "flowEfficiencyPct": 1000,
-        "littlesLawGaps": []
-      },
-      "warnings": [],
-      "nonfinite": [],
-      "working": "Delivery Flow Metrics — Kanban flow metrics and Little’s Law\nThroughput averages 7 items per 7-day period (variation 0%, predictability high).\nCycle time averages 1 days and changed 0% from the first to the second half.\nAverage work in progress: 1.\nFlow efficiency (active time ÷ cycle time): 1000%. Most knowledge work runs at 15–40%; the rest is waiting."
+      "accepted": false,
+      "error": "Periods, row 1: active days (10) cannot exceed the cycle time (1 days); active time is part of the cycle.",
+      "status": 400
     },
     {
       "name": "Constant labels mask latest drift",
@@ -1745,20 +1272,30 @@
           {
             "rule": "Point outside control limits",
             "at": "Week",
+            "index": 9,
             "side": "above"
           },
           {
             "rule": "8 points in a row on one side of the centre line",
             "at": "Week",
+            "index": 7,
+            "side": "below"
+          },
+          {
+            "rule": "8 points in a row on one side of the centre line",
+            "at": "Week",
+            "index": 8,
             "side": "below"
           }
         ],
-        "verdict": "had past instability",
+        "verdict": "drifting",
         "targetInsideLimits": null
       },
-      "warnings": [],
+      "warnings": [
+        "Defects is drifting in the wrong direction in the latest points. Investigate what changed."
+      ],
       "nonfinite": [],
-      "working": "Drift & Stability Monitor — XmR control chart with Western Electric and Nelson rules\nDefects: centre line 11.5, natural process limits 4.7 to 18.3.\nVerdict: had past instability. Signals found: 2.\n- Point outside control limits at Week (above centre).\n- 8 points in a row on one side of the centre line at Week (below centre)."
+      "working": "Drift & Stability Monitor — XmR control chart with Western Electric and Nelson rules\nDefects: centre line 11.5, natural process limits 4.7 to 18.3.\nVerdict: drifting. Signals found: 3.\n- Point outside control limits at Week (above centre).\n- 8 points in a row on one side of the centre line at Week (below centre).\n- 8 points in a row on one side of the centre line at Week (below centre)."
     },
     {
       "name": "Unique labels detect latest drift",
@@ -1773,16 +1310,19 @@
           {
             "rule": "Point outside control limits",
             "at": "W9",
+            "index": 9,
             "side": "above"
           },
           {
             "rule": "8 points in a row on one side of the centre line",
             "at": "W7",
+            "index": 7,
             "side": "below"
           },
           {
             "rule": "8 points in a row on one side of the centre line",
             "at": "W8",
+            "index": 8,
             "side": "below"
           }
         ],
@@ -1798,42 +1338,12 @@
     {
       "name": "Whitespace required objective and numeric budget",
       "tool": "T02",
-      "accepted": true,
-      "summary": {
-        "objectives": [
-          {
-            "objective": "",
-            "weightSharePct": 100,
-            "budgetSharePct": 0,
-            "gapPts": -100,
-            "initiatives": []
-          }
-        ],
-        "orphanInitiatives": [
-          ""
-        ],
-        "unfundedObjectives": [
-          ""
-        ],
-        "orphanSpendPct": 0,
-        "misallocationPct": 50,
-        "alignmentPct": 50
-      },
-      "warnings": [
-        "No active initiative serves: .",
-        "1 initiative(s) serve no listed objective."
-      ],
-      "nonfinite": [],
-      "working": "Strategy Alignment Matrix — Hoshin Kanri X-matrix method\nAlignment 50% (spend misallocated against importance: 50%; spend on initiatives with no objective: 0%).\n- : importance 100% vs spend 0% (-100 pts); initiatives: none.\nInitiatives serving no objective: .\nObjectives with no initiative: ."
+      "accepted": false,
+      "error": "Objectives, row 1: “Objective” is required.",
+      "status": 400
     },
     {
       "name": "Prototype name causes internal exception",
-      "tool": "T19",
-      "accepted": false,
-      "error": "topics[d.topic.toLowerCase(...)].push is not a function"
-    },
-    {
-      "name": "Invalid calendar date",
       "tool": "T19",
       "accepted": true,
       "summary": {
@@ -1845,7 +1355,7 @@
           {
             "title": "Example",
             "owner": "no owner",
-            "ageDays": 216
+            "ageDays": 277
           }
         ],
         "reversalRatePct": 0,
@@ -1862,35 +1372,21 @@
         "1 decision(s) have no owner."
       ],
       "nonfinite": [],
-      "working": "Decision Register — decision log with cycle-time measures\n1 decisions as of 2026-10-05; 1 open.\nCycle time from raised to decided: median — days, 80% within — days.\nReversal rate: 0% of decided items.\n- Stalled: Example (no owner), 216 days.\nReviews overdue: none.\nOpen decisions by owner: none."
+      "working": "Decision Register — decision log with cycle-time measures\n1 decisions as of 2026-10-05; 1 open.\nCycle time from raised to decided: median — days, 80% within — days.\nReversal rate: 0% of decided items.\n- Stalled: Example (no owner), 277 days.\nReviews overdue: none.\nOpen decisions by owner: none."
+    },
+    {
+      "name": "Invalid calendar date",
+      "tool": "T19",
+      "accepted": false,
+      "error": "Decisions, row 1: “Raised on” must be a date (YYYY-MM-DD).",
+      "status": 400
     },
     {
       "name": "Reversed chronology silently omitted",
       "tool": "T19",
-      "accepted": true,
-      "summary": {
-        "total": 1,
-        "open": 0,
-        "medianCycleDays": null,
-        "p80CycleDays": null,
-        "stalled": [],
-        "reversalRatePct": 0,
-        "withoutOwner": [
-          "Example"
-        ],
-        "withoutRationale": [
-          "Example"
-        ],
-        "reviewsOverdue": [],
-        "recurringTopics": [],
-        "openByOwner": {}
-      },
-      "warnings": [
-        "1 decision(s) have no owner.",
-        "1 decision(s) were made without a recorded rationale."
-      ],
-      "nonfinite": [],
-      "working": "Decision Register — decision log with cycle-time measures\n1 decisions as of 2026-10-05; 0 open.\nCycle time from raised to decided: median — days, 80% within — days.\nReversal rate: 0% of decided items.\nReviews overdue: none.\nOpen decisions by owner: none."
+      "accepted": false,
+      "error": "Decisions, row 1: “Decided on” (2026-02-01) is before “Raised on” (2026-03-01).",
+      "status": 400
     },
     {
       "name": "Annual plan satisfies quarterly strategy review",
@@ -1902,7 +1398,8 @@
         "updateSharePct": 0,
         "missingRhythmLevels": [
           "weekly operational review",
-          "monthly performance review"
+          "monthly performance review",
+          "quarterly strategy review"
         ],
         "meetingsWithoutOwner": [
           "Annual plan"
@@ -1924,51 +1421,26 @@
         ]
       },
       "warnings": [
-        "The rhythm has no weekly operational review, no monthly performance review.",
+        "The rhythm has no weekly operational review, no monthly performance review, no quarterly strategy review.",
         "No owner: Annual plan."
       ],
       "nonfinite": [],
-      "working": "Operating Rhythm & Meeting Design — meeting-load analysis against a weekly, monthly and quarterly review cycle\n0.1 person-hours a week in recurring meetings; 0 per person across 5 people.\nShare of time spent on status updates: 0%.\nMissing rhythm levels: weekly operational review; monthly performance review.\n- Annual plan: 0.1 person-hours/week (yearly, plan)."
+      "working": "Operating Rhythm & Meeting Design — meeting-load analysis against a weekly, monthly and quarterly review cycle\n0.1 person-hours a week in recurring meetings; 0 per person across 5 people.\nShare of time spent on status updates: 0%.\nMissing rhythm levels: weekly operational review; monthly performance review; quarterly strategy review.\n- Annual plan: 0.1 person-hours/week (yearly, plan)."
     },
     {
       "name": "More leavers than current staff creates negative supply",
       "tool": "T41",
-      "accepted": true,
-      "summary": {
-        "horizon": "12 months",
-        "roles": [
-          {
-            "role": "Analyst",
-            "current": 2,
-            "leavers": 10,
-            "needed": 3,
-            "internalReady": 0,
-            "weeksToHire": null,
-            "weeksToDevelop": null,
-            "projectedSupply": -8,
-            "gap": 11,
-            "fromInside": 0,
-            "toHire": 11,
-            "route": "hire and develop"
-          }
-        ],
-        "totalShortfall": 11,
-        "totalSurplus": 0,
-        "totalToHire": 11
-      },
-      "warnings": [
-        "Shortfall in 1 role(s), 11 people in total."
-      ],
-      "nonfinite": [],
-      "working": "Workforce Plan — supply and demand gap analysis (ISO 30409)\nOver 12 months: shortfall 11, surplus 0, external hires needed 11.\n- Analyst: need 3, projected -8 → gap 11; hire and develop (hire 11)."
+      "accepted": false,
+      "error": "Roles, row 1: “Expected leavers” (10) cannot exceed “Headcount today” (2).",
+      "status": 400
     },
     {
       "name": "Single small survey group leaks aggregate score",
       "tool": "T45",
       "accepted": true,
       "summary": {
-        "overallENPS": 100,
-        "overallResponseRatePct": 100,
+        "overallENPS": null,
+        "overallResponseRatePct": null,
         "teams": [
           {
             "team": "Small",
@@ -1978,41 +1450,18 @@
         ]
       },
       "warnings": [
-        "Fewer than 5 responses in Small: do not show these team results, to protect anonymity."
+        "Fewer than 5 responses in Small: do not show these team results, to protect anonymity.",
+        "Overall results withheld: with them, the hidden team results could be worked out."
       ],
       "nonfinite": [],
-      "working": "Engagement Survey — employee Net Promoter Score (−100 to +100)\nOverall eNPS 100 from 1 responses (100% response rate).\n- Small: hidden (fewer than 5 responses)."
+      "working": "Engagement Survey — employee Net Promoter Score (−100 to +100)\nOverall eNPS withheld to protect anonymity.\n- Small: hidden to protect anonymity."
     },
     {
       "name": "Large finite inputs overflow arithmetic",
       "tool": "T51",
-      "accepted": true,
-      "summary": {
-        "ranked": [
-          {
-            "opportunity": "X",
-            "horizon": "H1 — extend the core",
-            "ansoff": "market penetration",
-            "reach": 1e+308,
-            "impact": 3,
-            "confidence": 100,
-            "effort": 0.1,
-            "score": null
-          }
-        ],
-        "effortMixPct": {
-          "H1": 100,
-          "H2": 0,
-          "H3": 0
-        }
-      },
-      "warnings": [
-        "Over 85% of effort goes to the core business. Little is building the next one."
-      ],
-      "nonfinite": [
-        ".summary.ranked.0.score"
-      ],
-      "working": "Growth Opportunity Scoring — RICE score with Ansoff and Three Horizons mix\nEffort mix: H1 100%, H2 0%, H3 0% (a common reference point is roughly 70/20/10).\n1. X: RICE Infinity (H1, market penetration)."
+      "accepted": false,
+      "error": "These figures are too large or inconsistent to compute a result (ranked.0.score). Check the values entered.",
+      "status": 400
     }
   ]
 }
