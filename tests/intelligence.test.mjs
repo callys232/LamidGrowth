@@ -230,6 +230,8 @@ test('F-SI-05: resolving a conflict actually reconciles both agents onto one con
 test('F-SI-01: repeated computation produces immutable versions, not an overwrite', async () => {
   const cookie = await signup();
   const wsId = await workspaceId(cookie);
+  // Lineage is checked on read, so the cited source must be a real objective at its real version.
+  const goal = await store.insert(wsId, 'objective', { title: 'Versioned goal', status: 'Active' });
 
   const first = await upsertIntelligenceResult(store, {
     workspaceId: wsId,
@@ -238,10 +240,11 @@ test('F-SI-01: repeated computation produces immutable versions, not an overwrit
     agentId: 'goal-advisor',
     conclusion: 'progressing',
     summary: 'First computation.',
-    sources: [{ kind: 'objective', id: 'goal-versioned', version: 1 }],
+    sources: [{ kind: 'objective', id: goal.id, version: 1 }],
     modelRegistryId: 'companion-goal-advisor-v1',
   });
   assert.equal(first.version, 1);
+  await store.db.prepare('UPDATE records SET version = 2 WHERE id = ?').run(goal.id);
 
   const second = await upsertIntelligenceResult(store, {
     workspaceId: wsId,
@@ -250,7 +253,7 @@ test('F-SI-01: repeated computation produces immutable versions, not an overwrit
     agentId: 'goal-advisor',
     conclusion: 'at_risk',
     summary: 'Second computation, after a material change.',
-    sources: [{ kind: 'objective', id: 'goal-versioned', version: 2 }],
+    sources: [{ kind: 'objective', id: goal.id, version: 2 }],
     modelRegistryId: 'companion-goal-advisor-v1',
   });
   assert.equal(second.version, 2);
@@ -260,7 +263,7 @@ test('F-SI-01: repeated computation produces immutable versions, not an overwrit
   assert.equal(current.data.length, 1);
   assert.equal(current.data[0].version, 2);
   assert.equal(current.data[0].conclusion, 'at_risk');
-  assert.deepEqual(current.data[0].sources, [{ kind: 'objective', id: 'goal-versioned', version: 2 }]);
+  assert.deepEqual(current.data[0].sources, [{ kind: 'objective', id: goal.id, version: 2 }]);
   assert.equal(current.data[0].modelRegistryId, 'companion-goal-advisor-v1');
 
   // The history endpoint shows both versions, and the first version's content is provably
@@ -276,7 +279,7 @@ test('F-SI-01: repeated computation produces immutable versions, not an overwrit
   assert.equal(history.data[0].version, 1);
   assert.equal(history.data[0].conclusion, 'progressing');
   assert.equal(history.data[0].summary, 'First computation.');
-  assert.deepEqual(history.data[0].sources, [{ kind: 'objective', id: 'goal-versioned', version: 1 }]);
+  assert.deepEqual(history.data[0].sources, [{ kind: 'objective', id: goal.id, version: 1 }]);
   assert.equal(history.data[1].version, 2);
   assert.equal(history.data[1].conclusion, 'at_risk');
 });

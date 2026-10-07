@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { JOB_CATEGORIES } from './jobTaxonomy.mjs';
 import { REGULATED_KEYWORDS } from './regulatedKeywords.mjs';
+import { reviewerEligibility } from './expertEligibility.mjs';
 
 const text = (max) => z.string().trim().max(max).default('');
 
@@ -416,7 +417,7 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
       ).max_version;
       const review = await db
         .prepare(
-          "SELECT * FROM review_queue_entries WHERE scoping_case_id = ? AND status = 'completed' AND reviewed_version = ?",
+          "SELECT * FROM review_queue_entries WHERE scoping_case_id = ? AND status = 'completed' AND reviewed_version = ? AND qualification_revoked_at IS NULL",
         )
         .get(existing.id, currentVersion);
       if (!review)
@@ -506,25 +507,21 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     );
   });
 
-  // F-SC-02 (spec-review audit): "any registered talent profile" previously meant literally
-  // any expert — a UX designer could see and claim a case flagged red for legal-jurisdiction
-  // reasons. Eligibility now requires a verified profile whose declared domain actually covers
-  // the case's category (an unset category stays visible to any verified expert, since nothing
-  // more specific can be checked), and — for cases red-flagged by a jurisdiction rule — a
-  // matching declared jurisdiction. This does not fabricate a licensing check the platform has
-  // no evidence for; it uses the eligibility signals the schema actually has.
-  async function isEligibleReviewer(profile, caseRow) {
-    if (!profile || profile.vetting_status !== 'verified') return false;
-    if (caseRow.category) {
-      const domains = JSON.parse(profile.domains || '[]');
-      if (!domains.includes(caseRow.category)) return false;
-    }
-    if (caseRow.risk_band === 'red' && caseRow.jurisdiction) {
-      const requiresLicense = await jurisdictionRequiresLicense(caseRow.jurisdiction, caseRow.category);
-      if (requiresLicense && profile.jurisdiction !== caseRow.jurisdiction) return false;
-    }
-    return true;
+  // F-SC-02, tightened by the 2026-10-05 engine audit (H6): a verified profile whose domain
+  // covers the case's category, no restricted conflict, and — where the case's jurisdiction rule
+  // requires a licence — a current, verified, unrevoked licence for that jurisdiction (and the
+  // case's category, where the licence states one). A declared jurisdiction on the profile is
+  // no longer enough. Checked when the queue is listed, when a review is claimed and again when
+  // it is completed. See expertEligibility.mjs.
+  async function reviewerCheck(profile, caseRow) {
+    const requiresLicense =
+      caseRow.risk_band === 'red' && caseRow.jurisdiction
+        ? await jurisdictionRequiresLicense(caseRow.jurisdiction, caseRow.category)
+        : false;
+    return reviewerEligibility(db, profile, caseRow, requiresLicense);
   }
+  const isEligibleReviewer = async (profile, caseRow) =>
+    (await reviewerCheck(profile, caseRow)).eligible;
 
   app.get('/api/review-queue', async (req, res) => {
     const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.user.id);
@@ -558,8 +555,11 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
       )
       .get(req.params.id);
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
-    if (!(await isEligibleReviewer(profile, entry)))
-      return res.status(403).json({ error: 'You are not eligible to review this case.' });
+    const eligibility = await reviewerCheck(profile, { ...entry, risk_band: entry.case_risk_band });
+    if (!eligibility.eligible)
+      return res.status(403).json({
+        error: `You are not eligible to review this case: ${eligibility.reasons.join('; ')}.`,
+      });
     const claimedAt = new Date();
     // If this reviewer hasn't declared an expected response window, no SLA is fabricated — the
     // entry is claimed without one rather than inventing a plausible-looking number.
@@ -570,9 +570,9 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     // zero rows instead of both requests reading 'pending' and both writing a claim.
     const claimed = await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ?, sla_due_at = ? WHERE id = ? AND status = 'pending'",
+        "UPDATE review_queue_entries SET status = 'claimed', claimed_by = ?, claimed_at = ?, sla_due_at = ?, qualifying_credential_id = ? WHERE id = ? AND status = 'pending'",
       )
-      .run(req.user.id, claimedAt.toISOString(), slaDueAt, entry.id);
+      .run(req.user.id, claimedAt.toISOString(), slaDueAt, eligibility.licenceId, entry.id);
     if (claimed.changes === 0)
       return res.status(409).json({ error: 'This entry was already claimed by someone else.' });
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));
@@ -585,6 +585,17 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     if (!entry) return res.status(404).json({ error: 'Review queue entry not found.' });
     if (entry.claimed_by !== req.user.id)
       return res.status(403).json({ error: 'You have not claimed this entry.' });
+    // Qualification is checked again at completion: a licence that expired or was revoked since
+    // the claim cannot back the review the publish gate relies on.
+    const caseRow = await db
+      .prepare('SELECT category, jurisdiction, risk_band FROM scoping_cases WHERE id = ?')
+      .get(entry.scoping_case_id);
+    const profile = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(req.user.id);
+    const eligibility = await reviewerCheck(profile, caseRow);
+    if (!eligibility.eligible)
+      return res.status(403).json({
+        error: `You are no longer eligible to complete this review: ${eligibility.reasons.join('; ')}.`,
+      });
     const input = completeReviewSchema.parse(req.body ?? {});
     // F-SC-01: bind this completion to the scope's current version, so a later material edit
     // (which creates a new scope_versions row) makes the case's publish check see a stale,
@@ -598,13 +609,14 @@ export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
     const hasProposal = input.proposedChanges && Object.keys(input.proposedChanges).length > 0;
     await db
       .prepare(
-        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ?, reviewed_version = ?, proposed_changes = ? WHERE id = ?",
+        "UPDATE review_queue_entries SET status = 'completed', notes = ?, completed_at = ?, reviewed_version = ?, proposed_changes = ?, qualifying_credential_id = ? WHERE id = ?",
       )
       .run(
         input.notes,
         new Date().toISOString(),
         versionRow.max_version,
         hasProposal ? JSON.stringify(input.proposedChanges) : null,
+        eligibility.licenceId,
         entry.id,
       );
     res.json(await db.prepare('SELECT * FROM review_queue_entries WHERE id = ?').get(entry.id));

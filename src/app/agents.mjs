@@ -12,6 +12,13 @@ import { readAIRules, enforceFeature } from './aiRules.mjs';
 import { collectAgentSources } from './agentSources.mjs';
 import { TRANSITIONS, TERMINAL } from './goals.mjs';
 import { upsertIntelligenceResult } from './intelligence.mjs';
+import {
+  AGENT_CAPABILITIES,
+  capabilityAdapter,
+  executionRequest,
+  resolveCapability,
+} from './capabilities.mjs';
+import { runEngine } from './engines.mjs';
 import { createRecommendation } from './recommendations.mjs';
 
 const messageInput = z
@@ -28,8 +35,51 @@ const messageInput = z
     // input — distinct from and in addition to whatever authorizing words appear in `message`
     // itself. See requiresConfirmation on the agent definition and the check in send() below.
     confirm: z.boolean().optional(),
+    // A structured tool run for an agent with that tool on its allow-list. It goes through the
+    // shared execution path (validation, access, charging, lineage); the agent then explains the
+    // saved result rather than producing figures of its own.
+    toolRun: executionRequest
+      .pick({ input: true, subject: true, sources: true })
+      .extend({ capabilityId: z.string().regex(/^(T\d\d|[A-Za-z]\d{2,3})$/) })
+      .strict()
+      .optional(),
   })
   .strict();
+
+
+/** Runs the request's toolRun, if any, through the agent's adapter and returns it as a source
+ * the review can cite. The tool's own result is authoritative; the model only explains it. */
+async function runRequestedTool(ctx, agentId, input) {
+  if (!input.toolRun) return [];
+  const { capabilityId, ...request } = input.toolRun;
+  const out = await ctx.capabilities.run(capabilityId, request.input, {
+    subject: request.subject,
+    sources: request.sources,
+  });
+  return [
+    {
+      id: out.runId,
+      version: 1,
+      kind: 'tool_result',
+      data: {
+        tool: out.result.toolId,
+        status: out.status,
+        pointsCharged: out.pointsCharged,
+        result: {
+          summary: out.result.summary,
+          working: out.result.working,
+          warnings: out.result.warnings,
+          missingEvidence: out.result.missingEvidence,
+          limits: out.result.limits,
+        },
+        nextSteps: out.nextSteps,
+      },
+    },
+  ];
+}
+
+const toolCallsOf = (ran) =>
+  ran.map((r) => ({ capability: r.data.tool, runId: r.id, status: r.data.status }));
 
 // Authority band -> minimum permission required to invoke that agent.
 // A1 = observe/analyze only (work:write is enough); A2/A3 = may propose or
@@ -37,9 +87,12 @@ const messageInput = z
 // matching the same gate mountWorkflows() already applies to workflow mutation routes.
 const permissionForBand = { A1: 'work:write', A2: 'workspace:manage', A3: 'workspace:manage' };
 
-async function reviewSources(ctx, deps, useCase, question, extraKinds = []) {
+async function reviewSources(ctx, deps, useCase, question, extraKinds = [], requested = []) {
   const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
-  const sources = await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds);
+  const sources = [
+    ...requested,
+    ...(await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds)),
+  ];
   if (!deps.aiProvider) {
     return {
       response: `AI is not configured, so this is a recorded-data summary only: ${sources.length} item(s) on file (${
@@ -137,6 +190,49 @@ async function saveCreationAsset(ctx, { kind, title, content, jobId = null, prop
   return id;
 }
 
+/** Returns the milestone's invoice, issuing it on first request. Numbers run per issuer and
+ * calendar year (INV-2026-0001, 0002, ...). The amount is copied from the approved milestone at
+ * issue time, so a later regeneration always shows the same invoice. */
+async function issueInvoice(db, milestone, issuerUserId) {
+  const existing = () => db.prepare('SELECT * FROM invoices WHERE milestone_id = ?').get(milestone.id);
+  const found = await existing();
+  if (found) return found;
+  const issuedAt = new Date().toISOString();
+  const year = Number(issuedAt.slice(0, 4));
+  // Two concurrent first-time requests can pick the same next sequence; the UNIQUE constraints
+  // reject the loser, which then re-reads (same milestone) or retries with the next number.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    try {
+      const inserted = await db
+        .prepare(
+          `INSERT INTO invoices (id, milestone_id, issuer_user_id, year, sequence, number, amount, currency, issued_at)
+           SELECT ?, ?, ?, ?, next.seq, 'INV-' || ? || '-' || LPAD(next.seq::text, 4, '0'), ?, ?, ?
+           FROM (SELECT COALESCE(MAX(sequence), 0) + 1 AS seq FROM invoices WHERE issuer_user_id = ? AND year = ?) AS next
+           ON CONFLICT (milestone_id) DO NOTHING
+           RETURNING *`,
+        )
+        .get(
+          randomUUID(),
+          milestone.id,
+          issuerUserId,
+          year,
+          String(year),
+          milestone.amount,
+          milestone.currency,
+          issuedAt,
+          issuerUserId,
+          year,
+        );
+      return inserted ?? (await existing());
+    } catch (error) {
+      if (error.code !== '23505') throw error;
+      const raced = await existing();
+      if (raced) return raced;
+    }
+  }
+  throw new Error('Could not allocate an invoice number. Please try again.');
+}
+
 async function draftJobDocument(ctx, deps, useCase, job, question, templateFallback) {
   const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
   const kind = useCase.replace('companion.', '');
@@ -144,7 +240,7 @@ async function draftJobDocument(ctx, deps, useCase, job, question, templateFallb
   const result = deps.aiProvider
     ? await deps.aiProvider.review(
         { question, sources: [{ id: job.id, version: 1, kind: 'job', data: job }] },
-        {},
+        { mode: 'document' },
       )
     : null;
   const finalResponse = result ? result.review.summary : response;
@@ -235,14 +331,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'diagnostic-intelligence', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.diagnostic-intelligence',
         `Run a business-health-style diagnostic based on this request: ${input.message}`,
         ['progress'],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'signal-monitoring': {
@@ -253,14 +351,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'signal-monitoring', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.signal-monitoring',
         `Summarize what changed recently and what deserves attention, based on: ${input.message}`,
         ['notification', 'progress'],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'capability-mapper': {
@@ -271,13 +371,16 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
+      const ran = await runRequestedTool(ctx, 'capability-mapper', input);
       const { response, evidence } = await reviewSources(
         ctx,
         deps,
         'companion.capability-mapper',
         `Identify capability gaps relevant to this request: ${input.message}`,
+        [],
+        ran,
       );
-      return { response, toolCalls: [], evidence };
+      return { response, toolCalls: toolCallsOf(ran), evidence };
     },
   },
   'performance-analytics': {
@@ -358,7 +461,9 @@ const agents = {
         ctx,
         deps,
         'companion.market-intelligence',
-        `Surface market, customer, or competitive insight relevant to: ${input.message}`,
+        // It has no market data source — only what the workspace has saved in Knowledge. Say so,
+        // so the answer is never read as market research.
+        `Using only the knowledge saved in this workspace, surface market, customer, or competitive insight relevant to: ${input.message}. Begin by stating plainly that no external market data was consulted, and that the insight is only as current as the saved knowledge.`,
         ['knowledge'],
       );
       return { response, toolCalls: [], evidence };
@@ -591,7 +696,7 @@ const agents = {
               question: `Draft a change order describing how this proposal's scope and amount should change, given the requested change below. Requested change: ${requestedChange}. Do not invent scope or price beyond what is given or requested.`,
               sources: [{ id: proposal.id, version: 1, kind: 'proposal', data: proposal }],
             },
-            {},
+            { mode: 'document' },
           )
         : null;
       const finalResponse = result
@@ -686,30 +791,37 @@ const agents = {
           toolCalls: [],
           evidence: null,
         };
-      const { milestone, job } = await loadAuthorizedMilestone(ctx, input.milestoneId);
+      const { milestone, project, job } = await loadAuthorizedMilestone(ctx, input.milestoneId);
       if (milestone.status !== 'approved')
         return {
           response: `Milestone "${milestone.title}" is not yet approved (current status: ${milestone.status}). An invoice can only be generated once the client has approved the milestone.`,
           toolCalls: [],
           evidence: { milestoneId: milestone.id, status: milestone.status },
         };
-      const existing = (
-        await ctx.store.db
-          .prepare(
-            "SELECT COUNT(*) AS count FROM agent_runs WHERE agent_id = 'invoice-generator' AND workspace_id = ?",
-          )
-          .get(ctx.workspace.id)
-      ).count;
-      const invoiceNumber = `INV-${new Date().getFullYear()}-${String(existing + 1).padStart(4, '0')}`;
-      const issuedAt = new Date().toISOString().slice(0, 10);
+      const invoice = await issueInvoice(ctx.store.db, milestone, project.freelancer_user_id);
+      const nameOf = async (userId) =>
+        userId
+          ? (await ctx.store.db.prepare('SELECT name FROM users WHERE id = ?').get(userId))?.name
+          : null;
+      const from = await nameOf(project.freelancer_user_id);
+      const billedTo = await nameOf(job?.client_user_id);
       return {
-        response: `Invoice ${invoiceNumber}\n\nFor: ${job ? job.title : milestone.title}\nMilestone: ${milestone.title}\nAmount due: ${milestone.amount} ${milestone.currency}\nIssued: ${issuedAt}\n\nThis amount is taken directly from the approved milestone record. It is not editable by this tool and was not generated or phrased by an AI model.`,
+        response: [
+          `Invoice ${invoice.number}`,
+          '',
+          `From: ${from ?? 'Freelancer'}`,
+          `Billed to: ${billedTo ?? 'Client'}`,
+          `Project: ${job ? job.title : project.title}`,
+          `Milestone: ${milestone.title}`,
+          `Amount due: ${invoice.amount} ${invoice.currency}`,
+          `Issued: ${invoice.issued_at.slice(0, 10)}`,
+        ].join('\n'),
         toolCalls: [],
         evidence: {
           milestoneId: milestone.id,
-          invoiceNumber,
-          amount: milestone.amount,
-          currency: milestone.currency,
+          invoiceNumber: invoice.number,
+          amount: invoice.amount,
+          currency: invoice.currency,
           method: 'deterministic-calculation',
         },
       };
@@ -901,6 +1013,18 @@ export function createAgentRuntime(store, deps) {
     const reject = (message) => {
       throw Object.assign(new Error(message), { status: 422 });
     };
+    if (input.toolRun) {
+      const r = resolveCapability(input.toolRun.capabilityId);
+      if (r.error || !(AGENT_CAPABILITIES[agentId] ?? []).includes(r.toolId))
+        throw Object.assign(
+          new Error(
+            `${agentFor(agentId).name} cannot run ${input.toolRun.capabilityId}. No points have been charged.`,
+          ),
+          { status: 403 },
+        );
+      // Bad tool input is refused here, before the agent's own points are charged.
+      runEngine(r.ref, input.toolRun.input ?? {});
+    }
     if (
       [
         'proposal-drafter',
@@ -1027,7 +1151,15 @@ export function createAgentRuntime(store, deps) {
         evidence: null,
       };
     }
-    const points = agent.points || 0;
+    // Re-issuing a milestone's existing invoice returns the same document — charge only once.
+    // (Authorization is still checked in validatePrerequisites and again in execute.)
+    const reissue =
+      agentId === 'invoice-generator' &&
+      input.milestoneId &&
+      Boolean(
+        await db.prepare('SELECT 1 FROM invoices WHERE milestone_id = ?').get(input.milestoneId),
+      );
+    const points = reissue ? 0 : agent.points || 0;
     const runId = randomUUID();
     const createdAt = new Date().toISOString();
     const operation = 'companion.message';
@@ -1110,7 +1242,13 @@ export function createAgentRuntime(store, deps) {
     });
     if (priorResult) return priorResult;
     try {
-      const result = await agent.execute({ store, principal, workspace }, input, {
+      const capabilities = capabilityAdapter(store, {
+        agentId,
+        allowed: AGENT_CAPABILITIES[agentId] ?? [],
+        principal,
+        workspace,
+      });
+      const result = await agent.execute({ store, principal, workspace, capabilities }, input, {
         ...deps,
         aiProvider: scopedProvider(
           store,

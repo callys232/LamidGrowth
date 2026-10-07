@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /os/
+Disallow: /workspace/
+Disallow: /start
+Disallow: /signup
+Disallow: /login
+Disallow: /reset-password
+Disallow: /password-recovery
+Disallow: /verify-account
+
+Sitemap: https://lamidconsulting.com/sitemap.xml

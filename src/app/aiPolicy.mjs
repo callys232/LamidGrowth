@@ -65,7 +65,7 @@ export function scopedProvider(
   if (!provider) return null;
   return {
     ...provider,
-    async review(payload) {
+    async review(payload, { mode } = {}) {
       if (consent !== true)
         deny('Confirm consent to share the relevant workspace context with external AI.');
       const policy = await authorizeExternalAI(store, workspaceId, principalId);
@@ -80,12 +80,16 @@ export function scopedProvider(
         if (beforeSend.version !== policy.version)
           deny('Your AI rules changed before the request was sent.');
         const result = await Promise.race([
-          provider.review(payload, { signal: controller.signal }),
+          provider.review(payload, { signal: controller.signal, mode }),
           new Promise((_, reject) => {
-            timer = setTimeout(() => {
-              controller.abort();
-              reject(new Error('AI request timed out.'));
-            }, 45000);
+            timer = setTimeout(
+              () => {
+                controller.abort();
+                reject(new Error('AI request timed out.'));
+              },
+              // A full client document takes far longer to write than a planning review.
+              mode === 'document' ? 180000 : 45000,
+            );
           }),
         ]);
         const latest = await authorizeExternalAI(store, workspaceId, principalId);

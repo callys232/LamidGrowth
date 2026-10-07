@@ -333,3 +333,89 @@ test('F-SI-02: completing a goal disables its subscription monitoring', async ()
     .get(subscription.data.id);
   assert.equal(row.active, 0, 'a completed goal must stop being monitored');
 });
+
+async function postJobAs(cookie, title, description) {
+  const job = await request(
+    '/jobs',
+    {
+      title,
+      category: 'UX/UI design',
+      projectType: 'Fixed-scope project',
+      description,
+      deliverables: 'As described.',
+      budgetMin: 200,
+      budgetMax: 500,
+      currency: 'USD',
+      timeline: '1 week',
+    },
+    cookie,
+  );
+  assert.equal(job.status, 201);
+  return job.data;
+}
+
+test('a jobs scan only matches jobs related to the goal, and says what each matched on', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie, 'Redesign our mobile app onboarding');
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  const poster = await signup();
+  const related = await postJobAs(
+    poster,
+    'Mobile onboarding redesign',
+    'Rework the first-run onboarding screens of our iOS app.',
+  );
+  await postJobAs(poster, 'Quarterly bookkeeping', 'Reconcile Q3 accounts and prepare VAT returns.');
+
+  const scan = await request(`/goal-subscriptions/${subscription.data.id}/scan`, {}, cookie, 'POST');
+  assert.equal(scan.status, 200);
+  assert.deepEqual(
+    scan.data.newMatches.map((m) => m.sourceId),
+    [related.id],
+  );
+  assert.match(scan.data.newMatches[0].summary, /Matched on: .*onboarding/);
+  assert.equal(scan.data.relevanceNote, undefined);
+});
+
+test('a training scan only matches learning paths related to the goal', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie, 'Learn Python for data analysis');
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['training'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  const python = await request(
+    '/learning/paths',
+    { title: 'Python for analysts', description: 'Data analysis with pandas.', pointsCost: 0, language: 'en' },
+    cookie,
+  );
+  await request(
+    '/learning/paths',
+    { title: 'Public speaking basics', description: 'Presenting with confidence.', pointsCost: 0, language: 'en' },
+    cookie,
+  );
+  const scan = await request(`/goal-subscriptions/${subscription.data.id}/scan`, {}, cookie, 'POST');
+  assert.deepEqual(
+    scan.data.newMatches.map((m) => m.sourceId),
+    [python.data.id],
+  );
+});
+
+test('a goal with nothing specific to match on still shows new items, and says so', async () => {
+  const cookie = await signup();
+  const created = await goal(cookie, 'Land a new client');
+  const subscription = await request(
+    `/objectives/${created.id}/goal/subscriptions`,
+    { signalClasses: ['jobs'], attentionPolicy: 'digest' },
+    cookie,
+  );
+  const poster = await signup();
+  await postJobAs(poster, 'Quarterly bookkeeping', 'Reconcile Q3 accounts.');
+  const scan = await request(`/goal-subscriptions/${subscription.data.id}/scan`, {}, cookie, 'POST');
+  assert.equal(scan.data.newMatches.length, 1);
+  assert.match(scan.data.relevanceNote, /no specific terms/i);
+});

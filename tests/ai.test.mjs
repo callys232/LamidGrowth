@@ -304,7 +304,8 @@ test('AI reviews require opt-in and consent, enforce source scope and cannot exe
   assert.equal((await f.call('/ai/reviews', f.request(), f.cookie)).status, 429);
 });
 
-test('AI output cannot cite another source or survive revocation during an in-flight request', async (t) => {
+// Bounded: these tests wait for the provider to be called, which never happens if setup fails.
+test('AI output cannot cite another source or survive revocation during an in-flight request', { timeout: 300000 }, async (t) => {
   let resolveResult, started;
   const began = new Promise((resolve) => {
     started = resolve;
@@ -341,7 +342,7 @@ test('out-of-scope model evidence fails validation and leaves no accepted review
   assert.equal((await f.call('/ai/reviews', undefined, f.cookie)).data[0].status, 'failed');
 });
 
-test('a cancelled AI review cannot accept a late provider response', async (t) => {
+test('a cancelled AI review cannot accept a late provider response', { timeout: 300000 }, async (t) => {
   let finish, started;
   const began = new Promise((resolve) => {
     started = resolve;

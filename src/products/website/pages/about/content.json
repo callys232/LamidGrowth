@@ -8,30 +8,292 @@
   "canonical": "/about",
   "seo_title": "About LAMID ONE | Built From 35+ Years of Consulting Experience",
   "meta_description": "LAMID ONE grew from 35+ years of consulting experience and firsthand frustration with fragmented tools. One Human-AI Growth OS brings context, capability, execution, and continuous progress together.",
-  "title": "We Built the Operating System\nWe Wished We Had.",
-  "description": "For more than 35 years, we have worked alongside people and organizations solving difficult problems, making decisions, building capability, delivering important work, and growing.",
+  "title": "A calm, intelligent environment built for human growth.",
+  "description": "LAMID ONE exists because growth deserves clarity, structure, and human direction. Not pressure. Not overwhelm. Not complexity. A guided space where individuals, teams, and organizations can move forward with confidence — one clear step at a time.",
   "hero": {
-    "title": "We Built the Operating System\nWe Wished We Had.",
+    "title": "A calm, intelligent environment built for human growth.",
     "paragraphs": [
       {
-        "text": "We Built the Operating System We Wished We Had.",
-        "sourceParagraph": 1018
+        "text": "A calm, intelligent environment built for human growth.",
+        "sourceParagraph": 14013
       },
       {
-        "text": "For more than 35 years, we have worked alongside people and organizations solving difficult problems, making decisions, building capability, delivering important work, and growing.",
-        "sourceParagraph": 1019
+        "text": "LAMID ONE exists because growth deserves clarity, structure, and human direction. Not pressure. Not overwhelm. Not complexity. A guided space where individuals, teams, and organizations can move forward with confidence — one clear step at a time.",
+        "sourceParagraph": 14015
       },
       {
-        "text": "Again and again, the work was scattered across disconnected tools. Plans, conversations, evidence, projects, finances, people, and follow-up lived in different places. We experienced that fragmentation ourselves.",
-        "sourceParagraph": 1020
+        "text": "Every meaningful transformation begins with understanding. Understanding who you are, what you’re building, what you’re capable of, and what stands in the way. LAMID ONE was created to bring that understanding into a single, intelligent environment — one that feels calm, structured, and deeply human.",
+        "sourceParagraph": 14017
       },
       {
-        "text": "CTA: Read Our Story | Explore LAMID ONE",
-        "sourceParagraph": 1021
+        "text": "This is not another platform. Not another tool. Not another system you must learn.",
+        "sourceParagraph": 14019
+      },
+      {
+        "text": "It is an environment designed around how people actually grow: with clarity, capability, and consistent execution.",
+        "sourceParagraph": 14021
+      },
+      {
+        "text": "LAMID ONE is the home for that growth.",
+        "sourceParagraph": 14023
+      },
+      {
+        "text": "CTA: Start Free | Limited Access | Book a Demo",
+        "sourceParagraph": 14025
       }
     ]
   },
   "sections": [
+    {
+      "label": "IDENTITY",
+      "title": "Built on clarity, shaped by experience, grounded in humanity.",
+      "paragraphs": [
+        {
+          "text": "Built on clarity, shaped by experience, grounded in humanity.",
+          "sourceParagraph": 14041
+        },
+        {
+          "text": "LAMID ONE was created from a simple truth: people and organizations don’t fail because they lack ambition — they fail because they lack a guided environment that helps them grow with clarity, capability, and consistent execution.",
+          "sourceParagraph": 14043
+        },
+        {
+          "text": "For decades, growth has been fragmented across tools, courses, dashboards, and frameworks. None of them speak to each other. None of them understand the human experience. None of them create a unified path forward.",
+          "sourceParagraph": 14045
+        },
+        {
+          "text": "LAMID ONE exists to change that.",
+          "sourceParagraph": 14047
+        },
+        {
+          "text": "Our identity is rooted in three commitments:",
+          "sourceParagraph": 14049
+        },
+        {
+          "text": "1. Clarity as the foundation Growth begins when noise disappears and direction becomes visible. LAMID ONE brings that clarity into one calm, intelligent environment.",
+          "sourceParagraph": 14051
+        },
+        {
+          "text": "2. Capability as the engine People and organizations thrive when they strengthen the skills, habits, and structures that make progress possible. LAMID ONE helps you build capability with intention.",
+          "sourceParagraph": 14053
+        },
+        {
+          "text": "3. Execution as the differentiator Ideas matter. Plans matter. But follow‑through is what creates transformation. LAMID ONE guides execution with structure, rhythm, and human‑directed intelligence.",
+          "sourceParagraph": 14055
+        },
+        {
+          "text": "We are not building a platform. We are building an environment — one that reflects how humans actually grow.",
+          "sourceParagraph": 14057
+        },
+        {
+          "text": "LAMID ONE is the identity of guided progression, calm intelligence, and unified growth.",
+          "sourceParagraph": 14059
+        }
+      ],
+      "longForm": true
+    },
+    {
+      "label": "PURPOSE",
+      "title": "To make growth feel possible — for everyone.",
+      "paragraphs": [
+        {
+          "text": "To make growth feel possible — for everyone.",
+          "sourceParagraph": 14075
+        },
+        {
+          "text": "LAMID ONE was created with a single purpose: to give individuals, teams, and organizations a guided environment where growth feels clear, structured, and achievable. Not theoretical. Not overwhelming. Not fragmented across tools and systems.",
+          "sourceParagraph": 14077
+        },
+        {
+          "text": "Growth should feel human. It should feel steady. It should feel like something you can actually do — today, tomorrow, and over time.",
+          "sourceParagraph": 14079
+        },
+        {
+          "text": "Our purpose is to remove the friction that keeps people from moving forward. To replace noise with clarity. To replace confusion with capability. To replace hesitation with confident execution.",
+          "sourceParagraph": 14081
+        },
+        {
+          "text": "LAMID ONE exists so that:",
+          "sourceParagraph": 14083
+        },
+        {
+          "text": "- individuals can understand their direction",
+          "sourceParagraph": 14085
+        },
+        {
+          "text": "- founders can build with structure",
+          "sourceParagraph": 14087
+        },
+        {
+          "text": "- teams can align around what matters",
+          "sourceParagraph": 14089
+        },
+        {
+          "text": "- organizations can grow without losing humanity",
+          "sourceParagraph": 14091
+        },
+        {
+          "text": "- social missions can turn intention into impact",
+          "sourceParagraph": 14093
+        },
+        {
+          "text": "We believe growth is not a race. It is a guided progression — one that becomes possible when the environment supports it.",
+          "sourceParagraph": 14095
+        },
+        {
+          "text": "LAMID ONE is that environment.",
+          "sourceParagraph": 14097
+        }
+      ],
+      "longForm": true
+    },
+    {
+      "label": "HUMAN DIRECTION",
+      "title": "Intelligence should follow humans — not replace them.",
+      "paragraphs": [
+        {
+          "text": "Intelligence should follow humans — not replace them.",
+          "sourceParagraph": 14113
+        },
+        {
+          "text": "LAMID ONE is built on a simple belief: technology should never take the lead in human growth. It should not overwhelm. It should not dictate. It should not accelerate beyond what people can meaningfully absorb.",
+          "sourceParagraph": 14115
+        },
+        {
+          "text": "Growth is human. Direction is human. Judgment is human.",
+          "sourceParagraph": 14117
+        },
+        {
+          "text": "Technology’s role is to support that humanity — quietly, intelligently, and with restraint.",
+          "sourceParagraph": 14119
+        },
+        {
+          "text": "LAMID ONE uses intelligence to illuminate what matters, strengthen what’s missing, and guide execution with calm clarity. But it never takes over. It never pushes. It never replaces human intention.",
+          "sourceParagraph": 14121
+        },
+        {
+          "text": "Human direction means:",
+          "sourceParagraph": 14123
+        },
+        {
+          "text": "- clarity comes before automation",
+          "sourceParagraph": 14125
+        },
+        {
+          "text": "- capability comes before optimization",
+          "sourceParagraph": 14127
+        },
+        {
+          "text": "- execution comes with guidance, not pressure",
+          "sourceParagraph": 14129
+        },
+        {
+          "text": "- intelligence serves the person, not the other way around",
+          "sourceParagraph": 14131
+        },
+        {
+          "text": "This is why LAMID ONE feels different. It doesn’t rush you. It doesn’t overwhelm you. It doesn’t demand more than you can give.",
+          "sourceParagraph": 14133
+        },
+        {
+          "text": "It creates a guided environment where intelligence amplifies human judgment — and growth becomes something you can actually do.",
+          "sourceParagraph": 14135
+        }
+      ],
+      "longForm": true
+    },
+    {
+      "label": "PROGRESS",
+      "title": "Progress becomes possible when the environment supports it.",
+      "paragraphs": [
+        {
+          "text": "Progress becomes possible when the environment supports it.",
+          "sourceParagraph": 14151
+        },
+        {
+          "text": "Most people and organizations don’t struggle because they lack ambition — they struggle because progress is hard to sustain without clarity, capability, and consistent execution. LAMID ONE was built to make progress feel steady, structured, and achievable.",
+          "sourceParagraph": 14153
+        },
+        {
+          "text": "Progress is not a sudden leap. It is a guided movement — one clear step at a time.",
+          "sourceParagraph": 14155
+        },
+        {
+          "text": "LAMID ONE creates the conditions for that movement:",
+          "sourceParagraph": 14157
+        },
+        {
+          "text": "Clarity removes hesitation. When you see what matters, you know where to begin.",
+          "sourceParagraph": 14159
+        },
+        {
+          "text": "Capability removes friction. When you strengthen the skills and structures that support growth, you move with confidence.",
+          "sourceParagraph": 14161
+        },
+        {
+          "text": "Execution removes uncertainty. When you follow through with guided steps and intelligent cues, progress becomes a rhythm instead of a struggle.",
+          "sourceParagraph": 14163
+        },
+        {
+          "text": "This is how real transformation happens — not through pressure, but through a calm environment that helps you move forward with intention.",
+          "sourceParagraph": 14165
+        },
+        {
+          "text": "LAMID ONE turns progress into something you can feel, measure, and sustain.",
+          "sourceParagraph": 14167
+        }
+      ],
+      "longForm": true
+    },
+    {
+      "label": "CTA",
+      "title": "Step into the intelligent portal.",
+      "paragraphs": [
+        {
+          "text": "Step into the intelligent portal.",
+          "sourceParagraph": 14183
+        },
+        {
+          "text": "Growth becomes possible when the environment supports it — when clarity replaces noise, capability replaces hesitation, and execution becomes a guided rhythm instead of a struggle.",
+          "sourceParagraph": 14185
+        },
+        {
+          "text": "LAMID ONE gives you that environment. A calm, structured, human‑directed space where progress feels achievable and direction feels clear.",
+          "sourceParagraph": 14187
+        },
+        {
+          "text": "Whether you’re beginning alone, building something new, leading a team, or guiding an entire organization, you can start inside the intelligent portal today.",
+          "sourceParagraph": 14189
+        },
+        {
+          "text": "CTA: Start Free | Limited Access | Book a Demo",
+          "sourceParagraph": 14191
+        }
+      ],
+      "longForm": true
+    },
+    {
+      "label": "We Built the Operating System We Wished We Had.",
+      "title": "We Built the Operating System We Wished We Had.",
+      "paragraphs": [
+        {
+          "text": "We Built the Operating System We Wished We Had.",
+          "sourceParagraph": 1018
+        },
+        {
+          "text": "For more than 35 years, we have worked alongside people and organizations solving difficult problems, making decisions, building capability, delivering important work, and growing.",
+          "sourceParagraph": 1019
+        },
+        {
+          "text": "Again and again, the work was scattered across disconnected tools. Plans, conversations, evidence, projects, finances, people, and follow-up lived in different places. We experienced that fragmentation ourselves.",
+          "sourceParagraph": 1020
+        },
+        {
+          "text": "CTA: Read Our Story | Explore LAMID ONE",
+          "sourceParagraph": 1021
+        }
+      ],
+      "addedFrom": "Pithy"
+    },
     {
       "label": "The Problem Wasn't That We Needed More Tools",
       "title": "The Problem Wasn't That We Needed More Tools",
@@ -48,7 +310,8 @@
           "text": "The answer was not another disconnected application. The pieces needed to work together around the work itself.",
           "sourceParagraph": 1024
         }
-      ]
+      ],
+      "addedFrom": "Pithy"
     },
     {
       "label": "So We Started Connecting the Pieces",
@@ -66,7 +329,8 @@
           "text": "Piece by piece, those solutions became one connected operating environment.",
           "sourceParagraph": 1027
         }
-      ]
+      ],
+      "addedFrom": "Pithy"
     },
     {
       "label": "What LAMID ONE Is Today",
@@ -88,7 +352,8 @@
           "text": "Clarity -> Capability -> Consistency. Growth is the outcome.",
           "sourceParagraph": 1031
         }
-      ]
+      ],
+      "addedFrom": "Pithy"
     },
     {
       "label": "What That Means for You",
@@ -126,7 +391,8 @@
           "text": "You should not have to inherit the fragmentation that led us here. Our aim is to make your journey easier to understand, easier to continue, and easier to grow from.",
           "sourceParagraph": 1039
         }
-      ]
+      ],
+      "addedFrom": "Pithy"
     },
     {
       "label": "What We Believe",
@@ -148,7 +414,8 @@
           "text": "CTA: Read Our Story | Experience LAMID ONE",
           "sourceParagraph": 1043
         }
-      ]
+      ],
+      "addedFrom": "Pithy"
     }
   ]
 }

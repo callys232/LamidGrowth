@@ -2872,3 +2872,181 @@
     margin-bottom: 20px;
   }
 }
+
+/* How It Works: five numbered mechanics. */
+.lamid-home .home-mechanics-section {
+  background: var(--home-paper);
+}
+.lamid-home .home-mechanics-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--home-line);
+}
+.lamid-home .home-mechanics-list li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 24px;
+  align-items: baseline;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--home-line);
+}
+.lamid-home .home-mechanics-number {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--home-red);
+}
+.lamid-home .home-mechanics-list h3 {
+  margin: 0;
+  font:
+    400 30px/1.15 'Instrument Serif',
+    Georgia,
+    serif;
+  letter-spacing: -0.02em;
+}
+.lamid-home .home-mechanics-list p {
+  font-size: 15px;
+}
+/* Narrative: closing statement above the final call to action. */
+.lamid-home .home-closing-section .home-narrative-story {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 17px;
+  line-height: 1.75;
+}
+.lamid-home .home-closing-section .home-narrative-refrain {
+  max-width: 820px;
+  margin: 32px auto 0;
+  font:
+    400 clamp(30px, 3.2vw, 44px) / 1.2 'Instrument Serif',
+    Georgia,
+    serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+@media (max-width: 800px) {
+  .lamid-home .home-mechanics-list li {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 8px 16px;
+  }
+  .lamid-home .home-mechanics-list li p {
+    grid-column: 2;
+  }
+}
+/* Footer link row (footer-copy.json) wraps on narrow screens instead of overflowing. */
+.lamid-home .public-footer nav.footer-bottom {
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+
+/* Collapsed long-form sections (HomeLongFormSlide) use the shared page-flow rows. */
+.lamid-home .home-longform .page-flow {
+  display: block;
+  padding: 0;
+}
+.lamid-home .home-longform .flow-longform > h2 {
+  width: 100%;
+}
+
+/* The expansion path (Personal → Institution) stays a horizontal row on small screens: the
+   stages scroll sideways in one line, with the path tracing across as on desktop. */
+@media (max-width: 800px) {
+  .lamid-home .home-expansion-path {
+    grid-template-columns: repeat(5, minmax(128px, 1fr));
+    margin: 32px 0;
+    padding-top: 6px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .lamid-home .home-expansion-path::-webkit-scrollbar {
+    display: none;
+  }
+  .lamid-home .home-expansion-path li {
+    padding: 22px 8px 0;
+    border-top: 1px solid light-dark(#d8dfdb, #536474);
+    border-left: 0;
+    scroll-snap-align: start;
+  }
+  .lamid-home .home-expansion-path li:last-child {
+    border-top-color: transparent;
+  }
+  .lamid-home .home-expansion-path li::before {
+    top: -5px;
+    left: 0;
+  }
+  .lamid-home .home-expansion-path li:not(:last-child)::after {
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .lamid-home .home-expansion-path.is-visible li::after {
+    transform: scaleX(1);
+  }
+  .lamid-home .home-expansion-path strong {
+    font-size: 22px;
+  }
+}
+
+/* Phones: headings, copy, cards and buttons centre. Lists keep left-aligned lines inside a
+   centred block; the expansion path centres each stage under its marker. */
+@media (max-width: 600px) {
+  .lamid-home .home-section,
+  .lamid-home .home-section-heading,
+  .lamid-home .homepage-hero-copy,
+  .lamid-home .home-premium-hero {
+    text-align: center;
+  }
+  .lamid-home :is(.home-eyebrow, .homepage-hero-eyebrow) {
+    justify-content: center;
+    margin-inline: auto;
+  }
+  .lamid-home .canonical-ctas,
+  .lamid-home .homepage-hero-actions .canonical-ctas {
+    justify-content: center;
+  }
+  .lamid-home .home-section :is(article, li, .home-objective-card) {
+    text-align: center;
+  }
+  .lamid-home .home-section :is(ul, ol):not(.home-expansion-path) li {
+    justify-content: center;
+  }
+  .lamid-home .home-section :is(svg, .home-red-dot) {
+    margin-inline: auto;
+  }
+  .lamid-home .home-expansion-path li {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+  }
+  .lamid-home .home-expansion-path span {
+    margin: 0;
+  }
+  .lamid-home .home-expansion-path li::before {
+    left: calc(50% - 4.5px);
+  }
+  .lamid-home .home-section details > summary {
+    justify-content: center;
+    text-align: center;
+  }
+  /* Headings and their labels centre everywhere on the page, including the example cards. */
+  .lamid-home :is(main, .home-section, .home-premium-hero, .home-permissions) :is(h1, h2, h3),
+  .lamid-home
+    :is(.home-eyebrow, .home-section-heading > p, .home-continuation > .home-container > p) {
+    text-align: center;
+  }
+  .lamid-home .home-section-nav .home-container,
+  .lamid-home .home-context-selector {
+    justify-content: center;
+    text-align: center;
+  }
+  .lamid-home :is(.home-premium-hero, .home-permissions) header,
+  .lamid-home .home-permissions-heading {
+    justify-content: center;
+    text-align: center;
+  }
+}

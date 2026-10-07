@@ -117,7 +117,7 @@ async function fundedAndDisputedMilestone(client, freelancer, base) {
   assert.equal(fund.status, 201);
   const fundEvent = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    data: { reference: fund.data.reference, amount: fund.data.providerAmountMinor, currency: fund.data.providerCurrency },
   };
   const fundRawBody = Buffer.from(JSON.stringify(fundEvent));
   const fundSignature = createHmac('sha512', PAYSTACK_SECRET).update(fundRawBody).digest('hex');

@@ -119,10 +119,11 @@ test('F-CORE-02: a silent goal subscription is excluded from the aggregation, an
   const job = await request(
     '/jobs',
     {
-      title: 'Return-state signal job',
+      // Related to the goal ("Ship the feature") — signal scans only match relevant jobs.
+      title: 'Help ship a feature',
       category: 'UX/UI design',
       projectType: 'Fixed-scope project',
-      description: 'A job used to test return-state digest gating.',
+      description: 'A feature job used to test return-state digest gating.',
       deliverables: 'A page.',
       budgetMin: 200,
       budgetMax: 500,

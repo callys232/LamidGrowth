@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { createFundedTestApp as createApp } from './support/funded-app.mjs';
 
 let app, store, server, base;
+// The options the most recent AI call was made with — lets tests check which mode an agent used.
+let lastReviewOptions = null;
 before(async () => {
   ({ app, store } = await createApp({
     filename: ':memory:',
@@ -14,7 +16,8 @@ before(async () => {
     aiProvider: {
       name: 'test',
       model: 'test',
-      async review(context) {
+      async review(context, options = {}) {
+        lastReviewOptions = options;
         const source = (context.sources || [])[0];
         return {
           review: {
@@ -134,6 +137,7 @@ test('a generic question routes to the read-only context curator agent', async (
   );
   assert.equal(result.status, 201, JSON.stringify(result.data));
   assert.equal(result.data.agentId, 'context-curator');
+  assert.notEqual(lastReviewOptions?.mode, 'document');
   assert.ok(typeof result.data.response === 'string' && result.data.response.length > 0);
 });
 
@@ -470,6 +474,8 @@ test('the proposal drafter grounds its draft in the real job and rejects unrelat
   assert.equal(asClient.status, 201);
   assert.equal(asClient.data.agentId, 'proposal-drafter');
   assert.ok(asClient.data.response.includes('Website redesign project'));
+  // Client documents are drafted in document mode, not squeezed into a planning review.
+  assert.equal(lastReviewOptions?.mode, 'document');
 
   const asStranger = await request(
     '/companion/messages',
@@ -602,6 +608,7 @@ test('the contract builder grounds its draft in the real job and rejects unrelat
   );
   assert.equal(asClient.status, 201);
   assert.equal(asClient.data.agentId, 'contract-builder');
+  assert.equal(lastReviewOptions?.mode, 'document');
   assert.ok(asClient.data.response.includes('Backend API integration'));
   assert.ok(asClient.data.response.includes('legal review'));
 
@@ -718,4 +725,75 @@ test('the change order generator grounds in the real proposal and rejects unrela
     stranger,
   );
   assert.equal(asStranger.status, 403);
+});
+
+test('market intelligence is told, and tells the user, that it has no external market data', async () => {
+  const cookie = await enableAI(await signup('Market Scope', 'market-scope@example.test'));
+  const result = await request(
+    '/companion/messages',
+    { message: 'what does the market and our competitors look like?', consent: true },
+    cookie,
+  );
+  assert.equal(result.status, 201);
+  assert.equal(result.data.agentId, 'market-intelligence');
+  // The stub echoes the question it was given, so this checks the instruction the model receives.
+  assert.match(result.data.response, /only the knowledge saved in this workspace/i);
+  assert.match(result.data.response, /no external market data/i);
+});
+
+test('an agent runs an allowed tool through the shared execution path and explains the saved result', async () => {
+  const cookie = await enableAI(await signup('Agent Tools', 'agent-tools@example.test'));
+  const detail = await request('/engines/r02', undefined, cookie, 'GET');
+  const before = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  const result = await request(
+    '/companion/messages',
+    {
+      message: 'Why are we delivering slowly?',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T06', input: detail.data.example },
+    },
+    cookie,
+  );
+  assert.equal(result.status, 201);
+  assert.equal(result.data.toolCalls.length, 1);
+  assert.equal(result.data.toolCalls[0].capability, 'T06');
+  const run = await store.db
+    .prepare('SELECT caller, status, points_charged FROM agent_runs WHERE id = ?')
+    .get(result.data.toolCalls[0].runId);
+  assert.equal(run.caller, 'agent:diagnostic-intelligence');
+  // The agent's own charge plus the completed tool run's — each recorded separately.
+  const after = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  assert.equal(before - after, result.data.pointsCharged + run.points_charged);
+});
+
+test('an agent cannot run a tool outside its allow-list, or with bad input, and is not charged', async () => {
+  const cookie = await enableAI(
+    await signup('Agent Tools Denied', 'agent-tools-denied@example.test'),
+  );
+  const before = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  const denied = await request(
+    '/companion/messages',
+    {
+      message: 'Value the business',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T60', input: {} },
+    },
+    cookie,
+  );
+  assert.equal(denied.status, 403);
+  const bad = await request(
+    '/companion/messages',
+    {
+      message: 'Why are we delivering slowly?',
+      consent: true,
+      agentId: 'diagnostic-intelligence',
+      toolRun: { capabilityId: 'T06', input: { periods: [] } },
+    },
+    cookie,
+  );
+  assert.equal(bad.status, 400);
+  const after = (await request('/finance/points', undefined, cookie, 'GET')).data.balance;
+  assert.equal(after, before);
 });

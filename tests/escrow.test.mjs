@@ -217,7 +217,12 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
 
   const event = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    // Paystack reports what it was actually asked to charge (NGN settlement), not the canonical USD.
+    data: {
+      reference: fund.data.reference,
+      amount: fund.data.providerAmountMinor,
+      currency: fund.data.providerCurrency,
+    },
   };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
@@ -267,8 +272,8 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
     event: 'transfer.success',
     data: {
       reference: release.data.provider_reference,
-      amount: release.data.amount_minor,
-      currency: release.data.currency,
+      amount: release.data.provider_amount_minor,
+      currency: release.data.provider_currency,
     },
   };
   const transferRawBody = Buffer.from(JSON.stringify(transferEvent));
@@ -289,4 +294,159 @@ test('a mocked fund -> webhook hold -> release lifecycle marks funding released 
   );
   assert.equal(finalFunding.data.status, 'released');
   assert.ok(finalFunding.data.released_at);
+});
+
+async function sendWebhook(event) {
+  const rawBody = Buffer.from(JSON.stringify(event));
+  const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
+  const response = await fetch(`${base}/api/webhooks/paystack`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-paystack-signature': signature },
+    body: rawBody,
+  });
+  assert.equal(response.status, 200);
+}
+async function setRate(pair, rate) {
+  await store.db
+    .prepare(
+      'INSERT INTO fx_rates (pair, rate, updated_at) VALUES (?, ?, ?) ON CONFLICT (pair) DO UPDATE SET rate = excluded.rate',
+    )
+    .run(pair, rate, new Date().toISOString());
+}
+
+// The merchant's Paystack account settles in NGN only (the same constraint points purchases
+// already convert for), so a milestone priced in another currency is charged in NGN.
+test('funding a USD milestone charges Paystack in NGN at the configured rate and holds on that charge', async (t) => {
+  const initialized = [];
+  await boot(
+    mockFetch({
+      'https://api.paystack.co/transaction/initialize': (body) => {
+        initialized.push(body);
+        return jsonResponse(200, {
+          status: true,
+          data: { authorization_url: 'https://paystack.test/pay/fx', access_code: 'fx' },
+        });
+      },
+    }),
+  );
+  t.after(teardown);
+  await setRate('USD_NGN', 1500);
+  const client = await signup('FX Client', 'fx-client@example.test');
+  const freelancer = await signup('FX Freelancer', 'fx-freelancer@example.test');
+  const { milestoneId } = await approvedMilestone(client, freelancer, 750);
+
+  const fund = await request(`/milestones/${milestoneId}/fund`, {}, client);
+  assert.equal(fund.status, 201);
+  assert.equal(initialized.length, 1);
+  assert.equal(initialized[0].currency, 'NGN');
+  assert.equal(initialized[0].amount, 750 * 100 * 1500);
+  // The milestone's own amount and currency stay canonical.
+  assert.equal(fund.data.amountMinor, 75000);
+  assert.equal(fund.data.currency, 'USD');
+
+  await sendWebhook({
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: 750 * 100 * 1500, currency: 'NGN' },
+  });
+  const funding = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  assert.equal(funding.data.status, 'held');
+});
+
+test('funding a non-NGN milestone with no exchange rate configured is refused and records nothing', async (t) => {
+  await boot(mockFetch({}));
+  t.after(teardown);
+  await store.db.prepare('DELETE FROM fx_rates WHERE pair = ?').run('USD_NGN');
+  const client = await signup('NoRate Client', 'norate-client@example.test');
+  const freelancer = await signup('NoRate Freelancer', 'norate-freelancer@example.test');
+  const { milestoneId } = await approvedMilestone(client, freelancer, 750);
+  const fund = await request(`/milestones/${milestoneId}/fund`, {}, client);
+  assert.equal(fund.status, 503);
+  assert.ok(fund.data.error.includes('USD to NGN'), fund.data.error);
+  const funding = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  assert.equal(funding.data, null);
+});
+
+test('releasing a converted milestone pays out the NGN amount actually held, even if the rate moved', async (t) => {
+  const transfers = [];
+  const recipients = [];
+  await boot(
+    mockFetch({
+      'https://api.paystack.co/transaction/initialize': () =>
+        jsonResponse(200, {
+          status: true,
+          data: { authorization_url: 'https://paystack.test/pay/rel', access_code: 'rel' },
+        }),
+      'https://api.paystack.co/transferrecipient': (body) => {
+        recipients.push(body);
+        return jsonResponse(200, { status: true, data: { recipient_code: 'RCP_fx_1' } });
+      },
+      'https://api.paystack.co/transfer': (body) => {
+        transfers.push(body);
+        return jsonResponse(200, { status: true, data: { reference: body.reference, status: 'pending' } });
+      },
+    }),
+  );
+  t.after(teardown);
+  await setRate('USD_NGN', 1500);
+  const client = await signup('Payout Client', 'payout-client@example.test');
+  const freelancer = await signup('Payout Freelancer', 'payout-freelancer@example.test');
+  await request(
+    '/payment-accounts',
+    { provider: 'paystack', accountName: 'Payout Freelancer', accountNumber: '0123456789', bankCode: '058' },
+    freelancer,
+  );
+  const { milestoneId } = await approvedMilestone(client, freelancer, 200);
+  const fund = await request(`/milestones/${milestoneId}/fund`, {}, client);
+  await sendWebhook({
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: 200 * 100 * 1500, currency: 'NGN' },
+  });
+  // The rate changes between funding and release; the freelancer is paid what was held.
+  await store.db.prepare('UPDATE fx_rates SET rate = 1600 WHERE pair = ?').run('USD_NGN');
+
+  const release = await request(`/milestones/${milestoneId}/release`, { provider: 'paystack' }, client);
+  assert.equal(release.status, 201);
+  assert.equal(transfers.length, 1);
+  assert.equal(transfers[0].currency, 'NGN');
+  assert.equal(transfers[0].amount, 200 * 100 * 1500);
+
+  await sendWebhook({
+    event: 'transfer.success',
+    data: { reference: release.data.provider_reference, amount: 200 * 100 * 1500, currency: 'NGN' },
+  });
+  const funding = await request(`/milestones/${milestoneId}/funding`, undefined, client, 'GET');
+  assert.equal(funding.data.status, 'released');
+});
+
+test('refunding a converted milestone refunds the NGN amount that was actually charged', async (t) => {
+  const refunds = [];
+  await boot(
+    mockFetch({
+      'https://api.paystack.co/transaction/initialize': () =>
+        jsonResponse(200, {
+          status: true,
+          data: { authorization_url: 'https://paystack.test/pay/ref', access_code: 'ref' },
+        }),
+      'https://api.paystack.co/refund': (body) => {
+        refunds.push(body);
+        return jsonResponse(200, { status: true, data: { status: 'pending' } });
+      },
+    }),
+  );
+  t.after(teardown);
+  await setRate('USD_NGN', 1500);
+  const client = await signup('Refund FX Client', 'refund-fx-client@example.test');
+  const freelancer = await signup('Refund FX Freelancer', 'refund-fx-freelancer@example.test');
+  const { milestoneId } = await approvedMilestone(client, freelancer, 100);
+  const fund = await request(`/milestones/${milestoneId}/fund`, {}, client);
+  await sendWebhook({
+    event: 'charge.success',
+    data: { reference: fund.data.reference, amount: 100 * 100 * 1500, currency: 'NGN' },
+  });
+  await store.db.prepare("UPDATE milestones SET status = 'disputed' WHERE id = ?").run(milestoneId);
+
+  const refund = await request(`/milestones/${milestoneId}/refund`, {}, client);
+  assert.equal(refund.status, 201);
+  assert.equal(refunds.length, 1);
+  assert.equal(refunds[0].amount, 100 * 100 * 1500);
 });

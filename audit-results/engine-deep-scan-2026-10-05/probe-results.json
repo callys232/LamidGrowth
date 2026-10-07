@@ -1,0 +1,1467 @@
+{
+  "inventory": [
+    {
+      "id": "T01",
+      "code": "S01",
+      "name": "Purpose & Strategic Direction",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 6 anchored questions based on Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T02",
+      "code": "S03",
+      "name": "Strategy Alignment Matrix",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Links your objectives to the initiatives and spend under way, and compares each objective’s share of spend with its share of importance.",
+      "limits": "It works only from the objectives, initiatives and figures you list; it does not judge whether the objectives themselves are right."
+    },
+    {
+      "id": "T03",
+      "code": "S09",
+      "name": "Strategic Priority Ranking",
+      "engine": "existing",
+      "kind": "selection",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Weighted scoring of your options against your criteria, normalised for scale, with a check on how sensitive the winner is to the weights.",
+      "limits": "Criteria, weights and scores are yours; it does not research or verify the options."
+    },
+    {
+      "id": "T04",
+      "code": "S06",
+      "name": "OKR & Strategy Execution Review",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Progress of each key result from its start value toward its target, compared with how much of the period has passed, rolled up by objective.",
+      "limits": "Values are what you enter; it does not pull figures from other systems or judge whether targets are ambitious enough."
+    },
+    {
+      "id": "T05",
+      "code": "S07",
+      "name": "External Environment Scan",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Ranks the external factors you list by impact × likelihood and checks every PESTLE heading and competitive force was considered.",
+      "limits": "It does not research the market; factors and ratings are yours."
+    },
+    {
+      "id": "T63",
+      "code": "C06",
+      "name": "Operating Model Review",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 6 anchored questions based on McKinsey 7-S; Galbraith Star Model, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T06",
+      "code": "R02",
+      "name": "Delivery Flow Metrics",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.",
+      "limits": "Reads only the period figures you enter; it is not connected to your task tools."
+    },
+    {
+      "id": "T07",
+      "code": "R03",
+      "name": "Drift & Stability Monitor",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Natural process limits for any metric and the standard control-chart rules that separate real drift from routine variation.",
+      "limits": "Reads only the values you enter; it detects that something changed, not why."
+    },
+    {
+      "id": "T08",
+      "code": "R06",
+      "name": "Dependency Board",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Which dependencies between teams are late or overdue, and which providing teams are most often late.",
+      "limits": "Works from the dependencies and dates you record; it does not read project tools."
+    },
+    {
+      "id": "T09",
+      "code": "R05",
+      "name": "Workload & Capacity Balance",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Utilisation of each team or person against an 85% safe ceiling, and where spare capacity could absorb overload.",
+      "limits": "It does not know whether skills transfer between teams; check each suggested move."
+    },
+    {
+      "id": "T10",
+      "code": "P14",
+      "name": "Bottleneck & Process Improvement",
+      "engine": "existing",
+      "kind": "optimisation",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Finds the bottleneck step from the capacities you enter for each step, and where improvement would actually raise throughput.",
+      "limits": "It works on the step figures you enter; it does not measure your process or its costs."
+    },
+    {
+      "id": "T11",
+      "code": "R25",
+      "name": "Root Cause Analysis",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Builds the cause chains, ranks root causes by evidence and by whether they explain the facts, and shows which fishbone categories were not considered.",
+      "limits": "It organises and tests your analysis; it cannot find causes you have not listed."
+    },
+    {
+      "id": "T12",
+      "code": "S05",
+      "name": "Operating Rhythm & Meeting Design",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "The time your recurring meetings cost per person, how much of it is status updates, and whether the weekly, monthly and quarterly review levels exist.",
+      "limits": "It uses the meetings you list; it does not read calendars or judge meeting quality."
+    },
+    {
+      "id": "T13",
+      "code": "P10",
+      "name": "Productivity & Output Metrics",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Quality-adjusted output per 100 hours for each team, the change from last period, and the spread between the best team and the median.",
+      "limits": "Output units must mean the same thing across teams; it cannot normalise for different kinds of work."
+    },
+    {
+      "id": "T14",
+      "code": "Q39",
+      "name": "Collaboration Network Map",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Connections per person or team, collaboration load share, single points of failure and isolated groups.",
+      "limits": "Built from the relationships you list; it does not read email or chat data."
+    },
+    {
+      "id": "T15",
+      "code": "P24",
+      "name": "Technology ROI & Total Cost",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Return on each system from total annual cost against the value of time saved, plus adoption and unused licences.",
+      "limits": "Time saved is your estimate; it does not measure usage from the systems themselves."
+    },
+    {
+      "id": "T16",
+      "code": "P25",
+      "name": "Innovation Funnel",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Conversion between innovation stages, time to market and revenue returned per unit of innovation spend.",
+      "limits": "Works from your stage counts; it does not judge the quality of individual ideas."
+    },
+    {
+      "id": "T17",
+      "code": "R26",
+      "name": "Data Quality Check",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 7 anchored questions based on DAMA-DMBOK data quality dimensions; ISO 8000, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T18",
+      "code": "Q44",
+      "name": "Decision Quality",
+      "engine": "existing",
+      "kind": "decision-quality",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores one decision against a fixed set of requirements (options, criteria, owner, information and more), limited by its weakest requirement.",
+      "limits": "It rates how the decision is being made, not whether the eventual choice is right."
+    },
+    {
+      "id": "T19",
+      "code": "Q02",
+      "name": "Decision Register",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Decision cycle time, stalled and recurring decisions, missing owners and rationale, overdue reviews and reversal rate.",
+      "limits": "Built from the decisions you record; it does not judge whether a decision was right."
+    },
+    {
+      "id": "T20",
+      "code": "Q29",
+      "name": "Decision Rights Matrix",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Checks each decision has exactly one accountable owner and someone responsible, and finds roles that hold too many final calls.",
+      "limits": "It checks the matrix you enter, not whether people follow it in practice."
+    },
+    {
+      "id": "T21",
+      "code": "Q21",
+      "name": "Option Comparison",
+      "engine": "existing",
+      "kind": "selection",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Weighted scoring of your options against your criteria, normalised for scale, with a check on how sensitive the winner is to the weights.",
+      "limits": "Criteria, weights and scores are yours; it does not research or verify the options."
+    },
+    {
+      "id": "T22",
+      "code": "Q03",
+      "name": "Scenarios & Expected Value",
+      "engine": "existing",
+      "kind": "scenario-decision",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Compares your options across the futures you define under three decision rules, and reports what perfect information about the future would be worth.",
+      "limits": "The futures, their likelihoods and payoffs are yours; it does not forecast which future will happen."
+    },
+    {
+      "id": "T23",
+      "code": "Q05",
+      "name": "Decision Timing & Cost of Delay",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Orders pending items by cost of delay divided by duration (WSJF), places them on the Eisenhower matrix, and flags deadlines that can no longer be met.",
+      "limits": "Cost of delay is your estimate; the order is only as good as those figures."
+    },
+    {
+      "id": "T24",
+      "code": "Q06",
+      "name": "Priority Conflict Check",
+      "engine": "existing",
+      "kind": "conflict",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Checks the objectives you enter pair by pair and flags tensions that have no stated trade-off.",
+      "limits": "It only finds conflicts among the objectives you enter; it does not know your other goals."
+    },
+    {
+      "id": "T25",
+      "code": "Q17",
+      "name": "Stakeholder Map",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Places stakeholders on the power–interest grid, rates their salience, and computes power-weighted support.",
+      "limits": "Positions are your read of each stakeholder; it does not survey them."
+    },
+    {
+      "id": "T26",
+      "code": "S08",
+      "name": "Force Field Analysis",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Totals driving and resisting forces and names the resisting forces to reduce first.",
+      "limits": "Strengths are your judgement; it does not measure the forces."
+    },
+    {
+      "id": "T27",
+      "code": "Q35",
+      "name": "Decision Method Selector",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which tools to use.",
+      "limits": "The answer depends on how you describe the situation; it does not make the decision."
+    },
+    {
+      "id": "T30",
+      "code": "Q58",
+      "name": "Benefits & After-Action Review",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Planned against realised value per item and overall, with the lessons recorded.",
+      "limits": "Values are what you report; attributing results to one decision is your judgement."
+    },
+    {
+      "id": "T35",
+      "code": "Q27",
+      "name": "Forecast Calibration",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Brier scores per person and overall, and how often things predicted at each confidence level actually happened.",
+      "limits": "Only resolved predictions count; it measures past judgement, not ability on new kinds of question."
+    },
+    {
+      "id": "T28",
+      "code": "Q15",
+      "name": "Early Warning Indicators",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Red, amber or green status for each indicator against your thresholds, its direction of travel, and how soon it reaches red at the current pace.",
+      "limits": "Values are entered by you; it is not connected to live data."
+    },
+    {
+      "id": "T29",
+      "code": "Q43",
+      "name": "Risk Register",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Inherent and estimated residual risk, a heat map, risks above appetite, overdue actions and missing owners.",
+      "limits": "Scores are your judgement; residual risk is estimated from the control rating, not tested."
+    },
+    {
+      "id": "T36",
+      "code": "Q86",
+      "name": "Business Continuity (BIA)",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Recovery priority, activities whose recovery objective or tested recovery is too slow, untested plans and single-person dependencies.",
+      "limits": "Works from the times and test results you record; it does not run a recovery test."
+    },
+    {
+      "id": "T37",
+      "code": "X02",
+      "name": "Cyber Security Posture",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 9 anchored questions based on NIST Cybersecurity Framework 2.0; ISO/IEC 27001, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T39",
+      "code": "X06",
+      "name": "Organisational Resilience",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 7 anchored questions based on ISO 22316 organisational resilience, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T32",
+      "code": "Q99",
+      "name": "Governance Assessment",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 7 anchored questions based on ISO 37000 governance of organisations; OECD Principles; King IV, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T33",
+      "code": "Q76",
+      "name": "Commitments & Obligations Register",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Which commitments are overdue, due soon or not started, the rate at which commitments have been kept, and missing owners.",
+      "limits": "Tracks the commitments you record; it does not read contracts."
+    },
+    {
+      "id": "T34",
+      "code": "X04",
+      "name": "Compliance Assessment",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "The share of obligations that are controlled and evidenced, gaps by regulation, and reviews older than a year.",
+      "limits": "It does not interpret the law; the obligations and their status are yours. Not a legal opinion."
+    },
+    {
+      "id": "T38",
+      "code": "X05",
+      "name": "Ethics & Integrity",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 6 anchored questions based on ISO 37001 anti-bribery; ISO 37002 whistleblowing, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T61",
+      "code": "F06",
+      "name": "Financial Controls Review",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Control effectiveness by process using COSO deficiency levels, plus untested and unowned controls.",
+      "limits": "Uses the test results you record; it does not test controls or replace an audit."
+    },
+    {
+      "id": "T31",
+      "code": "A05",
+      "name": "Culture & Values Assessment",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 8 anchored questions based on Culture traits model (Denison & Mishra, 1995); team psychological safety (Edmondson, 1999) — original question wording, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T40",
+      "code": "A02",
+      "name": "Skills Gap Analysis",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "The gap between required and current skill levels by role, coverage, and skills held by only one person.",
+      "limits": "Levels are your assessment; it does not test anyone’s skills."
+    },
+    {
+      "id": "T41",
+      "code": "A03",
+      "name": "Workforce Plan",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Projected supply against demand for each role, the gap, how much internal moves can cover, and the hire or develop route.",
+      "limits": "Demand and leaver numbers are your estimates; it does not forecast the business."
+    },
+    {
+      "id": "T42",
+      "code": "A22",
+      "name": "Succession & Bench Strength",
+      "engine": "existing",
+      "kind": "bench-strength",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Measures succession coverage for each critical seat from the successors and readiness you enter.",
+      "limits": "It works from the figures you enter; it does not assess the people themselves."
+    },
+    {
+      "id": "T43",
+      "code": "A07",
+      "name": "Human Capital Metrics",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "The ISO 30414 core people measures you have data for: turnover, hiring, time to fill, mobility, training, absence and productivity.",
+      "limits": "Uses the period totals you enter; it does not read HR or payroll systems."
+    },
+    {
+      "id": "T44",
+      "code": "A09",
+      "name": "Performance–Potential Grid",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Places each person on the 9-box grid, shows the distribution, and flags key talent at risk of leaving.",
+      "limits": "Ratings are managers’ judgements; calibrate them before acting."
+    },
+    {
+      "id": "T45",
+      "code": "A11",
+      "name": "Engagement Survey",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "eNPS overall and by team from staff answers, response rates, and anonymity protection for small teams.",
+      "limits": "It scores survey results you collected; it does not run the survey or explain the reasons behind scores."
+    },
+    {
+      "id": "T46",
+      "code": "A15",
+      "name": "Development ROI",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Evaluation depth per Kirkpatrick level and Phillips ROI after adjusting the benefit for attribution and confidence.",
+      "limits": "Benefit, attribution and confidence are estimates; the ROI is only as good as them."
+    },
+    {
+      "id": "T47",
+      "code": "A23",
+      "name": "Competency & 360 Review",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Gaps against expected levels using others’ ratings, plus blind spots and hidden strengths where self and others disagree.",
+      "limits": "Ratings are opinions; use them for development conversations, not as a sole basis for pay or dismissal."
+    },
+    {
+      "id": "T48",
+      "code": "A25",
+      "name": "Next-Role Readiness",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "How far a person meets a target role’s requirements and how long the gaps take to close.",
+      "limits": "Levels and timings are your assessment."
+    },
+    {
+      "id": "T49",
+      "code": "C08",
+      "name": "Change Readiness",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Readiness of each affected group across the five change beliefs, weighted by group size, and the weakest belief to work on first.",
+      "limits": "Scores are your assessment of each group; ideally ask the groups themselves. Uses a published research model with original wording, not a licensed survey."
+    },
+    {
+      "id": "T50",
+      "code": "Z06",
+      "name": "Transformation Programme Tracker",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Milestone delivery and slippage, and benefits forecast against plan.",
+      "limits": "Dates and values are what you record; it does not read project plans."
+    },
+    {
+      "id": "T51",
+      "code": "Z01",
+      "name": "Growth Opportunity Scoring",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "RICE score (reach × impact × confidence ÷ effort) for each opportunity and the effort mix across the three horizons.",
+      "limits": "All inputs are your estimates; it does not research markets."
+    },
+    {
+      "id": "T52",
+      "code": "G03",
+      "name": "Growth Pathways",
+      "engine": "existing",
+      "kind": "growth-pathways",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Compares the growth pathways you enter and returns a sequenced portfolio that fits your capacity.",
+      "limits": "Pathway values and costs are your estimates; it does not find new pathways or supply market data."
+    },
+    {
+      "id": "T53",
+      "code": "G07",
+      "name": "Growth Plan Feasibility",
+      "engine": "existing",
+      "kind": "roadmap",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Sequences the initiatives you enter into periods, respecting dependencies and per-period capacity, and reports the critical path.",
+      "limits": "Effort, value and dependencies are your estimates; it does not estimate the work or assign people."
+    },
+    {
+      "id": "T54",
+      "code": "G04",
+      "name": "Modernisation Roadmap",
+      "engine": "existing",
+      "kind": "roadmap",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Sequences the initiatives you enter into periods, respecting dependencies and per-period capacity, and reports the critical path.",
+      "limits": "Effort, value and dependencies are your estimates; it does not estimate the work or assign people."
+    },
+    {
+      "id": "T55",
+      "code": "G06",
+      "name": "Digital Maturity",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 6 anchored questions based on Digital maturity models (MIT CISR; TM Forum DMM), by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    },
+    {
+      "id": "T56",
+      "code": "F01",
+      "name": "Financial Health Ratios",
+      "engine": "existing",
+      "kind": "financial",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Profit-and-loss arithmetic on the periods you enter: gross and operating margin, revenue growth, net burn, runway and revenue per head.",
+      "limits": "It does not forecast future periods and does not value the business: every figure describes the historical periods you entered."
+    },
+    {
+      "id": "T57",
+      "code": "F02",
+      "name": "Rolling Forecast & 13-Week Cash",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Week-by-week cash for the next 13 weeks with the low point, and a 12-month revenue, cost and cash projection from your growth assumptions.",
+      "limits": "It projects from the flows and growth rates you enter; it does not know about payments you have not listed."
+    },
+    {
+      "id": "T58",
+      "code": "F03",
+      "name": "KPI Driver Tree",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Splits return on equity into margin, asset turnover and leverage, and shows which driver moved it since the prior period.",
+      "limits": "Uses the totals you enter; it does not read accounts or adjust for one-off items."
+    },
+    {
+      "id": "T59",
+      "code": "F04",
+      "name": "Cost & Spend Analysis",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Ranks cost lines into A, B and C classes by cumulative share of spend, totals by category, and flags fast-growing lines.",
+      "limits": "Finds where spend is concentrated, not whether it is wasteful."
+    },
+    {
+      "id": "T60",
+      "code": "F05",
+      "name": "Business Valuation",
+      "engine": "schema",
+      "kind": "schema",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Enterprise and equity value from your cash-flow forecast, discount rate and long-term growth, with a sensitivity range.",
+      "limits": "An indicative income-approach value only; it is not a formal valuation opinion and uses your forecast as given."
+    },
+    {
+      "id": "T62",
+      "code": "F07",
+      "name": "Finance Function Maturity",
+      "engine": "anchored",
+      "kind": "anchored",
+      "exampleRuns": true,
+      "nonfinite": [],
+      "computes": "Scores your answers to 6 anchored questions based on FP&A maturity models, by area and overall, counting unevidenced answers for less.",
+      "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification."
+    }
+  ],
+  "emptyInput": [
+    {
+      "id": "T01",
+      "name": "Purpose & Strategic Direction",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T02",
+      "name": "Strategy Alignment Matrix",
+      "accepted": false,
+      "error": "Objectives: add at least 1 row (what the organisation is trying to achieve this period).",
+      "status": 400
+    },
+    {
+      "id": "T03",
+      "name": "Strategic Priority Ranking",
+      "accepted": false,
+      "error": "Add at least 2 options to compare.",
+      "status": 400
+    },
+    {
+      "id": "T04",
+      "name": "OKR & Strategy Execution Review",
+      "accepted": false,
+      "error": "Input: “Period start” is required.",
+      "status": 400
+    },
+    {
+      "id": "T05",
+      "name": "External Environment Scan",
+      "accepted": false,
+      "error": "External factors: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T63",
+      "name": "Operating Model Review",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T06",
+      "name": "Delivery Flow Metrics",
+      "accepted": false,
+      "error": "Periods: add at least 3 rows (one row per week or sprint, oldest first).",
+      "status": 400
+    },
+    {
+      "id": "T07",
+      "name": "Drift & Stability Monitor",
+      "accepted": false,
+      "error": "Input: “Metric” is required.",
+      "status": 400
+    },
+    {
+      "id": "T08",
+      "name": "Dependency Board",
+      "accepted": false,
+      "error": "Dependencies: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T09",
+      "name": "Workload & Capacity Balance",
+      "accepted": false,
+      "error": "Teams or people: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T10",
+      "name": "Bottleneck & Process Improvement",
+      "accepted": false,
+      "error": "Add at least 2 process steps.",
+      "status": 400
+    },
+    {
+      "id": "T11",
+      "name": "Root Cause Analysis",
+      "accepted": false,
+      "error": "Input: “Problem statement (what, where, when, how big)” is required.",
+      "status": 400
+    },
+    {
+      "id": "T12",
+      "name": "Operating Rhythm & Meeting Design",
+      "accepted": false,
+      "error": "Input: “People in scope” is required.",
+      "status": 400
+    },
+    {
+      "id": "T13",
+      "name": "Productivity & Output Metrics",
+      "accepted": false,
+      "error": "Input: “Unit of output” is required.",
+      "status": 400
+    },
+    {
+      "id": "T14",
+      "name": "Collaboration Network Map",
+      "accepted": false,
+      "error": "Working relationships: add at least 2 rows (who relies on whom for information or decisions).",
+      "status": 400
+    },
+    {
+      "id": "T15",
+      "name": "Technology ROI & Total Cost",
+      "accepted": false,
+      "error": "Input: “Average loaded cost per hour” is required.",
+      "status": 400
+    },
+    {
+      "id": "T16",
+      "name": "Innovation Funnel",
+      "accepted": false,
+      "error": "Stages, in order: add at least 2 rows (e.g. idea, assessed, prototype, pilot, launched).",
+      "status": 400
+    },
+    {
+      "id": "T17",
+      "name": "Data Quality Check",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T18",
+      "name": "Decision Quality",
+      "accepted": false,
+      "error": "Answer at least one decision-quality question.",
+      "status": 400
+    },
+    {
+      "id": "T19",
+      "name": "Decision Register",
+      "accepted": false,
+      "error": "Decisions: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T20",
+      "name": "Decision Rights Matrix",
+      "accepted": false,
+      "error": "Assignments: add at least 2 rows (one row per decision and role).",
+      "status": 400
+    },
+    {
+      "id": "T21",
+      "name": "Option Comparison",
+      "accepted": false,
+      "error": "Add at least 2 options to compare.",
+      "status": 400
+    },
+    {
+      "id": "T22",
+      "name": "Scenarios & Expected Value",
+      "accepted": false,
+      "error": "Add at least 1 future scenario.",
+      "status": 400
+    },
+    {
+      "id": "T23",
+      "name": "Decision Timing & Cost of Delay",
+      "accepted": false,
+      "error": "Pending decisions or work: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T24",
+      "name": "Priority Conflict Check",
+      "accepted": false,
+      "error": "Add at least 2 objectives to check.",
+      "status": 400
+    },
+    {
+      "id": "T25",
+      "name": "Stakeholder Map",
+      "accepted": false,
+      "error": "Input: “Decision or change” is required.",
+      "status": 400
+    },
+    {
+      "id": "T26",
+      "name": "Force Field Analysis",
+      "accepted": false,
+      "error": "Input: “Change being considered” is required.",
+      "status": 400
+    },
+    {
+      "id": "T27",
+      "name": "Decision Method Selector",
+      "accepted": false,
+      "error": "Input: “Decision” is required.",
+      "status": 400
+    },
+    {
+      "id": "T30",
+      "name": "Benefits & After-Action Review",
+      "accepted": false,
+      "error": "Decisions or initiatives reviewed: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T35",
+      "name": "Forecast Calibration",
+      "accepted": false,
+      "error": "Predictions: add at least 1 row (record a probability before the outcome is known).",
+      "status": 400
+    },
+    {
+      "id": "T28",
+      "name": "Early Warning Indicators",
+      "accepted": false,
+      "error": "Indicators: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T29",
+      "name": "Risk Register",
+      "accepted": false,
+      "error": "Risks: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T36",
+      "name": "Business Continuity (BIA)",
+      "accepted": false,
+      "error": "Critical activities: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T37",
+      "name": "Cyber Security Posture",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T39",
+      "name": "Organisational Resilience",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T32",
+      "name": "Governance Assessment",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T33",
+      "name": "Commitments & Obligations Register",
+      "accepted": false,
+      "error": "Commitments: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T34",
+      "name": "Compliance Assessment",
+      "accepted": false,
+      "error": "Compliance obligations: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T38",
+      "name": "Ethics & Integrity",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T61",
+      "name": "Financial Controls Review",
+      "accepted": false,
+      "error": "Key controls: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T31",
+      "name": "Culture & Values Assessment",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T40",
+      "name": "Skills Gap Analysis",
+      "accepted": false,
+      "error": "Skills by role: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T41",
+      "name": "Workforce Plan",
+      "accepted": false,
+      "error": "Roles: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T42",
+      "name": "Succession & Bench Strength",
+      "accepted": false,
+      "error": "Add at least 1 critical role.",
+      "status": 400
+    },
+    {
+      "id": "T43",
+      "name": "Human Capital Metrics",
+      "accepted": false,
+      "error": "Input: “Months covered” is required.",
+      "status": 400
+    },
+    {
+      "id": "T44",
+      "name": "Performance–Potential Grid",
+      "accepted": false,
+      "error": "People or roles: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T45",
+      "name": "Engagement Survey",
+      "accepted": false,
+      "error": "Survey results by team: add at least 1 row (answers to “How likely are you to recommend working here?” (0–10)).",
+      "status": 400
+    },
+    {
+      "id": "T46",
+      "name": "Development ROI",
+      "accepted": false,
+      "error": "Development programmes: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T47",
+      "name": "Competency & 360 Review",
+      "accepted": false,
+      "error": "Input: “Person reviewed” is required.",
+      "status": 400
+    },
+    {
+      "id": "T48",
+      "name": "Next-Role Readiness",
+      "accepted": false,
+      "error": "Input: “Person” is required.",
+      "status": 400
+    },
+    {
+      "id": "T49",
+      "name": "Change Readiness",
+      "accepted": false,
+      "error": "Input: “Change” is required.",
+      "status": 400
+    },
+    {
+      "id": "T50",
+      "name": "Transformation Programme Tracker",
+      "accepted": false,
+      "error": "Milestones: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T51",
+      "name": "Growth Opportunity Scoring",
+      "accepted": false,
+      "error": "Opportunities: add at least 1 row.",
+      "status": 400
+    },
+    {
+      "id": "T52",
+      "name": "Growth Pathways",
+      "accepted": false,
+      "error": "Add at least 1 growth pathway.",
+      "status": 400
+    },
+    {
+      "id": "T53",
+      "name": "Growth Plan Feasibility",
+      "accepted": false,
+      "error": "Add at least 1 initiative.",
+      "status": 400
+    },
+    {
+      "id": "T54",
+      "name": "Modernisation Roadmap",
+      "accepted": false,
+      "error": "Add at least 1 initiative.",
+      "status": 400
+    },
+    {
+      "id": "T55",
+      "name": "Digital Maturity",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    },
+    {
+      "id": "T56",
+      "name": "Financial Health Ratios",
+      "accepted": false,
+      "error": "`periods` is required for a financial module.",
+      "status": 400
+    },
+    {
+      "id": "T57",
+      "name": "Rolling Forecast & 13-Week Cash",
+      "accepted": false,
+      "error": "Input: “Cash today” is required.",
+      "status": 400
+    },
+    {
+      "id": "T58",
+      "name": "KPI Driver Tree",
+      "accepted": false,
+      "error": "Input: “Revenue” is required.",
+      "status": 400
+    },
+    {
+      "id": "T59",
+      "name": "Cost & Spend Analysis",
+      "accepted": false,
+      "error": "Cost lines: add at least 2 rows.",
+      "status": 400
+    },
+    {
+      "id": "T60",
+      "name": "Business Valuation",
+      "accepted": false,
+      "error": "Input: “Discount rate (%)” is required.",
+      "status": 400
+    },
+    {
+      "id": "T62",
+      "name": "Finance Function Maturity",
+      "accepted": false,
+      "error": "Answer at least one question.",
+      "status": 400
+    }
+  ],
+  "fieldSweep": [],
+  "migration": {
+    "MERGE": 150,
+    "REBUILD": 44,
+    "RETIRE": 16,
+    "VIEW": 21,
+    "KEEP": 13,
+    "CONTENT": 4
+  },
+  "probes": [
+    {
+      "name": "Fractional evidence creates NaN",
+      "tool": "T01",
+      "accepted": false,
+      "error": "“A written purpose and vision exist and leaders describe them the same way”: evidence must be 0, 1 or 2.",
+      "status": 400
+    },
+    {
+      "name": "One answer produces overall 100% mature",
+      "tool": "T01",
+      "accepted": true,
+      "summary": {
+        "provisional": true,
+        "overallPct": null,
+        "maturityLevel": null,
+        "maturityLabel": null,
+        "weakestArea": "Purpose, vision and values",
+        "evidenceBasis": "self-reported",
+        "sections": [
+          {
+            "id": "statement",
+            "label": "Purpose, vision and values",
+            "answered": 1,
+            "of": 2,
+            "scorePct": 100,
+            "averageLevel": 5,
+            "lowest": "A written purpose and vision exist and leaders describe them the same way",
+            "unevidencedHighs": []
+          },
+          {
+            "id": "direction",
+            "label": "Strategic direction",
+            "answered": 0,
+            "of": 2,
+            "scorePct": null,
+            "averageLevel": null,
+            "lowest": null,
+            "unevidencedHighs": []
+          },
+          {
+            "id": "use",
+            "label": "Used in decisions",
+            "answered": 0,
+            "of": 2,
+            "scorePct": null,
+            "averageLevel": null,
+            "lowest": null,
+            "unevidencedHighs": []
+          }
+        ],
+        "unanswered": [
+          "Values are defined as behaviours people can observe",
+          "There is a small set of strategic priorities for the next 1–3 years",
+          "Leaders can say what the organisation will not do",
+          "Major spending decisions are checked against the priorities",
+          "Hiring and promotion reflect the stated values"
+        ]
+      },
+      "warnings": [
+        "5 of 6 questions unanswered; they are left out of the score, not counted as zero.",
+        "Provisional: answer at least 80% of the questions, including some in every area, for an overall score and maturity level. Area scores below cover only the answers given."
+      ],
+      "nonfinite": [],
+      "working": "Purpose & Strategic Direction (Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation)\nProvisional: too few questions answered for an overall score. Weakest answered area: Purpose, vision and values.\n- Purpose, vision and values: 100% (1/2 answered); lowest: A written purpose and vision exist and leaders describe them the same way.\n- Strategic direction: —% (0/2 answered).\n- Used in decisions: —% (0/2 answered)."
+    },
+    {
+      "name": "No supporting facts still names most probable root",
+      "tool": "T11",
+      "accepted": true,
+      "summary": {
+        "roots": [
+          {
+            "chain": [
+              "Bad product"
+            ],
+            "depth": 1,
+            "root": "Bad product",
+            "category": "Process",
+            "evidence": "none",
+            "fitsFacts": "no",
+            "confidence": 0
+          }
+        ],
+        "outcome": "insufficient evidence",
+        "mostProbable": null,
+        "categoriesConsidered": [
+          "Process"
+        ],
+        "categoriesNotConsidered": [
+          "People",
+          "Tools and equipment",
+          "Materials and inputs",
+          "Environment",
+          "Measurement"
+        ]
+      },
+      "warnings": [
+        "1 chain(s) stop after fewer than 3 “why” steps; keep asking why until the cause is something you can change.",
+        "No root cause has strong evidence yet. Verify before fixing.",
+        "Some candidate causes do not explain where the problem does not occur; they are unlikely to be the true cause.",
+        "No candidate cause has both some evidence and a fit with the facts, so none is put forward. Gather evidence before acting."
+      ],
+      "nonfinite": [],
+      "working": "Root Cause Analysis — 5 Whys, Ishikawa categories and Kepner-Tregoe testing\nProblem: Lost sales\n- Bad product | root: Bad product (Process), evidence none, fits facts: no.\nLeading candidate root cause: none — insufficient evidence.\nFishbone categories not yet considered: People; Tools and equipment; Materials and inputs; Environment; Measurement."
+    },
+    {
+      "name": "Impossible active time yields efficiency above 100%",
+      "tool": "T06",
+      "accepted": false,
+      "error": "Periods, row 1: active days (10) cannot exceed the cycle time (1 days); active time is part of the cycle.",
+      "status": 400
+    },
+    {
+      "name": "Constant labels mask latest drift",
+      "tool": "T07",
+      "accepted": true,
+      "summary": {
+        "centreLine": 11.5,
+        "upperControlLimit": 18.3,
+        "lowerControlLimit": 4.7,
+        "sigma": 2.27,
+        "signals": [
+          {
+            "rule": "Point outside control limits",
+            "at": "Week",
+            "index": 9,
+            "side": "above"
+          },
+          {
+            "rule": "8 points in a row on one side of the centre line",
+            "at": "Week",
+            "index": 7,
+            "side": "below"
+          },
+          {
+            "rule": "8 points in a row on one side of the centre line",
+            "at": "Week",
+            "index": 8,
+            "side": "below"
+          }
+        ],
+        "verdict": "drifting",
+        "targetInsideLimits": null
+      },
+      "warnings": [
+        "Defects is drifting in the wrong direction in the latest points. Investigate what changed."
+      ],
+      "nonfinite": [],
+      "working": "Drift & Stability Monitor — XmR control chart with Western Electric and Nelson rules\nDefects: centre line 11.5, natural process limits 4.7 to 18.3.\nVerdict: drifting. Signals found: 3.\n- Point outside control limits at Week (above centre).\n- 8 points in a row on one side of the centre line at Week (below centre).\n- 8 points in a row on one side of the centre line at Week (below centre)."
+    },
+    {
+      "name": "Unique labels detect latest drift",
+      "tool": "T07",
+      "accepted": true,
+      "summary": {
+        "centreLine": 11.5,
+        "upperControlLimit": 18.3,
+        "lowerControlLimit": 4.7,
+        "sigma": 2.27,
+        "signals": [
+          {
+            "rule": "Point outside control limits",
+            "at": "W9",
+            "index": 9,
+            "side": "above"
+          },
+          {
+            "rule": "8 points in a row on one side of the centre line",
+            "at": "W7",
+            "index": 7,
+            "side": "below"
+          },
+          {
+            "rule": "8 points in a row on one side of the centre line",
+            "at": "W8",
+            "index": 8,
+            "side": "below"
+          }
+        ],
+        "verdict": "drifting",
+        "targetInsideLimits": null
+      },
+      "warnings": [
+        "Defects is drifting in the wrong direction in the latest points. Investigate what changed."
+      ],
+      "nonfinite": [],
+      "working": "Drift & Stability Monitor — XmR control chart with Western Electric and Nelson rules\nDefects: centre line 11.5, natural process limits 4.7 to 18.3.\nVerdict: drifting. Signals found: 3.\n- Point outside control limits at W9 (above centre).\n- 8 points in a row on one side of the centre line at W7 (below centre).\n- 8 points in a row on one side of the centre line at W8 (below centre)."
+    },
+    {
+      "name": "Whitespace required objective and numeric budget",
+      "tool": "T02",
+      "accepted": false,
+      "error": "Objectives, row 1: “Objective” is required.",
+      "status": 400
+    },
+    {
+      "name": "Prototype name causes internal exception",
+      "tool": "T19",
+      "accepted": true,
+      "summary": {
+        "total": 1,
+        "open": 1,
+        "medianCycleDays": null,
+        "p80CycleDays": null,
+        "stalled": [
+          {
+            "title": "Example",
+            "owner": "no owner",
+            "ageDays": 277
+          }
+        ],
+        "reversalRatePct": 0,
+        "withoutOwner": [
+          "Example"
+        ],
+        "withoutRationale": [],
+        "reviewsOverdue": [],
+        "recurringTopics": [],
+        "openByOwner": {}
+      },
+      "warnings": [
+        "1 open decision(s) have waited more than 30 days.",
+        "1 decision(s) have no owner."
+      ],
+      "nonfinite": [],
+      "working": "Decision Register — decision log with cycle-time measures\n1 decisions as of 2026-10-05; 1 open.\nCycle time from raised to decided: median — days, 80% within — days.\nReversal rate: 0% of decided items.\n- Stalled: Example (no owner), 277 days.\nReviews overdue: none.\nOpen decisions by owner: none."
+    },
+    {
+      "name": "Invalid calendar date",
+      "tool": "T19",
+      "accepted": false,
+      "error": "Decisions, row 1: “Raised on” must be a date (YYYY-MM-DD).",
+      "status": 400
+    },
+    {
+      "name": "Reversed chronology silently omitted",
+      "tool": "T19",
+      "accepted": false,
+      "error": "Decisions, row 1: “Decided on” (2026-02-01) is before “Raised on” (2026-03-01).",
+      "status": 400
+    },
+    {
+      "name": "Annual plan satisfies quarterly strategy review",
+      "tool": "T12",
+      "accepted": true,
+      "summary": {
+        "personHoursPerWeek": 0.1,
+        "hoursPerPersonPerWeek": 0,
+        "updateSharePct": 0,
+        "missingRhythmLevels": [
+          "weekly operational review",
+          "monthly performance review",
+          "quarterly strategy review"
+        ],
+        "meetingsWithoutOwner": [
+          "Annual plan"
+        ],
+        "meetingsWithoutAgenda": [
+          "Annual plan"
+        ],
+        "meetings": [
+          {
+            "name": "Annual plan",
+            "frequency": "yearly",
+            "minutes": 60,
+            "attendees": 5,
+            "purpose": "plan",
+            "owner": null,
+            "agenda": null,
+            "personHoursPerWeek": 0.1
+          }
+        ]
+      },
+      "warnings": [
+        "The rhythm has no weekly operational review, no monthly performance review, no quarterly strategy review.",
+        "No owner: Annual plan."
+      ],
+      "nonfinite": [],
+      "working": "Operating Rhythm & Meeting Design — meeting-load analysis against a weekly, monthly and quarterly review cycle\n0.1 person-hours a week in recurring meetings; 0 per person across 5 people.\nShare of time spent on status updates: 0%.\nMissing rhythm levels: weekly operational review; monthly performance review; quarterly strategy review.\n- Annual plan: 0.1 person-hours/week (yearly, plan)."
+    },
+    {
+      "name": "More leavers than current staff creates negative supply",
+      "tool": "T41",
+      "accepted": false,
+      "error": "Roles, row 1: “Expected leavers” (10) cannot exceed “Headcount today” (2).",
+      "status": 400
+    },
+    {
+      "name": "Single small survey group leaks aggregate score",
+      "tool": "T45",
+      "accepted": true,
+      "summary": {
+        "overallENPS": null,
+        "overallResponseRatePct": null,
+        "teams": [
+          {
+            "team": "Small",
+            "responses": 1,
+            "hidden": true
+          }
+        ]
+      },
+      "warnings": [
+        "Fewer than 5 responses in Small: do not show these team results, to protect anonymity.",
+        "Overall results withheld: with them, the hidden team results could be worked out."
+      ],
+      "nonfinite": [],
+      "working": "Engagement Survey — employee Net Promoter Score (−100 to +100)\nOverall eNPS withheld to protect anonymity.\n- Small: hidden to protect anonymity."
+    },
+    {
+      "name": "Large finite inputs overflow arithmetic",
+      "tool": "T51",
+      "accepted": false,
+      "error": "These figures are too large or inconsistent to compute a result (ranked.0.score). Check the values entered.",
+      "status": 400
+    }
+  ]
+}

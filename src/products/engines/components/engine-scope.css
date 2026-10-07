@@ -1,0 +1,17 @@
+.engine-scope {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--border);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.engine-scope dt {
+  font-weight: 600;
+  color: var(--text-muted-strong, var(--graphite));
+}
+.engine-scope dd {
+  margin: 2px 0 0;
+  color: var(--text-secondary, var(--graphite));
+}

@@ -13,6 +13,8 @@ export const sourceKinds = [
   'kpi',
   'opportunity',
   'experiment',
+  // Current, subject-bound results of catalog tool runs (see capabilities.mjs).
+  'tool_result',
 ];
 export const changeModes = ['block', 'ask', 'allow'];
 export const aiRulesSchema = z
@@ -32,6 +34,7 @@ export const aiRulesSchema = z
         'action.prepare': z.enum(changeModes).default('ask'),
         'progress.snapshot': z.enum(changeModes).default('ask'),
         'review.reminder': z.enum(changeModes).default('ask'),
+        'capability.run': z.enum(changeModes).default('ask'),
       })
       .strict()
       .default({}),

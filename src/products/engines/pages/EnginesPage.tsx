@@ -20,16 +20,39 @@ import { RoadmapForm } from '../components/RoadmapForm';
 import { OptimisationForm } from '../components/OptimisationForm';
 import { SelectorForm } from '../components/SelectorForm';
 import { ConflictForm } from '../components/ConflictForm';
+import { SchemaForm } from '../components/SchemaForm';
+import { AnchoredForm } from '../components/AnchoredForm';
 import { EngineResultView } from '../components/EngineResultView';
+import { EngineScope } from '../components/EngineScope';
 import './engines-page.css';
 
-const HOME_ENGINES = ['All', 'Clarity', 'Capability', 'Consistency', 'Growth', 'Finance', 'Shared'];
+const AREAS = [
+  'All',
+  'Strategy',
+  'Decisions',
+  'Operations',
+  'Risk',
+  'Governance',
+  'People',
+  'Change',
+  'Growth',
+  'Finance',
+];
 
-/** /os/engines — the ported intelligence-engine catalog: 248 diagnostic tools, each a real
- * deterministic compute (see server: src/app/engines.mjs, src/app/engineIntelligence/*), ported
- * from LamidOne's src/lib/intelligence layer. Every run charges points and returns arithmetic —
- * no engine on this page produces a number a model invented. */
-type Coverage = { totalEntries: number; verifiedCount: number; byArchetype: Record<string, number> };
+/** /os/engines — the standards-based tool catalog: 63 tools, each built on a recognised method
+ * (see server: src/app/toolCatalog/*, src/app/engines.mjs). Every run charges points and returns
+ * deterministic arithmetic — no tool on this page produces a number a model invented. */
+type Coverage = {
+  totalEntries: number;
+  validation: {
+    implemented: number;
+    calculationTested: number;
+    methodReviewed: number;
+    taskEvaluated: number;
+    operationallyTested: number;
+  };
+  byArchetype: Record<string, number>;
+};
 
 export function EnginesPage() {
   const { catalog, error } = useEngineCatalog();
@@ -45,19 +68,19 @@ export function EnginesPage() {
 
   const filtered = useMemo(() => {
     if (!catalog) return [];
-    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.homeEngine === tab);
+    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.area === tab);
   }, [catalog, tab]);
   const filteredLocked = useMemo(() => {
     if (!catalog?.locked) return [];
-    return tab === 'All' ? catalog.locked : catalog.locked.filter((e) => e.homeEngine === tab);
+    return tab === 'All' ? catalog.locked : catalog.locked.filter((e) => e.area === tab);
   }, [catalog, tab]);
 
   return (
     <section className="panel">
       <div className="panel-heading">
         <div>
-          <h2>Engines</h2>
-          <span>Structured diagnostics — real computed results, not AI-guessed scores.</span>
+          <h2>Tools</h2>
+          <span>Each tool follows a recognised method and calculates from your own figures.</span>
         </div>
       </div>
 
@@ -69,14 +92,15 @@ export function EnginesPage() {
 
       {coverage && (
         <p className="activity-feed-status">
-          {coverage.totalEntries} registered entries · {coverage.verifiedCount} individually
-          verified against a canonical capability — the rest share {Object.keys(coverage.byArchetype).length}{' '}
-          real compute archetypes, honestly unverified per-entry rather than fabricated.
+          {coverage.totalEntries} tools, each built on a named method or standard.{' '}
+          {coverage.validation.calculationTested} have figures checked against hand-worked
+          answers; {coverage.validation.methodReviewed} have had their method independently
+          reviewed.
         </p>
       )}
 
       <div className="engines-tabs">
-        {HOME_ENGINES.map((name) => (
+        {AREAS.map((name) => (
           <button
             key={name}
             type="button"
@@ -86,7 +110,7 @@ export function EnginesPage() {
             {name}
             {catalog && name !== 'All' && (
               <span className="engines-tab-count">
-                {catalog.engines.filter((e) => e.homeEngine === name).length}
+                {catalog.engines.filter((e) => e.area === name).length}
               </span>
             )}
           </button>
@@ -113,7 +137,7 @@ export function EnginesPage() {
                 >
                   <strong>{engine.engineName}</strong>
                   <small>
-                    {engine.code} · {engine.seriesName} · {engine.pointsCost} pts
+                    {engine.standard ?? engine.seriesName} · {engine.pointsCost} pts
                   </small>
                 </button>
               </li>
@@ -138,15 +162,18 @@ export function EnginesPage() {
             <div>
               <h3>Locked for your plan</h3>
               <span>
-                These engines exist but aren't included in your current tier or bundles — unlock
-                the matching seat to get access without a full tier upgrade.
+                These engines exist but aren't included in your current tier or bundles — unlock the
+                matching seat to get access without a full tier upgrade.
               </span>
             </div>
           </div>
           <ul className="engines-list">
             {filteredLocked.map((engine) => (
               <li key={engine.code}>
-                <div className="engines-list-item" style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  className="engines-list-item"
+                  style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}
+                >
                   <Lock size={14} />
                   <span>
                     <strong>{engine.engineName}</strong>
@@ -179,7 +206,14 @@ function EngineDetailPanel({
   return (
     <div className="engines-detail-inner">
       <h3>{engine.engineName}</h3>
+      {(manifest?.standard ?? engine.standard) && (
+        <p className="engines-detail-standard">Method: {manifest?.standard ?? engine.standard}</p>
+      )}
       <p className="engines-detail-purpose">{manifest?.purpose ?? engine.purpose}</p>
+      <EngineScope
+        computes={manifest?.computes ?? engine.computes}
+        limits={manifest?.limits ?? engine.limits}
+      />
       {manifest?.driverContext && <p className="engines-detail-driver">{manifest.driverContext}</p>}
 
       {error && (
@@ -194,6 +228,7 @@ function EngineDetailPanel({
         <EngineResultView
           pointsCharged={result.pointsCharged}
           balance={result.balance}
+          nextSteps={result.nextSteps}
           result={result.result}
         />
       ) : (
@@ -215,6 +250,35 @@ export function EngineForm({
   onSubmit: (input: Record<string, unknown>) => void;
 }) {
   switch (manifest.inputs.kind) {
+    case 'schema': {
+      const spec = manifest.inputs as Extract<typeof manifest.inputs, { kind: 'schema' }>;
+      return (
+        <SchemaForm
+          key={manifest.code}
+          toolKey={manifest.code}
+          fields={spec.fields}
+          tables={spec.tables}
+          example={manifest.example}
+          onSubmit={onSubmit}
+          submitting={submitting}
+        />
+      );
+    }
+    case 'anchored': {
+      const spec = manifest.inputs as Extract<typeof manifest.inputs, { kind: 'anchored' }>;
+      return (
+        <AnchoredForm
+          key={manifest.code}
+          toolKey={manifest.code}
+          sections={spec.sections}
+          levels={spec.levels}
+          evidence={spec.evidence}
+          example={manifest.example}
+          onSubmit={onSubmit}
+          submitting={submitting}
+        />
+      );
+    }
     case 'assessment':
       return (
         <AssessmentForm

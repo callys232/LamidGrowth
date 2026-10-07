@@ -1,0 +1,31 @@
+/* Two-line hero headlines (TwoLineTitle). Each line stays on one line; the type scales with
+   the column width so the longer line fits. --title-chars is the longer line's length. */
+:has(> h1 > .two-line-title) {
+  container-type: inline-size;
+}
+.two-line-title {
+  display: block;
+  font-size: clamp(30px, calc(100cqi / (var(--title-chars) * 0.47)), 76px);
+  line-height: 1.06;
+}
+.two-line-title > span {
+  display: block;
+  white-space: nowrap;
+}
+/* Narrow screens: let a line wrap rather than shrink type below a readable size. */
+@media (max-width: 600px) {
+  .two-line-title > span {
+    white-space: normal;
+  }
+}
+.two-line-title {
+  letter-spacing: -0.01em;
+  word-spacing: 0.04em;
+}
+/* Give the headline column more of the hero when it carries a two-line title. */
+@media (min-width: 900px) {
+  .content-hero:has(.two-line-title) {
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+    gap: 48px;
+  }
+}

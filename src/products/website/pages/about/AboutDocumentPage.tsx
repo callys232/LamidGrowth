@@ -1,28 +1,26 @@
-import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
+import { UpdatedDocumentPage } from '../../../../shared/content/UpdatedDocumentPage';
 import type { DocumentPageProps } from '../../../../shared/content/types';
+import home from '../home/content.json';
 import content from './content.json';
-import {
-  AboutHeroSlide,
-  TheProblemWasnTThatWeNeededMoreToolsSlide1,
-  SoWeStartedConnectingThePiecesSlide2,
-  WhatLamidOneIsTodaySlide3,
-  WhatThatMeansForYouSlide4,
-  WhatWeBelieveSlide5,
-} from './slides';
 
-/** /about — sections in reading order. */
+/** Original homepage slides whose ideas the newer homepage sections now carry ("How It Works",
+ * "Human-directed intelligence." and the final call to action). They read here, before the
+ * closing "What We Believe", using the homepage copy as written. */
+const movedFromHome = [
+  "Start With What You're Trying to Achieve",
+  'Intelligence That Stays Current With the Work',
+  'See LAMID ONE in Your Context',
+].map((label) => {
+  const section = home.sections.find((s) => s.label === label);
+  if (!section) throw new Error(`Missing homepage section: ${label}`);
+  return section;
+});
+
+const page = {
+  ...content,
+  sections: [...content.sections.slice(0, -1), ...movedFromHome, ...content.sections.slice(-1)],
+};
+
 export function AboutDocumentPage({ embedded = false }: DocumentPageProps) {
-  return (
-    <DocumentPageLayout
-      page={content}
-      embedded={embedded}
-      hero={<AboutHeroSlide embedded={embedded} />}
-    >
-      <TheProblemWasnTThatWeNeededMoreToolsSlide1 embedded={embedded} />
-      <SoWeStartedConnectingThePiecesSlide2 embedded={embedded} />
-      <WhatLamidOneIsTodaySlide3 embedded={embedded} />
-      <WhatThatMeansForYouSlide4 embedded={embedded} />
-      <WhatWeBelieveSlide5 embedded={embedded} />
-    </DocumentPageLayout>
-  );
+  return <UpdatedDocumentPage content={embedded ? content : page} embedded={embedded} />;
 }

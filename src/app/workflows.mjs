@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
 import { readAIRules, enforceFeature } from './aiRules.mjs';
+import { executeCapabilityInTransaction, loadWorkspaceFor } from './capabilities.mjs';
 
 const emptyInput = z.object({}).strict();
 const title = z.string().trim().min(1).max(500);
@@ -103,6 +104,54 @@ const tools = {
         runId: run.id,
         readAt: null,
       });
+    },
+  },
+  // A catalog tool run about this workflow's goal, through the same execution path as the tools
+  // page: access, input validation, charging (completed results only), and subject-bound
+  // intelligence citing the goal. It charges points, so it is a change that needs approval under
+  // the workspace's AI rules. Its `status` lets a later step branch on a provisional or
+  // insufficient-evidence result (e.g. to ask for the missing evidence).
+  'capability.run': {
+    name: 'Run a catalog tool on this goal',
+    engine: 'Shared',
+    band: 'A2',
+    writes: true,
+    input: z
+      .object({
+        capabilityId: z.string().regex(/^(T\d\d|[A-Za-z]\d{2,3})$/),
+        input: z.record(z.unknown()).default({}),
+        sources: z
+          .array(
+            z
+              .object({ kind: z.string().trim().min(1).max(40), id: z.string().trim().min(1).max(200) })
+              .strict(),
+          )
+          .max(50)
+          .default([]),
+      })
+      .strict(),
+    fields: [{ name: 'capabilityId', required: true, maxLength: 10 }],
+    async execute({ store, run, objective, principal, step }, input) {
+      const workspace = await loadWorkspaceFor(store.db, run.workspace_id, principal.id);
+      const out = await executeCapabilityInTransaction(store, {
+        principal,
+        workspace,
+        capabilityId: input.capabilityId,
+        subject: { kind: 'goal', id: objective.id },
+        input: input.input,
+        sources: [{ kind: 'objective', id: objective.id }, ...input.sources],
+        // The step runs inside the workflow's transaction, so a rolled-back attempt leaves
+        // nothing behind and the key stays free for the retry.
+        idempotencyKey: `workflow:${run.id}:${step.id}`,
+        caller: `workflow:${run.id}`,
+      });
+      return {
+        runId: out.runId,
+        status: out.status,
+        pointsCharged: out.pointsCharged,
+        nextSteps: out.nextSteps,
+        intelligenceVersion: out.intelligence?.version ?? null,
+      };
     },
   },
   // Workflow Builder (F-WF-01): a step on this tool is never actually executed — advance()
@@ -539,7 +588,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
           return;
         }
         const output = await tool.execute(
-          { store, run, objective, principal },
+          { store, run, objective, principal, step },
           tool.input.parse(step.input),
         );
         const evidence = {

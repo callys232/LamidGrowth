@@ -1,6 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { wordSet, scoreBid } from './text.mjs';
+import {
+  requirementSchema,
+  checkEligibility,
+  credentialsByProfile,
+  restrictedProfileIds,
+} from './expertEligibility.mjs';
 import { DOMAINS, FUNCTIONS, INDUSTRIES, SENIORITY, ENGAGEMENT_MODELS } from './expertiseTaxonomy.mjs';
 
 const profileSchema = z
@@ -38,9 +44,18 @@ const credentialSchema = z
     issuedAt: z.string().trim().max(40).optional(),
     expiresAt: z.string().trim().max(40).optional(),
     evidenceUrl: z.string().trim().max(2000).optional(),
+    // Where a licence is valid, and (optionally) the category it covers. A licence without a
+    // jurisdiction cannot satisfy a case that requires one.
+    jurisdiction: z.string().trim().max(100).optional(),
+    scope: z.string().trim().max(100).optional(),
   })
   .strict();
-const credentialDecisionSchema = z.object({ decision: z.enum(['verified', 'rejected']) }).strict();
+const credentialDecisionSchema = z
+  .object({
+    decision: z.enum(['verified', 'rejected', 'revoked']),
+    reason: z.string().trim().max(500).optional(),
+  })
+  .strict();
 const assessmentSchema = z
   .object({
     skill: z.string().trim().min(1).max(60),
@@ -49,6 +64,7 @@ const assessmentSchema = z
   .strict();
 
 const PASS_THRESHOLD = 0.8;
+const RETAKE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 // Deterministic multiple-choice quiz bank — a skills assessment is graded purely against
 // this bank, never by an AI, so a score can never be hallucinated. Modeled on LinkedIn's
@@ -346,8 +362,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       await db
         .prepare(
           `INSERT INTO expert_credentials
-         (id, profile_id, type, title, issuer, issued_at, expires_at, evidence_url, verification_status, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+         (id, profile_id, type, title, issuer, issued_at, expires_at, evidence_url, verification_status, created_at, jurisdiction, scope)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)`,
         )
         .run(
           id,
@@ -359,6 +375,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           input.expiresAt ?? null,
           input.evidenceUrl ?? null,
           now,
+          input.jurisdiction ?? null,
+          input.scope ?? null,
         );
       await log(req.workspace.id, req.user.name, 'Credential submitted', id, input.title);
     });
@@ -399,11 +417,33 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       .prepare('SELECT * FROM expert_credentials WHERE id = ?')
       .get(req.params.id);
     if (!credential) return res.status(404).json({ error: 'Credential not found.' });
-    await db
-      .prepare(
-        'UPDATE expert_credentials SET verification_status = ?, verified_at = ?, verified_by = ? WHERE id = ?',
-      )
-      .run(input.decision, new Date().toISOString(), req.user.id, req.params.id);
+    const now = new Date().toISOString();
+    if (input.decision === 'revoked') {
+      // A revocation keeps the verification record and adds when and why it stopped counting.
+      // Reviews claimed under this licence are reopened for an eligible reviewer, and completed
+      // ones are voided, so a red-band scope cannot publish on a revoked qualification.
+      await transaction(async () => {
+        await db
+          .prepare('UPDATE expert_credentials SET revoked_at = ?, revoked_reason = ? WHERE id = ?')
+          .run(now, input.reason ?? '', credential.id);
+        await db
+          .prepare(
+            "UPDATE review_queue_entries SET status = 'pending', claimed_by = NULL, claimed_at = NULL, sla_due_at = NULL, qualifying_credential_id = NULL WHERE qualifying_credential_id = ? AND status = 'claimed'",
+          )
+          .run(credential.id);
+        await db
+          .prepare(
+            "UPDATE review_queue_entries SET qualification_revoked_at = ? WHERE qualifying_credential_id = ? AND status = 'completed' AND qualification_revoked_at IS NULL",
+          )
+          .run(now, credential.id);
+        await log(req.workspace.id, req.user.name, 'Credential revoked', credential.id, input.reason ?? '');
+      });
+    } else
+      await db
+        .prepare(
+          'UPDATE expert_credentials SET verification_status = ?, verified_at = ?, verified_by = ? WHERE id = ?',
+        )
+        .run(input.decision, now, req.user.id, req.params.id);
     res.json(await db.prepare('SELECT * FROM expert_credentials WHERE id = ?').get(req.params.id));
   });
 
@@ -492,30 +532,22 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   app.get('/api/talent/experts', async (req, res) => {
     const skillQuery = String(req.query.skill || '').trim();
     const maxRate = req.query.maxRate ? Number(req.query.maxRate) : null;
-    const domainFilter = req.query.domain ? String(req.query.domain) : null;
-    const functionFilter = req.query.function ? String(req.query.function) : null;
-    const industryFilter = req.query.industry ? String(req.query.industry) : null;
+    // Every requirement given is a hard gate applied before ranking (expertEligibility.mjs):
+    // a jurisdiction, a credential type, a licence, a response window. Credentials only count
+    // while verified, unexpired and not revoked.
+    const requirement = requirementSchema.parse({
+      domain: req.query.domain || undefined,
+      function: req.query.function || undefined,
+      industry: req.query.industry || undefined,
+      jurisdiction: req.query.jurisdiction || undefined,
+      credentialType: req.query.credentialType || undefined,
+      maxResponseHours: req.query.maxResponseHours || undefined,
+    });
     const queryWords = wordSet(skillQuery);
     const rows = await db.prepare('SELECT * FROM talent_profiles').all();
-    // F-EX-03: an expired credential was still counted toward the match-score bonus forever —
-    // verification_status only ever moves forward from 'pending', so nothing re-evaluates it once
-    // expires_at passes. A credential with no expiry (expires_at IS NULL) still counts.
-    const credentialRows = await db
-      .prepare(
-        `SELECT profile_id, COUNT(*) AS count FROM expert_credentials
-         WHERE verification_status = 'verified' AND (expires_at IS NULL OR expires_at > ?)
-         GROUP BY profile_id`,
-      )
-      .all(new Date().toISOString());
-    const verifiedCredentialCounts = new Map(
-      credentialRows.map((row) => [row.profile_id, row.count]),
-    );
-    // A restricted conflict disclosure removes an expert from matching outright — this is the
-    // enforcement point for the governance gap, not just a badge shown on their profile.
-    const restrictedRows = await db
-      .prepare("SELECT DISTINCT profile_id FROM conflict_disclosures WHERE status = 'restricted'")
-      .all();
-    const restrictedProfileIds = new Set(restrictedRows.map((r) => r.profile_id));
+    const now = new Date().toISOString();
+    const credentialsOf = await credentialsByProfile(db);
+    const restricted = await restrictedProfileIds(db);
     const reputationRows = await db
       .prepare(
         'SELECT reviewee_user_id, COALESCE(AVG(rating), 0) AS average FROM reviews GROUP BY reviewee_user_id',
@@ -525,11 +557,15 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       reputationRows.map((row) => [row.reviewee_user_id, row.average]),
     );
     const results = rows
-      .filter((row) => !restrictedProfileIds.has(row.id))
-      .filter((row) => !domainFilter || JSON.parse(row.domains).includes(domainFilter))
-      .filter((row) => !functionFilter || JSON.parse(row.functions).includes(functionFilter))
-      .filter((row) => !industryFilter || JSON.parse(row.industries).includes(industryFilter))
-      .map((row) => {
+      .map((row) => ({
+        row,
+        check: checkEligibility(row, credentialsOf.get(row.id) ?? [], requirement, {
+          restricted: restricted.has(row.id),
+          now,
+        }),
+      }))
+      .filter(({ check }) => check.eligible)
+      .map(({ row, check }) => {
         const skills = JSON.parse(row.skills);
         const profileWords = wordSet(`${row.headline} ${skills.join(' ')}`);
         const overlap = [...queryWords].filter((word) => profileWords.has(word)).length;
@@ -538,7 +574,7 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         const rateFit =
           maxRate == null || !row.hourly_rate ? 15 : row.hourly_rate <= maxRate ? 15 : 0;
         const vettingBonus = row.vetting_status === 'verified' ? 15 : 0;
-        const credentialBonus = Math.min(10, (verifiedCredentialCounts.get(row.id) || 0) * 2);
+        const credentialBonus = Math.min(10, check.currentCredentials.length * 2);
         const reputationBonus = Math.round((reputationByUserId.get(row.user_id) || 0) * 2);
         return {
           userId: row.user_id,
@@ -554,6 +590,8 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
           vettingStatus: row.vetting_status,
           score: skillScore + rateFit + vettingBonus + credentialBonus + reputationBonus,
           breakdown: { skillScore, rateFit, vettingBonus, credentialBonus, reputationBonus },
+          // The requirements this expert was checked against and met — eligibility, not score.
+          meets: requirement,
         };
       })
       .filter((result) => queryWords.size === 0 || result.breakdown.skillScore > 0)
@@ -588,6 +626,22 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       return res
         .status(400)
         .json({ error: 'Create your talent profile before taking an assessment.' });
+    // The bank is a small fixed set of questions graded instantly, so unlimited retakes let
+    // anyone reach a pass by trial and error — a badge that proves nothing. One attempt per skill
+    // per cooldown window keeps a pass meaningful.
+    const last = await db
+      .prepare(
+        'SELECT created_at FROM talent_assessments WHERE profile_id = ? AND skill = ? ORDER BY created_at DESC LIMIT 1',
+      )
+      .get(profile.id, input.skill);
+    if (last) {
+      const retryAfter = new Date(new Date(last.created_at).getTime() + RETAKE_COOLDOWN_MS);
+      if (retryAfter > new Date())
+        return res.status(429).json({
+          error: `You can take the ${input.skill} assessment again after ${retryAfter.toISOString()}.`,
+          retryAfter: retryAfter.toISOString(),
+        });
+    }
     const id = randomUUID();
     await transaction(async () => {
       await db

@@ -1,4 +1,9 @@
 export const destinations: Record<string, string> = {
+  'Start Growing as ONE': '/start',
+  'Explore the Portal': '/product',
+  'Start Free': '/signup',
+  'Limited Access': '/start',
+  'Book a Demo': '/demo/request',
   'Experience LAMID ONE': '/start',
   'See How It Works': '/how-it-works',
   'Explore the Companion': '/product/companion',
@@ -52,7 +57,7 @@ export const destinations: Record<string, string> = {
   // Both uses of this label live on the pricing page's own content (hero + closing CTA), so
   // without the anchor this was a same-route Link to the page you're already on — previously a
   // silent no-op (RouteEffects only reset scroll on pathname change). Points at the live
-  // billables section (`id="billables"` in BillablesSection.tsx) instead.
+  // billables section (`id="billables"` in PricingFlow.tsx) instead.
   'View Pricing': '/pricing#billables',
   'Request a Conversation': '/enterprise/contact',
   'Explore Resources': '/resources',

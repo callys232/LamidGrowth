@@ -10,14 +10,8 @@ const pages = JSON.parse(readFileSync('src/content/pages.json', 'utf8')) as {
   blocks: { paragraphs: { text: string; sourceParagraph: number }[] }[];
 }[];
 
-// Paragraphs that are canonical copy but are never simultaneously in the DOM by design:
-// paragraph 49 is a hero line the custom HomeHeroSlide destructuring intentionally skips
-// (title/description/actions/continuity/control only), and 64-66 are the Founder/Team/
-// Enterprise audience-context bullets in a single-select tab widget — only the selected
-// tab's bullet (63, by default) renders at a time.
-const notSimultaneouslyRendered: Record<number, Set<number>> = {
-  1: new Set([49, 64, 65, 66]),
-};
+// Paragraphs that are canonical copy but are never simultaneously in the DOM by design.
+const notSimultaneouslyRendered: Record<number, Set<number>> = {};
 
 function normalizeForBreakdown(text: string) {
   return text
@@ -76,9 +70,13 @@ test('every documented route renders every original copy paragraph', async ({
       return merged;
     });
     const exceptions = notSimultaneouslyRendered[source.page] ?? new Set<number>();
-    expect(Object.keys(actual).length, `${path} paragraph count`).toBe(
-      source.blocks.reduce((count, block) => count + block.paragraphs.length, 0) - exceptions.size,
+    const expectedParagraphs = new Set(
+      source.blocks
+        .flatMap((block) => block.paragraphs)
+        .filter((paragraph) => !exceptions.has(paragraph.sourceParagraph))
+        .map((paragraph) => String(paragraph.sourceParagraph)),
     );
+    expect(Object.keys(actual).length, `${path} paragraph count`).toBe(expectedParagraphs.size);
     for (const block of source.blocks)
       for (const paragraph of block.paragraphs) {
         if (exceptions.has(paragraph.sourceParagraph)) continue;

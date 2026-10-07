@@ -132,21 +132,41 @@ test('F-EX-03: an expired verified credential no longer contributes to the match
   const futureYear = new Date().getUTCFullYear() + 5;
   const currentCred = await request(
     '/talent/credentials',
-    { type: 'certification', title: 'Privacy Cert', issuer: 'IAPP', expiresAt: `${futureYear}-01-01` },
+    {
+      type: 'certification',
+      title: 'Privacy Cert',
+      issuer: 'IAPP',
+      expiresAt: `${futureYear}-01-01`,
+    },
     current,
   );
   const pastYear = new Date().getUTCFullYear() - 5;
   const expiredCred = await request(
     '/talent/credentials',
-    { type: 'certification', title: 'Privacy Cert', issuer: 'IAPP', expiresAt: `${pastYear}-01-01` },
+    {
+      type: 'certification',
+      title: 'Privacy Cert',
+      issuer: 'IAPP',
+      expiresAt: `${pastYear}-01-01`,
+    },
     expired,
   );
   const currentCredId = currentCred.data.find((c) => c.title === 'Privacy Cert').id;
   const expiredCredId = expiredCred.data.find((c) => c.title === 'Privacy Cert').id;
 
-  const decideA = await request(`/admin/talent/credentials/${currentCredId}`, { decision: 'verified' }, adminCookie, 'PATCH');
+  const decideA = await request(
+    `/admin/talent/credentials/${currentCredId}`,
+    { decision: 'verified' },
+    adminCookie,
+    'PATCH',
+  );
   assert.equal(decideA.status, 200);
-  const decideB = await request(`/admin/talent/credentials/${expiredCredId}`, { decision: 'verified' }, adminCookie, 'PATCH');
+  const decideB = await request(
+    `/admin/talent/credentials/${expiredCredId}`,
+    { decision: 'verified' },
+    adminCookie,
+    'PATCH',
+  );
   assert.equal(decideB.status, 200);
 
   const currentUserId = (await request('/state', undefined, current, 'GET')).data.user.id;
@@ -157,9 +177,20 @@ test('F-EX-03: an expired verified credential no longer contributes to the match
   const currentEntry = results.data.find((r) => r.userId === currentUserId);
   const expiredEntry = results.data.find((r) => r.userId === expiredUserId);
   assert.ok(currentEntry, 'the expert with a still-valid verified credential must appear');
-  assert.ok(expiredEntry, 'the expert with an expired verified credential must still appear (just unbonused)');
-  assert.equal(currentEntry.breakdown.credentialBonus, 2, 'one still-valid verified credential contributes its bonus');
-  assert.equal(expiredEntry.breakdown.credentialBonus, 0, 'an expired verified credential must not contribute to the match score');
+  assert.ok(
+    expiredEntry,
+    'the expert with an expired verified credential must still appear (just unbonused)',
+  );
+  assert.equal(
+    currentEntry.breakdown.credentialBonus,
+    2,
+    'one still-valid verified credential contributes its bonus',
+  );
+  assert.equal(
+    expiredEntry.breakdown.credentialBonus,
+    0,
+    'an expired verified credential must not contribute to the match score',
+  );
 });
 
 test('skills assessments are graded deterministically, and a bogus skill 404s', async () => {
@@ -188,10 +219,18 @@ test('skills assessments are graded deterministically, and a bogus skill 404s', 
   assert.equal(perfect.data.score, 100);
   assert.equal(perfect.data.passed, true);
 
+  // A second attempt by the same person is subject to the retake cooldown (tested separately),
+  // so the all-wrong grading is checked on a fresh account.
+  const second = await signup('Quiz Taker Two');
+  await request(
+    '/talent/profile',
+    { headline: 'JS dev', skills: ['javascript'], languages: [] },
+    second,
+  );
   const zero = await request(
     '/talent/assessments',
     { skill: 'javascript', answers: [0, 1, 2, 0, 1] },
-    user,
+    second,
   );
   assert.equal(zero.status, 201);
   assert.equal(zero.data.score, 0);
@@ -411,4 +450,133 @@ test("job-matches ranks open jobs by fit to the freelancer's own profile", async
   assert.equal(matches.status, 200);
   assert.ok(matches.data.some((m) => m.jobId === matchingJob.data.id));
   assert.ok(!matches.data.some((m) => m.jobId === unrelatedJob.data.id));
+});
+
+test('a skill assessment cannot be retaken within 24 hours, so a badge cannot be won by trial and error', async () => {
+  const user = await signup('Quiz Retaker');
+  await request('/talent/profile', { headline: 'PM', skills: ['javascript'], languages: [] }, user);
+  const first = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [0, 1, 2, 0, 1] },
+    user,
+  );
+  assert.equal(first.status, 201);
+  const retry = await request(
+    '/talent/assessments',
+    { skill: 'javascript', answers: [2, 0, 1, 1, 2] },
+    user,
+  );
+  assert.equal(retry.status, 429);
+  assert.match(retry.data.error, /again after/i);
+  assert.ok(retry.data.retryAfter);
+});
+
+test('a licence-required review needs a current matching licence at claim, and revoking it voids the review', async () => {
+  const category = 'Legal and compliance';
+  await store.db
+    .prepare('INSERT INTO jurisdiction_rules VALUES (?, ?, ?, 1, ?, ?)')
+    .run('rule-uk-legal-licence', 'UK', category, 'test rule', new Date().toISOString());
+  const client = await signup('Licence Gate Client');
+  const created = await request(
+    '/scoping-cases',
+    { objective: 'Provide legal advice on contracts', problemStatement: '' },
+    client,
+  );
+  // Category and jurisdiction are set by editing the case, not at creation.
+  const edited = await request(
+    `/scoping-cases/${created.data.id}`,
+    { category, jurisdiction: 'UK' },
+    client,
+    'PATCH',
+  );
+  assert.equal(edited.status, 200);
+  assert.equal(edited.data.risk_band, 'red');
+  const requested = await request(`/scoping-cases/${created.data.id}/request-review`, {}, client);
+
+  // A verified expert who merely declares the UK jurisdiction is not enough.
+  const expert = await signup('Licence Gate Expert');
+  await request('/talent/profile', { headline: 'Solicitor', skills: ['Legal'] }, expert);
+  const userId = (await request('/state', undefined, expert, 'GET')).data.user.id;
+  await store.db
+    .prepare(
+      "UPDATE talent_profiles SET vetting_status = 'verified', jurisdiction = 'UK', domains = ? WHERE user_id = ?",
+    )
+    .run(JSON.stringify([category]), userId);
+  const noLicence = await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+  assert.equal(noLicence.status, 403);
+  assert.match(noLicence.data.error, /no current licence for UK/);
+
+  // A verified UK licence scoped to the category qualifies.
+  const added = await request(
+    '/talent/credentials',
+    {
+      type: 'license',
+      title: 'Practising certificate',
+      issuer: 'SRA',
+      jurisdiction: 'UK',
+      scope: category,
+    },
+    expert,
+  );
+  const licenceId = added.data.find((c) => c.title === 'Practising certificate').id;
+  await request(
+    `/admin/talent/credentials/${licenceId}`,
+    { decision: 'verified' },
+    adminCookie,
+    'PATCH',
+  );
+  const claimed = await request(`/review-queue/${requested.data.id}/claim`, {}, expert);
+  assert.equal(claimed.status, 200);
+  assert.equal(claimed.data.qualifying_credential_id, licenceId);
+  const completed = await request(
+    `/review-queue/${requested.data.id}/complete`,
+    { notes: 'Sound.' },
+    expert,
+  );
+  assert.equal(completed.status, 200);
+
+  // Revoking the licence voids the completed review, so the red-band case cannot publish on it.
+  const revoked = await request(
+    `/admin/talent/credentials/${licenceId}`,
+    { decision: 'revoked', reason: 'Struck off' },
+    adminCookie,
+    'PATCH',
+  );
+  assert.equal(revoked.status, 200);
+  const entry = await store.db
+    .prepare('SELECT qualification_revoked_at FROM review_queue_entries WHERE id = ?')
+    .get(requested.data.id);
+  assert.ok(entry.qualification_revoked_at);
+  const job = await request(
+    '/jobs',
+    {
+      title: 'Legal advisory project',
+      category,
+      projectType: 'Advisory engagement',
+      description: 'A project used to test licence revocation.',
+      deliverables: 'Advisory memo.',
+      budgetMin: 500,
+      budgetMax: 1000,
+      currency: 'USD',
+      timeline: '2 weeks',
+    },
+    client,
+  );
+  const publish = await request(
+    `/scoping-cases/${created.data.id}/publish`,
+    { publishedJobId: job.data.id, confirmed: true },
+    client,
+    'PATCH',
+  );
+  assert.equal(publish.status, 400);
+  assert.match(publish.data.error, /completed qualified review/);
+
+  // Discovery applies the same rule: no current licence, no match for a licence requirement.
+  const found = await request(
+    `/talent/experts?jurisdiction=UK&credentialType=license&domain=${encodeURIComponent(category)}`,
+    undefined,
+    client,
+    'GET',
+  );
+  assert.ok(!found.data.some((e) => e.userId === userId));
 });

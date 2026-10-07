@@ -1,0 +1,57 @@
+.brand.brand-logo {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 150px;
+  max-width: 100%;
+}
+
+.brand.brand-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Light theme (default): ink lettering. */
+.brand.brand-logo .brand-logo-white {
+  display: none;
+}
+
+/* Dark theme, chosen explicitly or from the system: white lettering. */
+:root[data-theme='dark'] .brand.brand-logo .brand-logo-ink {
+  display: none;
+}
+:root[data-theme='dark'] .brand.brand-logo .brand-logo-white {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .brand.brand-logo .brand-logo-ink {
+    display: none;
+  }
+  :root:not([data-theme='light']) .brand.brand-logo .brand-logo-white {
+    display: block;
+  }
+}
+
+/* The footer is always dark, so it always uses the white lettering. */
+.public-footer .brand.brand-logo .brand-logo-ink {
+  display: none;
+}
+.public-footer .brand.brand-logo .brand-logo-white {
+  display: block;
+}
+
+.public-footer .brand.brand-logo {
+  width: 230px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 640px) {
+  .public-header .brand.brand-logo {
+    width: 124px;
+  }
+
+  .public-footer .brand.brand-logo {
+    width: 200px;
+  }
+}

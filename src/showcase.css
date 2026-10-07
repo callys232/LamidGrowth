@@ -1,55 +1,4 @@
 /* Reference-inspired editorial layouts, using the original source paragraphs. */
-.section-index {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 0 max(24px, calc((100vw - 1280px) / 2));
-  background: color-mix(in srgb, var(--paper) 88%, transparent);
-  backdrop-filter: blur(16px);
-  border-block: 1px solid var(--border);
-}
-.section-index-label {
-  flex: 0 0 auto;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-.section-index-links {
-  display: flex;
-  overflow-x: auto;
-  min-width: 0;
-  gap: 24px;
-  scrollbar-width: thin;
-}
-.section-index a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-  max-width: 300px;
-  padding: 20px 0;
-  border-bottom: 3px solid transparent;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--text-muted);
-  text-decoration: none;
-}
-.section-index a span {
-  font-size: 10px;
-  color: var(--page-accent, #0d1a2b);
-}
-.section-index a:hover,
-.section-index a[aria-current] {
-  color: var(--page-accent, #0d1a2b);
-}
-.section-index a:focus-visible {
-  outline: 2px solid var(--page-accent, #0d1a2b);
-  outline-offset: -3px;
-}
 .content-page .showcase-copy .editorial-sections {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -140,17 +89,6 @@
   color: #0d1a2b;
 }
 @media (max-width: 760px) {
-  .section-index {
-    padding-inline: 20px;
-    gap: 16px;
-  }
-  .section-index-label {
-    display: none;
-  }
-  .section-index a {
-    max-width: 220px;
-    padding-block: 16px;
-  }
   .content-page .showcase-copy .editorial-sections {
     grid-template-columns: minmax(0, 1fr);
     padding-top: 32px;

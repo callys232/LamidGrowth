@@ -1,0 +1,187 @@
+/* Public page heroes over a still from the homepage video (--hero-scene, set by ContentPage
+   from heroScene.ts). Same treatment as the homepage: muted footage under a dark layer that is
+   heaviest behind the text, so the image sets the mood without distracting from the copy. */
+
+.content-page[data-hero-scene] {
+  overflow-x: clip;
+}
+
+.content-page[data-hero-scene] :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero) {
+  position: relative;
+  isolation: isolate;
+}
+
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::before,
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::before {
+  z-index: -2;
+  background: #10151c var(--hero-scene) center / cover no-repeat;
+  filter: saturate(0.6) brightness(0.9);
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::after {
+  z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(6 9 13 / 35%) 0%,
+      transparent 30%,
+      transparent 70%,
+      rgb(6 9 13 / 50%) 100%
+    ),
+    linear-gradient(90deg, rgb(6 9 13 / 92%) 0%, rgb(6 9 13 / 84%) 45%, rgb(6 9 13 / 74%) 100%);
+}
+/* Centred heroes (product engines, experts) get an even shade instead of a left-weighted one. */
+.content-page[data-hero-scene] :is(.engine-hero, .expert-hero)::after {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(6 9 13 / 45%) 0%,
+      transparent 35%,
+      transparent 65%,
+      rgb(6 9 13 / 55%) 100%
+    ),
+    rgb(6 9 13 / 80%);
+}
+
+/* The shared document hero is a light, contained block: make it a full-width dark band. */
+.content-page[data-hero-scene] .showcase-copy > .content-hero {
+  margin-top: 0;
+  margin-bottom: 56px;
+  padding-block: clamp(72px, 10vh, 120px);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #fff;
+}
+.content-page[data-hero-scene] .showcase-copy > .content-hero::before,
+.content-page[data-hero-scene] .showcase-copy > .content-hero::after {
+  inset: 0 calc(50% - 50vw);
+}
+.content-page[data-hero-scene] .showcase-copy > .content-hero h1 {
+  color: #fff;
+}
+.content-page[data-hero-scene] .showcase-copy > .content-hero .eyebrow {
+  color: rgb(255 255 255 / 80%);
+}
+.content-page[data-hero-scene] .showcase-copy > .content-hero > div:first-child p {
+  color: rgb(255 255 255 / 80%);
+}
+
+/* Buttons: the homepage pairing, red primary then a white outline. */
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)
+  .canonical-ctas
+  .button {
+  border: 1px solid #bc202c;
+  background: #bc202c;
+  color: #fff;
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)
+  .canonical-ctas
+  .button:hover {
+  border-color: #a11924;
+  background: #a11924;
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)
+  .canonical-ctas
+  .button
+  + .button {
+  border-color: rgb(255 255 255 / 55%);
+  background: rgb(255 255 255 / 4%);
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)
+  .canonical-ctas
+  .button
+  + .button:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 12%);
+}
+
+/* The orbit graphic keeps its own light surfaces; quiet its labels on the dark band. */
+.content-page[data-hero-scene] .showcase-copy > .content-hero .orbit-visual {
+  color: rgb(255 255 255 / 70%);
+}
+
+/* Close the small gap the page wrapper leaves above the hero band. */
+.content-page[data-hero-scene] .showcase-copy:has(> .content-hero) {
+  padding-top: 0;
+}
+/* Supporting text on the centred heroes reads at the same strength as the shared hero. */
+.content-page[data-hero-scene] :is(.engine-hero-description, .expert-hero-description) {
+  color: rgb(255 255 255 / 80%);
+}
+
+/* "Read more" on long heroes: the body copy unfolds softly beneath the actions. */
+.content-hero-more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+  cursor: pointer;
+}
+.content-hero-more-toggle:hover {
+  opacity: 1;
+}
+.content-hero-more-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.content-hero-more-toggle svg {
+  transition: transform 0.35s ease;
+}
+.content-hero-more-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+.content-hero-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.4s ease;
+}
+.content-hero-more.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.content-hero-more > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.content-hero-more > div > :first-child {
+  margin-top: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-hero-more,
+  .content-hero-more-toggle svg {
+    transition: none;
+  }
+}
+/* On heroes with "Read more", keep the orbit graphic in place while the copy unfolds. */
+.content-hero:has(.content-hero-more) > .orbit-visual {
+  position: sticky;
+  top: 110px;
+  align-self: start;
+}

@@ -1,0 +1,482 @@
+/* Public page flow (DocumentSectionSlide + pagePlan.ts). Each section takes a layout chosen from
+   its copy and its neighbours — feature grids, checklist cards, alternating spotlights with a
+   product-style card, step cards, centred bands and a closing band with the page scene — so a
+   page reads like a designed product page rather than a stack of text blocks. */
+
+.content-page .canonical-copy .page-flow {
+  --flow-accent: var(--page-accent, var(--signature-red, #c12129));
+  --flow-tint: color-mix(in srgb, var(--flow-accent) 6%, var(--paper, #fbfaf7));
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0 24px;
+  padding: 24px 0 96px;
+}
+/* Anything else on the page (live catalogues, price lists) spans the full width. */
+.content-page .canonical-copy .page-flow > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.content-page .canonical-copy .page-flow .flow-section {
+  display: grid;
+  margin: 0;
+  padding: clamp(56px, 7vw, 96px) 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.content-page .canonical-copy .page-flow .flow-section h2 {
+  margin: 0 0 20px;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(34px, 3.6vw, 52px);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--ink, #0d1a2b);
+  text-wrap: balance;
+}
+.content-page .canonical-copy .page-flow .flow-section p {
+  margin: 0 0 18px;
+  max-width: 64ch;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text-secondary, #4a5560);
+}
+.content-page .canonical-copy .page-flow .canonical-ctas {
+  margin: 12px 0 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* ── Feature grid: icon features in ruled columns ────────────────────────── */
+.content-page .canonical-copy .page-flow .flow-grid {
+  grid-column: span 2;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  gap: 18px;
+  margin-block: 24px 8px;
+  padding: 32px 28px 36px 24px;
+  border-left: 1px solid var(--border, #e3e4e0);
+  transition: background-color 0.25s ease;
+}
+.content-page .canonical-copy .page-flow .flow-grid.flow-cols-2 {
+  grid-column: span 3;
+}
+.content-page .canonical-copy .page-flow .flow-grid:hover {
+  background: var(--flow-tint);
+}
+.content-page .canonical-copy .page-flow .flow-section.flow-run-start {
+  grid-column: 1 / span 2;
+}
+.content-page .canonical-copy .page-flow .flow-section.flow-run-start.flow-cols-2 {
+  grid-column: 1 / span 3;
+}
+.content-page .canonical-copy .page-flow .flow-grid h2 {
+  margin-bottom: 10px;
+  font-family: var(--font-ui, inherit);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.content-page .canonical-copy .page-flow .flow-grid p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.flow-card-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--flow-accent) 10%, transparent);
+  color: var(--flow-accent);
+}
+.content-page .canonical-copy .page-flow .flow-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.content-page .canonical-copy .page-flow .flow-tags li {
+  display: inline-flex;
+  padding: 6px 12px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink, #0d1a2b);
+}
+.flow-tags .doc-list-dot {
+  display: none;
+}
+
+/* ── Checklist cards: feature cards with check marks ─────────────────────── */
+.content-page .canonical-copy .page-flow .flow-checklist {
+  grid-column: span 2;
+  align-content: start;
+  gap: 14px;
+  margin-block: 24px 0;
+  padding: 32px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 20px;
+  background: var(--surface, #fff);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.content-page .canonical-copy .page-flow .flow-checklist.flow-cols-2 {
+  grid-column: span 3;
+}
+.content-page .canonical-copy .page-flow .flow-checklist h2 {
+  margin: 6px 0 0;
+  font-family: var(--font-ui, inherit);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.content-page .canonical-copy .page-flow .flow-checks {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.content-page .canonical-copy .page-flow .flow-checks li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ink, #0d1a2b);
+}
+.flow-check {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--growth-green, #2e8f4e);
+  color: #fff;
+}
+
+/* ── Spotlight: copy beside a product-style card, alternating sides ──────── */
+.content-page .canonical-copy .page-flow .flow-spotlight {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
+}
+.content-page .canonical-copy .page-flow .flow-spotlight.flow-flip .flow-spotlight-copy {
+  order: 2;
+}
+.content-page .canonical-copy .page-flow .flow-spotlight-copy > p:first-of-type {
+  font-size: 19px;
+  color: var(--ink, #0d1a2b);
+}
+.flow-visual {
+  position: relative;
+  padding: clamp(28px, 4vw, 56px);
+  border-radius: 28px;
+  background: var(--flow-tint);
+  overflow: hidden;
+  isolation: isolate;
+}
+.flow-visual::before {
+  content: '';
+  position: absolute;
+  inset: auto -18% -30% auto;
+  z-index: -1;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 38% 62% 54% 46%;
+  background: color-mix(in srgb, var(--flow-accent) 16%, transparent);
+  transform: rotate(-18deg);
+}
+.flow-window {
+  border: 1px solid var(--border, #e3e4e0);
+  border-radius: 18px;
+  background: var(--surface, #fff);
+  box-shadow: 0 30px 60px -30px rgb(13 26 43 / 40%);
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.flow-spotlight:hover .flow-window {
+  transform: translateY(-4px);
+}
+.flow-window-bar {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border, #e3e4e0);
+}
+.flow-window-bar span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--border, #e3e4e0);
+}
+.flow-window-bar span:first-child {
+  background: var(--flow-accent);
+}
+.flow-window-body {
+  display: grid;
+  gap: 14px;
+  padding: 24px 26px 28px;
+}
+.flow-window-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--midnight, #0d1a2b);
+  color: #fff;
+}
+.content-page .canonical-copy .page-flow .flow-window .doc-label {
+  margin: 0 0 12px;
+}
+.flow-window-group + .flow-window-group {
+  padding-top: 14px;
+  border-top: 1px solid var(--border, #e3e4e0);
+}
+.content-page .canonical-copy .page-flow .flow-window .flow-tags {
+  margin: 0;
+}
+.content-page .canonical-copy .page-flow .flow-window .flow-checks li {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-alt, #f5f3ef);
+}
+
+/* ── Steps: heading and intro, then numbered cards across ────────────────── */
+.content-page .canonical-copy .page-flow :is(.flow-steps, .flow-chapters) {
+  gap: 36px;
+}
+.flow-steps-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 clamp(32px, 6vw, 88px);
+  align-items: start;
+}
+.flow-steps-head .doc-eyebrow {
+  grid-column: 1 / -1;
+}
+.content-page .canonical-copy .page-flow .flow-steps .doc-steps {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin: 0;
+}
+.content-page .canonical-copy .page-flow .flow-steps .doc-steps li {
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 18px;
+  padding: 28px;
+  border-radius: 20px;
+  background: var(--surface, #fff);
+}
+.flow-steps-after {
+  max-width: 760px;
+}
+
+/* ── Chapters: one card per numbered item and its copy ─────────────────── */
+.flow-chapter-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.flow-chapter-cards > li {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 32px 28px;
+  border: 1px solid var(--border, #e3e4e0);
+  border-top: 3px solid var(--flow-accent);
+  border-radius: 20px;
+  background: var(--surface, #fff);
+}
+.content-page .canonical-copy .page-flow .flow-chapter-cards h3 {
+  margin: 0;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy .page-flow .flow-chapter-cards p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+}
+.content-page .canonical-copy .page-flow .flow-chapter-cards p:first-of-type {
+  font-weight: 600;
+  color: var(--ink, #0d1a2b);
+}
+.content-page .canonical-copy .page-flow .flow-chapter-cards .doc-label {
+  margin: 6px 0 0;
+}
+
+/* ── Letter: long prose in a reading column ──────────────────────────────── */
+.content-page .canonical-copy .page-flow .flow-letter {
+  justify-items: center;
+}
+.content-page .canonical-copy .page-flow .flow-letter h2 {
+  max-width: 18ch;
+  text-align: center;
+}
+.flow-letter-body {
+  max-width: 680px;
+}
+.content-page .canonical-copy .page-flow .flow-letter-body p {
+  font-size: 18px;
+  line-height: 1.85;
+}
+
+/* ── Band: centred mid-page call to action on a full-bleed tint ──────────── */
+.content-page .canonical-copy .page-flow .flow-band {
+  justify-items: center;
+  margin-block: clamp(32px, 4vw, 56px);
+  text-align: center;
+  background: var(--flow-tint);
+  box-shadow: 0 0 0 100vmax var(--flow-tint);
+  clip-path: inset(0 -100vmax);
+}
+.content-page .canonical-copy .page-flow .flow-band h2 {
+  max-width: 22ch;
+}
+.content-page .canonical-copy .page-flow .flow-band p {
+  margin-inline: auto;
+}
+.flow-band .canonical-ctas,
+.flow-closing-plain .canonical-ctas {
+  justify-content: center;
+}
+
+/* A band directly after another stays untinted so the two read as separate moments. */
+.content-page .canonical-copy .page-flow .flow-band + .flow-band {
+  margin-top: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* ── Closing: dark band, copy and actions beside the page scene ──────────── */
+.content-page .canonical-copy .page-flow .flow-closing {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+  margin-top: clamp(32px, 4vw, 56px);
+  padding: clamp(44px, 6vw, 80px) clamp(28px, 6vw, 80px);
+  border-radius: 28px;
+  background: var(--midnight, #0d1a2b);
+  overflow: hidden;
+}
+.content-page .canonical-copy .page-flow .flow-closing.flow-closing-plain {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  text-align: center;
+}
+.content-page .canonical-copy .page-flow .flow-closing h2 {
+  color: #fff;
+}
+.content-page .canonical-copy .page-flow .flow-closing p {
+  color: rgb(255 255 255 / 80%);
+}
+.content-page .canonical-copy .page-flow .flow-closing .canonical-ctas .button {
+  border: 1px solid #bc202c;
+  background: #bc202c;
+  color: #fff;
+}
+.content-page .canonical-copy .page-flow .flow-closing .canonical-ctas .button + .button {
+  border-color: rgb(255 255 255 / 55%);
+  background: transparent;
+}
+.flow-closing-media {
+  position: relative;
+  justify-self: end;
+  width: min(100%, 380px);
+  margin: 24px 24px 24px 0;
+}
+.flow-closing-media::before {
+  content: '';
+  position: absolute;
+  inset: -7% -7% -7% 14%;
+  border-radius: 42% 24% 36% 30%;
+  background: var(--signature-red, #c12129);
+  transform: rotate(8deg);
+}
+.flow-closing-media img {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 22px;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .content-page .canonical-copy .page-flow .flow-grid,
+  .content-page .canonical-copy .page-flow .flow-grid.flow-cols-2,
+  .content-page .canonical-copy .page-flow .flow-checklist,
+  .content-page .canonical-copy .page-flow .flow-checklist.flow-cols-2 {
+    grid-column: span 3;
+  }
+  .content-page .canonical-copy .page-flow .flow-section.flow-run-start,
+  .content-page .canonical-copy .page-flow .flow-section.flow-run-start.flow-cols-2 {
+    grid-column: 1 / span 3;
+  }
+  .content-page
+    .canonical-copy
+    .page-flow
+    :is(.flow-statement, .flow-story, .flow-spotlight, .flow-closing),
+  .flow-steps-head {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .content-page .canonical-copy .page-flow .flow-spotlight.flow-flip .flow-spotlight-copy {
+    order: 0;
+  }
+  .doc-story-heading {
+    position: static;
+  }
+  .flow-closing-media {
+    justify-self: start;
+    width: min(100%, 300px);
+  }
+}
+@media (max-width: 600px) {
+  .content-page .canonical-copy .page-flow .flow-grid,
+  .content-page .canonical-copy .page-flow .flow-grid.flow-cols-2,
+  .content-page .canonical-copy .page-flow .flow-checklist,
+  .content-page .canonical-copy .page-flow .flow-checklist.flow-cols-2,
+  .content-page .canonical-copy .page-flow .flow-section.flow-run-start,
+  .content-page .canonical-copy .page-flow .flow-section.flow-run-start.flow-cols-2 {
+    grid-column: 1 / -1;
+  }
+  .content-page .canonical-copy .page-flow .flow-grid {
+    margin: 0;
+    padding: 24px 0;
+    border-left: 0;
+    border-top: 1px solid var(--border, #e3e4e0);
+  }
+  .content-page .canonical-copy .page-flow .flow-section:not(.flow-grid, .flow-checklist) {
+    padding-block: 48px;
+  }
+  .content-page .canonical-copy .page-flow .flow-closing {
+    padding: 40px 24px;
+  }
+  .flow-visual {
+    padding: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-window,
+  .content-page .canonical-copy .page-flow :is(.flow-grid, .flow-checklist) {
+    transition: none;
+  }
+}

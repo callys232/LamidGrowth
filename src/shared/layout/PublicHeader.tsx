@@ -242,7 +242,7 @@ export function PublicHeader() {
         }}
       >
         <div className="header-container">
-          <Brand />
+          <Brand logo />
           <button
             className="mobile-menu icon-button"
             aria-label={mobile ? 'Close navigation' : 'Open navigation'}
@@ -281,7 +281,7 @@ export function PublicHeader() {
                     if (
                       hoverEnabled &&
                       event.pointerType === 'mouse' &&
-                      window.matchMedia('(min-width: 761px)').matches
+                      window.matchMedia('(min-width: 901px)').matches
                     ) {
                       cancel();
                       setActive(menu.title);

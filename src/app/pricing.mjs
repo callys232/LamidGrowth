@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { MANIFEST_SYNC } from './toolCatalog/catalog.mjs';
 import { z } from 'zod';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
 import { engineReviewCost } from './ai.mjs';
@@ -38,6 +39,9 @@ async function bundleWithItems(db, bundleId) {
 // Pure read-only reference data — the same public price list any visitor can see on a real
 // pricing page, before ever signing up. Mounted ahead of the session gate in app.mjs
 // deliberately, so it works for anonymous visitors, not just signed-in users.
+const ENGINE_CODE = /^[a-z][0-9]{2,3}$/;
+const CATALOG_IDS = new Set(MANIFEST_SYNC.map((tool) => tool.id));
+
 export function mountPublicPricing(app, store) {
   const { db } = store;
 
@@ -49,6 +53,10 @@ export function mountPublicPricing(app, store) {
         'SELECT id, name, home_engine, max_authority, human_gate, points_cost FROM agent_manifests ORDER BY home_engine, name',
       )
       .all();
+    // Original engine codes that were merged into another tool or withdrawn keep their manifest
+    // rows (run history references them) but are no longer sold: list only the 63 catalog tools
+    // plus every non-engine tool (the chat agents).
+    const offered = tools.filter((t) => !ENGINE_CODE.test(t.id) || CATALOG_IDS.has(t.id));
     const learningPaths = await db
       .prepare(
         'SELECT id, title AS name, points_cost FROM learning_paths WHERE points_cost IS NOT NULL AND points_cost > 0 ORDER BY title',
@@ -57,7 +65,7 @@ export function mountPublicPricing(app, store) {
     res.json({
       pointsUnitPriceMinor: POINTS_UNIT_PRICE_MINOR,
       currency: 'USD',
-      tools,
+      tools: offered,
       learningPaths,
       deepReview: {
         name: 'AI Deep Review',

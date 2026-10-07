@@ -14,8 +14,35 @@ const estimateSchema = z
     category: z.enum(JOB_CATEGORIES),
     projectType: z.enum(PROJECT_TYPES).optional(),
     tags: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
+    currency: z
+      .string()
+      .regex(/^[A-Z]{3}$/)
+      .default('USD'),
   })
   .strict();
+
+/** Brings every job's budget into the requested currency with the fx_rates table (the same
+ * rates /api/fx/convert uses). Budgets in a currency with no rate are left out rather than
+ * averaged in raw — mixing NGN and USD figures used to produce "725,500 USD" for ~$1,000 jobs. */
+async function inCurrency(db, rows, currency) {
+  const rates = new Map();
+  const rateFor = async (from) => {
+    if (from === currency) return 1;
+    if (!rates.has(from)) {
+      const row = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get(`${from}_${currency}`);
+      rates.set(from, row ? row.rate : null);
+    }
+    return rates.get(from);
+  };
+  const converted = [];
+  let excluded = 0;
+  for (const row of rows) {
+    const rate = await rateFor(row.currency);
+    if (rate === null) excluded++;
+    else converted.push({ ...row, budget_min: row.budget_min * rate, budget_max: row.budget_max * rate });
+  }
+  return { rows: converted, excluded };
+}
 
 function summarize(rows) {
   const mins = rows.map((r) => r.budget_min);
@@ -31,9 +58,14 @@ export function mountEstimator(app, store) {
   app.post('/api/jobs/estimate', async (req, res, next) => {
     try {
       const input = estimateSchema.parse(req.body);
-      const categoryRows = await db
-        .prepare('SELECT budget_min, budget_max, tags FROM job_posts WHERE category = ?')
-        .all(input.category);
+      const { rows: categoryRows, excluded } = await inCurrency(
+        db,
+        await db
+          .prepare('SELECT budget_min, budget_max, currency, tags FROM job_posts WHERE category = ?')
+          .all(input.category),
+        input.currency,
+      );
+      const excludedForCurrency = excluded > 0 ? { excludedForCurrency: excluded } : {};
 
       let tagMatched = [];
       if (input.tags.length > 0) {
@@ -53,7 +85,8 @@ export function mountEstimator(app, store) {
         return res.json({
           available: true,
           ...summarize(tagMatched),
-          currency: 'USD',
+          currency: input.currency,
+          ...excludedForCurrency,
           basis: 'tag-matched-history',
           sampleSize: tagMatched.length,
           method: 'derived-from-real-platform-data',
@@ -63,7 +96,8 @@ export function mountEstimator(app, store) {
         return res.json({
           available: true,
           ...summarize(categoryRows),
-          currency: 'USD',
+          currency: input.currency,
+          ...excludedForCurrency,
           basis: 'category-wide-history',
           sampleSize: categoryRows.length,
           note:
@@ -78,7 +112,7 @@ export function mountEstimator(app, store) {
         sampleSize: categoryRows.length,
         message:
           categoryRows.length === 0
-            ? `Not enough completed history in "${input.category}" yet to produce a reliable estimate. Enter your own budget below.`
+            ? `Not enough posted jobs in "${input.category}" yet to produce a reliable estimate. Enter your own budget below.`
             : `Only ${categoryRows.length} prior job${categoryRows.length === 1 ? '' : 's'} in "${input.category}" so far — not enough to estimate reliably yet. Enter your own budget below.`,
       });
     } catch (error) {

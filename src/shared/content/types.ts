@@ -6,6 +6,9 @@ export interface CopySection {
   label: string;
   title: string;
   paragraphs: CopyParagraph[];
+  /** Long-form source copy: shown collapsed (title and teaser) until the reader opens it. */
+  longForm?: boolean;
+  addedFrom?: string;
 }
 // The hero's own label is only read by a few page renderers (EngineDocumentPage, AudienceHero) —
 // DocumentHeroSlide, used by the great majority of pages, renders the page-level `name` as its
@@ -19,6 +22,8 @@ export interface DocumentPage {
   route: string;
   source_paragraph: number;
   gates: string[];
+  indexing?: string;
+  canonical?: string;
   seo_title: string;
   meta_description: string;
   title: string;

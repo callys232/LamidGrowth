@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { MANIFEST_SYNC } from '../src/app/toolCatalog/catalog.mjs';
 import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -1448,6 +1449,54 @@ export async function openStore(filename, { poolMax } = {}) {
       CREATE INDEX IF NOT EXISTS intelligence_result_versions_subject
         ON intelligence_result_versions(workspace_id, subject_kind, subject_id, agent_id, version);
     `);
+    // Engine audit 2026-10-05 (H1/A2): tool runs become typed, subject-bound intelligence with
+    // lineage. agent_runs gains the analytical status, the subject, the tool version, what was
+    // actually charged, and an idempotency key so a retried request cannot charge twice.
+    // intelligence results gain a `claim` (what is being concluded — results only conflict when
+    // they make the same claim), the analytical status, and why a result went stale.
+    // intelligence_dependencies records which source, at which version, each result version
+    // rests on, so a changed source can mark its dependents stale without rewriting history.
+    await client.query(`
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS subject_kind TEXT;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS subject_id TEXT;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS tool_version TEXT;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS input_hash TEXT;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS points_charged INTEGER;
+      ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS caller TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS agent_runs_idempotency
+        ON agent_runs(workspace_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS claim TEXT;
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'completed';
+      ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS stale_reason TEXT;
+      ALTER TABLE intelligence_result_versions ADD COLUMN IF NOT EXISTS claim TEXT;
+      ALTER TABLE intelligence_result_versions ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'completed';
+      ALTER TABLE intelligence_result_versions ADD COLUMN IF NOT EXISTS run_id TEXT;
+      CREATE TABLE IF NOT EXISTS intelligence_dependencies (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        result_version_id TEXT NOT NULL REFERENCES intelligence_result_versions(id),
+        source_kind TEXT NOT NULL, source_id TEXT NOT NULL, source_version TEXT
+      );
+      CREATE INDEX IF NOT EXISTS intelligence_dependencies_source
+        ON intelligence_dependencies(workspace_id, source_kind, source_id);
+      CREATE INDEX IF NOT EXISTS intelligence_dependencies_result
+        ON intelligence_dependencies(result_version_id);
+    `);
+    // Engine audit 2026-10-05 (H6): a licence must say which jurisdiction (and optionally which
+    // category) it covers, and can be revoked. A review records the licence it was claimed
+    // under; revoking that licence reopens a claimed review and voids a completed one.
+    await client.query(`
+      ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS jurisdiction TEXT;
+      ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS scope TEXT;
+      ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS revoked_at TEXT;
+      ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS revoked_reason TEXT;
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS qualifying_credential_id TEXT REFERENCES expert_credentials(id);
+      ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS qualification_revoked_at TEXT;
+    `);
+    // Delivery review (audit plan §9): when a task was finished, so cycle time and throughput
+    // come from the record instead of being typed in. Older finished tasks have none and are
+    // reported as unmeasured rather than guessed from updated_at.
+    await client.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at TEXT;`);
     await client.query(
       `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),
@@ -1765,46 +1814,64 @@ export async function openStore(filename, { poolMax } = {}) {
     // created_by is nullable for these system-seeded rows only — it's never read anywhere, just
     // written, so relaxing it is safe.
     //
-    // An individual engine's *own* name can escalate it above its home_engine's base rank (e.g. a
-    // Clarity engine named "Enterprise-Wide Decision Map" — see engineRegistry.mjs's
-    // ESCALATION_KEYWORDS/BASE_RANK_BY_HOME_ENGINE, mirrored here exactly since server/store.mjs
-    // doesn't import src/app modules). A cheap home-engine seat must never smuggle in an
-    // escalated engine at the group's base price — that engine stays gated behind a full tier
-    // upgrade (or an individual entitlement), same as before seats existed.
+    // Seat members are the catalog tools in that seat. Each tool's plan level is its seat's base
+    // rank (engineRegistry.mjs), so a seat never includes a tool above the group's own level.
+    // Plans (src/app/plans.mjs). A workspace's plan decides its tool seats, member limit and
+    // monthly points. Existing workspaces are carried over once so nobody loses access: the
+    // enterprise tier becomes the Enterprise plan, the team tier the Team plan (admin-granted, so
+    // no expiry), and every workspace that existed before plans keeps the seats its signup context
+    // used to open. plan_grandfathered_seats is added without a default so only rows that exist
+    // right now are NULL and get carried over; the default for new rows is then set to '[]'.
+    await client.query(`
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_interval TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_people INTEGER;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_extra_seats TEXT NOT NULL DEFAULT '[]';
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_period_end TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_status TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_cancel_at_period_end INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_authorization TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_billing_email TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_billing_user_id TEXT REFERENCES users(id);
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_next_allowance_at TEXT;
+      ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_grandfathered_seats TEXT;
+      UPDATE workspaces SET plan_grandfathered_seats = CASE context
+          WHEN 'Professional' THEN '["Clarity","Consistency"]'
+          WHEN 'Founder' THEN '["Clarity","Consistency","Growth"]'
+          WHEN 'SME' THEN '["Clarity","Consistency","Growth","Finance"]'
+          WHEN 'Team' THEN '["Clarity","Consistency","Growth","Finance","Capability"]'
+          WHEN 'Institution' THEN '["Clarity","Consistency","Growth","Finance","Capability"]'
+          WHEN 'Enterprise' THEN '["Clarity","Consistency","Growth","Finance","Capability"]'
+          ELSE '["Clarity"]' END
+        WHERE plan_grandfathered_seats IS NULL;
+      ALTER TABLE workspaces ALTER COLUMN plan_grandfathered_seats SET DEFAULT '[]';
+      UPDATE workspaces SET plan = 'enterprise' WHERE tier = 'enterprise' AND plan = 'free';
+      UPDATE workspaces SET plan = 'team' WHERE tier = 'team' AND plan = 'free';
+      CREATE TABLE IF NOT EXISTS plan_payments (
+        id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+        user_id TEXT REFERENCES users(id), plan TEXT NOT NULL, interval TEXT NOT NULL,
+        people INTEGER NOT NULL DEFAULT 1, extra_seats TEXT NOT NULL DEFAULT '[]',
+        amount_minor BIGINT NOT NULL, currency TEXT NOT NULL,
+        provider_amount_minor BIGINT, provider_currency TEXT,
+        provider_reference TEXT NOT NULL UNIQUE, kind TEXT NOT NULL, status TEXT NOT NULL,
+        period_end TEXT, failure_reason TEXT, created_at TEXT NOT NULL, completed_at TEXT
+      );
+      CREATE INDEX IF NOT EXISTS plan_payments_workspace ON plan_payments (workspace_id, created_at);
+    `);
+    // Standards-based tool catalog (src/app/toolCatalog): keep each tool's primary-code manifest
+    // in step with the catalog — its current name and its subject seat — every startup, so the
+    // price list and the seat bundles below show the 63 current tools. Codes merged into a tool
+    // or withdrawn keep their rows (agent_runs history references them) but are not offered.
+    for (const tool of MANIFEST_SYNC) {
+      await client.query('UPDATE agent_manifests SET name = $1, home_engine = $2 WHERE id = $3', [
+        tool.name,
+        tool.homeEngine,
+        tool.id,
+      ]);
+    }
+    const catalogIds = MANIFEST_SYNC.map((tool) => tool.id);
     await client.query(`ALTER TABLE bundles ALTER COLUMN created_by DROP NOT NULL;`);
     {
-      const CONTEXT_RANK = {
-        Individual: 0,
-        Creator: 1,
-        Professional: 2,
-        Founder: 3,
-        SME: 4,
-        Team: 5,
-        Institution: 6,
-        Enterprise: 7,
-      };
-      const BASE_RANK_BY_HOME_ENGINE = {
-        Clarity: CONTEXT_RANK.Individual,
-        Consistency: CONTEXT_RANK.Professional,
-        Growth: CONTEXT_RANK.Founder,
-        Finance: CONTEXT_RANK.SME,
-        Capability: CONTEXT_RANK.Team,
-        Shared: CONTEXT_RANK.Institution,
-      };
-      const ESCALATION_KEYWORDS = [
-        [/enterprise|etos\b/i, CONTEXT_RANK.Enterprise],
-        [
-          /\b(department|business unit|multi-team|cross-team|organi[sz]ation-wide|organi[sz]ational)\b/i,
-          CONTEXT_RANK.Institution,
-        ],
-        [/\bteam\b/i, CONTEXT_RANK.Team],
-      ];
-      function isEscalated(homeEngine, engineName) {
-        const baseRank = BASE_RANK_BY_HOME_ENGINE[homeEngine] ?? CONTEXT_RANK.Individual;
-        return ESCALATION_KEYWORDS.some(
-          ([pattern, escalatedRank]) => escalatedRank > baseRank && pattern.test(engineName),
-        );
-      }
       const pointsUnitPriceMinor = Math.max(
         1,
         Number.parseInt(process.env.POINTS_UNIT_PRICE_MINOR || '10', 10) || 10,
@@ -1815,15 +1882,27 @@ export async function openStore(filename, { poolMax } = {}) {
       for (const homeEngine of homeEngines) {
         const bundleName = `${homeEngine} Seat`;
         const allMembers = await client.query(
-          "SELECT id, name, points_cost FROM agent_manifests WHERE home_engine = $1 AND id ~ '^[a-z][0-9]{2,3}$'",
-          [homeEngine],
+          'SELECT id, name, points_cost FROM agent_manifests WHERE home_engine = $1 AND id = ANY($2::text[])',
+          [homeEngine, catalogIds],
         );
-        const normalMembers = allMembers.rows.filter((row) => !isEscalated(homeEngine, row.name));
-        if (normalMembers.length === 0) continue;
+        // Members are catalog tools only, whose plan level is set by their subject seat (see
+        // engineRegistry.mjs) rather than by keywords in the name — so no name escalation here.
+        const normalMembers = allMembers.rows;
+        if (normalMembers.length === 0) {
+          // No catalog tool belongs to this seat any more (Shared): retire an auto-managed seat
+          // rather than keep selling withdrawn codes. Already-bought entitlements are untouched.
+          await client.query(
+            "UPDATE bundles SET status = 'archived', updated_at = $1 WHERE name = $2 AND description = $3",
+            [new Date().toISOString(), bundleName, autoDescription(homeEngine)],
+          );
+          continue;
+        }
         const totalPoints = normalMembers.reduce((sum, row) => sum + (row.points_cost || 0), 0);
         const priceMinor = Math.max(1, totalPoints * pointsUnitPriceMinor);
         const now = new Date().toISOString();
-        const existing = await client.query('SELECT id, description FROM bundles WHERE name = $1', [bundleName]);
+        const existing = await client.query('SELECT id, description FROM bundles WHERE name = $1', [
+          bundleName,
+        ]);
         let bundleId;
         if (existing.rowCount === 0) {
           bundleId = randomUUID();
@@ -1865,6 +1944,32 @@ export async function openStore(filename, { poolMax } = {}) {
       granted_at TEXT NOT NULL,
       PRIMARY KEY (workspace_id, agent_id, source)
     )`);
+    // One invoice per milestone, numbered per issuer (the freelancer) and calendar year. The
+    // number used to be derived from a count of agent_runs, which included the in-flight run,
+    // failed runs and "not yet approved" replies — so the first invoice was 0002 and re-invoicing
+    // the same milestone minted a new number each time.
+    await client.query(`CREATE TABLE IF NOT EXISTS invoices (
+      id TEXT PRIMARY KEY,
+      milestone_id TEXT NOT NULL UNIQUE REFERENCES milestones(id),
+      issuer_user_id TEXT NOT NULL REFERENCES users(id),
+      year INTEGER NOT NULL,
+      sequence INTEGER NOT NULL,
+      number TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      currency TEXT NOT NULL,
+      issued_at TEXT NOT NULL,
+      UNIQUE (issuer_user_id, year, sequence)
+    )`);
+    // Escrow in the settlement currency: the Paystack account settles in NGN only, so a milestone
+    // priced in another currency is charged (and later paid out/refunded) in NGN. As with
+    // points_purchases, amount_minor/currency stay canonical and these record what was actually
+    // dispatched to the provider — the figures a webhook must match.
+    await client.query(`
+      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+    `);
     await client.query('COMMIT');
   } catch (error) {
     try {

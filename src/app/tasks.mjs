@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { markDependentsStale } from './intelligence.mjs';
 import { z } from 'zod';
 
 const title = z.string().trim().min(1).max(500);
@@ -87,6 +88,14 @@ export function mountTasks(app, store) {
     return task;
   }
   const withAttention = (task) => ({ ...task, attention: attentionFor(task) });
+  // Findings computed from this project's tasks (e.g. a delivery review) no longer describe it.
+  const tasksChanged = (project) =>
+    markDependentsStale(store, {
+      workspaceId: project.workspace_id,
+      sourceKind: 'project_tasks',
+      sourceId: project.id,
+      reason: 'A task in this project changed since this was computed.',
+    });
 
   app.get('/api/projects/:id/tasks', async (req, res) => {
     const project = await projectFor(req.params.id);
@@ -128,6 +137,7 @@ export function mountTasks(app, store) {
           now,
         );
       await log(project.workspace_id, req.user.name, 'Task created', id, input.title);
+      await tasksChanged(project);
     });
     res.status(201).json(withAttention(await taskFor(id)));
   });
@@ -148,10 +158,14 @@ export function mountTasks(app, store) {
       blocked: blocked ? 1 : 0,
       blocked_reason: blocked ? (input.blockedReason ?? task.blocked_reason) : '',
     };
+    const now = new Date().toISOString();
+    // Set when a task becomes done, cleared if it is reopened.
+    const completedAt =
+      next.status === 'done' ? (task.status === 'done' ? task.completed_at : now) : null;
     await transaction(async () => {
       await db
         .prepare(
-          'UPDATE tasks SET title = ?, description = ?, status = ?, due_at = ?, assignee_user_id = ?, blocked = ?, blocked_reason = ?, updated_at = ? WHERE id = ?',
+          'UPDATE tasks SET title = ?, description = ?, status = ?, due_at = ?, assignee_user_id = ?, blocked = ?, blocked_reason = ?, updated_at = ?, completed_at = ? WHERE id = ?',
         )
         .run(
           next.title,
@@ -161,10 +175,12 @@ export function mountTasks(app, store) {
           next.assignee_user_id,
           next.blocked,
           next.blocked_reason,
-          new Date().toISOString(),
+          now,
+          completedAt,
           task.id,
         );
       await log(project.workspace_id, req.user.name, 'Task updated', task.id, next.title);
+      await tasksChanged(project);
     });
     res.json(withAttention(await taskFor(task.id)));
   });
@@ -176,6 +192,7 @@ export function mountTasks(app, store) {
     await transaction(async () => {
       await db.prepare('DELETE FROM tasks WHERE id = ?').run(task.id);
       await log(project.workspace_id, req.user.name, 'Task deleted', task.id, task.title);
+      await tasksChanged(project);
     });
     res.status(204).end();
   });

@@ -111,11 +111,17 @@ async function fireWebhook(reference) {
   // actually dispatched to the provider — read it back rather than guess, since a bundle/points
   // purchase may have gone through FX conversion (see payments.mjs) before Paystack ever saw it.
   const purchase = await store.db
-    .prepare('SELECT provider_amount_minor, provider_currency FROM points_purchases WHERE provider_reference = ?')
+    .prepare(
+      'SELECT provider_amount_minor, provider_currency FROM points_purchases WHERE provider_reference = ?',
+    )
     .get(reference);
   const event = {
     event: 'charge.success',
-    data: { reference, amount: purchase.provider_amount_minor, currency: purchase.provider_currency },
+    data: {
+      reference,
+      amount: purchase.provider_amount_minor,
+      currency: purchase.provider_currency,
+    },
   };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');
@@ -248,17 +254,9 @@ test('an enterprise-tier workspace can run any paid tool without any bundle', as
   const engineRun = await request(
     '/engines/a02/run',
     {
+      // a02 is now Skills Gap Analysis (SFIA levels) in the standards-based catalog.
       input: {
-        roles: [
-          {
-            role: 'Engineer',
-            headcount: 3,
-            capability: 3,
-            attritionRisk: 2,
-            successors: 1,
-            critical: true,
-          },
-        ],
+        skills: [{ role: 'Engineer', skill: 'Testing', required: 4, current: 3, peopleAtLevel: 1 }],
       },
     },
     cookie,

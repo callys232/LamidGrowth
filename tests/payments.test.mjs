@@ -247,7 +247,7 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
   assert.equal(fund.status, 201);
   const fundEvent = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    data: { reference: fund.data.reference, amount: fund.data.providerAmountMinor, currency: fund.data.providerCurrency },
   };
   const fundRawBody = Buffer.from(JSON.stringify(fundEvent));
   const fundSignature = createHmac('sha512', PAYSTACK_SECRET).update(fundRawBody).digest('hex');
@@ -270,7 +270,7 @@ test('a mocked Paystack happy path: recipient, transfer, then webhook confirms p
 
   const event = {
     event: 'transfer.success',
-    data: { reference: providerReference, amount: release.data.amount_minor, currency: release.data.currency },
+    data: { reference: providerReference, amount: release.data.provider_amount_minor, currency: release.data.provider_currency },
   };
   const rawBody = Buffer.from(JSON.stringify(event));
   const signature = createHmac('sha512', PAYSTACK_SECRET).update(rawBody).digest('hex');

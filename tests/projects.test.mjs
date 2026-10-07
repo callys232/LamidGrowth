@@ -392,6 +392,96 @@ test('the invoice generator only invoices approved milestones, with an exact det
   void deliverable;
 });
 
+async function approveMilestone(milestoneId, client, freelancer) {
+  await request(
+    `/milestones/${milestoneId}/deliverables`,
+    { title: 'Deliverable', description: '', criteria: ['Work is complete'] },
+    client,
+  );
+  const submission = await request(
+    `/milestones/${milestoneId}/submissions`,
+    { notes: 'Work is complete as agreed.' },
+    freelancer,
+  );
+  const verification = await request(`/submissions/${submission.data.id}/verify`, {}, client);
+  await request(
+    `/verification-cases/${verification.data.id}/decisions`,
+    { decision: 'approve', reason: 'Approved.' },
+    client,
+  );
+}
+
+test('invoice numbers start at 0001 per issuer and year, and re-invoicing a milestone reuses its number', async () => {
+  const client = await signup('Numbering Client', 'numbering-client@example.test');
+  const freelancer = await signup('Numbering Freelancer', 'numbering-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Numbering project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const first = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 400, currency: 'USD' },
+    client,
+  );
+  const second = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 2', description: '', amount: 600, currency: 'USD' },
+    client,
+  );
+  await approveMilestone(first.data.id, client, freelancer);
+  await approveMilestone(second.data.id, client, freelancer);
+  const year = new Date().getFullYear();
+  const invoiceFor = (milestoneId, cookie) =>
+    request(
+      '/companion/messages',
+      { message: 'generate an invoice for this milestone', milestoneId },
+      cookie,
+    );
+
+  const firstInvoice = await invoiceFor(first.data.id, freelancer);
+  assert.equal(firstInvoice.status, 201);
+  assert.equal(firstInvoice.data.evidence.invoiceNumber, `INV-${year}-0001`);
+
+  // Regenerating the same milestone's invoice — by either party — is the same invoice, never a
+  // second number for the same work.
+  const again = await invoiceFor(first.data.id, client);
+  assert.equal(again.data.evidence.invoiceNumber, `INV-${year}-0001`);
+
+  const secondInvoice = await invoiceFor(second.data.id, freelancer);
+  assert.equal(secondInvoice.data.evidence.invoiceNumber, `INV-${year}-0002`);
+});
+
+test('an invoice names who it is from and who it is billed to, with no internal tool wording', async () => {
+  const client = await signup('Billed Client', 'billed-client@example.test');
+  const freelancer = await signup('Issuing Freelancer', 'issuing-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Parties project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 300, currency: 'USD' },
+    client,
+  );
+  await approveMilestone(milestone.data.id, client, freelancer);
+  const invoice = await request(
+    '/companion/messages',
+    { message: 'generate an invoice for this milestone', milestoneId: milestone.data.id },
+    freelancer,
+  );
+  assert.equal(invoice.status, 201);
+  assert.ok(invoice.data.response.includes('From: Issuing Freelancer'), invoice.data.response);
+  assert.ok(invoice.data.response.includes('Billed to: Billed Client'), invoice.data.response);
+  assert.ok(invoice.data.response.includes('300 USD'));
+  assert.ok(!/AI model|this tool/i.test(invoice.data.response), invoice.data.response);
+});
+
 async function uploadTextFile(cookie, text, filename = 'evidence.txt') {
   const uploaded = await request(
     '/files',
@@ -577,4 +667,35 @@ test('Deliverable Verification: an asset needs exactly one of url or uploadedFil
     freelancer,
   );
   assert.equal(both.status, 400);
+});
+
+test('re-issuing an existing invoice costs nothing — the charge is for issuing it once', async () => {
+  const client = await signup('Recharge Client', 'recharge-client@example.test');
+  const freelancer = await signup('Recharge Freelancer', 'recharge-freelancer@example.test');
+  const freelancerState = (await request('/state', undefined, freelancer, 'GET')).data;
+  const job = await jobWithBid(client, freelancer);
+  const project = await request(
+    '/projects',
+    { jobId: job.id, title: 'Recharge project', freelancerUserId: freelancerState.user.id },
+    client,
+  );
+  const milestone = await request(
+    `/projects/${project.data.id}/milestones`,
+    { title: 'Phase 1', description: '', amount: 250, currency: 'USD' },
+    client,
+  );
+  await approveMilestone(milestone.data.id, client, freelancer);
+  const issue = () =>
+    request(
+      '/companion/messages',
+      { message: 'generate an invoice for this milestone', milestoneId: milestone.data.id },
+      freelancer,
+    );
+  const first = await issue();
+  assert.equal(first.data.pointsCharged, 65);
+  const again = await issue();
+  assert.equal(again.status, 201);
+  assert.equal(again.data.pointsCharged, 0);
+  assert.equal(again.data.balance, first.data.balance);
+  assert.equal(again.data.evidence.invoiceNumber, first.data.evidence.invoiceNumber);
 });

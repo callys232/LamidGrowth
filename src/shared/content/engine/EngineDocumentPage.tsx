@@ -4,6 +4,8 @@ import { DocumentPageLayout } from '../DocumentPageLayout';
 import { DocumentHeroSlide } from '../slides/DocumentHeroSlide';
 import { DocumentSectionSlide } from '../slides/DocumentSectionSlide';
 import { CopyLine } from '../CopyLine';
+import { TwoLineTitle } from '../TwoLineTitle';
+import '../hero-title.css';
 import type { DocumentPage, DocumentPageProps } from '../types';
 import './engine.css';
 
@@ -16,7 +18,7 @@ import './engine.css';
  * generic document template, same as every other bespoke page this session. `extraSection` is an
  * opt-in live component (not canonical copy) a specific page can pass in — rendered between the
  * tools grid and the closing band, omitted entirely in embedded mode, same pattern as
- * BillablesSection on the pricing page. */
+ * the live price list on the pricing page (PricingFlow.tsx). */
 export function EngineDocumentPage({
   content,
   icons,
@@ -50,7 +52,9 @@ export function EngineDocumentPage({
       <section className="engine-hero">
         <div className="engine-container">
           {content.hero.label && <span className="engine-eyebrow">{content.hero.label}</span>}
-          <h1 data-source-paragraph={title.sourceParagraph}>{title.text}</h1>
+          <h1 data-source-paragraph={title.sourceParagraph}>
+            {content.route.startsWith('/product') ? <TwoLineTitle text={title.text} /> : title.text}
+          </h1>
           <p
             className="engine-hero-description"
             data-source-paragraph={description.sourceParagraph}

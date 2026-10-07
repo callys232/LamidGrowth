@@ -87,6 +87,150 @@
           "sourceParagraph": 483
         }
       ]
+    },
+    {
+      "label": "Enterprise Overview",
+      "title": "Enterprise Overview",
+      "paragraphs": [
+        {
+          "text": "Enterprise Overview",
+          "sourceParagraph": 7095
+        },
+        {
+          "text": "Enterprises operate in environments where clarity, capability, and execution must work together across multiple teams, sites, and responsibilities. LAMID ONE provides a unified, guided portal that helps organizations strengthen alignment, build capability, and achieve consistent performance without complexity.",
+          "sourceParagraph": 7097
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "A Unified Environment for Enterprise Growth",
+      "title": "A Unified Environment for Enterprise Growth",
+      "paragraphs": [
+        {
+          "text": "A Unified Environment for Enterprise Growth",
+          "sourceParagraph": 7099
+        },
+        {
+          "text": "Large organizations often rely on scattered tools, disconnected processes, and uneven support systems. LAMID ONE replaces fragmentation with a single intelligent portal where direction, development, and execution are connected.",
+          "sourceParagraph": 7101
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Clarity Across Teams and Functions",
+      "title": "Clarity Across Teams and Functions",
+      "paragraphs": [
+        {
+          "text": "Clarity Across Teams and Functions",
+          "sourceParagraph": 7103
+        },
+        {
+          "text": "Enterprises need shared understanding to move with confidence. The portal helps leaders, managers, and teams see what matters, align around priorities, and work toward common goals.",
+          "sourceParagraph": 7105
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Capability That Scales",
+      "title": "Capability That Scales",
+      "paragraphs": [
+        {
+          "text": "Capability That Scales",
+          "sourceParagraph": 7107
+        },
+        {
+          "text": "Workforce capability grows when development is structured and accessible. LAMID ONE supports skill‑building, leadership development, and performance uplift across departments, sites, and regions.",
+          "sourceParagraph": 7109
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Execution That Stays Aligned",
+      "title": "Execution That Stays Aligned",
+      "paragraphs": [
+        {
+          "text": "Execution That Stays Aligned",
+          "sourceParagraph": 7111
+        },
+        {
+          "text": "Enterprise execution requires coordination. The portal organizes tasks, actions, and initiatives into coherent flows that help teams maintain momentum and follow‑through.",
+          "sourceParagraph": 7113
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Consistency Across Complexity",
+      "title": "Consistency Across Complexity",
+      "paragraphs": [
+        {
+          "text": "Consistency Across Complexity",
+          "sourceParagraph": 7115
+        },
+        {
+          "text": "Enterprises thrive when performance is dependable. LAMID ONE reinforces habits, routines, and aligned behaviors that support consistent results across changing demands.",
+          "sourceParagraph": 7117
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Human‑Directed Intelligence for Enterprise Performance",
+      "title": "Human‑Directed Intelligence for Enterprise Performance",
+      "paragraphs": [
+        {
+          "text": "Human‑Directed Intelligence for Enterprise Performance",
+          "sourceParagraph": 7119
+        },
+        {
+          "text": "Intelligence enhances clarity and execution when it stays under human direction. The portal provides guided support that strengthens decisions, capability, and follow‑through — while keeping leaders in control.",
+          "sourceParagraph": 7121
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "Adaptable to Any Enterprise Context",
+      "title": "Adaptable to Any Enterprise Context",
+      "paragraphs": [
+        {
+          "text": "Adaptable to Any Enterprise Context",
+          "sourceParagraph": 7123
+        },
+        {
+          "text": "LAMID ONE works across industries, sectors, and organizational structures. Whether managing multi‑site operations, leading transformation, or strengthening workforce capability, the portal adapts to enterprise‑level complexity.",
+          "sourceParagraph": 7125
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
+    },
+    {
+      "label": "One Portal for Enterprise Clarity, Capability, and Execution",
+      "title": "One Portal for Enterprise Clarity, Capability, and Execution",
+      "paragraphs": [
+        {
+          "text": "One Portal for Enterprise Clarity, Capability, and Execution",
+          "sourceParagraph": 7127
+        },
+        {
+          "text": "LAMID ONE gives enterprises a single guided environment where people, teams, and departments can grow with confidence.",
+          "sourceParagraph": 7129
+        }
+      ],
+      "addedFrom": "Tagline_Review_and_Refinement.md",
+      "longForm": true
     }
   ]
 }

@@ -284,7 +284,7 @@ test('a project can only be closed once every milestone is fully paid, and only 
   assert.equal(fund.status, 201);
   const fundEvent = {
     event: 'charge.success',
-    data: { reference: fund.data.reference, amount: fund.data.amountMinor, currency: fund.data.currency },
+    data: { reference: fund.data.reference, amount: fund.data.providerAmountMinor, currency: fund.data.providerCurrency },
   };
   const fundRaw = Buffer.from(JSON.stringify(fundEvent));
   await fetch(`${base}/api/webhooks/paystack`, {
@@ -301,8 +301,8 @@ test('a project can only be closed once every milestone is fully paid, and only 
     event: 'transfer.success',
     data: {
       reference: release.data.provider_reference,
-      amount: release.data.amount_minor,
-      currency: release.data.currency,
+      amount: release.data.provider_amount_minor,
+      currency: release.data.provider_currency,
     },
   };
   const transferRaw = Buffer.from(JSON.stringify(transferEvent));
@@ -330,4 +330,58 @@ test('a project can only be closed once every milestone is fully paid, and only 
   assert.ok(buffer.length > 0);
   assert.equal(buffer.toString('ascii', 0, 4), '%PDF');
   void freelancerState;
+});
+
+test('finishing a task records when; reopening it clears that', async () => {
+  const { client, project } = await projectWithParties();
+  const t = await request(`/projects/${project.id}/tasks`, { title: 'Ship it', description: '' }, client);
+  const done = await request(`/tasks/${t.data.id}`, { status: 'done' }, client, 'PATCH');
+  assert.ok(done.data.completed_at);
+  const again = await request(`/tasks/${t.data.id}`, { title: 'Ship it now' }, client, 'PATCH');
+  assert.equal(again.data.completed_at, done.data.completed_at, 'editing a done task keeps its time');
+  const reopened = await request(`/tasks/${t.data.id}`, { status: 'open' }, client, 'PATCH');
+  assert.equal(reopened.data.completed_at, null);
+});
+
+test('a delivery review computes flow from real tasks, publishes it on the project, and a task change makes it stale', async () => {
+  const { client, project } = await projectWithParties();
+  const before = (await request('/finance/points', undefined, client, 'GET')).data.balance;
+
+  // Too little history: insufficient evidence, nothing run or charged.
+  const thin = await request(`/projects/${project.id}/delivery-review`, {}, client);
+  assert.equal(thin.status, 200);
+  assert.equal(thin.data.status, 'insufficient_evidence');
+  assert.equal((await request('/finance/points', undefined, client, 'GET')).data.balance, before);
+
+  // Three weeks of finished work (timestamps set directly: the API only records "now").
+  const ids = [];
+  for (const weeksAgo of [3, 2, 1]) {
+    const t = await request(`/projects/${project.id}/tasks`, { title: `Week -${weeksAgo}`, description: '' }, client);
+    await request(`/tasks/${t.data.id}`, { status: 'done' }, client, 'PATCH');
+    const done = new Date(Date.now() - (weeksAgo * 7 - 2) * 86_400_000).toISOString();
+    const created = new Date(Date.parse(done) - 3 * 86_400_000).toISOString();
+    await store.db
+      .prepare('UPDATE tasks SET created_at = ?, completed_at = ? WHERE id = ?')
+      .run(created, done, t.data.id);
+    ids.push(t.data.id);
+  }
+  const review = await request(`/projects/${project.id}/delivery-review`, {}, client);
+  assert.equal(review.status, 200);
+  assert.equal(review.data.status, 'completed');
+  assert.equal(review.data.result.toolId, 'T06');
+  assert.equal(review.data.evidence.input.periods.length, 3);
+  assert.ok(review.data.evidence.limitations.length > 0);
+
+  const q = `/intelligence-results?subjectKind=project&subjectId=${project.id}`;
+  const current = (await request(q, undefined, client, 'GET')).data;
+  assert.ok(current.some((r) => r.agentId === 'tool:T06' && r.freshness.state === 'current'));
+
+  // Any task change: the finding no longer describes the project.
+  await request(`/tasks/${ids[0]}`, { title: 'Renamed' }, client, 'PATCH');
+  const after = (await request(q, undefined, client, 'GET')).data;
+  assert.ok(!after.some((r) => r.agentId === 'tool:T06'));
+  const stale = (await request(`${q}&includeStale=true`, undefined, client, 'GET')).data.find(
+    (r) => r.agentId === 'tool:T06',
+  );
+  assert.equal(stale.freshness.state, 'stale');
 });

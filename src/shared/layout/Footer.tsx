@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom';
 import { Brand } from '../ui/Brand';
-import home from '../../products/website/pages/home/content.json';
 export function Footer() {
   return (
     <footer className="public-footer">
       <div className="footer-top">
         <div>
-          <Brand light />
-          <p>{home.hero.paragraphs[2].text}</p>
+          <Brand light logo />
+          <p>Think clearly. Build capability. Make consistent progress.</p>
         </div>
         {[
           [
@@ -41,7 +40,7 @@ export function Footer() {
       </div>
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} LAMID ONE</span>
-        <span>{home.hero.paragraphs[5].text}</span>
+        <span>Progress keeps moving. Control stays with you.</span>
         <a href="#top">Back to top ↑</a>
       </div>
     </footer>
