@@ -1,0 +1,819 @@
+{
+  "source": "LAMID_ONE_Pithy_Go_Live_Website_Product_Copy_v1.4_2026-09-08.docx",
+  "count": 98,
+  "pages": [
+    {
+      "route": "/",
+      "sections": 13,
+      "sourceParagraphs": 49,
+      "missing": [],
+      "supersededHero": [
+        {
+          "sourceParagraph": 47,
+          "style": "Heading2",
+          "text": "The Human-AI Growth Operating System"
+        },
+        {
+          "sourceParagraph": 48,
+          "style": "HeroLine",
+          "text": "Continuous intelligence that keeps your context current and your growth in view - while you stay in control."
+        },
+        {
+          "sourceParagraph": 49,
+          "style": "PromiseLine",
+          "text": "Think clearly. Build capability. Make consistent progress."
+        },
+        {
+          "sourceParagraph": 50,
+          "style": "CTAStyle",
+          "text": "CTA: Experience LAMID ONE | See How It Works"
+        }
+      ],
+      "briefSource": false
+    },
+    {
+      "route": "/product",
+      "sections": 10,
+      "sourceParagraphs": 13,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/product/companion",
+      "sections": 4,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/product/experience",
+      "sections": 10,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/product/intelligence",
+      "sections": 10,
+      "sourceParagraphs": 15,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/product/workflows",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/product/organizations",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/how-it-works",
+      "sections": 8,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/how-it-works/clarity",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/how-it-works/capability",
+      "sections": 6,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/how-it-works/consistency",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/how-it-works/growth",
+      "sections": 5,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/how-it-works/rhythm",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for",
+      "sections": 11,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/individuals",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/professionals",
+      "sections": 6,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/creators",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/founders",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/teams",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/smes",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/enterprises",
+      "sections": 13,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/who-its-for/institutions",
+      "sections": 13,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/enterprise",
+      "sections": 4,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/security",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/responsible-ai",
+      "sections": 4,
+      "sourceParagraphs": 15,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/trust/privacy",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/trust/governance",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/pricing",
+      "sections": 4,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/enterprise/contact",
+      "sections": 4,
+      "sourceParagraphs": 18,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/demo",
+      "sections": 4,
+      "sourceParagraphs": 16,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/demo/request",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/start",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/resources",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/insights",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/guides",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/case-studies",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/research",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/help",
+      "sections": 2,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/help/getting-started",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/help/product",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/help/account",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/support",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/developers",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/developers/api",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/developers/sdks",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/integrations",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/developers/webhooks",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/developers/changelog",
+      "sections": 2,
+      "sourceParagraphs": 9,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/about",
+      "sections": 11,
+      "sourceParagraphs": 26,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/about/story",
+      "sections": 15,
+      "sourceParagraphs": 28,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/about/leadership",
+      "sections": 4,
+      "sourceParagraphs": 9,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/careers",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/press",
+      "sections": 3,
+      "sourceParagraphs": 9,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/contact",
+      "sections": 2,
+      "sourceParagraphs": 9,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/legal/privacy",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/legal/terms",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/legal/cookies",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/legal/acceptable-use",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/legal/dpa",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/accessibility",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/login",
+      "sections": 3,
+      "sourceParagraphs": 13,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/signup",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/forgot-password",
+      "sections": 2,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/reset-password",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/verify",
+      "sections": 3,
+      "sourceParagraphs": 11,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/onboarding",
+      "sections": 3,
+      "sourceParagraphs": 14,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/today",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/clarity",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/capability",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/consistency",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/progress",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/rhythm",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/companion",
+      "sections": 5,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/insights",
+      "sections": 3,
+      "sourceParagraphs": 9,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/business",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/opportunities",
+      "sections": 5,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/finance",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/people",
+      "sections": 5,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/workflows",
+      "sections": 3,
+      "sourceParagraphs": 10,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/workflows/[id]",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/organization",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/teams",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/organization/rhythm",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/analytics",
+      "sections": 3,
+      "sourceParagraphs": 12,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": false
+    },
+    {
+      "route": "/os/integrations",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/governance",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/audit",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/admin",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/profile",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/ai",
+      "sections": 4,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/privacy",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/notifications",
+      "sections": 5,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/workspace",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/members",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/billing",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    },
+    {
+      "route": "/os/settings/plan",
+      "sections": 3,
+      "sourceParagraphs": 8,
+      "missing": [],
+      "supersededHero": [],
+      "briefSource": true
+    }
+  ],
+  "registeredPages": 99,
+  "additionalPages": [
+    {
+      "route": "/experts",
+      "source": "Repository-owned content.json; no separate Pithy source section",
+      "sections": 32
+    }
+  ]
+}

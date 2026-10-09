@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { returnDestination } from '../returnDestination';
 import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
 import { Eyebrow } from '../../../shared/ui/Eyebrow';
@@ -34,6 +35,7 @@ export function AuthMainSlide({
   | 'setVisible'
   | 'error'
 >) {
+  const [params] = useSearchParams();
   return (
     <>
       <div className="auth-main">
@@ -106,7 +108,9 @@ export function AuthMainSlide({
           )}
           <p className="auth-switch">
             {login ? 'Starting a new chapter?' : 'Already have a workspace?'}{' '}
-            <Link to={login ? '/start' : '/login'}>
+            <Link
+              to={`${login ? '/start' : '/login'}?returnTo=${encodeURIComponent(returnDestination(params))}`}
+            >
               {login ? 'Get started' : 'Sign in'} <ArrowUpRightText />
             </Link>
           </p>

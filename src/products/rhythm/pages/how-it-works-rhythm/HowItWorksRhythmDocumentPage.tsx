@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { RhythmContent } from './RhythmContent';
 import {
   HowItWorksRhythmHeroSlide,
   TodaySlide1,
@@ -18,10 +19,16 @@ export function HowItWorksRhythmDocumentPage({ embedded = false }: DocumentPageP
       contentId="rhythm-overview"
       hero={<HowItWorksRhythmHeroSlide embedded={embedded} />}
     >
-      <TodaySlide1 embedded={embedded} />
-      <ThisWeekSlide2 embedded={embedded} />
-      <OrganizationSlide3 embedded={embedded} />
-      <SeeProgressInAnEvolvingContextNotJustAsAScoreSlide4 embedded={embedded} />
+      {!embedded ? (
+        <RhythmContent />
+      ) : (
+        <>
+          <TodaySlide1 embedded={embedded} />
+          <ThisWeekSlide2 embedded={embedded} />
+          <OrganizationSlide3 embedded={embedded} />
+          <SeeProgressInAnEvolvingContextNotJustAsAScoreSlide4 embedded={embedded} />
+        </>
+      )}
     </DocumentPageLayout>
   );
 }

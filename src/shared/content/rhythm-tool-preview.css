@@ -1,38 +1,73 @@
 .rhythm-demo-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
   gap: 28px;
-  align-items: start;
+  align-items: stretch;
 }
 .rhythm-demo-layout > div {
   min-width: 0;
 }
 .rhythm-demo-benefits {
-  padding: 24px;
-  border: 1px solid #c7ddc8;
-  border-radius: 18px;
-  background: #edf5ed;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
   color: #153d2a;
 }
-.rhythm-demo-benefits h3 {
+.rhythm-demo-benefits h3,
+.rhythm-demo-video-column h3 {
   margin: 0 0 18px;
   color: #153d2a;
-  font-size: 23px;
+  font-size: 22px;
   line-height: 1.25;
 }
-.rhythm-demo-benefits ul {
+.rhythm-demo-benefits .rhythm-benefit-cards {
   list-style: none;
   padding: 0;
-  margin: 0 0 22px;
+  margin: 0;
+  display: grid;
+  flex: 1;
+  grid-auto-rows: 1fr;
+  gap: 10px;
 }
-.rhythm-demo-benefits li {
-  padding: 12px 0;
-  border-top: 1px solid #c7ddc8;
-}
-.rhythm-demo-benefits strong {
-  display: block;
-  margin-bottom: 6px;
+.rhythm-demo-benefits .rhythm-benefit-card {
+  padding: 14px 16px;
+  border: 1px solid #c7ddc8;
+  border-radius: 14px;
+  background: var(--benefit-bg, #edf5ed);
   color: #153d2a;
+  transition: background-color 220ms ease;
+}
+.rhythm-demo-benefits .rhythm-benefit-card strong {
+  display: block;
+  color: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.rhythm-benefit-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.rhythm-demo-benefits .rhythm-benefit-card-top span {
+  color: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.rhythm-demo-benefits .rhythm-benefit-card[data-active='true'] {
+  background: var(--benefit-active, #d3e8d8);
+}
+.rhythm-benefit-card:focus-visible {
+  outline: 2px solid #24613e;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rhythm-demo-benefits .rhythm-benefit-card {
+    transition: none;
+    transform: none;
+  }
 }
 .rhythm-demo-benefits span {
   display: block;
@@ -45,4 +80,180 @@
     grid-template-columns: 1fr;
     gap: 16px;
   }
+  .rhythm-demo-benefits .rhythm-benefit-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.modal:has(.rhythm-demo-layout) {
+  max-width: 1160px;
+}
+.rhythm-demo-action {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+.rhythm-demo-layout video {
+  display: block;
+  aspect-ratio: 8 / 5;
+  background: #153d2a;
+}
+.rhythm-benefit-card:nth-child(1) {
+  --benefit-bg: #edf5ed;
+  --benefit-active: #cfe5d4;
+}
+.rhythm-benefit-card:nth-child(2) {
+  --benefit-bg: #eaf4f1;
+  --benefit-active: #c8e5dc;
+}
+.rhythm-benefit-card:nth-child(3) {
+  --benefit-bg: #eef3e8;
+  --benefit-active: #dce8c9;
+}
+.rhythm-benefit-card:nth-child(4) {
+  --benefit-bg: #eaf2f4;
+  --benefit-active: #cce2e8;
+}
+.rhythm-demo-caption {
+  margin: 0 auto 18px;
+  max-width: 60ch;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.rhythm-demo-action {
+  padding-top: 4px;
+}
+.modal:has(.rhythm-demo-layout) {
+  border-radius: 24px;
+  border-color: #c7ddc8;
+}
+.modal:has(.rhythm-demo-layout) .modal-inner {
+  padding: 0 28px 28px;
+}
+.modal:has(.rhythm-demo-layout) .modal-header {
+  position: relative;
+  align-items: center;
+  gap: 24px;
+  margin: 0 -28px 28px;
+  padding: 32px 36px;
+  background:
+    radial-gradient(ellipse at 90% 0%, #73b7a333, transparent 60%),
+    linear-gradient(115deg, #153d2a, #1b5c4f 60%, #17636a);
+  border-bottom: 1px solid #ffffff24;
+}
+.modal:has(.rhythm-demo-layout) .modal-header h2 {
+  max-width: 26ch;
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(27px, 3vw, 38px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.modal:has(.rhythm-demo-layout) .modal-header .icon-button {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #ffffff66;
+  border-radius: 50%;
+  background: #ffffff12;
+  color: #fff;
+  transition: background-color 180ms ease;
+}
+.modal:has(.rhythm-demo-layout) .modal-header .icon-button:hover {
+  background: #ffffff30;
+}
+.modal:has(.rhythm-demo-layout) .modal-header .icon-button:focus-visible {
+  outline: 2px solid #d1f0df;
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .modal:has(.rhythm-demo-layout) .modal-inner {
+    padding: 0 18px 22px;
+  }
+  .modal:has(.rhythm-demo-layout) .modal-header {
+    margin: 0 -18px 22px;
+    padding: 26px 20px;
+    gap: 16px;
+  }
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-layout {
+  gap: 18px 24px;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-action {
+  padding-top: 0;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-caption {
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-action .button {
+  min-height: 36px;
+  padding: 8px 18px;
+}
+.modal:has(.rhythm-demo-layout) .modal-inner {
+  padding-bottom: 16px;
+}
+.modal:has(.rhythm-demo-layout) .modal-header {
+  padding-block: 24px;
+  margin-bottom: 20px;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-action .rhythm-demo-caption {
+  margin: 0;
+  width: 100%;
+  max-width: 70ch;
+}
+.modal:has(.rhythm-demo-layout) .rhythm-demo-action .button {
+  margin: 0;
+}
+.modal:has(.rhythm-demo-layout) video {
+  max-height: calc(90dvh - 230px);
+  object-fit: contain;
+}
+@media (max-width: 760px) {
+  .modal:has(.rhythm-demo-layout) .modal-header {
+    padding-block: 18px;
+    margin-bottom: 14px;
+  }
+  .modal:has(.rhythm-demo-layout) .rhythm-demo-layout {
+    gap: 12px;
+  }
+  .rhythm-demo-video-column h3,
+  .rhythm-demo-benefits h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .rhythm-demo-benefits .rhythm-benefit-card {
+    padding: 10px 12px;
+  }
+  .rhythm-demo-benefits .rhythm-benefit-card strong {
+    font-size: 15px;
+  }
+  .rhythm-benefit-card-top {
+    margin-bottom: 4px;
+  }
+}
+@media (min-width: 761px) and (max-height: 800px) {
+  .modal:has(.rhythm-demo-layout) .modal-header {
+    padding-block: 16px;
+    margin-bottom: 14px;
+  }
+  .modal:has(.rhythm-demo-layout) .rhythm-demo-layout {
+    gap: 12px 24px;
+  }
+}
+.modal:has(.rhythm-demo-layout) {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.modal:has(.rhythm-demo-layout)::-webkit-scrollbar {
+  display: none;
 }

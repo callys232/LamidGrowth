@@ -154,12 +154,8 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
             </article>
             <article className="clarity-suite-card" {...cardInteraction('next-step')}>
               <span className="clarity-suite-label">04 / YOUR NEXT STEP</span>
-              <h3>Turn understanding into a decision</h3>
-              <p>
-                Review the findings against your context. Identify assumptions to check, discuss the
-                trade-offs, and choose a priority. The tools support the decision; you make the
-                final call.
-              </p>
+              <h3 data-source-paragraph={251}>{content.sections[3].title}</h3>
+              <p data-source-paragraph={252}>{content.sections[3].paragraphs[1].text}</p>
               <Link className="clarity-suite-link" to="/os/engines">
                 Explore the tools <span aria-hidden="true">↗</span>
               </Link>

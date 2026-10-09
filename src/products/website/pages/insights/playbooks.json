@@ -1,0 +1,975 @@
+[
+  {
+    "id": "decision-review",
+    "category": "Clarity",
+    "title": "Make decisions with clear ownership",
+    "description": "Track pending decisions, understand the cost of waiting, and keep reviews visible.",
+    "tools": [
+      {
+        "id": "T19",
+        "code": "Q02",
+        "name": "Decision Register",
+        "purpose": "Keeps a record of decisions and measures cycle time, stalled and recurring decisions, missing owners and overdue reviews.",
+        "computes": "Decision cycle time, stalled and recurring decisions, missing owners and rationale, overdue reviews and reversal rate.",
+        "limits": "Built from the decisions you record; it does not judge whether a decision was right.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "asOf",
+              "label": "As of (defaults to today)",
+              "type": "date"
+            },
+            {
+              "key": "stallDays",
+              "label": "Treat an open decision as stalled after (days)",
+              "type": "integer",
+              "min": 1,
+              "default": 30
+            }
+          ],
+          "tables": [
+            {
+              "key": "decisions",
+              "label": "Decisions",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "title",
+                  "label": "Decision",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "type": "text"
+                },
+                {
+                  "key": "raised",
+                  "label": "Raised on",
+                  "type": "date",
+                  "required": true
+                },
+                {
+                  "key": "decided",
+                  "label": "Decided on",
+                  "type": "date"
+                },
+                {
+                  "key": "status",
+                  "label": "Status",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "open",
+                      "label": "open"
+                    },
+                    {
+                      "value": "decided",
+                      "label": "decided"
+                    },
+                    {
+                      "value": "implemented",
+                      "label": "implemented"
+                    },
+                    {
+                      "value": "reversed",
+                      "label": "reversed"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "topic",
+                  "label": "Topic tag (same tag = same recurring question)",
+                  "type": "text"
+                },
+                {
+                  "key": "rationale",
+                  "label": "Rationale recorded",
+                  "type": "boolean"
+                },
+                {
+                  "key": "reviewBy",
+                  "label": "Review by",
+                  "type": "date"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T23",
+        "code": "Q05",
+        "name": "Decision Timing & Cost of Delay",
+        "purpose": "Orders pending decisions by the cost of waiting and flags deadlines that can no longer be met.",
+        "computes": "Orders pending items by cost of delay divided by duration (WSJF), places them on the Eisenhower matrix, and flags deadlines that can no longer be met.",
+        "limits": "Cost of delay is your estimate; the order is only as good as those figures.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "asOf",
+              "label": "As of (defaults to today)",
+              "type": "date"
+            }
+          ],
+          "tables": [
+            {
+              "key": "items",
+              "label": "Pending decisions or work",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "item",
+                  "label": "Item",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "costPerWeek",
+                  "label": "Cost of delay per week",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "weeks",
+                  "label": "Weeks to carry out once decided",
+                  "type": "number",
+                  "required": true,
+                  "min": 0.1
+                },
+                {
+                  "key": "deadline",
+                  "label": "Hard deadline (if any)",
+                  "type": "date"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "team-development",
+    "category": "Capability",
+    "title": "Plan the next development step",
+    "description": "Compare skill gaps with the requirements of a target role.",
+    "tools": [
+      {
+        "id": "T40",
+        "code": "A02",
+        "name": "Skills Gap Analysis",
+        "purpose": "Compares required and current skill levels by role and finds skills held by only one person.",
+        "computes": "The gap between required and current skill levels by role, coverage, and skills held by only one person.",
+        "limits": "Levels are your assessment; it does not test anyone’s skills.",
+        "spec": {
+          "kind": "schema",
+          "fields": [],
+          "tables": [
+            {
+              "key": "skills",
+              "label": "Skills by role",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "role",
+                  "label": "Role or team",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "skill",
+                  "label": "Skill",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "required",
+                  "label": "Level required (SFIA 1–7)",
+                  "type": "integer",
+                  "min": 1,
+                  "max": 7,
+                  "required": true
+                },
+                {
+                  "key": "current",
+                  "label": "Typical level today (1–7)",
+                  "type": "integer",
+                  "min": 1,
+                  "max": 7,
+                  "required": true
+                },
+                {
+                  "key": "peopleAtLevel",
+                  "label": "People at or above the required level",
+                  "type": "integer",
+                  "min": 0,
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T48",
+        "code": "A25",
+        "name": "Next-Role Readiness",
+        "purpose": "Measures how ready a person is for a target role and how long the gaps take to close.",
+        "computes": "How far a person meets a target role’s requirements and how long the gaps take to close.",
+        "limits": "Levels and timings are your assessment.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "person",
+              "label": "Person",
+              "type": "text",
+              "required": true
+            },
+            {
+              "key": "targetRole",
+              "label": "Target role",
+              "type": "text",
+              "required": true
+            }
+          ],
+          "tables": [
+            {
+              "key": "requirements",
+              "label": "Target role requirements",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "requirement",
+                  "label": "Requirement",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "required",
+                  "label": "Level required (1–5)",
+                  "type": "integer",
+                  "min": 1,
+                  "max": 5,
+                  "required": true
+                },
+                {
+                  "key": "current",
+                  "label": "Current level (1–5)",
+                  "type": "integer",
+                  "min": 1,
+                  "max": 5,
+                  "required": true
+                },
+                {
+                  "key": "weeks",
+                  "label": "Weeks to close the gap",
+                  "type": "number",
+                  "min": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "delivery-health",
+    "category": "Consistency",
+    "title": "Review delivery without chasing noise",
+    "description": "Read delivery flow, then check whether a metric is showing real change.",
+    "tools": [
+      {
+        "id": "T06",
+        "code": "R02",
+        "name": "Delivery Flow Metrics",
+        "purpose": "Measures how fast and how predictably work flows: throughput, cycle time, work in progress and flow efficiency.",
+        "computes": "Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.",
+        "limits": "Reads only the period figures you enter; it is not connected to your task tools.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "periodDays",
+              "label": "Days in each period",
+              "type": "integer",
+              "min": 1,
+              "default": 7
+            }
+          ],
+          "tables": [
+            {
+              "key": "periods",
+              "label": "Periods",
+              "hint": "one row per week or sprint, oldest first",
+              "minRows": 3,
+              "columns": [
+                {
+                  "key": "label",
+                  "label": "Period",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "throughput",
+                  "label": "Items finished",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "cycleTimeDays",
+                  "label": "Average cycle time (days)",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "wip",
+                  "label": "Average work in progress",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "activeDays",
+                  "label": "Average days actively worked per item",
+                  "type": "number",
+                  "min": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T07",
+        "code": "R03",
+        "name": "Drift & Stability Monitor",
+        "purpose": "Tells real drift from routine variation in any metric, so you react to signals and not to noise.",
+        "computes": "Natural process limits for any metric and the standard control-chart rules that separate real drift from routine variation.",
+        "limits": "Reads only the values you enter; it detects that something changed, not why.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "metric",
+              "label": "Metric",
+              "type": "text",
+              "required": true
+            },
+            {
+              "key": "betterWhen",
+              "label": "Better when",
+              "type": "select",
+              "options": [
+                {
+                  "value": "higher",
+                  "label": "higher"
+                },
+                {
+                  "value": "lower",
+                  "label": "lower"
+                },
+                {
+                  "value": "closer to target",
+                  "label": "closer to target"
+                }
+              ],
+              "default": "higher"
+            },
+            {
+              "key": "target",
+              "label": "Target (optional)",
+              "type": "number"
+            }
+          ],
+          "tables": [
+            {
+              "key": "values",
+              "label": "Values",
+              "hint": "at least 8 points, oldest first",
+              "minRows": 8,
+              "columns": [
+                {
+                  "key": "label",
+                  "label": "Period",
+                  "type": "text"
+                },
+                {
+                  "key": "value",
+                  "label": "Value",
+                  "type": "number",
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "operating-rhythm",
+    "category": "Consistency",
+    "title": "Build a useful review rhythm",
+    "description": "Review meeting time alongside progress against objectives.",
+    "tools": [
+      {
+        "id": "T12",
+        "code": "S05",
+        "name": "Operating Rhythm & Meeting Design",
+        "purpose": "Shows what your recurring meetings cost, how much is status updates, and whether weekly, monthly and quarterly reviews exist.",
+        "computes": "The time your recurring meetings cost per person, how much of it is status updates, and whether the weekly, monthly and quarterly review levels exist.",
+        "limits": "It uses the meetings you list; it does not read calendars or judge meeting quality.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "people",
+              "label": "People in scope",
+              "type": "integer",
+              "min": 1,
+              "required": true
+            }
+          ],
+          "tables": [
+            {
+              "key": "meetings",
+              "label": "Recurring meetings and reviews",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "name",
+                  "label": "Meeting",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "frequency",
+                  "label": "Frequency",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "daily",
+                      "label": "daily"
+                    },
+                    {
+                      "value": "weekly",
+                      "label": "weekly"
+                    },
+                    {
+                      "value": "fortnightly",
+                      "label": "fortnightly"
+                    },
+                    {
+                      "value": "monthly",
+                      "label": "monthly"
+                    },
+                    {
+                      "value": "quarterly",
+                      "label": "quarterly"
+                    },
+                    {
+                      "value": "yearly",
+                      "label": "yearly"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "minutes",
+                  "label": "Length (minutes)",
+                  "type": "integer",
+                  "min": 1,
+                  "required": true
+                },
+                {
+                  "key": "attendees",
+                  "label": "Attendees",
+                  "type": "integer",
+                  "min": 1,
+                  "required": true
+                },
+                {
+                  "key": "purpose",
+                  "label": "Main purpose",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "decide",
+                      "label": "decide"
+                    },
+                    {
+                      "value": "review progress",
+                      "label": "review progress"
+                    },
+                    {
+                      "value": "share updates",
+                      "label": "share updates"
+                    },
+                    {
+                      "value": "plan",
+                      "label": "plan"
+                    },
+                    {
+                      "value": "connect",
+                      "label": "connect"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "type": "text"
+                },
+                {
+                  "key": "agenda",
+                  "label": "Has a set agenda",
+                  "type": "boolean"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T04",
+        "code": "S06",
+        "name": "OKR & Strategy Execution Review",
+        "purpose": "Tracks objectives and key results against the time elapsed, so you see what is on pace and what is falling behind.",
+        "computes": "Progress of each key result from its start value toward its target, compared with how much of the period has passed, rolled up by objective.",
+        "limits": "Values are what you enter; it does not pull figures from other systems or judge whether targets are ambitious enough.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "periodStart",
+              "label": "Period start",
+              "type": "date",
+              "required": true
+            },
+            {
+              "key": "periodEnd",
+              "label": "Period end",
+              "type": "date",
+              "required": true
+            },
+            {
+              "key": "asOf",
+              "label": "Progress as of (defaults to today)",
+              "type": "date"
+            }
+          ],
+          "tables": [
+            {
+              "key": "keyResults",
+              "label": "Key results",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "objective",
+                  "label": "Objective",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "keyResult",
+                  "label": "Key result",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "start",
+                  "label": "Start value",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "target",
+                  "label": "Target value",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "current",
+                  "label": "Current value",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "owner",
+                  "label": "Owner",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "growth-review",
+    "category": "Growth",
+    "title": "Choose opportunities and review value",
+    "description": "Score opportunities, then compare planned benefits with realised value.",
+    "tools": [
+      {
+        "id": "T51",
+        "code": "Z01",
+        "name": "Growth Opportunity Scoring",
+        "purpose": "Ranks growth opportunities and shows how effort is spread across the three horizons.",
+        "computes": "RICE score (reach × impact × confidence ÷ effort) for each opportunity and the effort mix across the three horizons.",
+        "limits": "All inputs are your estimates; it does not research markets.",
+        "spec": {
+          "kind": "schema",
+          "fields": [],
+          "tables": [
+            {
+              "key": "opportunities",
+              "label": "Opportunities",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "opportunity",
+                  "label": "Opportunity",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "horizon",
+                  "label": "Horizon",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "H1 — extend the core",
+                      "label": "H1 — extend the core"
+                    },
+                    {
+                      "value": "H2 — build emerging business",
+                      "label": "H2 — build emerging business"
+                    },
+                    {
+                      "value": "H3 — create future options",
+                      "label": "H3 — create future options"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "ansoff",
+                  "label": "Ansoff move",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "market penetration",
+                      "label": "market penetration"
+                    },
+                    {
+                      "value": "product development",
+                      "label": "product development"
+                    },
+                    {
+                      "value": "market development",
+                      "label": "market development"
+                    },
+                    {
+                      "value": "diversification",
+                      "label": "diversification"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "reach",
+                  "label": "Customers or users reached per year",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "impact",
+                  "label": "Impact on each",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": 0.25,
+                      "label": "Minimal (0.25)"
+                    },
+                    {
+                      "value": 0.5,
+                      "label": "Low (0.5)"
+                    },
+                    {
+                      "value": 1,
+                      "label": "Medium (1)"
+                    },
+                    {
+                      "value": 2,
+                      "label": "High (2)"
+                    },
+                    {
+                      "value": 3,
+                      "label": "Massive (3)"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "confidence",
+                  "label": "Confidence in these estimates (%)",
+                  "type": "percent",
+                  "required": true
+                },
+                {
+                  "key": "effort",
+                  "label": "Effort (person-months)",
+                  "type": "number",
+                  "required": true,
+                  "min": 0.1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T30",
+        "code": "Q58",
+        "name": "Benefits & After-Action Review",
+        "purpose": "Compares planned with realised value and records what was learned.",
+        "computes": "Planned against realised value per item and overall, with the lessons recorded.",
+        "limits": "Values are what you report; attributing results to one decision is your judgement.",
+        "spec": {
+          "kind": "schema",
+          "fields": [],
+          "tables": [
+            {
+              "key": "items",
+              "label": "Decisions or initiatives reviewed",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "item",
+                  "label": "Decision or initiative",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "benefit",
+                  "label": "Benefit claimed",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "planned",
+                  "label": "Planned value",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "realised",
+                  "label": "Realised value so far",
+                  "type": "number",
+                  "required": true
+                },
+                {
+                  "key": "learned",
+                  "label": "What we learned (what happened vs what was expected, and why)",
+                  "type": "longtext"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "cash-spend",
+    "category": "Finance",
+    "title": "Bring cash and spending into view",
+    "description": "Project cash needs and see where spending is concentrated.",
+    "tools": [
+      {
+        "id": "T57",
+        "code": "F02",
+        "name": "Rolling Forecast & 13-Week Cash",
+        "purpose": "Projects cash week by week for 13 weeks and revenue, cost and cash for 12 months.",
+        "computes": "Week-by-week cash for the next 13 weeks with the low point, and a 12-month revenue, cost and cash projection from your growth assumptions.",
+        "limits": "It projects from the flows and growth rates you enter; it does not know about payments you have not listed.",
+        "spec": {
+          "kind": "schema",
+          "fields": [
+            {
+              "key": "openingCash",
+              "label": "Cash today",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "minimumCash",
+              "label": "Minimum cash you need to hold",
+              "type": "number",
+              "default": 0,
+              "min": 0
+            },
+            {
+              "key": "monthlyRevenue",
+              "label": "Current monthly revenue",
+              "type": "number",
+              "min": 0
+            },
+            {
+              "key": "revenueGrowthPct",
+              "label": "Expected monthly revenue growth (%)",
+              "type": "number",
+              "min": -100,
+              "max": 100,
+              "default": 0
+            },
+            {
+              "key": "monthlyCosts",
+              "label": "Current monthly costs",
+              "type": "number",
+              "min": 0
+            },
+            {
+              "key": "costGrowthPct",
+              "label": "Expected monthly cost growth (%)",
+              "type": "number",
+              "min": -100,
+              "max": 100,
+              "default": 0
+            }
+          ],
+          "tables": [
+            {
+              "key": "flows",
+              "label": "Cash in and out over the next 13 weeks",
+              "minRows": 1,
+              "columns": [
+                {
+                  "key": "item",
+                  "label": "Item",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "type",
+                  "label": "Type",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "receipt",
+                      "label": "receipt"
+                    },
+                    {
+                      "value": "payment",
+                      "label": "payment"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "amount",
+                  "label": "Amount",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "repeat",
+                  "label": "Repeats",
+                  "type": "select",
+                  "options": [
+                    {
+                      "value": "once",
+                      "label": "once"
+                    },
+                    {
+                      "value": "weekly",
+                      "label": "weekly"
+                    },
+                    {
+                      "value": "fortnightly",
+                      "label": "fortnightly"
+                    },
+                    {
+                      "value": "four-weekly",
+                      "label": "four-weekly"
+                    }
+                  ],
+                  "required": true
+                },
+                {
+                  "key": "startWeek",
+                  "label": "First week (1–13)",
+                  "type": "integer",
+                  "min": 1,
+                  "max": 13,
+                  "required": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "T59",
+        "code": "F04",
+        "name": "Cost & Spend Analysis",
+        "purpose": "Finds the few cost lines that make up most of the spend, and the ones growing fastest.",
+        "computes": "Ranks cost lines into A, B and C classes by cumulative share of spend, totals by category, and flags fast-growing lines.",
+        "limits": "Finds where spend is concentrated, not whether it is wasteful.",
+        "spec": {
+          "kind": "schema",
+          "fields": [],
+          "tables": [
+            {
+              "key": "lines",
+              "label": "Cost lines",
+              "minRows": 2,
+              "columns": [
+                {
+                  "key": "line",
+                  "label": "Cost line or supplier",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "category",
+                  "label": "Category",
+                  "type": "text",
+                  "required": true
+                },
+                {
+                  "key": "amount",
+                  "label": "Amount this period",
+                  "type": "number",
+                  "required": true,
+                  "min": 0
+                },
+                {
+                  "key": "prior",
+                  "label": "Amount prior period",
+                  "type": "number",
+                  "min": 0
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

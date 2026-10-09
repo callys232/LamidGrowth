@@ -4,7 +4,18 @@ import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
 
 export function InsightsHeroSlide({ embedded = false }: DocumentPageProps) {
-  return <DocumentHeroSlide page={content} embedded={embedded} />;
+  const page = embedded
+    ? content
+    : {
+        ...content,
+        hero: {
+          ...content.hero,
+          paragraphs: content.hero.paragraphs.map((p) =>
+            p.text.startsWith('CTA:') ? { ...p, text: 'CTA: Browse playbooks' } : p,
+          ),
+        },
+      };
+  return <DocumentHeroSlide page={page} embedded={embedded} />;
 }
 
 /** Topics */

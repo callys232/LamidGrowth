@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { CreatorsContent } from './CreatorsContent';
 import {
   WhoItsForCreatorsHeroSlide,
   ClarifyTheDirectionSlide1,
@@ -17,10 +18,16 @@ export function WhoItsForCreatorsDocumentPage({ embedded = false }: DocumentPage
       embedded={embedded}
       hero={<WhoItsForCreatorsHeroSlide embedded={embedded} />}
     >
-      <ClarifyTheDirectionSlide1 embedded={embedded} />
-      <ExploreOpportunitySlide2 embedded={embedded} />
-      <BuildTheBusinessBehindTheWorkSlide3 embedded={embedded} />
-      <StructureSupportsTheWorkItDoesNotReplaceItSlide4 embedded={embedded} />
+      {!embedded ? (
+        <CreatorsContent />
+      ) : (
+        <>
+          <ClarifyTheDirectionSlide1 embedded={embedded} />
+          <ExploreOpportunitySlide2 embedded={embedded} />
+          <BuildTheBusinessBehindTheWorkSlide3 embedded={embedded} />
+          <StructureSupportsTheWorkItDoesNotReplaceItSlide4 embedded={embedded} />
+        </>
+      )}
     </DocumentPageLayout>
   );
 }

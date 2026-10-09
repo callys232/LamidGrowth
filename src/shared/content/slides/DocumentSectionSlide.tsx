@@ -312,9 +312,11 @@ export function LongFormSection({
         </p>
       )}
       <div id={panel} className={`doc-more${open ? ' is-open' : ''}`} inert={!open}>
-        <div>
-          <Expanded.Provider value={true}>{children}</Expanded.Provider>
-        </div>
+        {open && (
+          <div>
+            <Expanded.Provider value={true}>{children}</Expanded.Provider>
+          </div>
+        )}
       </div>
     </>
   );

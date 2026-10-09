@@ -113,11 +113,14 @@ export function WorkspaceShell() {
       setError('');
     } catch (e) {
       if (sequence !== refreshSequence.current) return;
-      if (e instanceof ApiError && e.status === 401) navigate('/login', { replace: true });
+      if (e instanceof ApiError && e.status === 401)
+        navigate(`/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`, {
+          replace: true,
+        });
       else setError((e as Error).message);
       throw e;
     }
-  }, [navigate]);
+  }, [navigate, location.pathname, location.search]);
   useEffect(() => {
     void refresh().catch(() => {});
     const poll = () => {

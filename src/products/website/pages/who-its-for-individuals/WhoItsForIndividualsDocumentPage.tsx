@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { IndividualsContent } from './IndividualsContent';
 import {
   WhoItsForIndividualsHeroSlide,
   SetTheFocusSlide1,
@@ -17,10 +18,16 @@ export function WhoItsForIndividualsDocumentPage({ embedded = false }: DocumentP
       embedded={embedded}
       hero={<WhoItsForIndividualsHeroSlide embedded={embedded} />}
     >
-      <SetTheFocusSlide1 embedded={embedded} />
-      <StrengthenCapabilitySlide2 embedded={embedded} />
-      <KeepProgressMovingSlide3 embedded={embedded} />
-      <YourPersonalContextStaysPersonalSlide4 embedded={embedded} />
+      {!embedded ? (
+        <IndividualsContent />
+      ) : (
+        <>
+          <SetTheFocusSlide1 embedded={embedded} />
+          <StrengthenCapabilitySlide2 embedded={embedded} />
+          <KeepProgressMovingSlide3 embedded={embedded} />
+          <YourPersonalContextStaysPersonalSlide4 embedded={embedded} />
+        </>
+      )}
     </DocumentPageLayout>
   );
 }

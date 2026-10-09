@@ -62,6 +62,7 @@ export const destinations: Record<string, string> = {
   'Request a Conversation': '/enterprise/contact',
   'Explore Resources': '/resources',
   'Browse Insights': '/insights',
+  'Browse playbooks': '/insights#playbook-library',
   'Browse Guides': '/guides',
   'Browse Case Studies': '/case-studies',
   'Explore Research': '/research',

@@ -1,0 +1,56 @@
+[
+  [
+    {
+      "id": "T03",
+      "name": "Strategic Priority Ranking",
+      "purpose": "Ranks your actual strategic priorities against weighted criteria and shows how sensitive the ranking is to the weights.",
+      "area": "Strategy"
+    },
+    {
+      "id": "T04",
+      "name": "OKR & Strategy Execution Review",
+      "purpose": "Tracks objectives and key results against the time elapsed, so you see what is on pace and what is falling behind.",
+      "area": "Strategy"
+    }
+  ],
+  [
+    {
+      "id": "T21",
+      "name": "Option Comparison",
+      "purpose": "Scores options against weighted criteria and shows how fragile the winner is.",
+      "area": "Decisions"
+    },
+    {
+      "id": "T51",
+      "name": "Growth Opportunity Scoring",
+      "purpose": "Ranks growth opportunities and shows how effort is spread across the three horizons.",
+      "area": "Growth"
+    },
+    {
+      "id": "T52",
+      "name": "Growth Pathways",
+      "purpose": "Compares growth pathways and returns a sequenced portfolio that fits your capacity.",
+      "area": "Growth"
+    }
+  ],
+  [
+    {
+      "id": "T56",
+      "name": "Financial Health Ratios",
+      "purpose": "Calculates margins, growth, burn, runway and revenue per head from your period figures.",
+      "area": "Finance"
+    },
+    {
+      "id": "T57",
+      "name": "Rolling Forecast & 13-Week Cash",
+      "purpose": "Projects cash week by week for 13 weeks and revenue, cost and cash for 12 months.",
+      "area": "Finance"
+    },
+    {
+      "id": "T59",
+      "name": "Cost & Spend Analysis",
+      "purpose": "Finds the few cost lines that make up most of the spend, and the ones growing fastest.",
+      "area": "Finance"
+    }
+  ]
+]

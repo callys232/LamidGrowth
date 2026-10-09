@@ -1,0 +1,343 @@
+[
+  {
+    "route": "/",
+    "missing": [],
+    "relocatedToAbout": [
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      92,
+      93,
+      94,
+      95
+    ],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product/companion",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product/experience",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product/intelligence",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product/workflows",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/product/organizations",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works/clarity",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works/capability",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works/consistency",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works/growth",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/how-it-works/rhythm",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/individuals",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/professionals",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/creators",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/founders",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/teams",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/smes",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/enterprises",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/who-its-for/institutions",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/enterprise",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/security",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/responsible-ai",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/trust/privacy",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/trust/governance",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/pricing",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/experts",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/enterprise/contact",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/demo",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/demo/request",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/start",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/resources",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/insights",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/guides",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/case-studies",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/research",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/help",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/help/getting-started",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/help/product",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/help/account",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/support",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/developers",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/developers/api",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/developers/sdks",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/integrations",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/developers/webhooks",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/developers/changelog",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/about",
+    "missing": [],
+    "relocatedToAbout": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/about/story",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/about/leadership",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/careers",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/press",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/contact",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/legal/privacy",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/legal/terms",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/legal/cookies",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/legal/acceptable-use",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/legal/dpa",
+    "missing": [],
+    "horizontalOverflow": false
+  },
+  {
+    "route": "/accessibility",
+    "missing": [],
+    "horizontalOverflow": false
+  }
+]

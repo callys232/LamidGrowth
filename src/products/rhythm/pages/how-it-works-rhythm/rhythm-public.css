@@ -1,0 +1,265 @@
+.rhythm-public-content {
+  color: #153d2a;
+}
+.rhythm-public-content section {
+  padding-block: 32px;
+}
+.rhythm-section-heading {
+  max-width: 780px;
+  margin: 0 auto 24px;
+  text-align: center;
+}
+.rhythm-kicker {
+  display: block;
+  color: #24613e;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.content-page .rhythm-public-content h2 {
+  margin: 16px 0;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(30px, 3.5vw, 46px);
+  line-height: 1.15;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.content-page .rhythm-public-content h3 {
+  color: #153d2a;
+  font-size: 22px;
+  line-height: 1.3;
+}
+.content-page .rhythm-public-content p {
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.content-page .rhythm-section-heading > p {
+  max-width: 65ch;
+  width: 100%;
+  margin: 0 auto;
+}
+.rhythm-cycle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rhythm-cycle-card {
+  padding: 22px;
+  border: 1px solid #c7ddc8;
+  border-radius: 20px;
+  background: #edf5ed;
+}
+.rhythm-cycle-card:nth-child(2) {
+  background: #eaf4f1;
+}
+.rhythm-cycle-card:nth-child(3) {
+  background: #eef3e8;
+}
+.rhythm-cycle-card:nth-child(4) {
+  background: #eaf2f4;
+}
+.rhythm-cycle-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  color: #24613e;
+}
+.rhythm-cycle-top span {
+  font-size: 12px;
+  font-weight: 700;
+}
+.rhythm-cycle-card h3 {
+  margin: 12px 0;
+}
+.rhythm-cycle-card p {
+  margin: 0;
+}
+.rhythm-organization {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid #c7ddc8;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.rhythm-organization strong {
+  font-size: 18px;
+}
+.rhythm-organization p {
+  margin: 0;
+}
+.rhythm-public-content .rhythm-diagnosis-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
+  margin-block: 8px;
+  border: 1px solid #c7ddc8;
+  border-radius: 28px;
+  overflow: hidden;
+}
+.rhythm-diagnosis-input {
+  padding: 32px;
+  background: linear-gradient(135deg, #153d2a, #1b5c4f);
+  color: #fff;
+}
+.rhythm-diagnosis-output {
+  padding: 32px;
+  background: #e8f3ec;
+}
+.content-page .rhythm-diagnosis-input h2,
+.content-page .rhythm-diagnosis-input h3 {
+  color: #fff;
+}
+.content-page .rhythm-diagnosis-input p,
+.rhythm-diagnosis-input .rhythm-kicker {
+  color: #d5eee1;
+}
+.rhythm-diagnosis-input ul {
+  padding-left: 20px;
+  margin-block: 20px 28px;
+}
+.rhythm-diagnosis-input li {
+  padding-block: 6px;
+  line-height: 1.6;
+}
+.rhythm-diagnosis-input .button {
+  background: #d5eee1;
+  color: #153d2a;
+  border-color: #d5eee1;
+}
+.rhythm-diagnosis-output h3 {
+  margin: 16px 0 26px;
+}
+.rhythm-diagnosis-output ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rhythm-diagnosis-output li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  padding-block: 12px;
+  border-top: 1px solid #bbd4c4;
+}
+.rhythm-signal-number {
+  color: #24613e;
+  font-size: 12px;
+  font-weight: 700;
+  padding-top: 3px;
+}
+.rhythm-diagnosis-output strong {
+  font-size: 17px;
+}
+.rhythm-diagnosis-output li p {
+  margin: 6px 0 0;
+}
+.rhythm-tool-limit {
+  margin-top: 22px;
+  border-top: 1px solid #bbd4c4;
+  padding-top: 18px;
+}
+.rhythm-tool-limit summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #24613e;
+}
+.rhythm-learning-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.rhythm-learning-grid article {
+  padding: 22px;
+  border: 1px solid #c7ddc8;
+  border-radius: 18px;
+  background: #fff;
+  color: #24613e;
+}
+.rhythm-learning-grid h3 {
+  margin: 18px 0 12px;
+}
+.rhythm-learning-grid p {
+  margin: 0;
+}
+@media (max-width: 1000px) {
+  .rhythm-cycle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rhythm-diagnosis-input,
+  .rhythm-diagnosis-output {
+    padding: 32px;
+  }
+}
+@media (max-width: 650px) {
+  .rhythm-public-content section {
+    padding-block: 24px;
+  }
+  .rhythm-cycle-grid,
+  .rhythm-learning-grid,
+  .rhythm-public-content .rhythm-diagnosis-split {
+    grid-template-columns: 1fr;
+  }
+  .rhythm-organization {
+    display: block;
+  }
+  .rhythm-organization p {
+    margin-top: 12px;
+  }
+  .rhythm-diagnosis-input,
+  .rhythm-diagnosis-output {
+    padding: 22px;
+  }
+}
+.rhythm-cycle-card,
+.rhythm-learning-grid article {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+.rhythm-cycle-card[data-active='true'],
+.rhythm-learning-grid article[data-active='true'] {
+  background: #d4e9dc;
+  border-color: #24613e;
+}
+.rhythm-cycle-card:focus-visible,
+.rhythm-learning-grid article:focus-visible {
+  outline: 2px solid #24613e;
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .rhythm-cycle-card:hover,
+  .rhythm-learning-grid article:hover {
+    transform: translateY(-3px);
+    border-color: #24613e;
+    box-shadow: 0 10px 22px #153d2a16;
+  }
+  .rhythm-diagnosis-output li:hover {
+    background: #d4e9dc;
+  }
+}
+.rhythm-cycle-card:active,
+.rhythm-learning-grid article:active {
+  transform: translateY(1px) scale(0.995);
+  box-shadow: inset 0 2px 5px #153d2a12;
+}
+.rhythm-diagnosis-output li {
+  padding-inline: 10px;
+  border-radius: 10px;
+  transition: background-color 180ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rhythm-cycle-card,
+  .rhythm-learning-grid article,
+  .rhythm-diagnosis-output li {
+    transition: none;
+    transform: none;
+  }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
@@ -55,9 +55,15 @@ type Coverage = {
 };
 
 export function EnginesPage() {
+  const [searchParams] = useSearchParams();
   const { catalog, error } = useEngineCatalog();
   const [tab, setTab] = useState('All');
   const [selected, setSelected] = useState<EngineSummary | null>(null);
+  useEffect(() => {
+    const code = searchParams.get('tool');
+    const tool = catalog?.engines.find((engine) => engine.code === code);
+    if (tool) setSelected(tool);
+  }, [catalog, searchParams]);
   const run = useEngineRun(selected?.code ?? null);
   const [coverage, setCoverage] = useState<Coverage | null>(null);
   useEffect(() => {
@@ -93,9 +99,8 @@ export function EnginesPage() {
       {coverage && (
         <p className="activity-feed-status">
           {coverage.totalEntries} tools, each built on a named method or standard.{' '}
-          {coverage.validation.calculationTested} have figures checked against hand-worked
-          answers; {coverage.validation.methodReviewed} have had their method independently
-          reviewed.
+          {coverage.validation.calculationTested} have figures checked against hand-worked answers;{' '}
+          {coverage.validation.methodReviewed} have had their method independently reviewed.
         </p>
       )}
 

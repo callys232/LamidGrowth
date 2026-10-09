@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InsightPlaybooks } from './InsightPlaybooks';
 import {
   InsightsHeroSlide,
   TopicsSlide1,
@@ -16,9 +17,15 @@ export function InsightsDocumentPage({ embedded = false }: DocumentPageProps) {
       embedded={embedded}
       hero={<InsightsHeroSlide embedded={embedded} />}
     >
-      <TopicsSlide1 embedded={embedded} />
-      <UsefulByDesignSlide2 embedded={embedded} />
-      <OutcomeCollectionsSlide3 embedded={embedded} />
+      {!embedded ? (
+        <InsightPlaybooks />
+      ) : (
+        <>
+          <TopicsSlide1 embedded={embedded} />
+          <UsefulByDesignSlide2 embedded={embedded} />
+          <OutcomeCollectionsSlide3 embedded={embedded} />
+        </>
+      )}
     </DocumentPageLayout>
   );
 }

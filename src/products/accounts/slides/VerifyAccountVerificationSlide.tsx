@@ -8,14 +8,14 @@ export function VerifyAccountVerificationSlide(page: ReturnType<typeof useVerify
   return (
     <div className="auth-main">
       <Brand />
-      <Link to="/login" className="back-link">
+      <Link to={`/login?returnTo=${encodeURIComponent(returnDestination(page.params))}`} className="back-link">
         Back to sign in
       </Link>
       <div className="auth-content">
         <h2>Verify your account.</h2>
         {page.message && <p role="status">{page.message}</p>}
         {page.done ? (
-          <Link className="button button-primary full-width" to="/os">
+          <Link className="button button-primary full-width" to={returnDestination(page.params)}>
             Continue to workspace
           </Link>
         ) : (
@@ -88,3 +88,4 @@ export function VerifyAccountVerificationSlide(page: ReturnType<typeof useVerify
     </div>
   );
 }
+import { returnDestination } from '../returnDestination';

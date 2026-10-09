@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../../api';
 import { contexts } from '../../../shared/lib/contexts';
 import type { Context } from '../../../types';
+import { returnDestination } from '../returnDestination';
 
 function contextFromParams(params: URLSearchParams): Context {
   const requested = params.get('context');
@@ -47,9 +48,9 @@ export function useAuthPage({ login = false }: { login?: boolean }) {
         if (result.developmentCode)
           sessionStorage.setItem('lamid-development-otp', result.developmentCode);
         navigate(
-          `/verify?email=${encodeURIComponent(String(data.get('email')))}${result.challengeId ? `&challenge=${result.challengeId}` : ''}`,
+          `/verify?email=${encodeURIComponent(String(data.get('email')))}${result.challengeId ? `&challenge=${result.challengeId}` : ''}&returnTo=${encodeURIComponent(returnDestination(searchParams))}`,
         );
-      } else navigate('/os');
+      } else navigate(returnDestination(searchParams));
     } catch (e) {
       setError((e as Error).message);
     } finally {
