@@ -1,0 +1,77 @@
+{
+  "decision": "Open a second office in Manchester next year",
+  "input": {
+    "consequence": "high",
+    "reversibility": "costly",
+    "answers": {
+      "frame_question": 1,
+      "frame_outofscope": 1,
+      "frame_level": 0.5,
+      "alt_count": 1,
+      "alt_strawmen": 1,
+      "alt_status_quo": 1,
+      "info_backing": 0.35,
+      "info_uncertainty": 1,
+      "info_disconfirm": 0,
+      "values_before": 1,
+      "values_weighted": 0.5,
+      "values_sacrifice": 1,
+      "reason_logic": 1,
+      "reason_killcriteria": 0,
+      "reason_challenge": 0.5,
+      "commit_owner": 1,
+      "commit_date": 1,
+      "commit_buyin": 0.5,
+      "commit_firstmove": 1
+    }
+  },
+  "result": {
+    "overallPct": 45,
+    "requiredPct": 72,
+    "verdict": "blocked",
+    "headline": "Do not take this to the room yet — 1 fundamental is missing.",
+    "requirements": [
+      {
+        "id": "frame",
+        "label": "Appropriate frame",
+        "scorePct": 83.3,
+        "blocking": false
+      },
+      {
+        "id": "alternatives",
+        "label": "Real alternatives",
+        "scorePct": 100,
+        "blocking": false
+      },
+      {
+        "id": "information",
+        "label": "Reliable information",
+        "scorePct": 45,
+        "blocking": true
+      },
+      {
+        "id": "values",
+        "label": "Clear criteria and tradeoffs",
+        "scorePct": 83.3,
+        "blocking": false
+      },
+      {
+        "id": "reasoning",
+        "label": "Sound reasoning",
+        "scorePct": 50,
+        "blocking": true
+      },
+      {
+        "id": "commitment",
+        "label": "Commitment to action",
+        "scorePct": 87.5,
+        "blocking": false
+      }
+    ],
+    "nextAction": {
+      "prompt": "Have you stated what would change your mind?",
+      "remedy": "Write the specific evidence that would reverse this. A decision that nothing could falsify is a belief.",
+      "fatal": true
+    }
+  }
+}

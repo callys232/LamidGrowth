@@ -391,6 +391,12 @@ export async function createApp({
   mountPublicPlans(app, { toolsBySeat: engineCountByHomeEngine });
   mountPublicEngines(app);
   mountTraceability(app);
+  // Public header signed-in state. Without a session cookie answer directly, so anonymous visitors
+  // on public pages don't produce a 401 per page load; with one, fall through to the session
+  // middleware below and the second handler after it.
+  app.get('/api/auth/session', (req, res, next) =>
+    /(?:^|;\s*)lamid_session=/.test(req.headers.cookie || '') ? next() : res.json({ user: null }),
+  );
   app.use('/api', async (req, res, next) => {
     const token = (req.headers.cookie || '')
       .split(';')
@@ -444,6 +450,12 @@ export async function createApp({
     req.token = token;
     next();
   });
+  app.get('/api/auth/session', (req, res) =>
+    res.json({
+      user: { name: req.user.name },
+      workspace: { id: req.workspace.id, name: req.workspace.name },
+    }),
+  );
   app.post('/api/auth/logout', async (req, res) => {
     await db.prepare('DELETE FROM sessions WHERE token = ?').run(digest(req.token));
     res.clearCookie('lamid_session', { path: '/' });

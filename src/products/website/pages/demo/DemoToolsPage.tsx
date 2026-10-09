@@ -1,158 +1,135 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Empty } from '../../../../shared/ui/Empty';
-import { SkeletonList } from '../../../../shared/ui/Skeleton';
-import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
-import { useEngineRun } from '../../../engines/hooks/useEngineRun';
-import { EngineForm } from '../../../engines/pages/EnginesPage';
-import { EngineResultView } from '../../../engines/components/EngineResultView';
+import { m, useReducedMotion } from 'motion/react';
+import { ArrowDown, ArrowRight, Clock } from 'lucide-react';
+import { DecisionQualityPreview } from './DecisionQualityPreview';
+import { DemoVideoPlayer } from './DemoVideoPlayer';
+import './demo-videos.css';
+import { DemoToolPanel, EASE, PushDown } from './DemoToolPanel';
+import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
 import '../../../engines/pages/engines-page.css';
 import './demo-tools.css';
 
-const AREAS = [
-  'All',
-  'Strategy',
-  'Decisions',
-  'Operations',
-  'Risk',
-  'Governance',
-  'People',
-  'Change',
-  'Growth',
-  'Finance',
-];
-
-/** /demo — public, no signup required. "Explore the workspace" used to drop any visitor straight
- * into a real /os session with no email at all; it now sends them here instead — a real diagnostic
- * engine, run for real (POST /engines/:code/demo-run — same compute as the authenticated path, no
- * charge, no persistence, no account), so a visitor sees one genuine result before deciding to sign
- * up, rather than being handed a fake full workspace. */
+/** /demo — public, no signup required. Three slides: a hero that plays a real Decision Quality
+ * result, the same tool live with its benefits, then four more hand-picked tools to start with.
+ * Every run is real compute (POST /engines/:code/demo-run — same as the authenticated path, no
+ * charge, no persistence, no account), so a visitor sees one genuine result before deciding to
+ * sign up, rather than being handed a fake full workspace. */
 export function DemoToolsPage() {
-  const { catalog, error } = useEngineCatalog('/engines/catalog');
-  const [tab, setTab] = useState('All');
-  const [selected, setSelected] = useState<EngineSummary | null>(null);
-  const run = useEngineRun(selected?.code ?? null, true);
+  const heroToolRef = useRef<HTMLElement>(null);
+  const pickedRef = useRef<HTMLDivElement>(null);
+  const [picked, setPicked] = useState<FeaturedTool | null>(null);
+  const reduced = useReducedMotion();
 
-  const filtered = useMemo(() => {
-    if (!catalog) return [];
-    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.area === tab);
-  }, [catalog, tab]);
+  useEffect(() => {
+    if (picked) pickedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [picked]);
 
   return (
-    <div className="demo-tools-page">
-      <div className="demo-tools-container">
-        <div className="demo-tools-head">
-          <span className="demo-tools-eyebrow">TRY IT — NO ACCOUNT NEEDED</span>
-          <h1>Run a Real Diagnostic, Not a Demo Recording.</h1>
-          <p>
-            Pick any tool below and run it for real — the same compute the product uses, just not
-            saved and not charged. Each tool follows a recognised method. When you're ready for all
-            63 tools and your own workspace, <Link to="/signup">create an account</Link>.
-          </p>
-        </div>
-
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <div className="engines-tabs">
-          {AREAS.map((name) => (
-            <button
-              key={name}
-              type="button"
-              className={name === tab ? 'engines-tab is-active' : 'engines-tab'}
-              onClick={() => setTab(name)}
-            >
-              {name}
-              {catalog && name !== 'All' && (
-                <span className="engines-tab-count">
-                  {catalog.engines.filter((e) => e.area === name).length}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {!catalog ? (
-          <div className="engines-layout">
-            <SkeletonList rows={8} />
-          </div>
-        ) : (
-          <div className="engines-layout">
-            <ul className="engines-list">
-              {filtered.map((engine) => (
-                <li key={engine.code}>
-                  <button
-                    type="button"
-                    className={
-                      selected?.code === engine.code
-                        ? 'engines-list-item is-active'
-                        : 'engines-list-item'
-                    }
-                    onClick={() => setSelected(engine)}
-                  >
-                    <strong>{engine.engineName}</strong>
-                    <small>{engine.standard ?? engine.seriesName}</small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-
-            <div className="engines-detail">
-              {!selected ? (
-                <Empty title="Pick a tool">Choose one from the list to try it for real.</Empty>
-              ) : (
-                <DemoDetailPanel key={selected.code} engine={selected} run={run} />
-              )}
+    <div className="demo-tools-page" data-scroll-feedback="off">
+      <section className="demo-slide demo-hero">
+        <div className="demo-tools-container demo-hero-grid">
+          <div className="demo-hero-copy">
+            <span className="demo-tools-eyebrow">Try it — no account needed</span>
+            <h1>Is your next decision ready to make?</h1>
+            <p>
+              Run a real diagnostic in about {HERO_TOOL.minutes} minutes. Same engine as the
+              product. Nothing saved, nothing charged.
+            </p>
+            <div className="demo-hero-actions">
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={() =>
+                  heroToolRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }
+              >
+                Try {HERO_TOOL.name} <ArrowDown aria-hidden="true" size={16} />
+              </button>
+              <a className="demo-hero-link" href="#start-here">
+                Or pick another tool
+              </a>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
+          <DecisionQualityPreview />
+        </div>
+      </section>
 
-function DemoDetailPanel({
-  engine,
-  run,
-}: {
-  engine: EngineSummary;
-  run: ReturnType<typeof useEngineRun>;
-}) {
-  const { manifest, running, result, error, run: submit } = run;
+      <section ref={heroToolRef} id="try-decision-quality" className="demo-slide demo-slide-alt">
+        <div className="demo-tools-container">
+          <DemoToolPanel tool={HERO_TOOL} />
+        </div>
+      </section>
 
-  return (
-    <div className="engines-detail-inner">
-      <h3>{engine.engineName}</h3>
-      {engine.standard && <p className="engines-detail-standard">Method: {engine.standard}</p>}
-      <p className="engines-detail-purpose">{manifest?.purpose ?? engine.purpose}</p>
-
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
-        </p>
-      )}
-
-      {!manifest ? (
-        <SkeletonList rows={3} />
-      ) : result ? (
-        <>
-          <EngineResultView result={result.result} />
-          <div className="demo-tools-cta">
+      <section id="start-here" className="demo-slide">
+        <div className="demo-tools-container">
+          <div className="demo-section-head">
+            <span className="demo-tools-eyebrow">Start here</span>
+            <h2>Four more worth a first try</h2>
             <p>
-              That's a real, computed result — not a screenshot. Sign up to save it and use all 63
-              tools.
+              Each one is quick, runs for real, and answers a question you probably already have.
             </p>
-            <Link className="button button-primary" to="/signup">
-              Create your account
-            </Link>
           </div>
-        </>
-      ) : (
-        <EngineForm manifest={manifest} submitting={running} onSubmit={submit} />
-      )}
+
+          <ul className="demo-cards">
+            {START_HERE.map((tool, i) => (
+              <m.li
+                key={tool.code}
+                initial={reduced ? false : { opacity: 0, y: -16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.45, delay: i * 0.08, ease: EASE }}
+              >
+                <button
+                  type="button"
+                  className={picked?.code === tool.code ? 'demo-card is-active' : 'demo-card'}
+                  aria-pressed={picked?.code === tool.code}
+                  onClick={() => setPicked(tool)}
+                >
+                  <strong>{tool.name}</strong>
+                  <span className="demo-card-hook">{tool.hook}</span>
+                  <span className="demo-card-foot">
+                    <span>
+                      <Clock aria-hidden="true" size={13} /> ~{tool.minutes} min
+                    </span>
+                    <span className="demo-card-try">
+                      Try it <ArrowRight aria-hidden="true" size={14} />
+                    </span>
+                  </span>
+                </button>
+              </m.li>
+            ))}
+          </ul>
+
+          {picked && (
+            <div ref={pickedRef} className="demo-picked">
+              <PushDown key={picked.code} reduced={reduced}>
+                <DemoToolPanel tool={picked} startOpen />
+              </PushDown>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="demo-slide demo-motion" aria-labelledby="demo-motion-heading">
+        <div className="demo-tools-container">
+          <div className="demo-section-head">
+            <span className="demo-tools-eyebrow">From sign-up to answers</span>
+            <h2 id="demo-motion-heading">See it in motion</h2>
+          </div>
+          <DemoVideoPlayer />
+        </div>
+      </section>
+
+      <section className="demo-slide demo-closing">
+        <div className="demo-tools-container">
+          <h2>Save your results and unlock everything.</h2>
+          <p>Your own workspace, every diagnostic, and results that build on each other.</p>
+          <Link className="button button-primary" to="/signup">
+            Create your account
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

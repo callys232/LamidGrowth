@@ -25,6 +25,8 @@
     "content:catalog": "node scripts/sync-page-catalog.mjs && node scripts/generate-sitemap.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
     "@fontsource/dm-sans": "^5.2.0",
     "@fontsource/instrument-serif": "^5.2.0",
     "express": "^5.1.0",

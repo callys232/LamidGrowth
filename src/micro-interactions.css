@@ -54,9 +54,10 @@ details[open] > summary {
   :where(button, summary):not(:disabled):not([aria-disabled='true']):hover {
     box-shadow: inset 0 0 0 999px color-mix(in srgb, currentColor 5%, transparent);
   }
-  /* Navigation owns its indicators; operating-cycle cards use surface feedback. */
-  :where(main, .modal)
-    a:not(.button):not(.brand):not(:where(.home-section-nav a, .home-cycle a)):hover {
+  /* Only plain links in running text underline on hover. Component links — buttons, cards,
+     navigation, chips, menu and footer lists — carry a class or sit in a list and own their
+     indicators. */
+  :where(main, .modal) :is(p, dd, figcaption) a:not([class]):hover {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }

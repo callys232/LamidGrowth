@@ -1,0 +1,267 @@
+/* Public-site refresh: typography, line weight and interactive states for the marketing pages.
+   Loaded last (see main.tsx) and scoped to pages rendered inside ContentPage (main.content-page),
+   so the signed-in workspace keeps its own look. Content and layout are untouched — this file only
+   adjusts tokens, borders, and hover/active/focus states. */
+
+/* ---------- Tokens ---------- */
+:root:has(.content-page) {
+  --font-ui: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-editorial: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+
+  /* Lines: the old #e4dfd8 hairline measured ~1.25:1 against the surface and read as absent. */
+  --line: #cdc5ba;
+  --border: var(--line);
+  --pr-line-strong: #a89e91;
+  --pr-line-width: 1.5px;
+
+  /* Muted text: #898d92 measured 3.4:1 on white (below WCAG AA); this is 5.4:1. */
+  --text-muted: #666b71;
+  --text-secondary: #4f545a;
+
+  --pr-cta: var(--signature-red);
+  --pr-cta-hover: #a51c23;
+  --pr-cta-active: #8a1820;
+  --pr-cta-shadow: 0 1px 0 rgb(13 26 43 / 6%), 0 10px 22px -12px rgb(193 33 41 / 60%);
+  --pr-card-shadow: 0 1px 2px rgb(13 26 43 / 6%), 0 14px 32px -20px rgb(13 26 43 / 28%);
+  --pr-focus: var(--capability-purple);
+  /* Hover accents: a cool, calm teal instead of the brand red (red stays for primary CTAs). */
+  --pr-link-hover: #1d6a73;
+  --pr-cool: #2a8a93;
+  --pr-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+:root[data-theme='dark']:has(.content-page) {
+  --line: #3b4552;
+  --border: var(--line);
+  --pr-line-strong: #5f6c7c;
+  --text-muted: #aab0b7;
+  --text-secondary: #c3c8ce;
+  --pr-card-shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 16px 34px -20px rgb(0 0 0 / 75%);
+  --pr-focus: #a993ff;
+  --pr-link-hover: #8fd0d6;
+  --pr-cool: #7cc4cb;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):has(.content-page) {
+    --line: #3b4552;
+    --border: var(--line);
+    --pr-line-strong: #5f6c7c;
+    --text-muted: #aab0b7;
+    --text-secondary: #c3c8ce;
+    --pr-card-shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 16px 34px -20px rgb(0 0 0 / 75%);
+    --pr-focus: #a993ff;
+    --pr-link-hover: #8fd0d6;
+    --pr-cool: #7cc4cb;
+  }
+}
+
+/* The homepage keeps its own palette; its lines and muted text get the same lift. */
+.content-page .lamid-home {
+  --home-line: light-dark(#bcc5be, #56687a);
+  --home-muted: light-dark(#45525a, #c3d0d9);
+}
+
+/* ---------- Typography ---------- */
+:is(.content-page, .public-header, .public-footer) {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.content-page :is(p, li, dd) {
+  line-height: 1.65;
+}
+.content-page :is(h1, h2, h3) {
+  font-optical-sizing: auto;
+  letter-spacing: -0.012em;
+}
+
+/* ---------- Lines ---------- */
+.content-page
+  :is(
+    .home-companion-example,
+    .home-context-example,
+    .home-cycle ol,
+    .home-objective-card,
+    .home-permissions-card,
+    .home-disclosure,
+    .audience-service-card,
+    .audience-context-card,
+    .pricing-card,
+    .pricing-tier,
+    .pricing-bundle-engine-card,
+    .flow-section,
+    .home-context-selector button,
+    input,
+    select,
+    textarea
+  ) {
+  border-width: var(--pr-line-width);
+}
+.content-page hr {
+  border: 0;
+  border-top: var(--pr-line-width) solid var(--border);
+}
+
+/* ---------- Calls to action ---------- */
+:is(.content-page, .public-header, .public-footer) .button {
+  font-weight: 600;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 220ms ease,
+    transform 120ms var(--pr-ease);
+}
+:is(.content-page, .public-header, .public-footer) .button-primary {
+  background: var(--pr-cta);
+  border-color: var(--pr-cta);
+  color: #fff;
+  box-shadow: var(--pr-cta-shadow);
+}
+:is(.content-page, .public-header, .public-footer) .button-secondary,
+:is(.content-page, .public-header, .public-footer) .button-ghost {
+  background: transparent;
+  border: var(--pr-line-width) solid var(--ink);
+  color: var(--ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.content-page, .public-header, .public-footer) .button:not(:disabled):hover {
+    transform: none;
+  }
+  :is(.content-page, .public-header, .public-footer) .button-primary:not(:disabled):hover {
+    background: var(--pr-cta-hover);
+    border-color: var(--pr-cta-hover);
+    color: #fff;
+    box-shadow:
+      0 1px 0 rgb(13 26 43 / 6%),
+      0 14px 26px -12px rgb(193 33 41 / 70%);
+  }
+  :is(.content-page, .public-header, .public-footer)
+    :is(.button-secondary, .button-ghost):not(:disabled):hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+}
+:is(.content-page, .public-header, .public-footer) .button:not(:disabled):active {
+  transform: translateY(1px);
+}
+:is(.content-page, .public-header, .public-footer) .button-primary:not(:disabled):active {
+  background: var(--pr-cta-active);
+  border-color: var(--pr-cta-active);
+  box-shadow: none;
+}
+
+/* ---------- Links in running text ----------
+   Only plain links inside prose get an underline. Component links — buttons, cards, nav, chips,
+   footer and menu lists — carry a class or sit in a list and keep their own styling. */
+.content-page :is(p, dd, figcaption) a:not([class]) {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition:
+    color 220ms ease,
+    text-decoration-color 220ms ease;
+}
+.content-page :is(p, dd, figcaption) a:not([class]):hover {
+  color: var(--pr-link-hover);
+  text-decoration-color: currentColor;
+}
+
+/* ---------- Headings respond to hover ----------
+   A gentle cool tint, not an underline: headings that are not links should not look clickable.
+   The tint is applied through -webkit-text-fill-color, where currentColor is the heading's own
+   colour — so a white heading on a dark band stays light and a dark heading stays dark. (In the
+   color property, currentColor would be the parent's colour.) */
+.content-page :is(h2, h3) {
+  transition: -webkit-text-fill-color 320ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .content-page :is(h2, h3):hover {
+    -webkit-text-fill-color: color-mix(in srgb, currentColor 70%, var(--pr-cool));
+  }
+  /* The tint is for the heading's own text; buttons and links inside a heading keep their colours. */
+  .content-page :is(h2, h3):hover :is(button, a) {
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+/* ---------- Cards respond to hover (border and depth only — nothing moves) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .content-page
+    :is(
+      .home-objective-card,
+      .home-outcome-grid > li,
+      .audience-service-card,
+      .audience-context-card,
+      .pricing-card,
+      .pricing-tier,
+      .pricing-bundle-engine-card
+    ) {
+    transition:
+      border-color 200ms ease,
+      box-shadow 240ms ease;
+  }
+  .content-page
+    :is(
+      .home-objective-card,
+      .home-outcome-grid > li,
+      .audience-service-card,
+      .audience-context-card,
+      .pricing-card,
+      .pricing-tier,
+      .pricing-bundle-engine-card
+    ):hover {
+    transform: none;
+    border-color: var(--pr-line-strong);
+    box-shadow: var(--pr-card-shadow);
+  }
+}
+
+/* ---------- Keyboard focus ---------- */
+:is(.content-page, .public-header, .public-footer) :focus-visible {
+  outline: 3px solid var(--pr-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.content-page, .public-header, .public-footer) :is(.button, a, h2, h3) {
+    transition: none;
+  }
+}
+
+/* ---------- Images appear slowly ---------- */
+/* Full-bleed hero photos rise out of the dark hero colour when the page opens. Bento and gallery
+   heroes are light panels with the photo in a card, so they keep their own light surface (a dark
+   base there would sit behind their dark text). */
+.content-page[data-hero-scene]
+  :is(
+    .showcase-copy:not([data-design='bento'], [data-design='gallery']) > .content-hero,
+    .engine-hero,
+    .expert-hero
+  ) {
+  background-color: #10151c;
+}
+.content-page[data-hero-scene]
+  :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::before {
+  animation: pr-image-in 1.8s ease-out both;
+}
+/* Other images fade in once loaded and on screen (see useImageReveal). */
+.content-page[data-image-reveal] img {
+  transition: opacity 1.2s ease-out;
+}
+.content-page[data-image-reveal] img:not([data-revealed]) {
+  opacity: 0;
+}
+@keyframes pr-image-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .content-page[data-hero-scene]
+    :is(.showcase-copy > .content-hero, .engine-hero, .expert-hero)::before {
+    animation: none;
+  }
+}

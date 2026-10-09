@@ -140,6 +140,7 @@ export function useTalentPage() {
     slots: AvailabilitySlot[];
   } | null>(null);
   const [teams, setTeams] = useState<ExpertTeam[]>([]);
+  const [teamError, setTeamError] = useState('');
   const [reviewQueue, setReviewQueue] = useState<ReviewQueueEntry[]>([]);
   const [handoffInbox, setHandoffInbox] = useState<HandoffItem[]>([]);
   const [busy, setBusy] = useState(false);
@@ -463,8 +464,9 @@ export function useTalentPage() {
   async function loadTeams() {
     try {
       setTeams(await api<ExpertTeam[]>('/expert-teams/mine', undefined, 'GET'));
+      setTeamError('');
     } catch (error) {
-      setError((error as Error).message);
+      setTeamError((error as Error).message);
     }
   }
   useEffect(() => {
@@ -476,7 +478,7 @@ export function useTalentPage() {
     const form = event.currentTarget;
     const data = new FormData(form);
     setBusy(true);
-    setError('');
+    setTeamError('');
     try {
       await api('/expert-teams', {
         name: data.get('name'),
@@ -486,7 +488,7 @@ export function useTalentPage() {
       await loadTeams();
       notify('Expert team created.');
     } catch (error) {
-      setError((error as Error).message);
+      setTeamError((error as Error).message);
     } finally {
       setBusy(false);
     }
@@ -610,6 +612,7 @@ export function useTalentPage() {
     removeAvailability,
     cancelBooking,
     createTeam,
+    teamError,
     claimReview,
     completeReview,
     acceptHandoff,

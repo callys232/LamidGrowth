@@ -80,6 +80,13 @@
 .expert-phase-tint {
   background: var(--surface-alt, #f5f3ef);
 }
+#expert-matching {
+  color: #0d1a2b;
+}
+#expert-matching .expert-phase-intro p,
+#expert-matching .expert-card p {
+  color: #374151;
+}
 .expert-phase-dark {
   background: var(--midnight);
   color: #fff;
@@ -96,7 +103,7 @@
   font-size: 48px;
   line-height: 1;
   color: var(--page-accent, #c12129);
-  opacity: 0.5;
+  opacity: 0.75;
   transition:
     opacity 0.22s,
     transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -107,7 +114,7 @@
 }
 .expert-phase-dark .expert-phase-index {
   color: #fff;
-  opacity: 0.35;
+  opacity: 0.65;
 }
 .expert-phase-dark .expert-eyebrow {
   color: #b7c3d6;
@@ -188,7 +195,7 @@
 /* Same gentle scroll-band emphasis as the audience page's context grid, piggybacking on the
    site-wide InteractionFeedback observer (no extra JS). */
 .expert-card-grid > li {
-  opacity: 0.65;
+  opacity: 1;
   transform: translateY(8px);
   transition:
     opacity 0.5s ease,

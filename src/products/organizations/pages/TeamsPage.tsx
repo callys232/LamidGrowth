@@ -25,6 +25,7 @@ function useTeamsPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [createError, setCreateError] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [busy, setBusy] = useState(false);
@@ -44,13 +45,14 @@ function useTeamsPage() {
   const create = useCallback(async () => {
     if (!name.trim()) return;
     setBusy(true);
+    setCreateError('');
     try {
       await api<Team>('/expert-teams', { name, description });
       setName('');
       setDescription('');
       load();
     } catch (err) {
-      setError((err as Error).message);
+      setCreateError((err as Error).message);
     } finally {
       setBusy(false);
     }
@@ -71,7 +73,7 @@ function useTeamsPage() {
     [load],
   );
 
-  return { teams, loading, error, name, setName, description, setDescription, create, busy, removeMember };
+  return { teams, loading, error, createError, name, setName, description, setDescription, create, busy, removeMember };
 }
 
 /** /os/teams — the expert teams (pods) you lead or belong to, and their membership. */
@@ -134,6 +136,9 @@ export function TeamsPage() {
         <button type="button" disabled={page.busy || !page.name.trim()} onClick={page.create}>
           Create team
         </button>
+        {page.createError && (
+          <p role="alert" className="activity-feed-status activity-feed-error">{page.createError}</p>
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { SuiteStory } from '../../../../shared/content/SuiteStory';
 import {
   HowItWorksCapabilityHeroSlide,
   CapabilityIsMoreThanSkillSlide1,
@@ -13,6 +14,10 @@ import {
 
 /** /how-it-works/capability — sections in reading order. */
 export function HowItWorksCapabilityDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded)
+    return (
+      <SuiteStory page={content} suite="Capability" hero={<HowItWorksCapabilityHeroSlide />} />
+    );
   return (
     <DocumentPageLayout
       page={content}

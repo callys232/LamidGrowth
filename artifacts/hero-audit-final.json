@@ -1,0 +1,432 @@
+[
+  {
+    "route": "/",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/",
+    "width": 390,
+    "lines": 5,
+    "overflow": false
+  },
+  {
+    "route": "/product",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/product",
+    "width": 390,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/product/companion",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/product/companion",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/product/experience",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/product/experience",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/product/intelligence",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/product/intelligence",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/product/organizations",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/product/organizations",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works",
+    "width": 1440,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works",
+    "width": 390,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/clarity",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/clarity",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/capability",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/capability",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/consistency",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/consistency",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/growth",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/growth",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/rhythm",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/how-it-works/rhythm",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for",
+    "width": 390,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/individuals",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/individuals",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/professionals",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/professionals",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/creators",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/creators",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/founders",
+    "width": 1440,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/founders",
+    "width": 390,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/teams",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/teams",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/smes",
+    "width": 1440,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/smes",
+    "width": 390,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/enterprises",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/enterprises",
+    "width": 390,
+    "lines": 5,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/institutions",
+    "width": 1440,
+    "lines": 5,
+    "overflow": false
+  },
+  {
+    "route": "/who-its-for/institutions",
+    "width": 390,
+    "lines": 6,
+    "overflow": false
+  },
+  {
+    "route": "/enterprise/contact",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/enterprise/contact",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/demo",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/demo",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/demo/request",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/demo/request",
+    "width": 390,
+    "lines": 4,
+    "overflow": false
+  },
+  {
+    "route": "/start",
+    "width": 1440,
+    "noHero": true
+  },
+  {
+    "route": "/start",
+    "width": 390,
+    "noHero": true
+  },
+  {
+    "route": "/resources",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/resources",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/insights",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/insights",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/guides",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/guides",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/help",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/help",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/help/getting-started",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/help/getting-started",
+    "width": 390,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/help/product",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/help/product",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/help/account",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/help/account",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/support",
+    "width": 1440,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/support",
+    "width": 390,
+    "lines": 1,
+    "overflow": false
+  },
+  {
+    "route": "/about",
+    "width": 1440,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/about",
+    "width": 390,
+    "lines": 3,
+    "overflow": false
+  },
+  {
+    "route": "/contact",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/contact",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/accessibility",
+    "width": 1440,
+    "lines": 2,
+    "overflow": false
+  },
+  {
+    "route": "/accessibility",
+    "width": 390,
+    "lines": 2,
+    "overflow": false
+  }
+]

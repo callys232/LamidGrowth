@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { destinations } from './destinations';
+import { RhythmToolPreview } from './RhythmToolPreview';
 
 /** A handful of canonical CTAs point at the very page they're written on (e.g. "View Pricing" on
  * /pricing itself) — a plain <Link> to your own current URL is a no-op, previously reported as
@@ -29,6 +30,7 @@ export function CopyLine({ text, paragraph }: { text: string; paragraph: number 
           .split('|')
           .map((raw, i) => {
             const label = raw.trim();
+            if (label === 'Explore the Rhythm') return <RhythmToolPreview key={i} label={label} />;
             const to = destinations[label];
             const external = to && /^(mailto:|https?:)/.test(to);
             const [toPath, toHash] = to ? to.split('#') : [];

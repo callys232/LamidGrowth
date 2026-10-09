@@ -99,7 +99,7 @@
   background: var(--surface, #fff);
   border: 1px solid var(--border, #dedfdc);
   overflow: hidden;
-  opacity: 0.65;
+  opacity: 1;
   transform: translateY(8px);
   transition:
     opacity 0.5s ease,

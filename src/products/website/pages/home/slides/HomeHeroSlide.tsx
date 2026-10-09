@@ -1,9 +1,10 @@
 import { BrainCircuit, Layers3, ShieldCheck, Workflow } from 'lucide-react';
-import type { MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
 import content from '../content.json';
 import { HomeOperatingCycle } from '../components/HomeOperatingCycle';
 import { CompanionExample } from '../components/CompanionExample';
 import { HomeSkyline } from '../components/HomeSkyline';
+import { HOME_EXAMPLES } from '../components/homeExamples';
 
 const SCROLL_DURATION_MS = 1100;
 
@@ -40,6 +41,9 @@ const discover = [
 ].map((label) => content.sections.find((s) => s.label === label)!);
 
 export function HomeHeroSlide() {
+  // The stage last hovered or focused in the operating cycle; the Companion walkthrough until then.
+  const [preview, setPreview] = useState('Companion');
+  const example = HOME_EXAMPLES.find((e) => e.key === preview) ?? HOME_EXAMPLES[0];
   const [continuity, control] = content.continuity.paragraphs;
   const [continuityIntro, ...continuityBody] = continuity.text.split(': ');
   const progression = continuityBody
@@ -60,8 +64,8 @@ export function HomeHeroSlide() {
             <ShieldCheck size={15} />
             <span data-source-paragraph={control.sourceParagraph}>{control.text}</span>
           </p>
-          <CompanionExample />
-          <HomeOperatingCycle />
+          <CompanionExample example={example} />
+          <HomeOperatingCycle active={example.key} onPreview={setPreview} />
         </div>
       </section>
       <section

@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { SuiteStory } from '../../../../shared/content/SuiteStory';
 import {
   HowItWorksConsistencyHeroSlide,
   MoveTheNextActionSlide1,
@@ -11,6 +12,10 @@ import {
 
 /** /how-it-works/consistency — sections in reading order. */
 export function HowItWorksConsistencyDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded)
+    return (
+      <SuiteStory page={content} suite="Consistency" hero={<HowItWorksConsistencyHeroSlide />} />
+    );
   return (
     <DocumentPageLayout
       page={content}

@@ -34,7 +34,7 @@ export const destinations: Record<string, string> = {
   'Experience Clarity': '/os/clarity',
   'Explore Capability': '/how-it-works/capability',
   'Build Your Rhythm': '/how-it-works/rhythm',
-  'Explore the Rhythm': '/how-it-works/rhythm',
+  'Explore the Rhythm': '/os/rhythm',
   'Start With LAMID ONE': '/start?context=Individual',
   'Explore LAMID ONE for Professionals': '/start?context=Professional',
   'Explore LAMID ONE for Creators': '/start?context=Creator',

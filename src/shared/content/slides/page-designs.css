@@ -49,9 +49,9 @@
   :is(.content-hero-more-toggle) {
   color: var(--ink, #0d1a2b);
 }
-/* Designs whose hero carries no orbit graphic. */
+/* Designs whose hero carries no orbit graphic (unless the page opts in with heroOrbit). */
 .content-page
-  .showcase-copy:is(
+  .showcase-copy:not([data-hero-orbit]):is(
     [data-design='cards'],
     [data-design='bento'],
     [data-design='editorial'],
@@ -220,6 +220,9 @@
 }
 .content-page .canonical-copy[data-design='bento'] .page-flow .flow-band {
   justify-items: start;
+  /* Compact: the accent bar frames the statement without large empty bands above and below. */
+  margin-block: clamp(20px, 2.5vw, 32px);
+  padding-block: clamp(32px, 4vw, 52px);
   padding-left: clamp(24px, 4vw, 48px);
   text-align: left;
   background: none;
@@ -620,5 +623,30 @@
   }
   .content-page .canonical-copy[data-design='bento'] .flow-band .canonical-ctas {
     justify-content: center;
+  }
+}
+
+/* ═══ Hero orbit opt-in (DocumentPageLayout heroOrbit): copy and the interactive orbit side by side;
+   stacked, with a smaller orbit, on narrow screens. ═══════════════════════════════════════════ */
+.content-page .showcase-copy[data-hero-orbit][data-design] > .content-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  text-align: left;
+  gap: 28px;
+}
+.content-page .showcase-copy[data-hero-orbit][data-design] > .content-hero > .orbit-visual {
+  display: block;
+  width: min(100%, 360px);
+  justify-self: center;
+}
+@media (min-width: 960px) {
+  .content-page .showcase-copy[data-hero-orbit][data-design] > .content-hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: center;
+    gap: clamp(32px, 4vw, 64px);
+  }
+  .content-page .showcase-copy[data-hero-orbit][data-design] > .content-hero > .orbit-visual {
+    width: min(100%, 520px);
   }
 }

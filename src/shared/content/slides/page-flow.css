@@ -480,3 +480,15 @@
     transition: none;
   }
 }
+
+/* Two-sentence section headings: one sentence per line (SentenceLines). On wide screens the
+   heading may use the full column, so a sentence wraps only when it is genuinely too long. */
+.flow-title-line {
+  display: block;
+  text-wrap: balance;
+}
+@media (min-width: 1024px) {
+  .content-page .canonical-copy .page-flow h2:has(> .flow-title-line) {
+    max-width: none;
+  }
+}

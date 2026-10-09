@@ -38,7 +38,6 @@ export function EngineResultView({
         </div>
       )}
 
-      {result.standard && <p className="engine-result-standard">Method: {result.standard}</p>}
 
       {result.status && STATUS_NOTE[result.status] && (
         <div className="engine-result-status" role="status">

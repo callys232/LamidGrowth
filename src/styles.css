@@ -1,5 +1,5 @@
 :root {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-ui);
   color: #0d1a2b;
   background: #fbfaf7;
   font-synthesis: none;
@@ -11,7 +11,7 @@
   --paper: #fbfaf7;
   --sage: var(--border);
   --gold: var(--text-muted);
-  --serif: 'Instrument Serif', Georgia, serif;
+  --serif: var(--font-editorial);
 }
 * {
   box-sizing: border-box;
@@ -1039,7 +1039,7 @@ small {
   font-weight: 500;
 }
 .preview-focus h4 {
-  font-family: 'DM Sans';
+  font-family: var(--font-ui);
   font-size: 11px;
   font-weight: 500;
   margin: 8px 0 4px;
@@ -1268,7 +1268,7 @@ small {
 .footer-top > div:first-child > p {
   font-size: 10px;
   line-height: 1.9;
-  color: var(--text-muted);
+  color: #b7c3d6;
   margin-top: 20px;
 }
 .footer-column {
@@ -1277,7 +1277,7 @@ small {
   gap: 11px;
 }
 .footer-column h3 {
-  font-family: 'DM Sans';
+  font-family: var(--font-ui);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -1772,7 +1772,7 @@ small {
   display: flex;
   align-items: center;
   gap: 2px;
-  font: 8px 'DM Sans';
+  font: 8px var(--font-ui);
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 3px 4px;
@@ -2458,7 +2458,6 @@ small {
 .week-calendar-empty {
   font-size: 11px;
   color: var(--text-muted);
-  opacity: 0.6;
   margin: 0;
 }
 .week-calendar-day ul {
@@ -2993,7 +2992,7 @@ small {
   color: var(--text-muted);
 }
 .kanban-card > h3 {
-  font-family: 'DM Sans';
+  font-family: var(--font-ui);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;

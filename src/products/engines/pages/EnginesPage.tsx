@@ -206,9 +206,6 @@ function EngineDetailPanel({
   return (
     <div className="engines-detail-inner">
       <h3>{engine.engineName}</h3>
-      {(manifest?.standard ?? engine.standard) && (
-        <p className="engines-detail-standard">Method: {manifest?.standard ?? engine.standard}</p>
-      )}
       <p className="engines-detail-purpose">{manifest?.purpose ?? engine.purpose}</p>
       <EngineScope
         computes={manifest?.computes ?? engine.computes}

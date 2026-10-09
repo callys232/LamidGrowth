@@ -5,6 +5,9 @@ import { Brand } from '../ui/Brand';
 import { Cta } from '../ui/Cta';
 import { MotionSurface } from '../visuals/Motion';
 import { applyTheme, getStoredTheme } from '../lib/theme';
+import { api } from '../../api';
+
+type Session = { user: { name: string } | null };
 
 type Entry = [string, string, string?];
 const menus: {
@@ -176,6 +179,18 @@ export function PublicHeader() {
     return () => {
       observer.disconnect();
       media.removeEventListener('change', sync);
+    };
+  }, []);
+  // Signed-in state: unknown (null) until the session check resolves, so the header keeps showing
+  // the signed-out actions rather than flashing between the two. Any failure reads as signed out.
+  const [signedInAs, setSignedInAs] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    api<Session>('/auth/session')
+      .then((session) => live && setSignedInAs(session.user?.name ?? null))
+      .catch(() => {});
+    return () => {
+      live = false;
     };
   }, []);
   const [mobile, setMobile] = useState(false);
@@ -382,10 +397,21 @@ export function PublicHeader() {
             >
               {dark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
             </button>
-            <Link to="/login" className="sign-in" onClick={navigate}>
-              Sign in
-            </Link>
-            <Cta to="/start">Experience LAMID ONE</Cta>
+            {signedInAs ? (
+              <>
+                <span className="sign-in signed-in-as" title={`Signed in as ${signedInAs}`}>
+                  {signedInAs.split(/\s+/)[0]}
+                </span>
+                <Cta to="/os">Open workspace</Cta>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="sign-in" onClick={navigate}>
+                  Sign in
+                </Link>
+                <Cta to="/start">Experience LAMID ONE</Cta>
+              </>
+            )}
           </div>
         </div>
       </header>

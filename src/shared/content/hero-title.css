@@ -29,3 +29,35 @@
     gap: 48px;
   }
 }
+.content-page .showcase-copy[data-design] .content-hero .document-hero-copy h1 {
+  width: 100%;
+  max-width: 24ch;
+  font-size: clamp(36px, 8cqi, 68px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.content-page .showcase-copy[data-design] .document-hero-copy > .eyebrow {
+  text-align: inherit;
+}
+.content-page .showcase-copy[data-design] .document-hero-copy > p {
+  width: 100%;
+  max-width: 58ch;
+  line-height: 1.7;
+  text-align: inherit;
+}
+.content-page
+  .showcase-copy:is([data-design='gallery'], [data-design='bento'])
+  .document-hero-copy
+  h1,
+.content-page
+  .showcase-copy:is([data-design='gallery'], [data-design='bento'])
+  .document-hero-copy
+  > p {
+  margin-inline: auto;
+}
+.content-page .showcase-copy[data-design] .document-hero-copy {
+  container-type: inline-size;
+  min-width: 0;
+  width: 100%;
+}

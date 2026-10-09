@@ -1,0 +1,213 @@
+{
+  "S01": {
+    "input": {
+      "answers": {
+        "p1": {
+          "level": 4,
+          "evidence": 0
+        },
+        "p2": {
+          "level": 2,
+          "evidence": 1
+        },
+        "p3": {
+          "level": 3,
+          "evidence": 2
+        },
+        "p4": {
+          "level": 1,
+          "evidence": 0
+        },
+        "p5": {
+          "level": 2,
+          "evidence": 1
+        },
+        "p6": {
+          "level": 3,
+          "evidence": 2
+        }
+      }
+    },
+    "result": {
+      "overallPct": 45.3,
+      "maturityLabel": "Developing",
+      "weakestArea": "Strategic direction",
+      "sections": [
+        {
+          "label": "Purpose, vision and values",
+          "scorePct": 50
+        },
+        {
+          "label": "Strategic direction",
+          "scorePct": 38
+        },
+        {
+          "label": "Used in decisions",
+          "scorePct": 48
+        }
+      ]
+    }
+  },
+  "F01": {
+    "input": {
+      "currency": "GBP",
+      "periodLabel": "Month",
+      "periods": [
+        {
+          "revenue": 100000,
+          "cogs": 40000,
+          "opex": 50000
+        },
+        {
+          "revenue": 110000,
+          "cogs": 43000,
+          "opex": 52000
+        }
+      ],
+      "cashBalance": 250000,
+      "headcount": 20
+    },
+    "result": {
+      "currency": "GBP",
+      "grossMarginPct": 60.48,
+      "operatingMarginPct": 11.9,
+      "revenueGrowthPct": 10,
+      "revenuePerHead": 10500,
+      "periods": [
+        {
+          "revenue": 100000,
+          "grossMarginPct": 60,
+          "operatingMarginPct": 10
+        },
+        {
+          "revenue": 110000,
+          "grossMarginPct": 60.91,
+          "operatingMarginPct": 13.64
+        }
+      ]
+    }
+  },
+  "Q21": {
+    "input": {
+      "criteria": [
+        {
+          "id": "c1",
+          "name": "Fit",
+          "weight": 3,
+          "direction": "higher_better"
+        },
+        {
+          "id": "c2",
+          "name": "Price",
+          "weight": 2,
+          "direction": "lower_better"
+        }
+      ],
+      "options": [
+        {
+          "id": "a",
+          "name": "Vendor A",
+          "scores": {
+            "c1": 7,
+            "c2": 50
+          }
+        },
+        {
+          "id": "b",
+          "name": "Vendor B",
+          "scores": {
+            "c1": 9,
+            "c2": 80
+          }
+        }
+      ]
+    },
+    "result": {
+      "ranked": [
+        {
+          "name": "Vendor B",
+          "totalPct": 60
+        },
+        {
+          "name": "Vendor A",
+          "totalPct": 40
+        }
+      ],
+      "winner": "Vendor B",
+      "sensitivity": [
+        {
+          "name": "Fit",
+          "currentWeightPct": 60,
+          "flipDistancePct": 25,
+          "flipsTo": "Vendor A",
+          "direction": "decrease"
+        },
+        {
+          "name": "Price",
+          "currentWeightPct": 40,
+          "flipDistancePct": 25,
+          "flipsTo": "Vendor A",
+          "direction": "increase"
+        }
+      ]
+    }
+  },
+  "R25": {
+    "input": {
+      "problem": "Customer onboarding takes 21 days instead of 7 for enterprise clients since March.",
+      "isNot": "Small-business clients still onboard in 6 days.",
+      "causes": [
+        {
+          "cause": "Security review queue",
+          "explains": "",
+          "category": "Process",
+          "evidence": "some",
+          "fitsFacts": "yes"
+        },
+        {
+          "cause": "Only one reviewer",
+          "explains": "Security review queue",
+          "category": "People",
+          "evidence": "strong",
+          "fitsFacts": "yes"
+        },
+        {
+          "cause": "Reviewer moved to part-time in March",
+          "explains": "Only one reviewer",
+          "category": "People",
+          "evidence": "strong",
+          "fitsFacts": "yes"
+        },
+        {
+          "cause": "Contract template too long",
+          "explains": "",
+          "category": "Materials and inputs",
+          "evidence": "none",
+          "fitsFacts": "partly"
+        }
+      ]
+    },
+    "result": {
+      "roots": [
+        {
+          "chain": [
+            "Security review queue",
+            "Only one reviewer",
+            "Reviewer moved to part-time in March"
+          ],
+          "root": "Reviewer moved to part-time in March",
+          "evidence": "strong",
+          "category": "People"
+        },
+        {
+          "chain": ["Contract template too long"],
+          "root": "Contract template too long",
+          "evidence": "none",
+          "category": "Materials and inputs"
+        }
+      ],
+      "mostProbable": "Reviewer moved to part-time in March",
+      "categoriesNotConsidered": ["Tools and equipment", "Environment", "Measurement"]
+    }
+  }
+}

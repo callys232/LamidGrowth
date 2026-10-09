@@ -17,7 +17,7 @@ test('homepage puts its main actions above the fold and the product page preview
     const target = await link.getAttribute('href');
     await expect(page.locator(target!)).toHaveCount(1);
   }
-  await expect(page.locator('.home-objective-card')).toHaveCount(3);
+  await expect(page.locator('.home-pillar-card')).toHaveCount(6);
   await page.goto('/product');
   const clarity = page.getByRole('tab', { name: 'Clarity', exact: true });
   await clarity.focus();
@@ -87,7 +87,7 @@ test('homepage explains its cycle and changes relevant depth by audience', async
   await expect(example).toContainText('Governance');
   await expect(example).toContainText('Are teams aligned for the next launch?');
   await expect(example).not.toContainText('Companion');
-  await selector.getByRole('button', { name: 'Personal', exact: true }).click();
+  await selector.getByRole('button', { name: 'Individual', exact: true }).click();
   await expect(example).toContainText('Companion');
   await expect(example).toContainText('Is this role the right next move?');
   await selector.getByRole('button', { name: 'Founder', exact: true }).focus();
@@ -96,6 +96,11 @@ test('homepage explains its cycle and changes relevant depth by audience', async
   await selector.getByRole('button', { name: 'Team', exact: true }).click();
   await expect(example).toContainText('What should we prioritize this week?');
   await expect(example).not.toContainText('Governance');
+  await expect(selector.getByRole('button')).toHaveCount(8);
+  await selector.getByRole('button', { name: 'Creator', exact: true }).click();
+  await expect(example).toContainText('Which offer should I launch next?');
+  await selector.getByRole('button', { name: 'Institution', exact: true }).click();
+  await expect(example).toContainText('Human Oversight');
   await expect(page.locator('.home-expansion-path li')).toHaveCount(5);
   await expect(page.getByRole('heading', { name: 'A project deadline changes.' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Explore the product workspace' })).toHaveAttribute(
@@ -148,7 +153,6 @@ test('supporting homepage details expand and collapse with keyboard access', asy
     'Explore the three ways progress continues',
     'Explore the intelligence cycle',
     'How your workspace grows with you',
-    'This Week',
   ]) {
     const summary = page.locator('summary').filter({ hasText: label });
     const disclosure = summary.locator('..');

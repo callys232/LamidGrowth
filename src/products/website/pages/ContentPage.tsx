@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { pageTheme } from '../../../pageThemes';
 import { CanonicalCopy } from '../../../shared/content/CanonicalCopy';
 import { heroScene } from '../../../shared/content/heroScene';
+import { useImageReveal } from '../../../shared/visuals/useImageReveal';
 import '../../../shared/content/hero-scene.css';
 import { sourcePage } from '../../../shared/content/sourcePage';
 import { Footer } from '../../../shared/layout/Footer';
@@ -16,6 +17,7 @@ export function ContentPage({ children }: { children?: ReactNode }) {
   const page = sourcePage(pathname);
   // A still from the homepage video behind this page's hero (see hero-scene.css).
   const scene = !children ? heroScene(pathname) : undefined;
+  useImageReveal(pathname);
   return (
     <>
       <PublicHeader />

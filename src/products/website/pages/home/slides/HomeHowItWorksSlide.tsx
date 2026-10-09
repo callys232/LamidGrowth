@@ -1,6 +1,8 @@
+import { MechanicIcon } from '../components/MechanicIcon';
 import { homeSection } from './homeSection';
 
-/** How It Works: the five mechanics, each a numbered title paragraph followed by its body. */
+/** How It Works: the five mechanics as framed cards (icon, title, body). The source titles are
+ * numbered ("1.One Entry Point"); the number only picks the icon and is not shown. */
 export function HomeHowItWorksSlide() {
   const [title, intro, ...rest] = homeSection('How It Works').paragraphs;
   const steps = rest.flatMap((paragraph, index) =>
@@ -11,31 +13,27 @@ export function HomeHowItWorksSlide() {
       className="home-section home-mechanics-section"
       id={`section-${title.sourceParagraph}`}
       aria-labelledby="home-heading-mechanics"
+      data-scroll-feedback="off"
     >
       <div className="home-container">
-        <header className="home-section-heading">
+        <header className="home-mechanics-head">
           <h2 id="home-heading-mechanics" data-source-paragraph={title.sourceParagraph}>
             {title.text}
           </h2>
           <p data-source-paragraph={intro.sourceParagraph}>{intro.text}</p>
         </header>
-        <ol className="home-mechanics-list">
+        <ul className="home-mechanics-list">
           {steps.map(({ heading, body }) => {
             const [, number, name] = heading.text.match(/^(\d+)\.\s*(.*)$/) ?? [, '', heading.text];
             return (
               <li key={heading.sourceParagraph}>
-                <span className="home-mechanics-number" aria-hidden="true">
-                  {number.padStart(2, '0')}
-                </span>
-                <h3 data-source-paragraph={heading.sourceParagraph}>
-                  <span className="sr-only">{number}. </span>
-                  {name}
-                </h3>
+                <MechanicIcon step={Number(number)} />
+                <h3 data-source-paragraph={heading.sourceParagraph}>{name}</h3>
                 <p data-source-paragraph={body.sourceParagraph}>{body.text}</p>
               </li>
             );
           })}
-        </ol>
+        </ul>
       </div>
     </section>
   );

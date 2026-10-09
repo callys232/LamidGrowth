@@ -1,4 +1,4 @@
-﻿import { ArrowRight, Compass, Layers3, ListChecks } from 'lucide-react';
+import { ArrowRight, Compass, Layers3, ListChecks } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const stages = [
@@ -12,13 +12,26 @@ const stages = [
   },
 ];
 
-export function HomeOperatingCycle() {
+/** Hovering or focusing a stage previews its walkthrough in the example above (CompanionExample);
+ * clicking still opens that stage's page. */
+export function HomeOperatingCycle({
+  active,
+  onPreview,
+}: {
+  active?: string;
+  onPreview?: (stage: string) => void;
+}) {
   return (
     <div className="home-cycle" aria-label="Your operating cycle">
       <ol>
         {stages.map(({ name, description, icon: Icon, route }) => (
           <li key={name}>
-            <Link to={`/how-it-works/${route}`}>
+            <Link
+              to={`/how-it-works/${route}`}
+              data-active={active === name || undefined}
+              onPointerEnter={() => onPreview?.(name)}
+              onFocus={() => onPreview?.(name)}
+            >
               <Icon size={22} strokeWidth={1.4} />
               <span>
                 <strong>{name}</strong>

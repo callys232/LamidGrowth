@@ -237,7 +237,7 @@
    data-scroll-feedback/data-scroll-active — no extra JS needed here. Kept subtle (not a hard
    hide/reveal) since the same attribute toggles back off once scrolled past. */
 .audience-context-grid > li {
-  opacity: 0.6;
+  opacity: 1;
   transform: translateY(8px);
   transition:
     opacity 0.5s ease,

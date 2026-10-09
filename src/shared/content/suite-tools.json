@@ -1,0 +1,108 @@
+{
+  "Capability": [
+    {
+      "id": "T40",
+      "name": "Skills Gap Analysis",
+      "area": "People",
+      "purpose": "Compares required and current skill levels by role and finds skills held by only one person."
+    },
+    {
+      "id": "T41",
+      "name": "Workforce Plan",
+      "area": "People",
+      "purpose": "Compares future demand with projected supply for each role and sets the hire or develop route."
+    },
+    {
+      "id": "T42",
+      "name": "Succession & Bench Strength",
+      "area": "People",
+      "purpose": "Measures succession coverage for each critical seat."
+    },
+    {
+      "id": "T47",
+      "name": "Competency & 360 Review",
+      "area": "People",
+      "purpose": "Compares self and others’ ratings against expected levels to find gaps and blind spots."
+    },
+    {
+      "id": "T48",
+      "name": "Next-Role Readiness",
+      "area": "People",
+      "purpose": "Measures how ready a person is for a target role and how long the gaps take to close."
+    },
+    {
+      "id": "T46",
+      "name": "Development ROI",
+      "area": "People",
+      "purpose": "Shows how deeply each programme is evaluated and its return after attribution."
+    }
+  ],
+  "Consistency": [
+    {
+      "id": "T06",
+      "name": "Delivery Flow Metrics",
+      "area": "Operations",
+      "purpose": "Measures how fast and how predictably work flows: throughput, cycle time, work in progress and flow efficiency."
+    },
+    {
+      "id": "T07",
+      "name": "Drift & Stability Monitor",
+      "area": "Operations",
+      "purpose": "Tells real drift from routine variation in any metric, so you react to signals and not to noise."
+    },
+    {
+      "id": "T08",
+      "name": "Dependency Board",
+      "area": "Operations",
+      "purpose": "Tracks what teams need from each other and when, and shows which dependencies are late and who is most often late."
+    },
+    {
+      "id": "T09",
+      "name": "Workload & Capacity Balance",
+      "area": "Operations",
+      "purpose": "Compares demand with capacity for each team or person and suggests where spare capacity could absorb overload."
+    },
+    {
+      "id": "T12",
+      "name": "Operating Rhythm & Meeting Design",
+      "area": "Operations",
+      "purpose": "Shows what your recurring meetings cost, how much is status updates, and whether weekly, monthly and quarterly reviews exist."
+    },
+    {
+      "id": "T28",
+      "name": "Early Warning Indicators",
+      "area": "Risk",
+      "purpose": "Tracks leading indicators against amber and red thresholds and shows how soon they will breach."
+    },
+    {
+      "id": "T29",
+      "name": "Risk Register",
+      "area": "Risk",
+      "purpose": "Keeps risks with owners and controls, and shows the heat map, risks above appetite and overdue actions."
+    },
+    {
+      "id": "T36",
+      "name": "Business Continuity (BIA)",
+      "area": "Risk",
+      "purpose": "Sets recovery priorities and finds activities that would not recover in time."
+    },
+    {
+      "id": "T32",
+      "name": "Governance Assessment",
+      "area": "Governance",
+      "purpose": "Assesses governance against recognised principles, with evidence for each answer."
+    },
+    {
+      "id": "T33",
+      "name": "Commitments & Obligations Register",
+      "area": "Governance",
+      "purpose": "Tracks contracts, partnership terms, public pledges and mandates against their due dates."
+    },
+    {
+      "id": "T34",
+      "name": "Compliance Assessment",
+      "area": "Governance",
+      "purpose": "Shows which compliance obligations are controlled and evidenced, by regulation."
+    }
+  ]
+}

@@ -15,6 +15,7 @@ export function HowItWorksRhythmDocumentPage({ embedded = false }: DocumentPageP
     <DocumentPageLayout
       page={content}
       embedded={embedded}
+      contentId="rhythm-overview"
       hero={<HowItWorksRhythmHeroSlide embedded={embedded} />}
     >
       <TodaySlide1 embedded={embedded} />

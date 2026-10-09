@@ -4,6 +4,9 @@ import '@fontsource/dm-sans/600.css';
 import '@fontsource/dm-sans/700.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource/instrument-serif/400.css';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/fraunces/standard-italic.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -24,6 +27,7 @@ import './showcase.css';
 import './ui-refresh.css';
 import './theme.css';
 import './micro-interactions.css';
+import './public-refresh.css';
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {

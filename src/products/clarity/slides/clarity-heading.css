@@ -1,0 +1,23 @@
+/* Workspace Clarity heading with the interactive orbit beside it (stacked on narrow screens).
+   The orbit's labels need ~380px to clear the sphere, so it never renders smaller than that
+   beside the heading. */
+.clarity-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.clarity-heading-orbit {
+  width: min(100%, 400px);
+  justify-self: center;
+  margin-bottom: 12px;
+}
+@media (min-width: 1180px) {
+  .clarity-heading {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 28px;
+  }
+  .clarity-heading-orbit {
+    margin-bottom: 0;
+  }
+}

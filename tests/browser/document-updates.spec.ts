@@ -30,7 +30,16 @@ for (const route of update.routes as string[]) {
     }
     if (route === '/') {
       await captureHomepage();
-      for (const name of ['Personal', 'Founder', 'Team', 'Enterprise']) {
+      for (const name of [
+        'Individual',
+        'Professional',
+        'Creator',
+        'Founder',
+        'Team',
+        'SME',
+        'Enterprise',
+        'Institution',
+      ]) {
         await page
           .getByRole('group', { name: 'Choose an audience context' })
           .getByRole('button', { name, exact: true })
@@ -109,7 +118,7 @@ test('restored homepage preserves the original layout and interactive sections',
     ).toBeVisible();
   }
   await choices.first().click();
-  await expect(page.locator('.home-rhythm-reviews details')).toHaveCount(4);
+  await expect(page.locator('.home-rhythm-steps > li')).toHaveCount(4);
   await expect(page.locator('.home-expansion-path li')).toHaveCount(5);
   for (const section of await page.locator('.lamid-home > .home-section').all()) {
     await section.scrollIntoViewIfNeeded();

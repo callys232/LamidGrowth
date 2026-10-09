@@ -51,7 +51,6 @@ export function EngineDocumentPage({
     <div className="engine-page" data-source-page={content.page}>
       <section className="engine-hero">
         <div className="engine-container">
-          {content.hero.label && <span className="engine-eyebrow">{content.hero.label}</span>}
           <h1 data-source-paragraph={title.sourceParagraph}>
             {content.route.startsWith('/product') ? <TwoLineTitle text={title.text} /> : title.text}
           </h1>

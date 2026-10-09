@@ -294,6 +294,9 @@ export function TalentDashboardPage() {
           <Button type="submit" disabled={page.busy}>
             Create team
           </Button>
+          {page.teamError && (
+            <p role="alert" className="activity-feed-status activity-feed-error">{page.teamError}</p>
+          )}
         </form>
         {page.teams.length === 0 ? (
           <Empty title="No expert teams yet">

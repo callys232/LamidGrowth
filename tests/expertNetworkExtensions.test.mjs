@@ -491,9 +491,10 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   const admin = await signup('Extensions Admin', adminEmail);
   const client = await signup('Governance Client', 'governance-client@example.test');
   const expert = await makeExpert('Governance Expert', 'governance-expert@example.test');
-  // F-SC-02: the review queue is eligibility-gated on verification, declared domain and, for a
-  // jurisdiction-license-required red case, matching declared jurisdiction. Elevate this expert
-  // to match what the case below will require.
+  // F-SC-02 (tightened by audit H6): the review queue is eligibility-gated on verification,
+  // declared domain and, for a jurisdiction-license-required red case, a current verified licence
+  // for that jurisdiction — a declared jurisdiction alone is not enough. Elevate this expert to
+  // match what the case below will require.
   await request(
     '/talent/profile',
     { headline: 'Governance Expert — consultant', skills: ['strategy'], domains: ['Legal and compliance'], jurisdiction: 'Germany' },
@@ -502,6 +503,23 @@ test('governance: a jurisdiction rule forces a scoping case to red, and the revi
   await store.db
     .prepare("UPDATE talent_profiles SET vetting_status = 'verified' WHERE user_id = ?")
     .run(await userId(expert));
+  const credentials = await request(
+    '/talent/credentials',
+    {
+      type: 'license',
+      title: 'Rechtsanwalt admission',
+      issuer: 'Rechtsanwaltskammer',
+      jurisdiction: 'Germany',
+      scope: 'Legal and compliance',
+    },
+    expert,
+  );
+  const licenceId = credentials.data.find((c) => c.title === 'Rechtsanwalt admission').id;
+  assert.equal(
+    (await request(`/admin/talent/credentials/${licenceId}`, { decision: 'verified' }, admin, 'PATCH'))
+      .status,
+    200,
+  );
 
   const rule = await request(
     '/admin/jurisdiction-rules',

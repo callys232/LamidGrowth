@@ -1,0 +1,48 @@
+.rhythm-demo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.rhythm-demo-layout > div {
+  min-width: 0;
+}
+.rhythm-demo-benefits {
+  padding: 24px;
+  border: 1px solid #c7ddc8;
+  border-radius: 18px;
+  background: #edf5ed;
+  color: #153d2a;
+}
+.rhythm-demo-benefits h3 {
+  margin: 0 0 18px;
+  color: #153d2a;
+  font-size: 23px;
+  line-height: 1.25;
+}
+.rhythm-demo-benefits ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 22px;
+}
+.rhythm-demo-benefits li {
+  padding: 12px 0;
+  border-top: 1px solid #c7ddc8;
+}
+.rhythm-demo-benefits strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #153d2a;
+}
+.rhythm-demo-benefits span {
+  display: block;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.65;
+}
+@media (max-width: 760px) {
+  .rhythm-demo-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

@@ -23,8 +23,7 @@ export function DocumentHeroSlide({
   const collapsible = !embedded && more.reduce((n, p) => n + p.text.length, 0) > 120;
   return (
     <section className="content-hero section-wrap">
-      <div>
-        <div className="eyebrow">{page.name}</div>
+      <div className="document-hero-copy">
         <Title data-source-paragraph={page.hero.paragraphs[0].sourceParagraph}>
           {!embedded && page.route.startsWith('/product') && !page.title.includes('\n') ? (
             <TwoLineTitle text={page.title} />

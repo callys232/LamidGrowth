@@ -238,9 +238,41 @@ function ListBlock({
   );
 }
 
+/** A two-sentence heading ("One OS. Different Relevant Depth.") sets each sentence on its own
+ * line; anything else renders as written. The space between the sentences is kept, so the text
+ * copies and reads aloud unchanged. */
+function SentenceLines({ text }: { text: string }) {
+  const parts = text.match(/^([^.?!]+[.?!])\s+([^.?!]+[.?!])$/);
+  if (!parts) return <>{text}</>;
+  return (
+    <>
+      <span className="flow-title-line">{parts[1]}</span>{' '}
+      <span className="flow-title-line">{parts[2]}</span>
+    </>
+  );
+}
+
+/** Optional accordion behaviour for long-form sections: inside a LongFormGroup only one section
+ * is open at a time, so opening one closes the previous. Outside a group each section opens on
+ * its own, as before. */
+const LongFormGroupContext = createContext<{
+  openId: string | null;
+  setOpenId: (id: string | null) => void;
+} | null>(null);
+
+export function LongFormGroup({ children }: { children: ReactNode }) {
+  const [openId, setOpenId] = useState<string | null>(null);
+  return (
+    <LongFormGroupContext.Provider value={{ openId, setOpenId }}>
+      {children}
+    </LongFormGroupContext.Provider>
+  );
+}
+
 /** Long-form copy, collapsed: the title and a two-line teaser, with the full section (in its
- * usual layout) opening beneath on request. */
-function LongFormSection({
+ * usual layout) opening beneath on request. Exported so a page can supply its own opened layout
+ * (the homepage does) while keeping the same trigger, teaser and accordion behaviour. */
+export function LongFormSection({
   heading,
   title,
   teaser,
@@ -251,8 +283,12 @@ function LongFormSection({
   teaser?: string;
   children: ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
+  const [ownOpen, setOwnOpen] = useState(false);
+  const group = useContext(LongFormGroupContext);
   const panel = useId();
+  const open = group ? group.openId === panel : ownOpen;
+  const toggle = () =>
+    group ? group.setOpenId(open ? null : panel) : setOwnOpen((value) => !value);
   return (
     <>
       <h2 data-source-paragraph={heading.sourceParagraph}>
@@ -261,7 +297,7 @@ function LongFormSection({
           className="flow-longform-trigger"
           aria-expanded={open}
           aria-controls={panel}
-          onClick={() => setOpen((value) => !value)}
+          onClick={toggle}
         >
           <span className="flow-longform-title">{title}</span>
           <span className="flow-longform-cue">
@@ -384,7 +420,9 @@ export function DocumentSectionSlide({
   const Icon = iconFor(section.title);
   // A collapsed long-form section shows its title on the toggle, so the body omits it.
   const title = longForm ? null : (
-    <h2 data-source-paragraph={heading.sourceParagraph}>{section.title}</h2>
+    <h2 data-source-paragraph={heading.sourceParagraph}>
+      <SentenceLines text={section.title} />
+    </h2>
   );
   const eyebrow = <span className="doc-eyebrow">{String(index + 1).padStart(2, '0')}</span>;
   const className = [

@@ -188,7 +188,6 @@ export function GrowthPage() {
       <div className="panel-heading">
         <div>
           <h2>Growth</h2>
-          <span>KPIs with real evidence, and experiments with structured results.</span>
         </div>
       </div>
       {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
