@@ -1,0 +1,214 @@
+.integration-directory {
+  padding-block: 28px;
+  scroll-margin-top: 100px;
+}
+.integration-directory-heading {
+  max-width: 700px;
+  margin-bottom: 20px;
+}
+.integration-kicker {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: #376455;
+}
+.content-page .integration-directory h2 {
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(28px, 3vw, 40px);
+  color: #253e35;
+  line-height: 1.15;
+  margin: 8px 0 12px;
+}
+.content-page .integration-directory p {
+  color: #465a50;
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0;
+}
+.integration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+.integration-card {
+  background: #edf5ef;
+  border: 1px solid #cbdcd1;
+  padding: 24px;
+  border-radius: 22px;
+  color: #253e35;
+  transition:
+    background 180ms,
+    transform 180ms,
+    box-shadow 180ms;
+}
+.integration-card:nth-child(2) {
+  background: #eaf2f5;
+}
+.integration-card:nth-child(3) {
+  background: #f2f2e7;
+}
+.integration-card:hover,
+.integration-card:focus-within,
+.integration-card:has(details[open]) {
+  background: #d9eadd;
+  box-shadow: 0 10px 26px #253e3510;
+}
+.integration-card:nth-child(2):is(:hover, :focus-within, :has(details[open])) {
+  background: #d8e7ed;
+}
+.integration-card:nth-child(3):is(:hover, :focus-within, :has(details[open])) {
+  background: #e4e5cf;
+}
+.integration-card:hover {
+  transform: translateY(-3px);
+}
+.integration-card:active {
+  transform: translateY(1px);
+}
+.integration-card:focus-visible {
+  outline: 2px solid #376455;
+  outline-offset: 3px;
+}
+.integration-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #376455;
+  margin-bottom: 22px;
+}
+.integration-card-top span {
+  font-size: 11px;
+  font-weight: 650;
+  text-align: right;
+}
+.content-page .integration-card h3 {
+  font-size: 27px;
+  font-family: var(--font-editorial, Georgia, serif);
+  color: #253e35;
+  margin: 0 0 10px;
+}
+.integration-card ol {
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.integration-card li {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 180ms;
+}
+.integration-card li:hover {
+  background: #ffffff90;
+}
+.content-page .integration-scope {
+  background: #ffffff80;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+.integration-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-weight: 650;
+  font-size: 13px;
+  color: #285743;
+}
+.integration-context {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 32px;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid #d6dfd8;
+  border-radius: 20px;
+  margin: 24px 0 32px;
+  background: #f8faf6;
+}
+.integration-context ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+.integration-context li,
+.integration-provider-tags span {
+  background: #e2ece3;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #315643;
+}
+.integration-provider-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.integration-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 30px;
+  margin-top: 28px;
+  border-radius: 24px;
+  background: linear-gradient(120deg, #203c32, #365b4a);
+  color: #fff;
+}
+.content-page .integration-control h2 {
+  color: #fff;
+}
+.integration-control .integration-kicker {
+  color: #bbdfcc;
+}
+.content-page .integration-control p {
+  color: #e1eee6;
+}
+.integration-control .button {
+  margin-top: 18px;
+}
+.integration-control-points {
+  display: grid;
+  gap: 10px;
+}
+.integration-control-points div {
+  padding: 16px;
+  border: 1px solid #ffffff30;
+  background: #ffffff0c;
+  border-radius: 14px;
+}
+.integration-control-points strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+.integration-closing {
+  margin-top: 28px;
+  text-align: center;
+  padding: 22px;
+}
+@media (max-width: 850px) {
+  .integration-grid {
+    grid-template-columns: 1fr;
+  }
+  .integration-context,
+  .integration-control {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .integration-card {
+    transition: none;
+  }
+  .integration-card:hover,
+  .integration-card:active {
+    transform: none;
+  }
+}

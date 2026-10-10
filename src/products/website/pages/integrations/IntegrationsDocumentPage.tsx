@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { IntegrationDirectory } from './IntegrationDirectory';
 import {
   IntegrationsHeroSlide,
   IntegrationCategoriesSlide1,
@@ -16,9 +17,15 @@ export function IntegrationsDocumentPage({ embedded = false }: DocumentPageProps
       embedded={embedded}
       hero={<IntegrationsHeroSlide embedded={embedded} />}
     >
-      <IntegrationCategoriesSlide1 embedded={embedded} />
-      <ControlTheConnectionSlide2 embedded={embedded} />
-      <ReduceFragmentationWithoutCreatingANewSiloSlide3 embedded={embedded} />
+      {!embedded ? (
+        <IntegrationDirectory />
+      ) : (
+        <>
+          <IntegrationCategoriesSlide1 embedded={embedded} />
+          <ControlTheConnectionSlide2 embedded={embedded} />
+          <ReduceFragmentationWithoutCreatingANewSiloSlide3 embedded={embedded} />
+        </>
+      )}
     </DocumentPageLayout>
   );
 }

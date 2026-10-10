@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { DemoVideoLibrary } from './DemoVideoLibrary';
 import {
   DemoHeroSlide,
   ChooseAContextSlide1,
@@ -17,6 +18,7 @@ export function DemoDocumentPage({ embedded = false }: DocumentPageProps) {
       embedded={embedded}
       hero={<DemoHeroSlide embedded={embedded} />}
     >
+      {!embedded && <DemoVideoLibrary />}
       <ChooseAContextSlide1 embedded={embedded} />
       <SeeTheCoreOperatingCycleSlide2 embedded={embedded} />
       <PlanATeamExpansionSlide3 embedded={embedded} />

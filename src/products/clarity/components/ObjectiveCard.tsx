@@ -2,8 +2,12 @@ import { CalendarDays, Plus } from 'lucide-react';
 import { dateLabel } from '../../../shared/lib/dateLabel';
 import type { Objective } from '../../../types';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
+import { ObjectiveForm } from '../../workspace/components/WorkspaceShell';
+import { DeleteGoalButton } from './DeleteGoalButton';
+import { useState } from 'react';
 export function ObjectiveCard({ objective }: { objective: Objective }) {
-  const { state, newAction } = useWorkspace();
+  const { state, newAction, refresh, notify } = useWorkspace();
+  const [editing, setEditing] = useState(false);
   const actions = state.actions.filter((a) => a.objectiveId === objective.id);
   const done = actions.filter((a) => a.status === 'Done').length;
   const percent = actions.length ? Math.round((done / actions.length) * 100) : 0;
@@ -41,6 +45,31 @@ export function ObjectiveCard({ objective }: { objective: Objective }) {
           Next action <Plus size={14} />
         </button>
       </div>
+      {state.permissions.includes('work:write') && (
+        <div className="objective-goal-controls">
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setEditing(true)}
+            aria-label={`Edit goal: ${objective.title}`}
+          >
+            Edit goal
+          </button>
+          <DeleteGoalButton objective={objective} />
+        </div>
+      )}
+      {editing && (
+        <ObjectiveForm
+          context={objective.context}
+          objective={objective}
+          onClose={() => setEditing(false)}
+          onSaved={async () => {
+            setEditing(false);
+            notify('Goal updated.');
+            await refresh().catch(() => notify('Goal saved. Reload to refresh your workspace.'));
+          }}
+        />
+      )}
     </article>
   );
 }

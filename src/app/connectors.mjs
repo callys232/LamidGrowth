@@ -1,16 +1,8 @@
 import { randomUUID, randomBytes, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 
-// Connector Platform (F-CORE-01): the audit asks for "connector grants and health" plus a
-// "versioned event bus/outbox contract." This codebase has no existing OAuth flow or external
-// provider integration to ground a specific connector type in — fabricating one would mean
-// pretending to integrate with a service nothing here actually calls. What's real and buildable:
-// a governance/registry layer (useful regardless of which providers get wired up later) and a
-// genuinely working `webhook` connector type — an inbound URL bound to a signed HMAC secret,
-// verifiable today, not a stub for an unbuilt OAuth grant. `manual` connectors just track status
-// for a human-operated integration. No "typed temporal context graph" or "five-scope memory
-// service" is built — both are large, novel concepts with no existing precedent or real consumer
-// in this codebase (same discipline already applied to F-SI-01's "dependency graph").
+// Shared connector registry, signed inbound webhooks, recorded grants, and workspace events.
+// Provider OAuth, encrypted credentials, snapshots, and revocation live in nativeConnectors.mjs.
 
 const CONNECTOR_TYPES = ['webhook', 'manual'];
 const CONNECTOR_STATUSES = ['connected', 'disconnected', 'error'];
@@ -30,7 +22,9 @@ const fail = (message, status) => {
 // milestone decision (projects.mjs), recommendation status change (recommendations.mjs).
 export async function emitDomainEvent(store, { workspaceId, eventType, payload }) {
   await store.db
-    .prepare('INSERT INTO event_outbox (id, workspace_id, event_type, payload, created_at) VALUES (?, ?, ?, ?, ?)')
+    .prepare(
+      'INSERT INTO event_outbox (id, workspace_id, event_type, payload, created_at) VALUES (?, ?, ?, ?, ?)',
+    )
     .run(randomUUID(), workspaceId, eventType, JSON.stringify(payload), new Date().toISOString());
 }
 
@@ -48,7 +42,9 @@ export function mountConnectorWebhook(app, store) {
     if (!connector || connector.type !== 'webhook' || !connector.secret)
       return res.status(404).json({ error: 'Webhook connector not found.' });
     const signature = req.get('X-Signature') || '';
-    const expected = createHmac('sha256', connector.secret).update(req.rawBody || Buffer.from('')).digest('hex');
+    const expected = createHmac('sha256', connector.secret)
+      .update(req.rawBody || Buffer.from(''))
+      .digest('hex');
     const expectedBuf = Buffer.from(expected, 'hex');
     const signatureBuf = Buffer.from(signature, 'hex');
     if (signatureBuf.length !== expectedBuf.length || !timingSafeEqual(signatureBuf, expectedBuf))
@@ -62,7 +58,13 @@ export function mountConnectorWebhook(app, store) {
         eventType: `connector.${connector.name}.received`,
         payload: req.body || {},
       });
-      await log(connector.workspace_id, 'webhook', 'Connector webhook received', connector.id, connector.name);
+      await log(
+        connector.workspace_id,
+        'webhook',
+        'Connector webhook received',
+        connector.id,
+        connector.name,
+      );
     });
     res.json({ ok: true });
   });
@@ -72,7 +74,9 @@ export function mountConnectors(app, store) {
   const { db, transaction, log } = store;
 
   async function connectorFor(id, workspaceId) {
-    const row = await db.prepare('SELECT * FROM connectors WHERE id = ? AND workspace_id = ?').get(id, workspaceId);
+    const row = await db
+      .prepare('SELECT * FROM connectors WHERE id = ? AND workspace_id = ?')
+      .get(id, workspaceId);
     if (!row) fail('Connector not found.', 404);
     return row;
   }
@@ -83,9 +87,11 @@ export function mountConnectors(app, store) {
 
   app.get('/api/connectors', async (req, res) => {
     res.json(
-      (await db.prepare('SELECT * FROM connectors WHERE workspace_id = ? ORDER BY created_at').all(req.workspace.id)).map(
-        redact,
-      ),
+      (
+        await db
+          .prepare('SELECT * FROM connectors WHERE workspace_id = ? ORDER BY created_at')
+          .all(req.workspace.id)
+      ).map(redact),
     );
   });
 
@@ -99,8 +105,24 @@ export function mountConnectors(app, store) {
     await transaction(async () => {
       await db
         .prepare('INSERT INTO connectors VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(id, req.workspace.id, input.name, input.type, 'disconnected', secret, null, req.user.id, createdAt);
-      await log(req.workspace.id, req.user.name, 'Connector registered', id, `${input.name} (${input.type})`);
+        .run(
+          id,
+          req.workspace.id,
+          input.name,
+          input.type,
+          'disconnected',
+          secret,
+          null,
+          req.user.id,
+          createdAt,
+        );
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Connector registered',
+        id,
+        `${input.name} (${input.type})`,
+      );
     });
     const row = await connectorFor(id, req.workspace.id);
     res.status(201).json({ ...redact(row), secret });
@@ -108,12 +130,20 @@ export function mountConnectors(app, store) {
 
   app.patch('/api/connectors/:id/status', async (req, res) => {
     const connector = await connectorFor(req.params.id, req.workspace.id);
+    if (!CONNECTOR_TYPES.includes(connector.type))
+      fail('Service status is managed by the provider connection.', 409);
     const input = statusSchema.parse(req.body);
     await transaction(async () => {
       await db
         .prepare('UPDATE connectors SET status = ?, last_sync_at = ? WHERE id = ?')
         .run(input.status, new Date().toISOString(), connector.id);
-      await log(req.workspace.id, req.user.name, 'Connector status updated', connector.id, input.status);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Connector status updated',
+        connector.id,
+        input.status,
+      );
     });
     res.json(redact(await connectorFor(connector.id, req.workspace.id)));
   });
@@ -131,12 +161,16 @@ export function mountConnectors(app, store) {
   app.get('/api/connectors/:id/grants', async (req, res) => {
     const connector = await connectorFor(req.params.id, req.workspace.id);
     res.json(
-      await db.prepare('SELECT * FROM connector_grants WHERE connector_id = ? ORDER BY granted_at').all(connector.id),
+      await db
+        .prepare('SELECT * FROM connector_grants WHERE connector_id = ? ORDER BY granted_at')
+        .all(connector.id),
     );
   });
 
   app.post('/api/connectors/:id/grants', async (req, res) => {
     const connector = await connectorFor(req.params.id, req.workspace.id);
+    if (!CONNECTOR_TYPES.includes(connector.type))
+      fail('Service scopes are granted through provider authorization.', 409);
     const input = grantSchema.parse(req.body);
     const id = randomUUID();
     const grantedAt = new Date().toISOString();
@@ -144,13 +178,21 @@ export function mountConnectors(app, store) {
       await db
         .prepare('INSERT INTO connector_grants VALUES (?, ?, ?, ?, ?, ?)')
         .run(id, connector.id, input.scope, req.user.id, grantedAt, null);
-      await log(req.workspace.id, req.user.name, 'Connector grant added', connector.id, input.scope);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Connector grant added',
+        connector.id,
+        input.scope,
+      );
     });
     res.status(201).json(await db.prepare('SELECT * FROM connector_grants WHERE id = ?').get(id));
   });
 
   app.delete('/api/connectors/:id/grants/:grantId', async (req, res) => {
     const connector = await connectorFor(req.params.id, req.workspace.id);
+    if (!CONNECTOR_TYPES.includes(connector.type))
+      fail('Disconnect the service to revoke provider access.', 409);
     const grant = await db
       .prepare('SELECT * FROM connector_grants WHERE id = ? AND connector_id = ?')
       .get(req.params.grantId, connector.id);
@@ -160,7 +202,13 @@ export function mountConnectors(app, store) {
       await db
         .prepare('UPDATE connector_grants SET revoked_at = ? WHERE id = ?')
         .run(new Date().toISOString(), grant.id);
-      await log(req.workspace.id, req.user.name, 'Connector grant revoked', connector.id, grant.scope);
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Connector grant revoked',
+        connector.id,
+        grant.scope,
+      );
     });
     res.json({ ok: true });
   });
@@ -170,12 +218,19 @@ export function mountConnectors(app, store) {
   app.get('/api/events', async (req, res) => {
     const since = z.coerce.number().int().nonnegative().default(0).parse(req.query.since);
     const rows = await db
-      .prepare('SELECT * FROM event_outbox WHERE workspace_id = ? AND seq > ? ORDER BY seq LIMIT 100')
+      .prepare(
+        'SELECT * FROM event_outbox WHERE workspace_id = ? AND seq > ? ORDER BY seq LIMIT 100',
+      )
       .all(req.workspace.id, since);
     if (rows.length)
       await db
-        .prepare('UPDATE event_outbox SET delivered_at = ? WHERE id = ANY(?) AND delivered_at IS NULL')
-        .run(new Date().toISOString(), rows.map((r) => r.id));
+        .prepare(
+          'UPDATE event_outbox SET delivered_at = ? WHERE id = ANY(?) AND delivered_at IS NULL',
+        )
+        .run(
+          new Date().toISOString(),
+          rows.map((r) => r.id),
+        );
     res.json(
       rows.map((row) => ({
         seq: Number(row.seq),

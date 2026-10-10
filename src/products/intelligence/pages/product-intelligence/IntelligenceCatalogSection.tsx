@@ -3,6 +3,7 @@ import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/use
 import { EngineScope } from '../../../engines/components/EngineScope';
 import { SkeletonCards } from '../../../../shared/ui/Skeleton';
 import './intelligence-catalog.css';
+import { CatalogEngineDemo } from '../../../website/pages/demo/CatalogEngineDemo';
 
 const AREAS = [
   'Strategy',
@@ -16,12 +17,8 @@ const AREAS = [
   'Finance',
 ] as const;
 
-/** Public, logged-out, purely informational — no buttons, tabs, or forms. Public/audience pages
- * only educate; running a diagnostic is a signed-in workspace action (POST /api/engines/:code/run
- * requires a session — see src/app/engines.mjs), never available here. Every name/count/purpose
- * below is read live from the real registry (public GET /api/engines), not written or edited as
- * marketing copy — same "use the real thing, don't restate it" rule as the live price list on the
- * pricing page. */
+/** Public catalog with tool-specific video walkthroughs. Definitions come from the live
+ * registry; diagnosis CTAs lead to the signed-in workspace and preserve the chosen tool. */
 export function IntelligenceCatalogSection() {
   const { catalog, error } = useEngineCatalog('/engines/catalog');
 
@@ -64,6 +61,7 @@ export function IntelligenceCatalogSection() {
                     )}
                     <p>{engine.purpose}</p>
                     <EngineScope computes={engine.computes} limits={engine.limits} />
+                    <CatalogEngineDemo engine={engine} />
                   </li>
                 ))}
               </ul>

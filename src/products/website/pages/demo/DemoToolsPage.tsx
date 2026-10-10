@@ -4,6 +4,8 @@ import { m, useReducedMotion } from 'motion/react';
 import { ArrowDown, ArrowRight, Clock } from 'lucide-react';
 import { DecisionQualityPreview } from './DecisionQualityPreview';
 import { DemoVideoPlayer } from './DemoVideoPlayer';
+import { DemoVideoLibrary } from './DemoVideoLibrary';
+import { AllEngineDemos } from './CatalogEngineDemo';
 import './demo-videos.css';
 import { DemoToolPanel, EASE, PushDown } from './DemoToolPanel';
 import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
@@ -27,11 +29,16 @@ export function DemoToolsPage() {
 
   return (
     <div className="demo-tools-page" data-scroll-feedback="off">
+      <section className="demo-slide">
+        <div className="demo-tools-container">
+          <DemoVideoLibrary primary />
+        </div>
+      </section>
       <section className="demo-slide demo-hero">
         <div className="demo-tools-container demo-hero-grid">
           <div className="demo-hero-copy">
             <span className="demo-tools-eyebrow">Try it — no account needed</span>
-            <h1>Is your next decision ready to make?</h1>
+            <h2>Is your next decision ready to make?</h2>
             <p>
               Run a real diagnostic in about {HERO_TOOL.minutes} minutes. Same engine as the
               product. Nothing saved, nothing charged.
@@ -121,6 +128,7 @@ export function DemoToolsPage() {
         </div>
       </section>
 
+      <AllEngineDemos />
       <section className="demo-slide demo-closing">
         <div className="demo-tools-container">
           <h2>Save your results and unlock everything.</h2>

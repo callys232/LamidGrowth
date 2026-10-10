@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { destinations } from './destinations';
 import { RhythmToolPreview } from './RhythmToolPreview';
+import { demoDestination } from './demoDestination';
 
 /** A handful of canonical CTAs point at the very page they're written on (e.g. "View Pricing" on
  * /pricing itself) — a plain <Link> to your own current URL is a no-op, previously reported as
@@ -21,7 +22,7 @@ function scrollForSelfLink(trigger: HTMLElement, hash: string) {
 }
 
 export function CopyLine({ text, paragraph }: { text: string; paragraph: number }) {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   if (/^(CTA:|Links?:)/.test(text)) {
     return (
       <div className="canonical-ctas" data-source-paragraph={paragraph}>
@@ -31,7 +32,15 @@ export function CopyLine({ text, paragraph }: { text: string; paragraph: number 
           .map((raw, i) => {
             const label = raw.trim();
             if (label === 'Explore the Rhythm') return <RhythmToolPreview key={i} label={label} />;
-            const to = destinations[label];
+            const to = [
+              'Book a Demo',
+              'Start the Demo',
+              'See the OS in Action',
+              'See LAMID ONE in Action',
+              'Request an Organizational Demo',
+            ].includes(label)
+              ? demoDestination(pathname, search)
+              : destinations[label];
             const external = to && /^(mailto:|https?:)/.test(to);
             const [toPath, toHash] = to ? to.split('#') : [];
             const selfLink = to && !external && toPath === pathname;

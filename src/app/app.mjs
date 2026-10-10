@@ -18,6 +18,7 @@ import { mountTasks } from './tasks.mjs';
 import { mountGoals } from './goals.mjs';
 import { mountGrowth } from './growth.mjs';
 import { mountConnectors, mountConnectorWebhook } from './connectors.mjs';
+import { mountNativeConnectors } from './nativeConnectors.mjs';
 import { mountReturnState } from './returnState.mjs';
 import { mountSignals } from './signals.mjs';
 import { mountFiles } from './files.mjs';
@@ -177,6 +178,7 @@ export async function createApp({
   paymentProvider = (name) =>
     name === 'paystack' ? paystackProvider() : name === 'crypto_usdt' ? cryptoUsdtProvider() : null,
   kycProvider = () => genericKycProvider(),
+  connectorOAuth,
   ecosystemAdminEmails = (process.env.ECOSYSTEM_ADMIN_EMAILS || '')
     .split(',')
     .map((email) => email.trim().toLowerCase())
@@ -471,7 +473,10 @@ export async function createApp({
     res.json(await accounts.mfa.enroll(req.user.id, req.user.email || req.user.name));
   });
   app.post('/api/mfa/confirm', async (req, res) => {
-    const input = z.object({ code: z.string().min(6).max(6) }).strict().parse(req.body);
+    const input = z
+      .object({ code: z.string().min(6).max(6) })
+      .strict()
+      .parse(req.body);
     const result = await accounts.mfa.confirm(req.user.id, input.code);
     if (!result)
       return res.status(400).json({
@@ -481,11 +486,20 @@ export async function createApp({
     res.json({ ok: true, ...result });
   });
   app.post('/api/mfa/disable', async (req, res) => {
-    const input = z.object({ password: z.string().max(128) }).strict().parse(req.body);
+    const input = z
+      .object({ password: z.string().max(128) })
+      .strict()
+      .parse(req.body);
     if (!(await verifyCurrentPassword(req, input.password)))
       return res.status(403).json({ error: 'Your password is incorrect.' });
     await accounts.mfa.disable(req.user.id);
-    await log(req.workspace.id, req.user.name, 'MFA disabled', req.user.id, 'Removed by account owner');
+    await log(
+      req.workspace.id,
+      req.user.name,
+      'MFA disabled',
+      req.user.id,
+      'Removed by account owner',
+    );
     res.json({ ok: true });
   });
   app.get('/api/admin/welcome-rewards', async (req, res) => {
@@ -561,21 +575,35 @@ export async function createApp({
         .status(403)
         .json({ error: 'Only an ecosystem administrator can change a workspace tier.' });
     const input = z
-      .object({ tier: z.enum(['individual', 'team', 'enterprise']), mfaCode: z.string().max(64).optional() })
+      .object({
+        tier: z.enum(['individual', 'team', 'enterprise']),
+        mfaCode: z.string().max(64).optional(),
+      })
       .strict()
       .parse(req.body);
     // SEC-01 step-up: an admin who has enrolled MFA must re-prove it for this action; an admin
     // who has never enrolled is let through (see accounts.mfa.verifyStepUp) so rollout doesn't
     // lock anyone out before they've had a chance to set it up.
     if (!(await accounts.mfa.verifyStepUp(req.user.id, input.mfaCode)))
-      return res.status(401).json({ error: 'A valid authentication code is required for this action.' });
-    const workspaceRow = await db.prepare('SELECT id FROM workspaces WHERE id = ?').get(req.params.id);
+      return res
+        .status(401)
+        .json({ error: 'A valid authentication code is required for this action.' });
+    const workspaceRow = await db
+      .prepare('SELECT id FROM workspaces WHERE id = ?')
+      .get(req.params.id);
     if (!workspaceRow) return res.status(404).json({ error: 'Workspace not found.' });
-    const memberLimit = input.tier === 'enterprise' ? enterpriseMemberLimit : input.tier === 'team' ? 10 : 1;
+    const memberLimit =
+      input.tier === 'enterprise' ? enterpriseMemberLimit : input.tier === 'team' ? 10 : 1;
     await db
       .prepare('UPDATE workspaces SET tier = ?, member_limit = ? WHERE id = ?')
       .run(input.tier, memberLimit, workspaceRow.id);
-    await log(workspaceRow.id, req.user.name, 'Workspace tier changed by admin', workspaceRow.id, input.tier);
+    await log(
+      workspaceRow.id,
+      req.user.name,
+      'Workspace tier changed by admin',
+      workspaceRow.id,
+      input.tier,
+    );
     res.json({ id: workspaceRow.id, tier: input.tier, memberLimit });
   });
   app.get('/api/admin/operations', async (req, res) => {
@@ -825,9 +853,21 @@ export async function createApp({
         await db
           .prepare('INSERT INTO review_queue_entries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
           .run(randomUUID(), scopingCaseId, 'red', 'pending', null, null, '', null, now);
-        await log(req.workspace.id, req.user.name, 'Regulated job post queued for expert review', id, input.title);
+        await log(
+          req.workspace.id,
+          req.user.name,
+          'Regulated job post queued for expert review',
+          id,
+          input.title,
+        );
       }
-      return { id, ...input, status: 'open', pointsCharged: jobPostCost, riskBand: regulated ? 'red' : 'green' };
+      return {
+        id,
+        ...input,
+        status: 'open',
+        pointsCharged: jobPostCost,
+        riskBand: regulated ? 'red' : 'green',
+      };
     });
     res.status(201).json(result);
   });
@@ -1079,7 +1119,9 @@ export async function createApp({
       return res.status(403).json({ error: 'Your administrator password is incorrect.' });
     // SEC-01 step-up: same progressive-enrollment policy as the tier-grant route above.
     if (!(await accounts.mfa.verifyStepUp(req.user.id, input.mfaCode)))
-      return res.status(401).json({ error: 'A valid authentication code is required for this action.' });
+      return res
+        .status(401)
+        .json({ error: 'A valid authentication code is required for this action.' });
     const target = await db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.id);
     if (!target) return res.status(404).json({ error: 'User account not found.' });
     await deleteUser(target.id, req.user.id);
@@ -1438,17 +1480,18 @@ export async function createApp({
           `INSERT INTO workspaces (id, user_id, name, context, tier, member_limit, parent_workspace_id, created_at)
            VALUES (?, ?, ?, ?, 'individual', 1, ?, ?)`,
         )
-        .run(childId, req.user.id, input.name, input.context, req.workspace.id, new Date().toISOString());
+        .run(
+          childId,
+          req.user.id,
+          input.name,
+          input.context,
+          req.workspace.id,
+          new Date().toISOString(),
+        );
       await db
         .prepare('INSERT INTO workspace_members VALUES (?, ?, ?, ?, ?)')
         .run(childId, req.user.id, 'owner', 'active', Date.now());
-      await log(
-        req.workspace.id,
-        req.user.name,
-        'Child workspace created',
-        childId,
-        input.name,
-      );
+      await log(req.workspace.id, req.user.name, 'Child workspace created', childId, input.name);
     });
     res.status(201).json(await db.prepare('SELECT * FROM workspaces WHERE id = ?').get(childId));
   });
@@ -1624,8 +1667,16 @@ export async function createApp({
       // F-SI-02: a deleted goal must stop being monitored and stop backing cached intelligence/
       // recommendations — previously only an explicit stage transition did this cascade.
       await db.prepare('UPDATE goal_subscriptions SET active = 0 WHERE goal_id = ?').run(row.id);
-      await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
-      await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
+      await markResultsStale(store, {
+        workspaceId: req.workspace.id,
+        subjectKind: 'goal',
+        subjectId: row.id,
+      });
+      await invalidateRecommendations(store, {
+        workspaceId: req.workspace.id,
+        subjectKind: 'goal',
+        subjectId: row.id,
+      });
       await log(
         req.workspace.id,
         req.user.name,
@@ -1669,8 +1720,16 @@ export async function createApp({
       // F-SI-02: any edit invalidates prior intelligence/recommendations computed against the
       // old state — the goal/stage route already did this on a stage change; ordinary edits
       // (objective text, constraints, etc.) did not. Completing a goal also stops its monitoring.
-      await markResultsStale(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
-      await invalidateRecommendations(store, { workspaceId: req.workspace.id, subjectKind: 'goal', subjectId: row.id });
+      await markResultsStale(store, {
+        workspaceId: req.workspace.id,
+        subjectKind: 'goal',
+        subjectId: row.id,
+      });
+      await invalidateRecommendations(store, {
+        workspaceId: req.workspace.id,
+        subjectKind: 'goal',
+        subjectId: row.id,
+      });
       if (updated.status === 'Complete')
         await db.prepare('UPDATE goal_subscriptions SET active = 0 WHERE goal_id = ?').run(row.id);
       await log(
@@ -1796,6 +1855,7 @@ export async function createApp({
   mountTasks(app, store);
   mountGoals(app, store);
   mountGrowth(app, store);
+  mountNativeConnectors(app, store, connectorOAuth);
   mountConnectors(app, store);
   mountReturnState(app, store);
   mountSignals(app, store);

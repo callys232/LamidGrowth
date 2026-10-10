@@ -7,6 +7,7 @@ import { useEngineRun } from '../../../engines/hooks/useEngineRun';
 import { EngineForm } from '../../../engines/pages/EnginesPage';
 import { EngineResultView } from '../../../engines/components/EngineResultView';
 import type { FeaturedTool } from './featuredTools';
+import { EngineDemoPreview } from './EngineDemoPreview';
 
 export const EASE = [0.22, 0.61, 0.36, 1] as const;
 
@@ -29,6 +30,7 @@ export function DemoToolPanel({
       <header className="demo-panel-head">
         <h2>{tool.name}</h2>
         <p className="demo-panel-hook">{tool.hook}</p>
+        <EngineDemoPreview tool={tool} onTry={() => setOpen(true)} />
       </header>
 
       <ol className="demo-panel-benefits">

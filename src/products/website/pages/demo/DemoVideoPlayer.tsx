@@ -60,11 +60,22 @@ const CHAPTERS: Chapter[] = [
 /** "See it in motion": one screen that plays each chapter and moves on by itself, looping after
  * the last. Plays only while on screen and the tab is visible; the visitor can pause or jump to
  * any chapter. With reduced motion it shows each chapter's finished frame and never advances. */
-export function DemoVideoPlayer() {
+export function DemoVideoPlayer({
+  engineCode,
+  single = false,
+}: {
+  engineCode?: string;
+  single?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.35 });
   const reduced = useReducedMotion();
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() =>
+    Math.max(
+      0,
+      CHAPTERS.findIndex((chapter) => chapter.key === engineCode),
+    ),
+  );
   const [t, setT] = useState(0);
   const [paused, setPaused] = useState(false);
   const [tabVisible, setTabVisible] = useState(true);
@@ -90,14 +101,14 @@ export function DemoVideoPlayer() {
       last = now;
       if (time.current >= chapter.duration) {
         time.current = 0;
-        setIndex((i) => (i + 1) % CHAPTERS.length);
+        if (!single) setIndex((i) => (i + 1) % CHAPTERS.length);
       }
       setT(time.current);
       frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [playing, chapter.duration]);
+  }, [playing, chapter.duration, single]);
 
   const go = (i: number) => {
     time.current = 0;
@@ -126,7 +137,7 @@ export function DemoVideoPlayer() {
         <p className="dv-caption" aria-live="polite">
           {chapter.caption}
         </p>
-        {!reduced && (
+        {!reduced && !single && (
           <button
             type="button"
             className="dv-pause"
@@ -142,26 +153,28 @@ export function DemoVideoPlayer() {
         )}
       </div>
 
-      <ol className="dv-chapters">
-        {CHAPTERS.map((c, i) => {
-          const fill = i < index ? 1 : i > index ? 0 : Math.min(1, shownT / c.duration);
-          return (
-            <li key={c.key}>
-              <button
-                type="button"
-                aria-current={i === index ? 'step' : undefined}
-                onClick={() => go(i)}
-              >
-                <span className="dv-chapter-num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="dv-chapter-label">{c.label}</span>
-                <span className="dv-chapter-track" aria-hidden="true">
-                  <i style={{ transform: `scaleX(${fill})` }} />
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+      {!single && (
+        <ol className="dv-chapters">
+          {CHAPTERS.map((c, i) => {
+            const fill = i < index ? 1 : i > index ? 0 : Math.min(1, shownT / c.duration);
+            return (
+              <li key={c.key}>
+                <button
+                  type="button"
+                  aria-current={i === index ? 'step' : undefined}
+                  onClick={() => go(i)}
+                >
+                  <span className="dv-chapter-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="dv-chapter-label">{c.label}</span>
+                  <span className="dv-chapter-track" aria-hidden="true">
+                    <i style={{ transform: `scaleX(${fill})` }} />
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      )}
     </div>
   );
 }

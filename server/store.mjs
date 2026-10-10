@@ -1373,6 +1373,16 @@ export async function openStore(filename, { poolMax } = {}) {
         secret TEXT, last_sync_at TEXT, created_by TEXT NOT NULL, created_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS connectors_workspace ON connectors(workspace_id);
+      CREATE TABLE IF NOT EXISTS connector_credentials (
+        connector_id TEXT PRIMARY KEY REFERENCES connectors(id) ON DELETE CASCADE,
+        payload TEXT NOT NULL, snapshot TEXT, synced_at TEXT
+      );
+      CREATE TABLE IF NOT EXISTS connector_oauth_states (
+        state_hash TEXT PRIMARY KEY, provider TEXT NOT NULL,
+        workspace_id TEXT NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        verifier TEXT NOT NULL, expires_at BIGINT NOT NULL
+      );
       CREATE TABLE IF NOT EXISTS connector_grants (
         id TEXT PRIMARY KEY, connector_id TEXT NOT NULL REFERENCES connectors(id),
         scope TEXT NOT NULL, granted_by TEXT NOT NULL, granted_at TEXT NOT NULL, revoked_at TEXT

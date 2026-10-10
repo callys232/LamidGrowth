@@ -127,3 +127,16 @@
     line-height: 1.75;
   }
 }
+.workspace-layout .objective-goal-controls {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--border, #dce3df);
+  margin-top: 14px;
+  padding-top: 10px;
+}
+.workspace-layout .objective-goal-controls .goal-delete {
+  flex: 1;
+  min-width: 0;
+}

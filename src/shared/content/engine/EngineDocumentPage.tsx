@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { DocumentPageLayout } from '../DocumentPageLayout';
 import { DocumentHeroSlide } from '../slides/DocumentHeroSlide';
 import { DocumentSectionSlide } from '../slides/DocumentSectionSlide';
@@ -61,6 +62,9 @@ export function EngineDocumentPage({
             {description.text}
           </p>
           <CopyLine text={actions.text} paragraph={actions.sourceParagraph} />
+          <Link className="button button-secondary" to="/demo#all-engine-demos">
+            Explore engine demos
+          </Link>
         </div>
       </section>
       <section className="engine-tools">

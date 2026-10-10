@@ -16,7 +16,7 @@ export function ToolReadMore({ children, label }: { children: ReactNode; label: 
     };
     card.addEventListener('click', toggle);
     card.addEventListener('keydown', toggle);
-    const closeOutside = (event: PointerEvent) => {
+    const closeOutside = (event: MouseEvent) => {
       if (details.open && !card.contains(event.target as Node)) details.open = false;
     };
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -27,12 +27,12 @@ export function ToolReadMore({ children, label }: { children: ReactNode; label: 
         }
       }
     };
-    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('click', closeOutside);
     document.addEventListener('keydown', closeOnEscape);
     return () => {
       card.removeEventListener('click', toggle);
       card.removeEventListener('keydown', toggle);
-      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('click', closeOutside);
       document.removeEventListener('keydown', closeOnEscape);
     };
   }, []);

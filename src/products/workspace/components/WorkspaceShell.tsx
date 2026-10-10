@@ -50,7 +50,7 @@ import { Empty } from '../../../shared/ui/Empty';
 import { Field } from '../../../shared/ui/Field';
 import { Loading } from '../../../shared/ui/Loading';
 import { Modal } from '../../../shared/ui/Modal';
-import type { Action, Context, Status, WorkspaceState } from '../../../types';
+import type { Action, Context, Objective, Status, WorkspaceState } from '../../../types';
 
 export interface WorkspaceContext {
   state: WorkspaceState;
@@ -485,12 +485,14 @@ export function WorkspaceShell() {
     </div>
   );
 }
-function ObjectiveForm({
+export function ObjectiveForm({
   context,
+  objective,
   onSaved,
   onClose,
 }: {
   context: Context;
+  objective?: Objective;
   onSaved: () => Promise<void>;
   onClose: () => void;
 }) {
@@ -499,9 +501,15 @@ function ObjectiveForm({
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
+    data.title = String(data.title).toUpperCase();
     setBusy(true);
+    setError('');
     try {
-      await api('/objectives', data);
+      await api(
+        objective ? `/objectives/${objective.id}` : '/objectives',
+        objective ? { ...data, version: objective.version } : data,
+        objective ? 'PATCH' : 'POST',
+      );
       await onSaved();
     } catch (e) {
       setError((e as Error).message);
@@ -510,7 +518,7 @@ function ObjectiveForm({
     }
   }
   return (
-    <Modal title="What do you want to move forward?" onClose={onClose}>
+    <Modal title={objective ? 'Edit goal' : 'What do you want to move forward?'} onClose={onClose}>
       <p className="modal-description">Start with an outcome. You can build the work around it.</p>
       <form onSubmit={submit}>
         <Field label="Your objective">
@@ -518,12 +526,30 @@ function ObjectiveForm({
             name="title"
             required
             maxLength={500}
+            defaultValue={objective?.title.toUpperCase()}
+            autoCapitalize="characters"
+            onChange={(e) => {
+              const input = e.currentTarget;
+              const start = input.selectionStart;
+              const end = input.selectionEnd;
+              const value = input.value;
+              const upper = value.toUpperCase();
+              if (upper !== value) {
+                input.value = upper;
+                if (start !== null && end !== null)
+                  input.setSelectionRange(
+                    value.slice(0, start).toUpperCase().length,
+                    value.slice(0, end).toUpperCase().length,
+                  );
+              }
+            }}
             placeholder="e.g. Launch a focused advisory service"
           />
         </Field>
         <Field label="Why it matters">
           <textarea
             name="description"
+            defaultValue={objective?.description}
             maxLength={5000}
             rows={3}
             placeholder="Describe the situation and the change you want to make."
@@ -537,7 +563,7 @@ function ObjectiveForm({
             </div>
           </Field>
           <Field label="Priority">
-            <select name="priority" defaultValue="Medium">
+            <select name="priority" defaultValue={objective?.priority ?? 'Medium'}>
               <option>High</option>
               <option>Medium</option>
               <option>Low</option>
@@ -547,6 +573,7 @@ function ObjectiveForm({
         <Field label="What does success look like?">
           <input
             name="success"
+            defaultValue={objective?.success}
             maxLength={5000}
             placeholder="An observable result, in your own words"
           />
@@ -554,12 +581,13 @@ function ObjectiveForm({
         <Field label="Constraints to keep in view">
           <input
             name="constraints"
+            defaultValue={objective?.constraints}
             maxLength={5000}
             placeholder="Time, resources, assumptions, or boundaries"
           />
         </Field>
         <Field label="Target date (optional)">
-          <DatePicker name="targetDate" />
+          <DatePicker name="targetDate" defaultValue={objective?.targetDate} />
         </Field>
         {error && (
           <p className="form-error" role="alert">
@@ -571,7 +599,7 @@ function ObjectiveForm({
             Cancel
           </Button>
           <Button type="submit" disabled={busy}>
-            {busy ? 'Saving…' : 'Create objective'}
+            {busy ? 'Saving…' : objective ? 'Save changes' : 'Create objective'}
             <Plus size={16} />
           </Button>
         </div>
