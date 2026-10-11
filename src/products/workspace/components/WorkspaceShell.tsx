@@ -68,12 +68,15 @@ export function WorkspaceShell() {
   const navigate = useNavigate();
   // Demo visitors: which sample persona this tab is showing (null for real accounts).
   const demoSession = readDemoSession();
-  // Switching persona reloads the workspace so every page reads the new persona's sandbox.
+  const location = useLocation();
+  // Switching persona re-enters the demo in-app (no page reload, which a static host would answer
+  // with its own 404 on a deep link) and returns to the same page on the new persona's sandbox.
   const switchDemo = (profile: DemoProfile, tier: DemoTier) => {
     startDemoSession(profile, tier);
-    window.location.reload();
+    navigate(`/demo/workspace?${new URLSearchParams({ profile, tier, next: location.pathname })}`, {
+      replace: true,
+    });
   };
-  const location = useLocation();
   const refreshSequence = useRef(0);
   const displayedWorkspace = useRef<string | null>(null);
   const refresh = useCallback(async () => {
