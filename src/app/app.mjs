@@ -2,6 +2,7 @@ import express from 'express';
 import { mountDashboardBriefing } from './dashboardBriefing.mjs';
 import { createReadinessCheck } from './readiness.mjs';
 import { mountAccounts } from './accounts.mjs';
+import { mountPublicSupport } from './support.mjs';
 import { mountPublicCompanion } from './companionTasks.mjs';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { z } from 'zod';
@@ -398,6 +399,10 @@ export async function createApp({
     throw error;
   });
   mountPublicCompanion(app);
+  mountPublicSupport(app, store, {
+    ...(mailProvider !== undefined ? { mailProvider } : {}),
+    errorLogger,
+  });
   mountPublicPricing(app, store);
   mountPublicPlans(app, { toolsBySeat: engineCountByHomeEngine });
   mountPublicEngines(app);

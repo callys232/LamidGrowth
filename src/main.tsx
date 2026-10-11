@@ -11,7 +11,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
-import { applyTheme, getStoredTheme } from './shared/lib/theme';
+import { applyContrast, applyTheme, getStoredContrast, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import { reportClientError } from './errorReporting';
@@ -31,6 +31,7 @@ import './micro-interactions.css';
 import './public-refresh.css';
 import './workspace-ui.css';
 import './workspace-legacy.css';
+import './contrast.css';
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -54,6 +55,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
   }
 }
 applyTheme(getStoredTheme());
+applyContrast(getStoredContrast());
 window.addEventListener('error', (event) =>
   reportClientError('error', event.error || event.message),
 );

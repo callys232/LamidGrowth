@@ -14,6 +14,26 @@ export function getStoredTheme(): ThemePreference {
   }
 }
 
+const CONTRAST_KEY = 'lamid-contrast';
+
+export function getStoredContrast(): boolean {
+  try {
+    return localStorage.getItem(CONTRAST_KEY) === 'high';
+  } catch {
+    return false;
+  }
+}
+
+export function applyContrast(high: boolean) {
+  if (high) document.documentElement.dataset.contrast = 'high';
+  else delete document.documentElement.dataset.contrast;
+  try {
+    localStorage.setItem(CONTRAST_KEY, high ? 'high' : 'normal');
+  } catch {
+    // Same as the theme: applies for this page load even when it can't persist.
+  }
+}
+
 export function applyTheme(preference: ThemePreference) {
   if (preference === 'system') delete document.documentElement.dataset.theme;
   else document.documentElement.dataset.theme = preference;

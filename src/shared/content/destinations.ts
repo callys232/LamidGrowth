@@ -67,7 +67,7 @@ export const destinations: Record<string, string> = {
   'Browse Case Studies': '/case-studies',
   'Explore Research': '/research',
   'Browse Product Guides': '/help/product',
-  'Contact Support': '/support',
+  'Contact Support': '/support#support-form',
   'Read the Developer Docs': '/developers',
   'View API Reference': '/developers/api',
   'View Changelog': '/developers/changelog',

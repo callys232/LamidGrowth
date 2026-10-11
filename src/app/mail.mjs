@@ -22,6 +22,7 @@ export function resendMailer({
           to: [message.to],
           subject: message.subject,
           text: message.text,
+          ...(message.replyTo ? { reply_to: message.replyTo } : {}),
         }),
       });
       if (!response.ok) throw new Error(`Mail delivery failed (${response.status}).`);
@@ -44,6 +45,7 @@ export function sendgridMailer({
         body: JSON.stringify({
           personalizations: [{ to: [{ email: message.to }], custom_args: { message_id: id } }],
           from: { email: from },
+          ...(message.replyTo ? { reply_to: { email: message.replyTo } } : {}),
           subject: message.subject,
           content: [{ type: 'text/plain', value: message.text }],
         }),

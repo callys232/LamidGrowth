@@ -1,10 +1,10 @@
-import { ArrowUpRight, ChevronDown, Menu, Moon, Sun, X } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Brand } from '../ui/Brand';
 import { Cta } from '../ui/Cta';
 import { MotionSurface } from '../visuals/Motion';
-import { applyTheme, getStoredTheme } from '../lib/theme';
+import { PublicUtilityBar, type SearchEntry } from './PublicUtilityBar';
 import { api } from '../../api';
 
 type Session = { user: { name: string } | null };
@@ -157,30 +157,39 @@ const menus: {
   },
 ];
 
+// Everything the utility-bar search can find: every mega-menu destination plus the top-level pages.
+const searchIndex: SearchEntry[] = [
+  { label: 'Home', description: 'The LAMID ONE operating system.', to: '/' },
+  ...menus.flatMap((menu) =>
+    menu.groups.flatMap((group) =>
+      group.entries
+        .filter((entry): entry is [string, string, string] => Boolean(entry[2]))
+        .map(([label, description, to]) => ({ label, description, to })),
+    ),
+  ),
+  { label: 'Pricing', description: 'Plans and pricing.', to: '/pricing' },
+  { label: 'Demo', description: 'See LAMID ONE in action.', to: '/demo#profile-demos' },
+  { label: 'Customer support', description: 'Get help from the team.', to: '/support' },
+  {
+    label: 'Contact sales',
+    description: 'Talk to us about your organization.',
+    to: '/enterprise/contact',
+  },
+  { label: 'Enterprise', description: 'LAMID ONE for large organizations.', to: '/enterprise' },
+  { label: 'About', description: 'Who we are and why we built LAMID ONE.', to: '/about' },
+  { label: 'Our story', description: 'How LAMID ONE came to be.', to: '/about/story' },
+  { label: 'Leadership', description: 'The people behind LAMID ONE.', to: '/about/leadership' },
+  { label: 'Careers', description: 'Join the team.', to: '/careers' },
+  { label: 'Press', description: 'News and media resources.', to: '/press' },
+  { label: 'Contact', description: 'Get in touch.', to: '/contact' },
+  { label: 'Accessibility', description: 'Our accessibility commitments.', to: '/accessibility' },
+  { label: 'Privacy policy', description: 'How we handle your data.', to: '/legal/privacy' },
+  { label: 'Terms of service', description: 'The terms that govern use.', to: '/legal/terms' },
+  { label: 'Log in', description: 'Sign in to your workspace.', to: '/login' },
+  { label: 'Start', description: 'Experience LAMID ONE.', to: '/start' },
+];
+
 export function PublicHeader() {
-  const [dark, setDark] = useState(
-    () =>
-      getStoredTheme() === 'dark' ||
-      (getStoredTheme() === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches),
-  );
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const sync = () =>
-      setDark(
-        document.documentElement.dataset.theme === 'dark' ||
-          (!document.documentElement.dataset.theme && media.matches),
-      );
-    const observer = new MutationObserver(sync);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    });
-    media.addEventListener('change', sync);
-    return () => {
-      observer.disconnect();
-      media.removeEventListener('change', sync);
-    };
-  }, []);
   // Signed-in state: unknown (null) until the session check resolves, so the header keeps showing
   // the signed-out actions rather than flashing between the two. Any failure reads as signed out.
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
@@ -241,6 +250,7 @@ export function PublicHeader() {
   }, []);
   return (
     <>
+      <PublicUtilityBar searchIndex={searchIndex} signedIn={Boolean(signedInAs)} />
       {active && !mobile && (
         <div className="mega-backdrop" aria-hidden="true" onPointerDown={close} />
       )}
@@ -391,15 +401,6 @@ export function PublicHeader() {
             </Link>
           </nav>
           <div className="header-actions">
-            <button
-              type="button"
-              className="theme-toggle icon-button"
-              aria-label={`Switch to ${dark ? 'light' : 'dark'} mode`}
-              title={`Switch to ${dark ? 'light' : 'dark'} mode`}
-              onClick={() => applyTheme(dark ? 'light' : 'dark')}
-            >
-              {dark ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
-            </button>
             {signedInAs ? (
               <>
                 <span className="sign-in signed-in-as" title={`Signed in as ${signedInAs}`}>
@@ -408,12 +409,7 @@ export function PublicHeader() {
                 <Cta to="/os">Open workspace</Cta>
               </>
             ) : (
-              <>
-                <Link to="/login" className="sign-in" onClick={navigate}>
-                  Sign in
-                </Link>
-                <Cta to="/start">Experience LAMID ONE</Cta>
-              </>
+              <Cta to="/start">Experience LAMID ONE</Cta>
             )}
           </div>
         </div>

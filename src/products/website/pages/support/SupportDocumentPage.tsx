@@ -1,14 +1,10 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
-import {
-  SupportHeroSlide,
-  ChooseATopicSlide1,
-  DescribeTheOutcomeSlide2,
-  SubmitSlide3,
-} from './slides';
+import { SupportHeroSlide } from './slides';
+import { SupportForm } from './SupportForm';
 
-/** /support — sections in reading order. */
+/** /support — hero, then the contact form (which covers the topic → describe → submit steps). */
 export function SupportDocumentPage({ embedded = false }: DocumentPageProps) {
   return (
     <DocumentPageLayout
@@ -16,9 +12,7 @@ export function SupportDocumentPage({ embedded = false }: DocumentPageProps) {
       embedded={embedded}
       hero={<SupportHeroSlide embedded={embedded} />}
     >
-      <ChooseATopicSlide1 embedded={embedded} />
-      <DescribeTheOutcomeSlide2 embedded={embedded} />
-      <SubmitSlide3 embedded={embedded} />
+      <SupportForm />
     </DocumentPageLayout>
   );
 }
