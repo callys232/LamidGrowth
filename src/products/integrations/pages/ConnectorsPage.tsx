@@ -1,3 +1,4 @@
+import { PageHeading } from '../../../shared/workspace/PageHeading';
 import { useCallback, useEffect, useState } from 'react';
 import { Plug, Trash2 } from 'lucide-react';
 import { api } from '../../../api';
@@ -194,192 +195,199 @@ export function ConnectorsPage() {
     }
   };
   return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Integrations</h2>
-          <span>Connectors this workspace owns, their health, and who's granted access.</span>
-        </div>
-      </div>
-      {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {providerError && (
-        <p role="alert" className="form-error">
-          {providerError}
-        </p>
-      )}
-      <div className="integration-grid" style={{ marginBlock: 20 }}>
-        {providers.map((provider) => (
-          <article className="settings-card" key={provider.id}>
-            <h3>{provider.name}</h3>
-            <p>{provider.description}</p>
-            <p>
-              <small>Requested access: {provider.scopes.join(', ')}</small>
-            </p>
-            <button
-              type="button"
-              className="button button-primary"
-              disabled={providerBusy || !provider.configured}
-              onClick={() => connect(provider.id)}
-            >
-              Connect {provider.name}
-            </button>
-            {!provider.configured && (
-              <p>
-                <small>Administrator setup required.</small>
-              </p>
-            )}
-          </article>
-        ))}
-      </div>
-      {snapshot && (
-        <section className="settings-card" aria-label="Imported snapshot">
-          <div className="panel-heading">
-            <h3>{snapshot.name}</h3>
-            <button type="button" onClick={() => setSnapshot(null)}>
-              Close snapshot
-            </button>
+    <>
+      <PageHeading
+        eyebrow="ACCOUNT · INTEGRATIONS"
+        title="Integrations"
+        description="Connect the tools your work already lives in."
+      />
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Integrations</h2>
+            <span>Connectors this workspace owns, their health, and who's granted access.</span>
           </div>
-          <p>
-            Read-only snapshot, up to 100 records per collection.{' '}
-            {snapshot.data.hasMore ? 'More records are available in the source service.' : ''}
+        </div>
+        {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
+        {providerError && (
+          <p role="alert" className="form-error">
+            {providerError}
           </p>
-          {Object.entries(snapshot.data)
-            .filter(([, value]) => Array.isArray(value))
-            .map(([collection, rows]) => (
-              <div key={collection}>
-                <h4>
-                  {collection} ({(rows as Record<string, unknown>[]).length})
-                </h4>
-                <ol>
-                  {(rows as Record<string, unknown>[]).map((row, index) => (
-                    <li key={index}>
-                      <dl>
-                        {Object.entries(row).map(([key, value]) => (
-                          <div key={key}>
-                            <dt>{key}</dt>
-                            <dd>{value == null ? '—' : String(value)}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            ))}
-        </section>
-      )}
-      {page.newSecret && (
-        <p className="form-error" role="alert">
-          Signing secret (shown once — store it now): <code>{page.newSecret.secret}</code>{' '}
-          <button type="button" onClick={page.dismissSecret}>
-            Dismiss
-          </button>
-        </p>
-      )}
-      {page.loading && <SkeletonList rows={4} />}
-      {!page.loading && page.connectors.length === 0 && (
-        <Empty title="No connectors yet">Register one below to start receiving events.</Empty>
-      )}
-      {!page.loading && page.connectors.length > 0 && (
-        <ol className="activity-feed-list">
-          {page.connectors.map((connector) => (
-            <li key={connector.id} className="activity-feed-row" style={{ display: 'block' }}>
-              <span className="activity-feed-icon">
-                <Plug size={15} />
-              </span>
-              <strong>{connector.name}</strong> <small>({connector.type})</small>{' '}
-              <StatusPill status={connector.status} />
-              {['slack', 'salesforce'].includes(connector.type) && (
-                <>
-                  <button
-                    type="button"
-                    disabled={providerBusy}
-                    onClick={() => importSnapshot(connector)}
-                  >
-                    Import snapshot
-                  </button>
-                  <button
-                    type="button"
-                    disabled={providerBusy}
-                    onClick={() => viewSnapshot(connector)}
-                  >
-                    View snapshot
-                  </button>
-                  <small>Disconnect to revoke provider access.</small>
-                </>
-              )}
-              {connector.last_sync_at && (
-                <small> · last sync {new Date(connector.last_sync_at).toLocaleString()}</small>
-              )}
+        )}
+        <div className="integration-grid" style={{ marginBlock: 20 }}>
+          {providers.map((provider) => (
+            <article className="settings-card" key={provider.id}>
+              <h3>{provider.name}</h3>
+              <p>{provider.description}</p>
+              <p>
+                <small>Requested access: {provider.scopes.join(', ')}</small>
+              </p>
               <button
                 type="button"
-                disabled={page.busy || providerBusy}
-                onClick={() => page.remove(connector.id)}
-                aria-label={`${['slack', 'salesforce'].includes(connector.type) ? 'Disconnect' : 'Delete'} ${connector.name}`}
+                className="button button-primary"
+                disabled={providerBusy || !provider.configured}
+                onClick={() => connect(provider.id)}
               >
-                <Trash2 size={14} />
+                Connect {provider.name}
               </button>
-              <ul>
-                {(page.grantsByConnector[connector.id] || [])
-                  .filter((g) => !g.revoked_at)
-                  .map((grant) => (
-                    <li key={grant.id}>
-                      {grant.scope}
-                      <button
-                        type="button"
-                        disabled={page.busy || ['slack', 'salesforce'].includes(connector.type)}
-                        onClick={() => page.revokeGrant(connector.id, grant.id)}
-                      >
-                        Revoke
-                      </button>
-                    </li>
-                  ))}
-              </ul>
-              {!['slack', 'salesforce'].includes(connector.type) && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Add a scope (e.g. contacts:read)"
-                    disabled={['slack', 'salesforce'].includes(connector.type)}
-                    value={page.scopeDrafts[connector.id] || ''}
-                    onChange={(e) =>
-                      page.setScopeDrafts((prev) => ({ ...prev, [connector.id]: e.target.value }))
-                    }
-                  />
-                  <button
-                    type="button"
-                    disabled={page.busy || ['slack', 'salesforce'].includes(connector.type)}
-                    onClick={() => page.addGrant(connector.id)}
-                  >
-                    Grant
-                  </button>
-                </>
+              {!provider.configured && (
+                <p>
+                  <small>Administrator setup required.</small>
+                </p>
               )}
-            </li>
+            </article>
           ))}
-        </ol>
-      )}
-      <div className="panel-heading" style={{ marginTop: 24 }}>
-        <h3>Register a connector</h3>
-      </div>
-      <div className="settings-card">
-        <input
-          type="text"
-          placeholder="Name"
-          value={page.name}
-          onChange={(e) => page.setName(e.target.value)}
-        />
-        <select
-          value={page.type}
-          onChange={(e) => page.setType(e.target.value as 'webhook' | 'manual')}
-        >
-          <option value="webhook">Webhook (signed, inbound)</option>
-          <option value="manual">Manual (human-operated)</option>
-        </select>
-        <button type="button" disabled={page.busy || !page.name.trim()} onClick={page.create}>
-          Register connector
-        </button>
-      </div>
-    </section>
+        </div>
+        {snapshot && (
+          <section className="settings-card" aria-label="Imported snapshot">
+            <div className="panel-heading">
+              <h3>{snapshot.name}</h3>
+              <button type="button" onClick={() => setSnapshot(null)}>
+                Close snapshot
+              </button>
+            </div>
+            <p>
+              Read-only snapshot, up to 100 records per collection.{' '}
+              {snapshot.data.hasMore ? 'More records are available in the source service.' : ''}
+            </p>
+            {Object.entries(snapshot.data)
+              .filter(([, value]) => Array.isArray(value))
+              .map(([collection, rows]) => (
+                <div key={collection}>
+                  <h4>
+                    {collection} ({(rows as Record<string, unknown>[]).length})
+                  </h4>
+                  <ol>
+                    {(rows as Record<string, unknown>[]).map((row, index) => (
+                      <li key={index}>
+                        <dl>
+                          {Object.entries(row).map(([key, value]) => (
+                            <div key={key}>
+                              <dt>{key}</dt>
+                              <dd>{value == null ? '—' : String(value)}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
+          </section>
+        )}
+        {page.newSecret && (
+          <p className="form-error" role="alert">
+            Signing secret (shown once — store it now): <code>{page.newSecret.secret}</code>{' '}
+            <button type="button" onClick={page.dismissSecret}>
+              Dismiss
+            </button>
+          </p>
+        )}
+        {page.loading && <SkeletonList rows={4} />}
+        {!page.loading && page.connectors.length === 0 && (
+          <Empty title="No connectors yet">Register one below to start receiving events.</Empty>
+        )}
+        {!page.loading && page.connectors.length > 0 && (
+          <ol className="activity-feed-list">
+            {page.connectors.map((connector) => (
+              <li key={connector.id} className="activity-feed-row" style={{ display: 'block' }}>
+                <span className="activity-feed-icon">
+                  <Plug size={15} />
+                </span>
+                <strong>{connector.name}</strong> <small>({connector.type})</small>{' '}
+                <StatusPill status={connector.status} />
+                {['slack', 'salesforce'].includes(connector.type) && (
+                  <>
+                    <button
+                      type="button"
+                      disabled={providerBusy}
+                      onClick={() => importSnapshot(connector)}
+                    >
+                      Import snapshot
+                    </button>
+                    <button
+                      type="button"
+                      disabled={providerBusy}
+                      onClick={() => viewSnapshot(connector)}
+                    >
+                      View snapshot
+                    </button>
+                    <small>Disconnect to revoke provider access.</small>
+                  </>
+                )}
+                {connector.last_sync_at && (
+                  <small> · last sync {new Date(connector.last_sync_at).toLocaleString()}</small>
+                )}
+                <button
+                  type="button"
+                  disabled={page.busy || providerBusy}
+                  onClick={() => page.remove(connector.id)}
+                  aria-label={`${['slack', 'salesforce'].includes(connector.type) ? 'Disconnect' : 'Delete'} ${connector.name}`}
+                >
+                  <Trash2 size={14} />
+                </button>
+                <ul>
+                  {(page.grantsByConnector[connector.id] || [])
+                    .filter((g) => !g.revoked_at)
+                    .map((grant) => (
+                      <li key={grant.id}>
+                        {grant.scope}
+                        <button
+                          type="button"
+                          disabled={page.busy || ['slack', 'salesforce'].includes(connector.type)}
+                          onClick={() => page.revokeGrant(connector.id, grant.id)}
+                        >
+                          Revoke
+                        </button>
+                      </li>
+                    ))}
+                </ul>
+                {!['slack', 'salesforce'].includes(connector.type) && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Add a scope (e.g. contacts:read)"
+                      disabled={['slack', 'salesforce'].includes(connector.type)}
+                      value={page.scopeDrafts[connector.id] || ''}
+                      onChange={(e) =>
+                        page.setScopeDrafts((prev) => ({ ...prev, [connector.id]: e.target.value }))
+                      }
+                    />
+                    <button
+                      type="button"
+                      disabled={page.busy || ['slack', 'salesforce'].includes(connector.type)}
+                      onClick={() => page.addGrant(connector.id)}
+                    >
+                      Grant
+                    </button>
+                  </>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+        <div className="panel-heading" style={{ marginTop: 24 }}>
+          <h3>Register a connector</h3>
+        </div>
+        <div className="settings-card">
+          <input
+            type="text"
+            placeholder="Name"
+            value={page.name}
+            onChange={(e) => page.setName(e.target.value)}
+          />
+          <select
+            value={page.type}
+            onChange={(e) => page.setType(e.target.value as 'webhook' | 'manual')}
+          >
+            <option value="webhook">Webhook (signed, inbound)</option>
+            <option value="manual">Manual (human-operated)</option>
+          </select>
+          <button type="button" disabled={page.busy || !page.name.trim()} onClick={page.create}>
+            Register connector
+          </button>
+        </div>
+      </section>
+    </>
   );
 }

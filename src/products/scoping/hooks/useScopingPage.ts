@@ -274,7 +274,9 @@ export function useScopingPage() {
     setBusy(true);
     setError('');
     try {
-      const updated = await api<ScopingCase>(`/scoping-cases/${scopingCase.id}/reconcile`, { accept });
+      const updated = await api<ScopingCase>(`/scoping-cases/${scopingCase.id}/reconcile`, {
+        accept,
+      });
       setScopingCase(updated);
       setReviewDiff(null);
       notify('Reviewer proposal reconciled.');

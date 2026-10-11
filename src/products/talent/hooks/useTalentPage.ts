@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../../../api';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
+import type { Job } from '../../commercial/types';
 
 export type TalentProfile = {
   id: string;
@@ -54,6 +55,7 @@ export type Invitation = {
   created_at: string;
 };
 export type JobMatch = {
+  job?: Job;
   jobId: string;
   title: string;
   category: string;

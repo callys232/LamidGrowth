@@ -675,6 +675,28 @@ export function resolve(code) {
   return { ref, toolId, primary: parseEngineCode(PRIMARY[toolId]) };
 }
 
+/** The public 63-tool catalog (GET /api/engines/catalog). Also snapshotted for the demo sandbox by
+ * scripts/engine-catalog-snapshot.mjs. */
+export function catalogSummary() {
+  const engines = CATALOG_CODES.map(manifestSummary).filter(Boolean);
+  return { engines, count: engines.length };
+}
+
+/** Tools per form and validation evidence (GET /api/engines/catalog/coverage). */
+export function catalogCoverage() {
+  const summaries = CATALOG_CODES.map(manifestSummary).filter(Boolean);
+  const byKind = {};
+  for (const entry of summaries) byKind[entry.kind] = (byKind[entry.kind] || 0) + 1;
+  return {
+    totalEntries: summaries.length,
+    // Tools with current evidence for each validation state (not a single "verified" flag).
+    validation: validationCoverage(),
+    byArchetype: byKind,
+    originalCodes: REGISTERED_CODES.length,
+    stillRunning: Object.keys(CODE_TO_TOOL).length,
+  };
+}
+
 function manifestSummary(code) {
   const ref = parseEngineCode(code);
   const toolId = toolFor(ref);
@@ -743,27 +765,14 @@ function toolAccessible(accessibleCodes, purchased, toolId) {
 export function mountPublicEngines(app) {
   app.get('/api/engines/catalog', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
-    const list = CATALOG_CODES.map(manifestSummary).filter(Boolean);
-    res.json({
-      engines: filter ? list.filter((m) => m.homeEngine === filter) : list,
-      count: list.length,
-    });
+    const { engines: list, count } = catalogSummary();
+    res.json({ engines: filter ? list.filter((m) => m.homeEngine === filter) : list, count });
   });
 
   // Coverage report: tools per form (schema calculator/register, anchored questionnaire, or an
   // original archetype) and how many are built on a named method — all 63, by construction.
   app.get('/api/engines/catalog/coverage', async (req, res) => {
-    const summaries = CATALOG_CODES.map(manifestSummary).filter(Boolean);
-    const byKind = {};
-    for (const entry of summaries) byKind[entry.kind] = (byKind[entry.kind] || 0) + 1;
-    res.json({
-      totalEntries: summaries.length,
-      // Tools with current evidence for each validation state (not a single "verified" flag).
-      validation: validationCoverage(),
-      byArchetype: byKind,
-      originalCodes: REGISTERED_CODES.length,
-      stillRunning: Object.keys(CODE_TO_TOOL).length,
-    });
+    res.json(catalogCoverage());
   });
 
   app.post('/api/engines/:code/demo-run', async (req, res) => {

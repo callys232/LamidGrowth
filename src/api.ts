@@ -13,13 +13,29 @@ export function setWorkspaceScope(id: string) {
 // Empty (default) means the API is same-origin — built into this same server, as today. Set to
 // the backend's origin (e.g. https://api.lamidgrowth.com, no trailing slash) only when the
 // frontend is deployed separately from the backend (e.g. Vercel + a standalone API host).
-const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+const apiBase = import.meta.env?.VITE_API_BASE_URL || '';
+
+/** A replacement for the network: given the request, resolve the parsed JSON or throw ApiError.
+ * The public demo sets one (the in-browser sandbox) so the real workspace runs on sample data
+ * without any request reaching the server. */
+export type ApiTransport = (request: {
+  path: string;
+  method: string;
+  body?: unknown;
+}) => Promise<unknown>;
+let transport: ApiTransport | null = null;
+export function setApiTransport(next: ApiTransport | null) {
+  transport = next;
+}
+
 export async function api<T>(
   path: string,
   body?: unknown,
   method = 'POST',
   idempotencyKey?: string,
 ): Promise<T> {
+  if (transport)
+    return (await transport({ path, method: body === undefined ? 'GET' : method, body })) as T;
   const response = await fetch(`${apiBase}/api${path}`, {
     method: body === undefined ? 'GET' : method,
     credentials: apiBase ? 'include' : 'same-origin',

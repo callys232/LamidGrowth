@@ -8,3 +8,4 @@ package-lock.json
 src/content
 test-results
 playwright-report
+src/products/workspace/sandbox/engineCatalog.json

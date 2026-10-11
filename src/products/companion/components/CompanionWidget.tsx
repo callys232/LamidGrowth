@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { Bot, Minus, X } from 'lucide-react';
 import { api } from '../../../api';
-import { CompanionChatPage } from '../pages/CompanionChatPage';
+const CompanionChatPage = lazy(() =>
+  import('../pages/CompanionChatPage').then((module) => ({ default: module.CompanionChatPage })),
+);
 import './companionWidget.css';
 
 type GuideTopic =
@@ -198,7 +200,9 @@ export function CompanionWidget() {
             </header>
             <div className="companion-widget-body">
               {workspace ? (
-                <CompanionChatPage key={pathname} />
+                <Suspense fallback={<p role="status">Loading companion…</p>}>
+                  <CompanionChatPage key={pathname} />
+                </Suspense>
               ) : (
                 <>
                   <ol className="companion-chat-turns" aria-live="polite">

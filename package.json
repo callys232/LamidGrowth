@@ -7,12 +7,13 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "node --watch-path=server --watch-path=src/app --watch-path=vite.config.ts server/index.mjs",
+    "dev": "node scripts/dev.mjs",
     "build": "tsc -b && vite build",
     "start": "node server/index.mjs --production",
     "errors:daily": "node scripts/error-report.mjs",
     "test": "node --test --test-concurrency=3 tests/*.test.mjs",
     "test:e2e": "playwright test",
+    "test:demo": "npm run build && playwright test --config=playwright.sandbox.config.ts",
     "check": "npm run build && npm test",
     "test:exploratory": "playwright test --config=usability.config.ts && playwright test --config=paid-path.config.ts && playwright test --config=deep-coverage.config.ts && playwright test --config=human-pace.config.ts && playwright test --config=click-everything.config.ts",
     "test:full": "npm run check && npm run test:e2e && npm run test:exploratory && npm run format:check",
@@ -23,6 +24,11 @@
     "docs:products": "node scripts/update-product-index.mjs",
     "seo:sitemap": "node scripts/generate-sitemap.mjs",
     "content:catalog": "node scripts/sync-page-catalog.mjs && node scripts/generate-sitemap.mjs && prettier --write src/content/catalog.ts src/content/documentPages.ts"
+  },
+  "overrides": {
+    "hyperid": {
+      "uuid": "^11.1.1"
+    }
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",

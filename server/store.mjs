@@ -897,7 +897,7 @@ export async function openStore(filename, { poolMax } = {}) {
     // starting simultaneously) can both pass the "not exists" check and both attempt the CREATE,
     // one hitting pg_namespace's own unique index. That failure means the schema now exists —
     // exactly the desired end state — so it's safe to swallow specifically this error.
-    if (error.code !== '23505') throw error;
+    if (error.code !== '23505') throw markDatabaseError(error, bootstrap);
   } finally {
     bootstrapClient?.off('error', onBootstrapClientError);
     bootstrapClient?.release(true);
@@ -931,7 +931,7 @@ export async function openStore(filename, { poolMax } = {}) {
     client = await acquireDatabaseClient(pool, { attempts: 2 });
   } catch (error) {
     await pool.end().catch(() => {});
-    throw error;
+    throw markDatabaseError(error, pool);
   }
   // Symmetric add/remove — see the comment in withClient for why an unpaired add leaks listeners
   // on this pool's connections, which withClient/transaction go on to reuse for this store's
@@ -1872,13 +1872,13 @@ export async function openStore(filename, { poolMax } = {}) {
     // in step with the catalog — its current name and its subject seat — every startup, so the
     // price list and the seat bundles below show the 63 current tools. Codes merged into a tool
     // or withdrawn keep their rows (agent_runs history references them) but are not offered.
-    for (const tool of MANIFEST_SYNC) {
-      await client.query('UPDATE agent_manifests SET name = $1, home_engine = $2 WHERE id = $3', [
-        tool.name,
-        tool.homeEngine,
-        tool.id,
-      ]);
-    }
+    await client.query(
+      `UPDATE agent_manifests AS manifests
+      SET name = tools.name, home_engine = tools."homeEngine"
+      FROM jsonb_to_recordset($1::jsonb) AS tools(id text, name text, "homeEngine" text)
+      WHERE manifests.id = tools.id`,
+      [JSON.stringify(MANIFEST_SYNC)],
+    );
     const catalogIds = MANIFEST_SYNC.map((tool) => tool.id);
     await client.query(`ALTER TABLE bundles ALTER COLUMN created_by DROP NOT NULL;`);
     {
@@ -1935,12 +1935,18 @@ export async function openStore(filename, { poolMax } = {}) {
         } else {
           continue; // an admin customized this seat's description — leave their edits alone.
         }
-        for (const member of normalMembers) {
-          await client.query(
-            'INSERT INTO bundle_items (id, bundle_id, agent_id, created_at) VALUES ($1, $2, $3, $4)',
-            [randomUUID(), bundleId, member.id, now],
-          );
-        }
+        await client.query(
+          `INSERT INTO bundle_items (id, bundle_id, agent_id, created_at)
+          SELECT item.id, $2, item.agent_id, $3 FROM jsonb_to_recordset($1::jsonb)
+          AS item(id text, agent_id text)`,
+          [
+            JSON.stringify(
+              normalMembers.map((member) => ({ id: randomUUID(), agent_id: member.id })),
+            ),
+            bundleId,
+            now,
+          ],
+        );
       }
     }
     // Real entitlement gating (see src/app/entitlements.mjs): a workspace's access to a paid
@@ -1990,7 +1996,7 @@ export async function openStore(filename, { poolMax } = {}) {
     client.off('error', onClientError);
     client.release(true);
     await pool.end().catch(() => {});
-    throw error;
+    throw markDatabaseError(error, pool);
   }
   client.off('error', onClientError);
   client.release();

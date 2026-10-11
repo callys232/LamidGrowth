@@ -1,9 +1,11 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { api } from '../../../api';
+import { api, ApiError } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import { Modal } from '../../../shared/ui/Modal';
 import type { Options } from '../types';
+import type { Job } from '../types';
+import { ConsultantFinder } from './ConsultantFinder';
 
 type EstimateResponse =
   | {
@@ -28,6 +30,9 @@ export function JobForm({
   onSaved: () => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [needsRiskConfirmation, setNeedsRiskConfirmation] = useState(false);
+  const [riskConfirmed, setRiskConfirmed] = useState(false);
+  const [posted, setPosted] = useState<Job | null>(null);
   const [error, setError] = useState('');
   const [category, setCategory] = useState(options.categories[0] ?? '');
   const [projectType, setProjectType] = useState(options.projectTypes[0] ?? '');
@@ -75,156 +80,178 @@ export function JobForm({
     setError('');
     const data = Object.fromEntries(new FormData(event.currentTarget));
     try {
-      await api(
+      const result = await api<Job>(
         '/jobs',
         {
           ...data,
           budgetMin: Number(budgetMin),
           budgetMax: Number(budgetMax),
           tags,
+          ...(needsRiskConfirmation ? { riskConfirmed } : {}),
         },
         'POST',
         key.current,
       );
-      onSaved();
+      setPosted(result);
     } catch (error) {
+      if (error instanceof ApiError && error.status === 409 && error.message.includes('regulated'))
+        setNeedsRiskConfirmation(true);
       setError((error as Error).message);
     } finally {
       setBusy(false);
     }
   }
   return (
-    <Modal title="Post a scoped job" onClose={onClose}>
-      <form
-        onSubmit={save}
-        onChange={() => {
-          key.current = crypto.randomUUID();
-        }}
-      >
-        <Field label="Job title">
-          <input name="title" required maxLength={500} />
-        </Field>
-        <Field label="Category">
-          <select name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-            {options.categories.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Project type">
-          <select
-            name="projectType"
-            value={projectType}
-            onChange={(e) => setProjectType(e.target.value)}
+    <Modal title="Post a scoped job" onClose={posted ? onSaved : onClose}>
+      {posted ? (
+        <>
+          <p role="status">Your job has been posted. Find consultants for “{posted.title}”.</p>
+          <ConsultantFinder jobId={posted.id} />
+          <Button onClick={onSaved}>Done</Button>
+        </>
+      ) : (
+        <form
+          onSubmit={save}
+          onChange={() => {
+            key.current = crypto.randomUUID();
+          }}
+        >
+          <Field label="Job title">
+            <input name="title" required maxLength={500} />
+          </Field>
+          <Field label="Category">
+            <select name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+              {options.categories.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Project type">
+            <select
+              name="projectType"
+              value={projectType}
+              onChange={(e) => setProjectType(e.target.value)}
+            >
+              {options.projectTypes.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Project description">
+            <textarea
+              name="description"
+              required
+              minLength={20}
+              maxLength={10000}
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Field>
+          <Field label="Deliverables">
+            <textarea
+              name="deliverables"
+              required
+              maxLength={5000}
+              value={deliverables}
+              onChange={(e) => setDeliverables(e.target.value)}
+            />
+          </Field>
+          <Field
+            label="Smart tags"
+            hint="Comma-separated, e.g. mobile-app, react-native — narrows the estimate within this category"
           >
-            {options.projectTypes.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Project description">
-          <textarea
-            name="description"
-            required
-            minLength={20}
-            maxLength={10000}
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </Field>
-        <Field label="Deliverables">
-          <textarea
-            name="deliverables"
-            required
-            maxLength={5000}
-            value={deliverables}
-            onChange={(e) => setDeliverables(e.target.value)}
-          />
-        </Field>
-        <Field
-          label="Smart tags"
-          hint="Comma-separated, e.g. mobile-app, react-native — narrows the estimate within this category"
-        >
-          <input
-            value={tagsText}
-            onChange={(e) => setTagsText(e.target.value)}
-            placeholder="mobile-app, react-native"
-          />
-        </Field>
-        <Button
-          type="button"
-          variant="secondary"
-          disabled={estimating}
-          onClick={() => void runEstimate()}
-        >
-          {estimating ? 'Estimating…' : 'Estimate budget from real platform data'}
-        </Button>
-        {estimate && (
-          <p style={{ fontSize: 12 }}>
-            {estimate.available ? (
-              <>
-                Based on the posted budgets of {estimate.sampleSize}{' '}
-                {estimate.basis === 'tag-matched-history' ? 'tag-matched' : 'category'} job
-                {estimate.sampleSize === 1 ? '' : 's'}: {estimate.budgetMin}–{estimate.budgetMax}{' '}
-                {estimate.currency}.{estimate.note ? ` ${estimate.note}` : ''}
-                {estimate.excludedForCurrency
-                  ? ` ${estimate.excludedForCurrency} job${estimate.excludedForCurrency === 1 ? ' was' : 's were'} left out because no exchange rate is set for ${estimate.excludedForCurrency === 1 ? 'its' : 'their'} currency.`
-                  : ''}{' '}
-                Posted budgets are what clients offered, not agreed prices. This is a starting
-                suggestion — adjust it below as needed.
-              </>
-            ) : (
-              estimate.message
-            )}
-          </p>
-        )}
-        <div className="form-grid">
-          <Field label="Minimum budget">
             <input
-              name="budgetMin"
-              type="number"
-              min={0}
-              max={100000000}
-              required
-              value={budgetMin}
-              onChange={(e) => setBudgetMin(e.target.value)}
+              value={tagsText}
+              onChange={(e) => setTagsText(e.target.value)}
+              placeholder="mobile-app, react-native"
             />
           </Field>
-          <Field label="Maximum budget">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={estimating}
+            onClick={() => void runEstimate()}
+          >
+            {estimating ? 'Estimating…' : 'Estimate budget from real platform data'}
+          </Button>
+          {estimate && (
+            <p style={{ fontSize: 12 }}>
+              {estimate.available ? (
+                <>
+                  Based on the posted budgets of {estimate.sampleSize}{' '}
+                  {estimate.basis === 'tag-matched-history' ? 'tag-matched' : 'category'} job
+                  {estimate.sampleSize === 1 ? '' : 's'}: {estimate.budgetMin}–{estimate.budgetMax}{' '}
+                  {estimate.currency}.{estimate.note ? ` ${estimate.note}` : ''}
+                  {estimate.excludedForCurrency
+                    ? ` ${estimate.excludedForCurrency} job${estimate.excludedForCurrency === 1 ? ' was' : 's were'} left out because no exchange rate is set for ${estimate.excludedForCurrency === 1 ? 'its' : 'their'} currency.`
+                    : ''}{' '}
+                  Posted budgets are what clients offered, not agreed prices. This is a starting
+                  suggestion — adjust it below as needed.
+                </>
+              ) : (
+                estimate.message
+              )}
+            </p>
+          )}
+          <div className="form-grid">
+            <Field label="Minimum budget">
+              <input
+                name="budgetMin"
+                type="number"
+                min={0}
+                max={100000000}
+                required
+                value={budgetMin}
+                onChange={(e) => setBudgetMin(e.target.value)}
+              />
+            </Field>
+            <Field label="Maximum budget">
+              <input
+                name="budgetMax"
+                type="number"
+                min={1}
+                max={100000000}
+                required
+                value={budgetMax}
+                onChange={(e) => setBudgetMax(e.target.value)}
+              />
+            </Field>
+          </div>
+          <Field label="Currency">
             <input
-              name="budgetMax"
-              type="number"
-              min={1}
-              max={100000000}
+              name="currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+              pattern="[A-Z]{3}"
               required
-              value={budgetMax}
-              onChange={(e) => setBudgetMax(e.target.value)}
+              maxLength={3}
             />
           </Field>
-        </div>
-        <Field label="Currency">
-          <input
-            name="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-            pattern="[A-Z]{3}"
-            required
-            maxLength={3}
-          />
-        </Field>
-        <Field label="Timeline">
-          <input name="timeline" required maxLength={200} />
-        </Field>
-        {error && (
-          <p role="alert" className="form-error">
-            {error}
-          </p>
-        )}
-        <Button type="submit" disabled={busy}>
-          Post job · {options.jobPostCost} points
-        </Button>
-      </form>
+          <Field label="Timeline">
+            <input name="timeline" required maxLength={200} />
+          </Field>
+          {error && (
+            <p role="alert" className="form-error">
+              {error}
+            </p>
+          )}
+          {needsRiskConfirmation && (
+            <label>
+              <input
+                type="checkbox"
+                required
+                checked={riskConfirmed}
+                onChange={(e) => setRiskConfirmed(e.target.checked)}
+              />
+              I acknowledge that this scope requires independent expert review.
+            </label>
+          )}
+          <Button type="submit" disabled={busy}>
+            Post job · {options.jobPostCost} points
+          </Button>
+        </form>
+      )}
     </Modal>
   );
 }

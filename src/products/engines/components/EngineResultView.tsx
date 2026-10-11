@@ -38,7 +38,6 @@ export function EngineResultView({
         </div>
       )}
 
-
       {result.status && STATUS_NOTE[result.status] && (
         <div className="engine-result-status" role="status">
           <p>{STATUS_NOTE[result.status]}</p>

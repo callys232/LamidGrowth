@@ -1,6 +1,7 @@
 import { useMembersPage } from '../hooks/useMembersPage';
 import { MembersHeadingSlide } from '../slides/MembersHeadingSlide';
 import { MembersMembershipManagementSlide } from '../slides/MembersMembershipManagementSlide';
+import { DeletionRequests } from '../../accounts/components/DeletionRequests';
 
 /** Compose the page in reading order. Edit each section in ../slides. */
 export function Members() {
@@ -8,6 +9,7 @@ export function Members() {
   return (
     <>
       <MembersHeadingSlide />
+      {page.isEcosystemAdmin && <DeletionRequests />}
       <MembersMembershipManagementSlide
         canManage={page.canManage}
         error={page.error}

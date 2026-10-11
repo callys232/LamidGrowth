@@ -15,6 +15,7 @@ import { Modal } from '../../../shared/ui/Modal';
 import { DocumentCard } from './DocumentCard';
 import { ChecklistCard } from './ChecklistCard';
 import { ChangeOrderCard } from './ChangeOrderCard';
+import { ConsultantFinder } from './ConsultantFinder';
 import type { Bid, Job, Proposal } from '../types';
 
 const documentTools = [
@@ -289,6 +290,7 @@ export function JobDetail({
       {owner && (
         <>
           <h3>Submitted bids</h3>
+          <ConsultantFinder jobId={job.id} />
           {bids.length ? (
             bids.map((bid) => (
               <article key={bid.id}>

@@ -353,7 +353,14 @@ export async function mountAccounts(
           .prepare(
             'INSERT INTO workspaces (id,user_id,name,context,tier,member_limit) VALUES (?,?,?,?,?,?)',
           )
-          .run(workspace, user, `${input.name.split(' ')[0]}'s workspace`, input.context, 'individual', 1);
+          .run(
+            workspace,
+            user,
+            `${input.name.split(' ')[0]}'s workspace`,
+            input.context,
+            'individual',
+            1,
+          );
         await db
           .prepare('INSERT INTO workspace_members VALUES (?,?,?,?,?)')
           .run(workspace, user, 'owner', 'active', Date.now());
@@ -545,7 +552,10 @@ export async function mountAccounts(
   }
   app.post('/api/auth/mfa/verify', async (req, res) => {
     const input = z
-      .object({ challengeToken: z.string().regex(/^[a-f0-9]{64}$/), code: z.string().min(6).max(64) })
+      .object({
+        challengeToken: z.string().regex(/^[a-f0-9]{64}$/),
+        code: z.string().min(6).max(64),
+      })
       .strict()
       .parse(req.body);
     const tokenHash = digest(input.challengeToken);
@@ -561,7 +571,9 @@ export async function mountAccounts(
     if (!pending)
       return res
         .status(400)
-        .json({ error: 'This verification challenge is invalid or expired. Please sign in again.' });
+        .json({
+          error: 'This verification challenge is invalid or expired. Please sign in again.',
+        });
     const secretRow = await db
       .prepare('SELECT secret_encrypted FROM mfa_secrets WHERE user_id = ?')
       .get(pending.user_id);
@@ -619,12 +631,18 @@ export async function mountAccounts(
     },
     async enroll(userId, email) {
       const secret = generateTotpSecret();
-      await db
+      const enrolled = await db
         .prepare(
           `INSERT INTO mfa_secrets (user_id, secret_encrypted, confirmed_at, created_at) VALUES (?, ?, NULL, ?)
-           ON CONFLICT (user_id) DO UPDATE SET secret_encrypted = EXCLUDED.secret_encrypted, confirmed_at = NULL, created_at = EXCLUDED.created_at`,
+           ON CONFLICT (user_id) DO UPDATE SET secret_encrypted = EXCLUDED.secret_encrypted, confirmed_at = NULL, created_at = EXCLUDED.created_at
+           WHERE mfa_secrets.confirmed_at IS NULL RETURNING user_id`,
         )
-        .run(userId, encryptSecret(key, secret), Date.now());
+        .get(userId, encryptSecret(key, secret), Date.now());
+      if (!enrolled)
+        throw Object.assign(
+          new Error('Authentication is already enabled. Disable it before replacing it.'),
+          { status: 409 },
+        );
       return { secret, otpauthUrl: otpauthUrl(secret, email) };
     },
     async confirm(userId, code) {

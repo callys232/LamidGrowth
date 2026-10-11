@@ -14,6 +14,7 @@ import { mountAI, defaultAiProvider, reviewSchema as aiReviewSchema } from './ai
 import { createAgentRuntime, mountAgents, agentManifests } from './agents.mjs';
 import { mountModelRegistry } from './models.mjs';
 import { mountProjects } from './projects.mjs';
+import { mountAccountServices } from './accountServices.mjs';
 import { mountTasks } from './tasks.mjs';
 import { mountGoals } from './goals.mjs';
 import { mountGrowth } from './growth.mjs';
@@ -325,7 +326,12 @@ export async function createApp({
   mountPaystackWebhook(app, store, { paymentProvider });
   mountKycWebhook(app, store, { kycProvider });
   mountConnectorWebhook(app, store);
-  app.use('/api', apiLimiter);
+  app.use('/api', (req, res, next) => {
+    // Health polling must not perform a rate-limit write before the bounded readiness query.
+    if (['GET', 'HEAD'].includes(req.method) && ['/health', '/ready'].includes(req.path))
+      return next();
+    return apiLimiter(req, res, next);
+  });
   app.use('/api/auth', (req, res, next) => {
     if (req.method === 'GET') return next();
     return authLimiter(req, res, next);
@@ -387,6 +393,9 @@ export async function createApp({
     welcomeIpVelocityLimit,
     errorLogger,
     ecosystemAdminEmails,
+  }).catch(async (error) => {
+    await store.db.close().catch(() => {});
+    throw error;
   });
   mountPublicCompanion(app);
   mountPublicPricing(app, store);
@@ -470,6 +479,11 @@ export async function createApp({
   app.get('/api/mfa/status', async (req, res) => res.json(await accounts.mfa.status(req.user.id)));
   app.post('/api/mfa/enroll', async (req, res) => {
     if (req.user.demo) return res.status(403).json({ error: 'Sample accounts cannot enroll MFA.' });
+    if ((await accounts.mfa.status(req.user.id)).enabled)
+      return res.status(409).json({
+        error:
+          'Authentication is already enabled. Disable it with your password before replacing it.',
+      });
     res.json(await accounts.mfa.enroll(req.user.id, req.user.email || req.user.name));
   });
   app.post('/api/mfa/confirm', async (req, res) => {
@@ -749,7 +763,11 @@ export async function createApp({
   app.get('/api/bids/mine', async (req, res) =>
     res.json(
       await db
-        .prepare('SELECT * FROM bids WHERE freelancer_user_id = ? ORDER BY created_at DESC')
+        .prepare(
+          `SELECT bids.*, job_posts.title AS job_title, job_posts.status AS job_status
+           FROM bids JOIN job_posts ON job_posts.id = bids.job_id
+           WHERE bids.freelancer_user_id = ? ORDER BY bids.created_at DESC`,
+        )
         .all(req.user.id),
     ),
   );
@@ -1036,6 +1054,21 @@ export async function createApp({
       // legitimate path allowed to physically destroy them, and it does so only for the duration
       // of this transaction.
       await db.exec("SET LOCAL app.allow_purge = 'on'");
+      const retainedProject = await db
+        .prepare(
+          `SELECT projects.id FROM projects
+        LEFT JOIN job_posts ON job_posts.id = projects.job_id
+        WHERE projects.freelancer_user_id = ? OR job_posts.client_user_id = ?
+        OR projects.workspace_id IN (SELECT id FROM workspaces WHERE user_id = ?) LIMIT 1`,
+        )
+        .get(userId, userId, userId);
+      if (retainedProject)
+        throw Object.assign(
+          new Error(
+            'This account has shared commercial projects. Retain their delivery and financial records and complete an administrator retention review before permanent deletion.',
+          ),
+          { status: 409 },
+        );
       // Remove the account's draft commercial work; preserve other users' point history.
       await db
         .prepare(
@@ -1063,6 +1096,11 @@ export async function createApp({
       await db.prepare('DELETE FROM points_ledger WHERE user_id = ?').run(userId);
       await db.prepare('DELETE FROM idempotency WHERE user_id = ?').run(userId);
       await db.prepare('DELETE FROM account_tokens WHERE user_id = ?').run(userId);
+      await db
+        .prepare(
+          "DELETE FROM records WHERE kind IN ('account_profile', 'account_deletion_request') AND data::jsonb ->> 'userId' = ?",
+        )
+        .run(userId);
       await db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
       await db.prepare('DELETE FROM workspace_members WHERE user_id = ?').run(userId);
       for (const workspace of workspaces) {
@@ -1664,6 +1702,11 @@ export async function createApp({
           "UPDATE records SET kind = 'deleted_objective', version = version + 1 WHERE id = ?",
         )
         .run(row.id);
+      await db
+        .prepare(
+          "UPDATE records SET data = jsonb_set(data::jsonb, '{goalId}', '\"\"'::jsonb)::text, version = version + 1 WHERE workspace_id = ? AND kind = 'internal_project' AND data::jsonb ->> 'goalId' = ?",
+        )
+        .run(req.workspace.id, row.id);
       // F-SI-02: a deleted goal must stop being monitored and stop backing cached intelligence/
       // recommendations — previously only an explicit stage transition did this cascade.
       await db.prepare('UPDATE goal_subscriptions SET active = 0 WHERE goal_id = ?').run(row.id);
@@ -1851,6 +1894,7 @@ export async function createApp({
   mountAI(app, store, aiProvider);
   mountAgents(app, store, agentRuntime, { spendLimiter });
   mountModelRegistry(app, store);
+  mountAccountServices(app, store, { verifyCurrentPassword, ecosystemAdminEmails });
   mountProjects(app, store, { aiProvider });
   mountTasks(app, store);
   mountGoals(app, store);

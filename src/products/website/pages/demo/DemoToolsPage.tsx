@@ -6,6 +6,7 @@ import { DecisionQualityPreview } from './DecisionQualityPreview';
 import { DemoVideoPlayer } from './DemoVideoPlayer';
 import { DemoVideoLibrary } from './DemoVideoLibrary';
 import { AllEngineDemos } from './CatalogEngineDemo';
+import { DemoProfileLauncher } from './DemoProfileLauncher';
 import './demo-videos.css';
 import { DemoToolPanel, EASE, PushDown } from './DemoToolPanel';
 import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
@@ -29,9 +30,14 @@ export function DemoToolsPage() {
 
   return (
     <div className="demo-tools-page" data-scroll-feedback="off">
+      <section id="profile-demos" className="demo-slide">
+        <div className="demo-tools-container">
+          <DemoProfileLauncher />
+        </div>
+      </section>
       <section className="demo-slide">
         <div className="demo-tools-container">
-          <DemoVideoLibrary primary />
+          <DemoVideoLibrary />
         </div>
       </section>
       <section className="demo-slide demo-hero">

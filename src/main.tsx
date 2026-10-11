@@ -15,6 +15,7 @@ import { applyTheme, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import { reportClientError } from './errorReporting';
+import { readDemoSession } from './products/workspace/sandbox/demoSession';
 import './styles.css';
 import './readability.css';
 import './design-system.css';
@@ -28,6 +29,8 @@ import './ui-refresh.css';
 import './theme.css';
 import './micro-interactions.css';
 import './public-refresh.css';
+import './workspace-ui.css';
+import './workspace-legacy.css';
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
@@ -57,15 +60,24 @@ window.addEventListener('error', (event) =>
 window.addEventListener('unhandledrejection', (event) =>
   reportClientError('rejection', event.reason),
 );
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <MotionProvider>
-        <BrowserRouter>
-          <InteractionFeedback />
-          <App />
-        </BrowserRouter>
-      </MotionProvider>
-    </ErrorBoundary>
-  </React.StrictMode>,
-);
+function start() {
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <MotionProvider>
+          <BrowserRouter>
+            <InteractionFeedback />
+            <App />
+          </BrowserRouter>
+        </MotionProvider>
+      </ErrorBoundary>
+    </React.StrictMode>,
+  );
+}
+// Demo visitors: load the in-browser sandbox and route every api() call to it before anything
+// renders. Everyone else never downloads the sandbox code.
+if (readDemoSession())
+  void import('./products/workspace/sandbox/session')
+    .then(({ activateSandboxIfDemo }) => activateSandboxIfDemo())
+    .finally(start);
+else start();

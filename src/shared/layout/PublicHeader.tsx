@@ -386,6 +386,9 @@ export function PublicHeader() {
             <Link to="/pricing" onPointerEnter={close} onClick={navigate}>
               Pricing
             </Link>
+            <Link to="/demo#profile-demos" onPointerEnter={close} onClick={navigate}>
+              Demo
+            </Link>
           </nav>
           <div className="header-actions">
             <button

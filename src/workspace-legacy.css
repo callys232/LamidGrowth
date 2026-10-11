@@ -1,0 +1,164 @@
+/* Workspace pages built before the Phase 2 design system: their shared building blocks (panels,
+   section headings, settings cards, activity feeds, empty states) take the workspace surface and
+   the current tool's domain colour. Scoped to the workspace content area — never the public site. */
+
+.workspace-layout #workspace-main .panel {
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 20px 22px;
+}
+/* A page-level panel that only groups other panels becomes a frameless stack. */
+.workspace-layout #workspace-main .panel:has(> .panel, > section.panel) {
+  display: grid;
+  gap: 18px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  overflow: visible;
+}
+.workspace-layout #workspace-main .panel .panel {
+  margin: 0;
+}
+
+/* Section headings: a bar in the tool's domain colour. */
+.workspace-layout #workspace-main .panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px 14px;
+  margin: 0 0 14px;
+  padding: 0;
+}
+.workspace-layout #workspace-main .panel-heading::before {
+  content: '';
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 3px;
+  min-height: 22px;
+  border-radius: 3px;
+  background: var(--ws-accent, var(--ws-work));
+}
+.workspace-layout #workspace-main .panel-heading > div {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+.workspace-layout #workspace-main .panel-heading h2 {
+  margin: 0 0 4px;
+  font-size: 19px;
+  color: var(--ink);
+}
+.workspace-layout #workspace-main .panel-heading h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--ink);
+}
+.workspace-layout #workspace-main .panel-heading span {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary, var(--text-muted));
+}
+.workspace-layout #workspace-main .settings-card > h3:first-child,
+.workspace-layout #workspace-main .settings-card > h2:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
+  font-size: 16px;
+  color: var(--ink);
+}
+.workspace-layout #workspace-main .settings-card > h3:first-child::before,
+.workspace-layout #workspace-main .settings-card > h2:first-child::before {
+  content: '';
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ws-accent, var(--ws-work));
+}
+
+/* Activity feeds: calmer rows with a domain-tinted hover. */
+.workspace-layout #workspace-main .activity-feed-list {
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 10px;
+  overflow: hidden;
+}
+.workspace-layout #workspace-main .activity-feed-row {
+  padding: 12px 16px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+.workspace-layout #workspace-main .activity-feed-row:hover {
+  background: color-mix(in srgb, var(--ws-accent, var(--ws-work)) 6%, transparent);
+}
+.workspace-layout #workspace-main .activity-feed-icon {
+  color: var(--ws-accent, var(--ws-work));
+}
+
+/* Empty states sit lighter inside cards. */
+.workspace-layout #workspace-main .panel .empty-state,
+.workspace-layout #workspace-main .panel .empty {
+  border-radius: 10px;
+}
+
+@media (max-width: 560px) {
+  .workspace-layout #workspace-main .panel {
+    padding: 16px 14px;
+  }
+  .workspace-layout #workspace-main .activity-feed-row {
+    padding: 11px 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-layout #workspace-main .activity-feed-row {
+    transition: none;
+  }
+}
+
+/* Headings with no actions stay left; actions in a heading row sit at the end. */
+.workspace-layout #workspace-main .panel-heading {
+  justify-content: flex-start;
+}
+
+/* Bare inputs placed straight into a card stack with even spacing and full width. */
+.workspace-layout #workspace-main .settings-card > input,
+.workspace-layout #workspace-main .settings-card > select,
+.workspace-layout #workspace-main .settings-card > textarea {
+  display: block;
+  width: 100%;
+  margin: 0 0 10px;
+}
+
+/* Plain buttons without a design-system class get the secondary button treatment. */
+.workspace-layout #workspace-main .panel button:not([class]),
+.workspace-layout #workspace-main .settings-card button:not([class]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong, var(--border));
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.workspace-layout #workspace-main .panel button:not([class]):hover:not(:disabled) {
+  border-color: var(--ws-accent, var(--ws-work));
+  background: color-mix(in srgb, var(--ws-accent, var(--ws-work)) 8%, transparent);
+}
+.workspace-layout #workspace-main .panel button:not([class]):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.workspace-layout #workspace-main .panel button:not([class]):focus-visible {
+  outline: 2px solid var(--ws-accent, var(--ws-work));
+  outline-offset: 2px;
+}

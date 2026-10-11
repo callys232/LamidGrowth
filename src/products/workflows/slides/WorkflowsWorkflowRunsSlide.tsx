@@ -76,7 +76,11 @@ export function WorkflowsWorkflowRunsSlide({
                     <Button
                       disabled={busy}
                       onClick={() =>
-                        void resolveEvent(run, step.input.correlationKey || '', payloadDrafts[step.id] || '')
+                        void resolveEvent(
+                          run,
+                          step.input.correlationKey || '',
+                          payloadDrafts[step.id] || '',
+                        )
                       }
                     >
                       Resolve event ({step.input.correlationKey})

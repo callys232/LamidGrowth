@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { BarChart3, FlaskConical } from 'lucide-react';
+import { BarChart3, FlaskConical, Plus } from 'lucide-react';
 import { api } from '../../../api';
-import { Empty } from '../../../shared/ui/Empty';
+import { Button } from '../../../shared/ui/Button';
 import { SkeletonList } from '../../../shared/ui/Skeleton';
-import { StatusPill } from '../../../shared/workspace/StatusPill';
+import { PageHeader } from '../../../shared/workspace/ui/PageHeader';
+import { StatusPill } from '../../../shared/workspace/ui/StatusPill';
+import type { Kpi as OverviewKpi } from '../../workspace/overview/overviewModel';
 
 type Kpi = {
   id: string;
@@ -179,131 +181,311 @@ function useGrowthPage() {
   };
 }
 
+const EXPERIMENT_TONE = { draft: 'neutral', running: 'opportunities', complete: 'money' } as const;
+const shortDate = (iso: string) =>
+  new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(new Date(iso));
+
 /** /os/growth — KPI definitions with real evidence, and the experiment pipeline. */
 export function GrowthPage() {
   const page = useGrowthPage();
   const [resultDrafts, setResultDrafts] = useState<Record<string, string>>({});
+  const recorded = page.kpis.filter((k) => (page.observations[k.id] ?? []).length > 0).length;
+  const running = page.experiments.filter((e) => e.status === 'running').length;
+  const kpiTiles: OverviewKpi[] = [
+    {
+      domain: 'opportunities',
+      label: 'KPIs defined',
+      value: String(page.kpis.length),
+      hint: `${recorded} with recorded values`,
+      to: '/os/growth',
+    },
+    {
+      domain: 'opportunities',
+      label: 'Experiments running',
+      value: String(running),
+      hint: `${page.experiments.length} in total`,
+      to: '/os/growth',
+    },
+    {
+      domain: 'money',
+      label: 'Completed experiments',
+      value: String(page.experiments.filter((e) => e.status === 'complete').length),
+      hint: 'With a recorded result',
+      to: '/os/growth',
+    },
+  ];
   return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Growth</h2>
+    <div className="ws-page" data-domain="opportunities">
+      <PageHeader
+        eyebrow="OPPORTUNITIES · GROWTH"
+        title="Growth"
+        description="The KPIs you track and the experiments testing what moves them."
+        kpis={page.loading ? [] : kpiTiles}
+        loadingKpis={page.loading ? 3 : 0}
+      />
+      {page.error && (
+        <p className="form-error" role="alert">
+          {page.error}
+        </p>
+      )}
+
+      <section className="ws-panel" aria-labelledby="kpis-title">
+        <div className="ws-panel-heading">
+          <div>
+            <h2 id="kpis-title">KPIs</h2>
+            <span>Each value is recorded evidence, plotted in the order it was observed.</span>
+          </div>
         </div>
-      </div>
-      {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {page.loading && <SkeletonList rows={4} />}
-
-      <h3>KPIs</h3>
-      {!page.loading && page.kpis.length === 0 && <Empty title="No KPIs yet">Define one below.</Empty>}
-      {!page.loading && page.kpis.length > 0 && (
-        <ol className="activity-feed-list">
-          {page.kpis.map((kpi) => (
-            <li key={kpi.id} className="activity-feed-row" style={{ display: 'block' }}>
-              <span className="activity-feed-icon">
-                <BarChart3 size={15} />
-              </span>
-              <strong>{kpi.name}</strong> <small>{kpi.unit}</small>
-              {kpi.calculation_method && <p>{kpi.calculation_method}</p>}
-              <ul>
-                {(page.observations[kpi.id] || []).map((obs) => (
-                  <li key={obs.id}>
-                    {obs.value} {kpi.unit} · {new Date(obs.observed_at).toLocaleDateString()}
-                    {obs.hasEvidence ? ' · has evidence' : ''}
-                  </li>
-                ))}
-              </ul>
-              <input
-                type="number"
-                placeholder="Record a value"
-                value={page.obsDrafts[kpi.id] || ''}
-                onChange={(e) => page.setObsDrafts((prev) => ({ ...prev, [kpi.id]: e.target.value }))}
-              />
-              <button type="button" disabled={page.busy} onClick={() => page.addObservation(kpi.id)}>
-                Record
-              </button>
-            </li>
-          ))}
-        </ol>
-      )}
-      <div className="settings-card">
-        <input type="text" placeholder="KPI name" value={page.kpiName} onChange={(e) => page.setKpiName(e.target.value)} />
-        <input type="text" placeholder="Unit (optional)" value={page.kpiUnit} onChange={(e) => page.setKpiUnit(e.target.value)} />
-        <input
-          type="text"
-          placeholder="How is this calculated? (optional but recommended)"
-          value={page.kpiMethod}
-          onChange={(e) => page.setKpiMethod(e.target.value)}
-        />
-        <button type="button" disabled={page.busy || !page.kpiName.trim()} onClick={page.createKpi}>
-          Define KPI
-        </button>
-      </div>
-
-      <h3 style={{ marginTop: 32 }}>Experiments</h3>
-      {!page.loading && page.experiments.length === 0 && <Empty title="No experiments yet">Draft one below.</Empty>}
-      {!page.loading && page.experiments.length > 0 && (
-        <ol className="activity-feed-list">
-          {page.experiments.map((exp) => (
-            <li key={exp.id} className="activity-feed-row" style={{ display: 'block' }}>
-              <span className="activity-feed-icon">
-                <FlaskConical size={15} />
-              </span>
-              <strong>{exp.title}</strong> <StatusPill status={exp.status} />
-              <p>{exp.hypothesis}</p>
-              {exp.variants && (
-                <p>
-                  Variants: {exp.variants.map((v) => `${v.name} (${v.trafficWeightPercent}%)`).join(', ')}
-                </p>
-              )}
-              {exp.status === 'draft' && (
-                <button type="button" disabled={page.busy} onClick={() => page.startExperiment(exp.id)}>
-                  Start
-                </button>
-              )}
-              {exp.status === 'running' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Result"
-                    value={resultDrafts[exp.id] || ''}
-                    onChange={(e) => setResultDrafts((prev) => ({ ...prev, [exp.id]: e.target.value }))}
-                  />
-                  <button
-                    type="button"
-                    disabled={page.busy}
-                    onClick={() => page.completeExperiment(exp.id, resultDrafts[exp.id] || '')}
+        {page.loading ? (
+          <div className="ws-trends">
+            <SkeletonList rows={3} />
+          </div>
+        ) : page.kpis.length === 0 ? (
+          <div className="ws-panel-state ws-empty">
+            <BarChart3 size={28} aria-hidden="true" />
+            <h3>No KPIs yet</h3>
+            <p>Define the measures that matter below, then record values as you observe them.</p>
+          </div>
+        ) : (
+          <div className="ws-trends">
+            {page.kpis.map((kpi) => {
+              const values = page.observations[kpi.id] ?? [];
+              const latest = values.at(-1);
+              const peak = Math.max(kpi.target ?? 0, ...values.map((v) => v.value), 1);
+              return (
+                <article className="ws-trend ws-kpi" key={kpi.id}>
+                  <header>
+                    <strong>{kpi.name}</strong>
+                    {kpi.unit && <StatusPill tone="neutral">{kpi.unit}</StatusPill>}
+                  </header>
+                  <div className="ws-trend-body">
+                    <div>
+                      <span className="ws-trend-value">
+                        {latest ? latest.value : '—'}
+                        {latest && kpi.unit === '%' ? '%' : ''}
+                      </span>
+                      <small>
+                        {latest
+                          ? `Recorded ${shortDate(latest.observed_at)}${kpi.target !== null ? ` · target ${kpi.target}` : ''}`
+                          : 'No values recorded yet'}
+                      </small>
+                    </div>
+                    <div
+                      className="ws-trend-bars"
+                      role="img"
+                      aria-label={`Recorded values: ${values.map((v) => v.value).join(', ') || 'none'}`}
+                    >
+                      {values.map((obs) => (
+                        <span key={obs.id} title={`${shortDate(obs.observed_at)} · ${obs.value}`}>
+                          <i style={{ height: `${Math.max((obs.value / peak) * 100, 4)}%` }} />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  {kpi.target !== null && latest && (
+                    <div className="ws-progress" aria-label={`Toward target ${kpi.target}`}>
+                      <div className="ws-progress-track">
+                        <span
+                          style={{
+                            width: `${Math.min(100, (latest.value / (kpi.target || 1)) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {kpi.calculation_method && (
+                    <p className="ws-kpi-method">{kpi.calculation_method}</p>
+                  )}
+                  <form
+                    className="ws-kpi-record"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void page.addObservation(kpi.id);
+                    }}
                   >
-                    Complete
-                  </button>
-                </>
-              )}
-              {exp.status === 'complete' && (
-                <p>
-                  {exp.result}
-                  {exp.winning_variant ? ` — winner: ${exp.winning_variant}` : ''}
-                </p>
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
-      <div className="settings-card">
-        <input type="text" placeholder="Title" value={page.expTitle} onChange={(e) => page.setExpTitle(e.target.value)} />
-        <input
-          type="text"
-          placeholder="Hypothesis"
-          value={page.expHypothesis}
-          onChange={(e) => page.setExpHypothesis(e.target.value)}
-        />
-        <input type="text" placeholder="Metric" value={page.expMetric} onChange={(e) => page.setExpMetric(e.target.value)} />
-        <button
-          type="button"
-          disabled={page.busy || !page.expTitle.trim() || !page.expHypothesis.trim() || !page.expMetric.trim()}
-          onClick={page.createExperiment}
+                    <input
+                      type="number"
+                      aria-label={`Record a value for ${kpi.name}`}
+                      placeholder="Record a value"
+                      value={page.obsDrafts[kpi.id] || ''}
+                      onChange={(e) =>
+                        page.setObsDrafts((prev) => ({ ...prev, [kpi.id]: e.target.value }))
+                      }
+                    />
+                    <Button
+                      type="submit"
+                      variant="secondary"
+                      disabled={page.busy || !page.obsDrafts[kpi.id]}
+                    >
+                      Record
+                    </Button>
+                  </form>
+                </article>
+              );
+            })}
+          </div>
+        )}
+        <form
+          className="ws-inline-form ws-inline-form-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void page.createKpi();
+          }}
         >
-          Draft experiment
-        </button>
-      </div>
-    </section>
+          <label>
+            <span>KPI name</span>
+            <input
+              type="text"
+              value={page.kpiName}
+              onChange={(e) => page.setKpiName(e.target.value)}
+              placeholder="e.g. Monthly recurring revenue"
+            />
+          </label>
+          <label>
+            <span>Unit</span>
+            <input
+              type="text"
+              value={page.kpiUnit}
+              onChange={(e) => page.setKpiUnit(e.target.value)}
+              placeholder="Optional — USD, %, count"
+            />
+          </label>
+          <label>
+            <span>How it’s calculated</span>
+            <input
+              type="text"
+              value={page.kpiMethod}
+              onChange={(e) => page.setKpiMethod(e.target.value)}
+              placeholder="Recommended"
+            />
+          </label>
+          <Button type="submit" disabled={page.busy || !page.kpiName.trim()}>
+            <Plus size={15} /> Define KPI
+          </Button>
+        </form>
+      </section>
+
+      <section className="ws-panel" aria-labelledby="experiments-title">
+        <div className="ws-panel-heading">
+          <div>
+            <h2 id="experiments-title">Experiments</h2>
+            <span>Draft a hypothesis, run it, and record what actually happened.</span>
+          </div>
+        </div>
+        {!page.loading && page.experiments.length === 0 ? (
+          <div className="ws-panel-state ws-empty">
+            <FlaskConical size={28} aria-hidden="true" />
+            <h3>No experiments yet</h3>
+            <p>Draft one below to test what moves your KPIs.</p>
+          </div>
+        ) : (
+          <div className="ws-trends">
+            {page.experiments.map((exp) => (
+              <article className="ws-trend ws-experiment" key={exp.id}>
+                <header>
+                  <strong>{exp.title}</strong>
+                  <StatusPill
+                    tone={EXPERIMENT_TONE[exp.status as keyof typeof EXPERIMENT_TONE] ?? 'neutral'}
+                  >
+                    {exp.status}
+                  </StatusPill>
+                </header>
+                <p className="ws-experiment-hypothesis">{exp.hypothesis}</p>
+                <p className="ws-kpi-method">Metric: {exp.metric}</p>
+                {exp.variants && (
+                  <div className="ws-split" aria-label="Traffic split">
+                    {exp.variants.map((v) => (
+                      <span
+                        key={v.name}
+                        style={{ flexBasis: `${v.trafficWeightPercent}%` }}
+                        data-winner={exp.winning_variant === v.name || undefined}
+                      >
+                        {v.name} · {v.trafficWeightPercent}%
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {exp.status === 'draft' && (
+                  <Button disabled={page.busy} onClick={() => page.startExperiment(exp.id)}>
+                    Start experiment
+                  </Button>
+                )}
+                {exp.status === 'running' && (
+                  <form
+                    className="ws-kpi-record"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void page.completeExperiment(exp.id, resultDrafts[exp.id] || '');
+                    }}
+                  >
+                    <input
+                      type="text"
+                      aria-label={`Result for ${exp.title}`}
+                      placeholder="What happened?"
+                      value={resultDrafts[exp.id] || ''}
+                      onChange={(e) =>
+                        setResultDrafts((prev) => ({ ...prev, [exp.id]: e.target.value }))
+                      }
+                    />
+                    <Button type="submit" variant="secondary" disabled={page.busy}>
+                      Complete
+                    </Button>
+                  </form>
+                )}
+                {exp.status === 'complete' && (
+                  <p className="ws-experiment-result">
+                    {exp.result}
+                    {exp.winning_variant ? ` — winner: ${exp.winning_variant}` : ''}
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+        <form
+          className="ws-inline-form ws-inline-form-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void page.createExperiment();
+          }}
+        >
+          <label>
+            <span>Experiment title</span>
+            <input
+              type="text"
+              value={page.expTitle}
+              onChange={(e) => page.setExpTitle(e.target.value)}
+            />
+          </label>
+          <label>
+            <span>Hypothesis</span>
+            <input
+              type="text"
+              value={page.expHypothesis}
+              onChange={(e) => page.setExpHypothesis(e.target.value)}
+            />
+          </label>
+          <label>
+            <span>Metric</span>
+            <input
+              type="text"
+              value={page.expMetric}
+              onChange={(e) => page.setExpMetric(e.target.value)}
+            />
+          </label>
+          <Button
+            type="submit"
+            disabled={
+              page.busy ||
+              !page.expTitle.trim() ||
+              !page.expHypothesis.trim() ||
+              !page.expMetric.trim()
+            }
+          >
+            <Plus size={15} /> Draft experiment
+          </Button>
+        </form>
+      </section>
+    </div>
   );
 }

@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Button } from '../../../shared/ui/Button';
 import { SkeletonBlock, SkeletonLine } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
-import { useWorkspace } from '../../workspace/components/WorkspaceShell';
 import { MilestoneCard } from '../components/MilestoneCard';
+import { ProjectLifecycle } from '../projects/ProjectLifecycle';
 import { useProjectDetail, type ProjectMessage } from '../hooks/useProjectsPage';
 
 /** /os/commercial/projects/:id — milestones, deliverables, verification, and approval for one project. */
 export function ProjectDetailPage() {
   const { id = '' } = useParams();
-  const { state } = useWorkspace();
   const {
     project,
     loading,
@@ -55,8 +54,8 @@ export function ProjectDetailPage() {
   if (error) return <p className="activity-feed-status activity-feed-error">{error}</p>;
   if (!project) return null;
 
-  const isFreelancer = project.freelancer_user_id === state.user.id;
-  const isClient = !isFreelancer; // server enforces the real check; this only toggles which controls render
+  const isFreelancer = project.isFreelancer === true || project.isTeamMember === true;
+  const isClient = project.isClient === true;
 
   return (
     <section className="panel">
@@ -66,7 +65,9 @@ export function ProjectDetailPage() {
           <span>Milestones, deliverables, and approvals for this project.</span>
         </div>
         <StatusPill status={project.status} />
+        <Link to="/os/disputes">Review disputes</Link>
       </div>
+      <ProjectLifecycle project={project} />
 
       {project.milestones.length === 0 ? (
         <p className="activity-feed-status">No milestones yet.</p>
@@ -86,7 +87,7 @@ export function ProjectDetailPage() {
               onVerify={verifySubmission}
               onDecide={decide}
               onFund={fundMilestone}
-              onLoadFunding={loadFunding}
+              onLoadFunding={project.isTeamMember ? undefined : loadFunding}
               onRelease={releaseMilestone}
               onRefund={refundMilestone}
             />

@@ -1,3 +1,4 @@
+import { PageHeading } from '../../../shared/workspace/PageHeading';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Lock } from 'lucide-react';
@@ -82,120 +83,128 @@ export function EnginesPage() {
   }, [catalog, tab]);
 
   return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>Tools</h2>
-          <span>Each tool follows a recognised method and calculates from your own figures.</span>
-        </div>
-      </div>
-
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
-        </p>
-      )}
-
-      {coverage && (
-        <p className="activity-feed-status">
-          {coverage.totalEntries} tools, each built on a named method or standard.{' '}
-          {coverage.validation.calculationTested} have figures checked against hand-worked answers;{' '}
-          {coverage.validation.methodReviewed} have had their method independently reviewed.
-        </p>
-      )}
-
-      <div className="engines-tabs">
-        {AREAS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            className={name === tab ? 'engines-tab is-active' : 'engines-tab'}
-            onClick={() => setTab(name)}
-          >
-            {name}
-            {catalog && name !== 'All' && (
-              <span className="engines-tab-count">
-                {catalog.engines.filter((e) => e.area === name).length}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {!catalog ? (
-        <div className="engines-layout">
-          <SkeletonList rows={8} />
-        </div>
-      ) : (
-        <div className="engines-layout">
-          <ul className="engines-list">
-            {filtered.map((engine) => (
-              <li key={engine.code}>
-                <button
-                  type="button"
-                  className={
-                    selected?.code === engine.code
-                      ? 'engines-list-item is-active'
-                      : 'engines-list-item'
-                  }
-                  onClick={() => setSelected(engine)}
-                >
-                  <strong>{engine.engineName}</strong>
-                  <small>
-                    {engine.standard ?? engine.seriesName} · {engine.pointsCost} pts
-                  </small>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="engines-detail">
-            {!selected ? (
-              <Empty title="Pick a diagnostic">
-                Choose one from the list to see what it measures and run it.
-              </Empty>
-            ) : (
-              <EngineDetailPanel key={selected.code} engine={selected} run={run} />
-            )}
+    <>
+      <PageHeading
+        eyebrow="INTELLIGENCE · ENGINES"
+        title="Engines"
+        description="The decision and analysis tools open to your workspace, and what each one calculates."
+      />
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Tools</h2>
+            <span>Each tool follows a recognised method and calculates from your own figures.</span>
           </div>
         </div>
-      )}
 
-      {filteredLocked.length > 0 && (
-        <div className="engines-locked" style={{ marginTop: 24 }}>
-          <div className="panel-heading">
-            <div>
-              <h3>Locked for your plan</h3>
-              <span>
-                These engines exist but aren't included in your current tier or bundles — unlock the
-                matching seat to get access without a full tier upgrade.
-              </span>
-            </div>
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        {coverage && (
+          <p className="activity-feed-status">
+            {coverage.totalEntries} tools, each built on a named method or standard.{' '}
+            {coverage.validation.calculationTested} have figures checked against hand-worked
+            answers; {coverage.validation.methodReviewed} have had their method independently
+            reviewed.
+          </p>
+        )}
+
+        <div className="engines-tabs">
+          {AREAS.map((name) => (
+            <button
+              key={name}
+              type="button"
+              className={name === tab ? 'engines-tab is-active' : 'engines-tab'}
+              onClick={() => setTab(name)}
+            >
+              {name}
+              {catalog && name !== 'All' && (
+                <span className="engines-tab-count">
+                  {catalog.engines.filter((e) => e.area === name).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {!catalog ? (
+          <div className="engines-layout">
+            <SkeletonList rows={8} />
           </div>
-          <ul className="engines-list">
-            {filteredLocked.map((engine) => (
-              <li key={engine.code}>
-                <div
-                  className="engines-list-item"
-                  style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}
-                >
-                  <Lock size={14} />
-                  <span>
+        ) : (
+          <div className="engines-layout">
+            <ul className="engines-list">
+              {filtered.map((engine) => (
+                <li key={engine.code}>
+                  <button
+                    type="button"
+                    className={
+                      selected?.code === engine.code
+                        ? 'engines-list-item is-active'
+                        : 'engines-list-item'
+                    }
+                    onClick={() => setSelected(engine)}
+                  >
                     <strong>{engine.engineName}</strong>
                     <small>
-                      {engine.code} · {engine.seriesName} · requires the {engine.homeEngine} seat
+                      {engine.standard ?? engine.seriesName} · {engine.pointsCost} pts
                     </small>
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <Link to="/os/pricing" className="button button-secondary">
-            See seats and bundles on Pricing
-          </Link>
-        </div>
-      )}
-    </section>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="engines-detail">
+              {!selected ? (
+                <Empty title="Pick a diagnostic">
+                  Choose one from the list to see what it measures and run it.
+                </Empty>
+              ) : (
+                <EngineDetailPanel key={selected.code} engine={selected} run={run} />
+              )}
+            </div>
+          </div>
+        )}
+
+        {filteredLocked.length > 0 && (
+          <div className="engines-locked" style={{ marginTop: 24 }}>
+            <div className="panel-heading">
+              <div>
+                <h3>Locked for your plan</h3>
+                <span>
+                  These engines exist but aren't included in your current tier or bundles — unlock
+                  the matching seat to get access without a full tier upgrade.
+                </span>
+              </div>
+            </div>
+            <ul className="engines-list">
+              {filteredLocked.map((engine) => (
+                <li key={engine.code}>
+                  <div
+                    className="engines-list-item"
+                    style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}
+                  >
+                    <Lock size={14} />
+                    <span>
+                      <strong>{engine.engineName}</strong>
+                      <small>
+                        {engine.code} · {engine.seriesName} · requires the {engine.homeEngine} seat
+                      </small>
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <Link to="/os/pricing" className="button button-secondary">
+              See seats and bundles on Pricing
+            </Link>
+          </div>
+        )}
+      </section>
+    </>
   );
 }
 

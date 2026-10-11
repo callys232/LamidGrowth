@@ -1,33 +1,17 @@
 import {
   ArrowUpRight,
-  BarChart3,
   Bell,
-  CalendarDays,
   Check,
   ChevronDown,
   Command,
-  Compass,
-  Cpu,
   GitBranch,
-  GraduationCap,
-  Layers3,
-  LayoutDashboard,
-  ListTodo,
   LogOut,
   Menu,
-  Network,
-  Plug,
   Plus,
   Search,
   Settings2,
   ShieldCheck,
   Sparkles,
-  Sun,
-  Target,
-  TrendingUp,
-  Users,
-  Wallet,
-  Wand2,
   X,
 } from 'lucide-react';
 import type { FormEvent } from 'react';
@@ -41,7 +25,12 @@ import {
   useOutletContext,
 } from 'react-router-dom';
 import { api, ApiError, setWorkspaceScope } from '../../../api';
+import { PROFILES, TIERS, type DemoProfile, type DemoTier } from '../demo/personaList';
+import { endDemoSession, readDemoSession, startDemoSession } from '../sandbox/demoSession';
+import { useWorkspaceActivity } from '../hooks/useWorkspaceActivity';
 import { pageTheme } from '../../../pageThemes';
+import { domainForPath } from '../../../shared/workspace/domains';
+import { buildNav, NAV_SECTIONS, type NavItem } from '../../../shared/workspace/navigation';
 import { CanonicalCopy } from '../../../shared/content/CanonicalCopy';
 import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
@@ -63,29 +52,10 @@ export interface WorkspaceContext {
 export function useWorkspace() {
   return useOutletContext<WorkspaceContext>();
 }
-const navigation = [
-  ['Overview', '/os', LayoutDashboard],
-  ['AI Settings', '/os/settings/ai', Settings2],
-  ['Today', '/os/today', Sun],
-  ['Clarity', '/os/clarity', Compass],
-  ['Capability', '/os/capability', Layers3],
-  ['Consistency', '/os/consistency', ListTodo],
-  ['Progress', '/os/progress', TrendingUp],
-  ['Rhythm', '/os/rhythm', CalendarDays],
-  ['Commercial', '/os/commercial', GitBranch],
-  ['Opportunities', '/os/opportunities', Target],
-  ['Growth', '/os/growth', BarChart3],
-  ['Knowledge', '/os/knowledge', Layers3],
-  ['Talent', '/os/talent', Users],
-  ['Teams', '/os/teams', Users],
-  ['Finance', '/os/finance', Wallet],
-  ['People', '/os/people', Network],
-  ['Engines', '/os/engines', Cpu],
-  ['Integrations', '/os/integrations', Plug],
-  ['Guided Scoping', '/os/scoping/new', Wand2],
-  ['Learning', '/os/learning', GraduationCap],
-  ["What's new", '/os/whats-new', Bell],
-] as const;
+/** Flat [title, path, icon] list of every workspace tool, for search and the page title. */
+const navigation = NAV_SECTIONS.flatMap((section) => section.items).map(
+  (entry) => [entry.title, entry.to, entry.icon] as const,
+);
 export function WorkspaceShell() {
   const [state, setState] = useState<WorkspaceState | null>(null);
   const [error, setError] = useState('');
@@ -94,7 +64,15 @@ export function WorkspaceShell() {
   const [objectiveId, setObjectiveId] = useState('');
   const [mobile, setMobile] = useState(false);
   const [query, setQuery] = useState('');
+  const activity = useWorkspaceActivity(state?.workspace.id);
   const navigate = useNavigate();
+  // Demo visitors: which sample persona this tab is showing (null for real accounts).
+  const demoSession = readDemoSession();
+  // Switching persona reloads the workspace so every page reads the new persona's sandbox.
+  const switchDemo = (profile: DemoProfile, tier: DemoTier) => {
+    startDemoSession(profile, tier);
+    window.location.reload();
+  };
   const location = useLocation();
   const refreshSequence = useRef(0);
   const displayedWorkspace = useRef<string | null>(null);
@@ -178,6 +156,24 @@ export function WorkspaceShell() {
       <Loading />
     );
   const pending = state.actions.filter((a) => a.status === 'Needs review').length;
+  const nav = buildNav(activity);
+  const link = (entry: NavItem) => {
+    const Icon = entry.icon;
+    const count = entry.title === 'Today' ? pending : (entry.badge ?? 0);
+    return (
+      <NavLink
+        key={entry.to}
+        to={entry.to}
+        end
+        data-domain={entry.domain}
+        className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
+      >
+        <Icon size={18} strokeWidth={1.6} />
+        {entry.title}
+        {count > 0 && <span className="nav-count">{count}</span>}
+      </NavLink>
+    );
+  };
   const current =
     [
       ...navigation,
@@ -213,7 +209,7 @@ export function WorkspaceShell() {
     ...navigation.map(([title, path]) => ({ id: path, title, type: 'Page', path })),
   ].filter((x) => x.title.toLowerCase().includes(query.toLowerCase()));
   return (
-    <div className="workspace-layout">
+    <div className="workspace-layout" data-domain={domainForPath(location.pathname)}>
       <a className="skip-link" href="#workspace-main">
         Skip to workspace
       </a>
@@ -269,18 +265,20 @@ export function WorkspaceShell() {
         </label>
         <div className="sidebar-label">YOUR OPERATING SPACE</div>
         <nav aria-label="Workspace navigation">
-          {navigation.map(([title, to, Icon]) => (
-            <NavLink
-              key={to}
-              to={to}
-              end
-              className={({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link')}
-            >
-              <Icon size={18} strokeWidth={1.6} />
-              {title}
-              {title === 'Today' && pending > 0 && <span className="nav-count">{pending}</span>}
-            </NavLink>
+          {nav.sections.map((section) => (
+            <div className="ws-nav-section" data-domain={section.domain} key={section.label}>
+              <div className="ws-nav-heading">{section.label}</div>
+              {section.items.map(link)}
+            </div>
           ))}
+          {nav.more.length > 0 && (
+            <details className="ws-nav-more">
+              <summary>
+                More tools <span className="ws-nav-more-count">{nav.more.length}</span>
+              </summary>
+              {nav.more.map(link)}
+            </details>
+          )}
           <div className="sidebar-divider" />
           <NavLink to="/os/companion" className="sidebar-link companion-link">
             <Sparkles size={18} />
@@ -325,6 +323,11 @@ export function WorkspaceShell() {
               aria-label="Sign out"
               onClick={async () => {
                 try {
+                  if (readDemoSession()) {
+                    endDemoSession();
+                    navigate('/demo');
+                    return;
+                  }
                   await api('/auth/logout', {});
                   navigate('/');
                 } catch (e) {
@@ -377,6 +380,40 @@ export function WorkspaceShell() {
               <span className="gold-dot" /> Your own sample workspace. Explore freely; changes are
               saved in this session.
             </span>
+            {demoSession && (
+              <span className="demo-banner-controls">
+                <select
+                  name="demo-profile"
+                  aria-label="Sample persona"
+                  value={demoSession.profile}
+                  onChange={(e) => switchDemo(e.target.value as DemoProfile, demoSession.tier)}
+                >
+                  {PROFILES.map((profile) => (
+                    <option key={profile}>{profile}</option>
+                  ))}
+                </select>
+                <select
+                  name="demo-tier"
+                  aria-label="Sample tier"
+                  value={demoSession.tier}
+                  onChange={(e) => switchDemo(demoSession.profile, e.target.value as DemoTier)}
+                >
+                  {TIERS.map((tier) => (
+                    <option key={tier}>{tier}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => {
+                    endDemoSession();
+                    navigate('/demo');
+                  }}
+                >
+                  Exit demo
+                </button>
+              </span>
+            )}
             <Link to="/signup">
               Create your workspace <ArrowUpRight size={13} />
             </Link>
@@ -386,6 +423,8 @@ export function WorkspaceShell() {
           id="workspace-main"
           className="workspace-main"
           data-page-theme={pageTheme(location.pathname)}
+          // Workspace tools own their hover and active states; the reading tint is for public pages.
+          data-scroll-feedback="off"
           tabIndex={-1}
         >
           {error && (

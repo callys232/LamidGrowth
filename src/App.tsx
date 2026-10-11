@@ -1,46 +1,231 @@
-import { useEffect } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import pages from './content/catalog';
-import { AuthPage } from './products/accounts/pages/AuthPage';
-import { DemoToolsPage } from './products/website/pages/demo/DemoToolsPage';
-import { PasswordRecovery } from './products/accounts/pages/PasswordRecovery';
-import { ResetPassword } from './products/accounts/pages/ResetPassword';
-import { VerifyAccount } from './products/accounts/pages/VerifyAccount';
-import { Capability } from './products/capability/pages/CapabilityPage';
-import { Clarity } from './products/clarity/pages/ClarityPage';
-import { Commercial } from './products/commercial/pages/CommercialPage';
-import { ProjectDetailPage } from './products/commercial/pages/ProjectDetailPage';
-import { ProjectsListPage } from './products/commercial/pages/ProjectsListPage';
-import { ConciergePage } from './products/concierge/pages/ConciergePage';
-import { FinancePage } from './products/finance/pages/FinancePage';
-import { EnginesPage } from './products/engines/pages/EnginesPage';
-import { PeoplePage } from './products/people/pages/PeoplePage';
-import { TalentDashboardPage } from './products/talent/pages/TalentDashboardPage';
-import { Companion } from './products/companion/pages/CompanionPage';
-import { CompanionChatPage } from './products/companion/pages/CompanionChatPage';
+const AuthPage = lazy(() =>
+  import('./products/accounts/pages/AuthPage').then((module) => ({ default: module.AuthPage })),
+);
+const DemoToolsPage = lazy(() =>
+  import('./products/website/pages/demo/DemoToolsPage').then((module) => ({
+    default: module.DemoToolsPage,
+  })),
+);
+const DemoWorkspacePage = lazy(() =>
+  import('./products/website/pages/demo/DemoWorkspacePage').then((module) => ({
+    default: module.DemoWorkspacePage,
+  })),
+);
+const ClassicDemoPage = lazy(() =>
+  import('./products/website/pages/demo/ClassicDemoPage').then((module) => ({
+    default: module.ClassicDemoPage,
+  })),
+);
+const PasswordRecovery = lazy(() =>
+  import('./products/accounts/pages/PasswordRecovery').then((module) => ({
+    default: module.PasswordRecovery,
+  })),
+);
+const ResetPassword = lazy(() =>
+  import('./products/accounts/pages/ResetPassword').then((module) => ({
+    default: module.ResetPassword,
+  })),
+);
+const VerifyAccount = lazy(() =>
+  import('./products/accounts/pages/VerifyAccount').then((module) => ({
+    default: module.VerifyAccount,
+  })),
+);
+const Capability = lazy(() =>
+  import('./products/capability/pages/CapabilityPage').then((module) => ({
+    default: module.Capability,
+  })),
+);
+const Clarity = lazy(() =>
+  import('./products/clarity/pages/ClarityPage').then((module) => ({ default: module.Clarity })),
+);
+const Commercial = lazy(() =>
+  import('./products/commercial/pages/CommercialPage').then((module) => ({
+    default: module.Commercial,
+  })),
+);
+const ProjectDetailPage = lazy(() =>
+  import('./products/commercial/pages/ProjectDetailPage').then((module) => ({
+    default: module.ProjectDetailPage,
+  })),
+);
+const ProjectsListPage = lazy(() =>
+  import('./products/commercial/pages/ProjectsListPage').then((module) => ({
+    default: module.ProjectsListPage,
+  })),
+);
+const EscrowsPage = lazy(() =>
+  import('./products/commercial/pages/EscrowsPage').then((module) => ({
+    default: module.EscrowsPage,
+  })),
+);
+const ConciergePage = lazy(() =>
+  import('./products/concierge/pages/ConciergePage').then((module) => ({
+    default: module.ConciergePage,
+  })),
+);
+const FinancePage = lazy(() =>
+  import('./products/finance/pages/FinancePage').then((module) => ({
+    default: module.FinancePage,
+  })),
+);
+const EnginesPage = lazy(() =>
+  import('./products/engines/pages/EnginesPage').then((module) => ({
+    default: module.EnginesPage,
+  })),
+);
+const PeoplePage = lazy(() =>
+  import('./products/people/pages/PeoplePage').then((module) => ({ default: module.PeoplePage })),
+);
+const TalentDashboardPage = lazy(() =>
+  import('./products/talent/pages/TalentDashboardPage').then((module) => ({
+    default: module.TalentDashboardPage,
+  })),
+);
+const JobMatcherPage = lazy(() =>
+  import('./products/talent/pages/JobMatcherPage').then((module) => ({
+    default: module.JobMatcherPage,
+  })),
+);
+const Companion = lazy(() =>
+  import('./products/companion/pages/CompanionPage').then((module) => ({
+    default: module.Companion,
+  })),
+);
+const CompanionChatPage = lazy(() =>
+  import('./products/companion/pages/CompanionChatPage').then((module) => ({
+    default: module.CompanionChatPage,
+  })),
+);
 import { CompanionWidget } from './products/companion/components/CompanionWidget';
-import { ActionsPage } from './products/consistency/pages/ActionsPage';
-import { Governance } from './products/governance/pages/GovernancePage';
-import { Intelligence } from './products/intelligence/pages/IntelligencePage';
-import { Knowledge } from './products/knowledge/pages/KnowledgePage';
-import { Notifications } from './products/notifications/pages/NotificationsPage';
-import { Members } from './products/organizations/pages/MembersPage';
-import { TeamsPage } from './products/organizations/pages/TeamsPage';
-import { OpportunitiesPage } from './products/commercial/pages/OpportunitiesPage';
-import { GrowthPage } from './products/commercial/pages/GrowthPage';
-import { ConnectorsPage } from './products/integrations/pages/ConnectorsPage';
-import { ReturnStatePage } from './products/workspace/pages/ReturnStatePage';
-import { PricingBillablesPage } from './products/pricing/pages/PricingBillablesPage';
-import { Progress } from './products/progress/pages/ProgressPage';
-import { Rhythm } from './products/rhythm/pages/RhythmPage';
-import { ScopingWizardPage } from './products/scoping/pages/ScopingWizardPage';
-import { LearningPage } from './products/learning/pages/LearningPage';
-import { Settings } from './products/settings/pages/SettingsPage';
-import { ContentPage } from './products/website/pages/ContentPage';
-import { Workflows } from './products/workflows/pages/WorkflowsPage';
+const ActionsPage = lazy(() =>
+  import('./products/consistency/pages/ActionsPage').then((module) => ({
+    default: module.ActionsPage,
+  })),
+);
+const Governance = lazy(() =>
+  import('./products/governance/pages/GovernancePage').then((module) => ({
+    default: module.Governance,
+  })),
+);
+const Intelligence = lazy(() =>
+  import('./products/intelligence/pages/IntelligencePage').then((module) => ({
+    default: module.Intelligence,
+  })),
+);
+const Knowledge = lazy(() =>
+  import('./products/knowledge/pages/KnowledgePage').then((module) => ({
+    default: module.Knowledge,
+  })),
+);
+const Notifications = lazy(() =>
+  import('./products/notifications/pages/NotificationsPage').then((module) => ({
+    default: module.Notifications,
+  })),
+);
+const Members = lazy(() =>
+  import('./products/organizations/pages/MembersPage').then((module) => ({
+    default: module.Members,
+  })),
+);
+const TeamsPage = lazy(() =>
+  import('./products/organizations/pages/TeamsPage').then((module) => ({
+    default: module.TeamsPage,
+  })),
+);
+const OpportunitiesPage = lazy(() =>
+  import('./products/commercial/pages/OpportunitiesPage').then((module) => ({
+    default: module.OpportunitiesPage,
+  })),
+);
+const GrowthPage = lazy(() =>
+  import('./products/commercial/pages/GrowthPage').then((module) => ({
+    default: module.GrowthPage,
+  })),
+);
+const ConnectorsPage = lazy(() =>
+  import('./products/integrations/pages/ConnectorsPage').then((module) => ({
+    default: module.ConnectorsPage,
+  })),
+);
+const ReturnStatePage = lazy(() =>
+  import('./products/workspace/pages/ReturnStatePage').then((module) => ({
+    default: module.ReturnStatePage,
+  })),
+);
+const PricingBillablesPage = lazy(() =>
+  import('./products/pricing/pages/PricingBillablesPage').then((module) => ({
+    default: module.PricingBillablesPage,
+  })),
+);
+const Progress = lazy(() =>
+  import('./products/progress/pages/ProgressPage').then((module) => ({ default: module.Progress })),
+);
+const Rhythm = lazy(() =>
+  import('./products/rhythm/pages/RhythmPage').then((module) => ({ default: module.Rhythm })),
+);
+const ScopingWizardPage = lazy(() =>
+  import('./products/scoping/pages/ScopingWizardPage').then((module) => ({
+    default: module.ScopingWizardPage,
+  })),
+);
+const LearningPage = lazy(() =>
+  import('./products/learning/pages/LearningPage').then((module) => ({
+    default: module.LearningPage,
+  })),
+);
+const Settings = lazy(() =>
+  import('./products/settings/pages/SettingsPage').then((module) => ({ default: module.Settings })),
+);
+const ContentPage = lazy(() =>
+  import('./products/website/pages/ContentPage').then((module) => ({
+    default: module.ContentPage,
+  })),
+);
+const Workflows = lazy(() =>
+  import('./products/workflows/pages/WorkflowsPage').then((module) => ({
+    default: module.Workflows,
+  })),
+);
 import { WorkspaceShell } from './products/workspace/components/WorkspaceShell';
-import { Dashboard } from './products/workspace/pages/DashboardPage';
-import { PlannedModule } from './products/workspace/pages/PlannedModulePage';
+const Dashboard = lazy(() =>
+  import('./products/workspace/pages/DashboardPage').then((module) => ({
+    default: module.Dashboard,
+  })),
+);
+const PlannedModule = lazy(() =>
+  import('./products/workspace/pages/PlannedModulePage').then((module) => ({
+    default: module.PlannedModule,
+  })),
+);
+const ProfilePage = lazy(() =>
+  import('./products/accounts/pages/AccountServicesPage').then((module) => ({
+    default: module.ProfilePage,
+  })),
+);
+const PrivacyPage = lazy(() =>
+  import('./products/accounts/pages/AccountServicesPage').then((module) => ({
+    default: module.PrivacyPage,
+  })),
+);
+const PayoutSettingsPage = lazy(() =>
+  import('./products/accounts/pages/AccountServicesPage').then((module) => ({
+    default: module.PayoutSettingsPage,
+  })),
+);
+const AnalyticsPage = lazy(() =>
+  import('./products/analytics/pages/AnalyticsPage').then((module) => ({
+    default: module.AnalyticsPage,
+  })),
+);
+const DisputesPage = lazy(() =>
+  import('./products/commercial/pages/DisputesPage').then((module) => ({
+    default: module.DisputesPage,
+  })),
+);
 function RouteEffects() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
@@ -170,114 +355,132 @@ export function App() {
     <>
       <RouteEffects />
       <div id="top" />
-      <Routes>
-        <Route path="/" element={<ContentPage />} />
-        <Route
-          path="/start"
-          element={
-            <ContentPage>
-              <AuthPage key="start" />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <ContentPage>
-              <AuthPage key="signup" />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <ContentPage>
-              <AuthPage key="login" login />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/demo"
-          element={
-            <ContentPage>
-              <DemoToolsPage />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <ContentPage>
-              <PasswordRecovery />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <ContentPage>
-              <ResetPassword />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/verify"
-          element={
-            <ContentPage>
-              <VerifyAccount />
-            </ContentPage>
-          }
-        />
-        <Route
-          path="/onboarding"
-          element={
-            <ContentPage>
-              <AuthPage key="onboarding" />
-            </ContentPage>
-          }
-        />
-        <Route path="/os" element={<WorkspaceShell />}>
-          <Route index element={<Dashboard />} />
-          <Route path="today" element={<ActionsPage today />} />
-          <Route path="clarity" element={<Clarity />} />
-          <Route path="capability" element={<Capability />} />
-          <Route path="consistency" element={<ActionsPage />} />
-          <Route path="companion" element={<Companion />} />
-          <Route path="companion/chat" element={<CompanionChatPage />} />
-          <Route path="workflows" element={<Workflows />} />
-          <Route path="workflows/:id" element={<Workflows />} />
-          <Route path="settings/notifications" element={<Notifications />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="teams" element={<TeamsPage />} />
-          <Route path="opportunities" element={<OpportunitiesPage />} />
-          <Route path="growth" element={<GrowthPage />} />
-          <Route path="integrations" element={<ConnectorsPage />} />
-          <Route path="whats-new" element={<ReturnStatePage />} />
-          <Route path="rhythm" element={<Rhythm />} />
-          <Route path="progress" element={<Progress />} />
-          <Route path="governance" element={<Governance />} />
-          <Route path="audit" element={<Governance />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="admin" element={<Members />} />
-          <Route path="settings/members" element={<Members />} />
-          <Route path="commercial" element={<Commercial />} />
-          <Route path="commercial/projects" element={<ProjectsListPage />} />
-          <Route path="commercial/projects/:id" element={<ProjectDetailPage />} />
-          <Route path="concierge" element={<ConciergePage />} />
-          <Route path="talent" element={<TalentDashboardPage />} />
-          <Route path="finance" element={<FinancePage />} />
-          <Route path="engines" element={<EnginesPage />} />
-          <Route path="people" element={<PeoplePage />} />
-          <Route path="pricing" element={<PricingBillablesPage />} />
-          <Route path="scoping/new" element={<ScopingWizardPage />} />
-          <Route path="learning" element={<LearningPage />} />
-          <Route path="knowledge" element={<Knowledge />} />
-          <Route path="insights" element={<Intelligence />} />
-          <Route path="settings/ai" element={<Intelligence settings />} />
-          <Route path="*" element={<PlannedModule />} />
-        </Route>
-        <Route path="*" element={<ContentPage />} />
-      </Routes>
+      <Suspense
+        fallback={
+          <div role="status" className="panel">
+            Loading page?
+          </div>
+        }
+      >
+        <Routes>
+          <Route path="/" element={<ContentPage />} />
+          <Route
+            path="/start"
+            element={
+              <ContentPage>
+                <AuthPage key="start" />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <ContentPage>
+                <AuthPage key="signup" />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <ContentPage>
+                <AuthPage key="login" login />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/demo"
+            element={
+              <ContentPage>
+                <DemoToolsPage />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <ContentPage>
+                <PasswordRecovery />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <ContentPage>
+                <ResetPassword />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/verify"
+            element={
+              <ContentPage>
+                <VerifyAccount />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/onboarding"
+            element={
+              <ContentPage>
+                <AuthPage key="onboarding" />
+              </ContentPage>
+            }
+          />
+          <Route path="/demo/workspace" element={<DemoWorkspacePage />} />
+          <Route path="/demo/classic" element={<ClassicDemoPage />} />
+          <Route path="/os/demo" element={<Navigate to="/demo#profile-demos" replace />} />
+          <Route path="/os" element={<WorkspaceShell />}>
+            <Route index element={<Dashboard />} />
+            <Route path="today" element={<ActionsPage today />} />
+            <Route path="clarity" element={<Clarity />} />
+            <Route path="capability" element={<Capability />} />
+            <Route path="consistency" element={<ActionsPage />} />
+            <Route path="companion" element={<Companion />} />
+            <Route path="companion/chat" element={<CompanionChatPage />} />
+            <Route path="workflows" element={<Workflows />} />
+            <Route path="workflows/:id" element={<Workflows />} />
+            <Route path="settings/notifications" element={<Notifications />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="teams" element={<TeamsPage />} />
+            <Route path="opportunities" element={<OpportunitiesPage />} />
+            <Route path="growth" element={<GrowthPage />} />
+            <Route path="integrations" element={<ConnectorsPage />} />
+            <Route path="whats-new" element={<ReturnStatePage />} />
+            <Route path="rhythm" element={<Rhythm />} />
+            <Route path="progress" element={<Progress />} />
+            <Route path="governance" element={<Governance />} />
+            <Route path="audit" element={<Governance />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="settings/privacy" element={<PrivacyPage />} />
+            <Route path="settings/payouts" element={<PayoutSettingsPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="disputes" element={<DisputesPage />} />
+            <Route path="admin" element={<Members />} />
+            <Route path="settings/members" element={<Members />} />
+            <Route path="commercial" element={<Commercial />} />
+            <Route path="commercial/projects" element={<ProjectsListPage />} />
+            <Route path="escrows" element={<EscrowsPage />} />
+            <Route path="commercial/projects/:id" element={<ProjectDetailPage />} />
+            <Route path="concierge" element={<ConciergePage />} />
+            <Route path="talent" element={<TalentDashboardPage />} />
+            <Route path="job-matcher" element={<JobMatcherPage />} />
+            <Route path="finance" element={<FinancePage />} />
+            <Route path="engines" element={<EnginesPage />} />
+            <Route path="people" element={<PeoplePage />} />
+            <Route path="pricing" element={<PricingBillablesPage />} />
+            <Route path="scoping/new" element={<ScopingWizardPage />} />
+            <Route path="learning" element={<LearningPage />} />
+            <Route path="knowledge" element={<Knowledge />} />
+            <Route path="insights" element={<Intelligence />} />
+            <Route path="settings/ai" element={<Intelligence settings />} />
+            <Route path="*" element={<PlannedModule />} />
+          </Route>
+          <Route path="*" element={<ContentPage />} />
+        </Routes>
+      </Suspense>
       <CompanionWidget />
     </>
   );

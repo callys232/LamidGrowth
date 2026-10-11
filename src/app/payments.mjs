@@ -12,6 +12,34 @@ export function paystackProvider({
   if (!secretKey) return null;
   return {
     name: 'Paystack',
+    async listBanks() {
+      const banks = [];
+      let cursor = '';
+      for (let page = 0; page < 20; page++) {
+        const url = new URL('https://api.paystack.co/bank');
+        url.search = new URLSearchParams({
+          country: 'nigeria',
+          currency: 'NGN',
+          use_cursor: 'true',
+          perPage: '100',
+          ...(cursor ? { next: cursor } : {}),
+        }).toString();
+        const response = await fetchImpl(url.toString(), {
+          headers: { Authorization: `Bearer ${secretKey}` },
+        });
+        const body = await response.json();
+        if (!response.ok || !body.status || !Array.isArray(body.data))
+          throw new Error('Unable to load supported banks. Please try again.');
+        banks.push(
+          ...body.data
+            .filter((b) => b.active !== false)
+            .map((b) => ({ name: b.name, code: b.code })),
+        );
+        if (!body.meta?.next) return banks;
+        cursor = body.meta.next;
+      }
+      throw new Error('The bank list could not be loaded completely. Please try again.');
+    },
     async createRecipient({ accountName, accountNumber, bankCode }) {
       const response = await fetchImpl('https://api.paystack.co/transferrecipient', {
         method: 'POST',
@@ -51,15 +79,21 @@ export function paystackProvider({
           }),
         });
       } catch (networkError) {
-        throw Object.assign(new Error(`Network error contacting Paystack: ${networkError.message}`), {
-          outcome: 'unknown',
-        });
+        throw Object.assign(
+          new Error(`Network error contacting Paystack: ${networkError.message}`),
+          {
+            outcome: 'unknown',
+          },
+        );
       }
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.status)
-        throw Object.assign(new Error(body.message || 'Paystack could not initiate this transfer.'), {
-          outcome: response.status >= 500 ? 'unknown' : 'rejected',
-        });
+        throw Object.assign(
+          new Error(body.message || 'Paystack could not initiate this transfer.'),
+          {
+            outcome: response.status >= 500 ? 'unknown' : 'rejected',
+          },
+        );
       return {
         providerReference: String(body.data.reference || reference),
         status: body.data.status,
@@ -104,9 +138,12 @@ export function paystackProvider({
           body: JSON.stringify({ transaction: reference, amount: amountMinor }),
         });
       } catch (networkError) {
-        throw Object.assign(new Error(`Network error contacting Paystack: ${networkError.message}`), {
-          outcome: 'unknown',
-        });
+        throw Object.assign(
+          new Error(`Network error contacting Paystack: ${networkError.message}`),
+          {
+            outcome: 'unknown',
+          },
+        );
       }
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !body.status)
@@ -129,9 +166,8 @@ export function paystackProvider({
   };
 }
 
-// Crypto/USDT is registered as a real provider slot for future use, but is
-// deliberately unimplemented for now: no keys or on-chain integration exist
-// yet, so it must stay inert rather than fake a working payout path.
+// USDT uses TRON (TRC-20). A merchant provider and credentials are still needed
+// before checkout, confirmation, refunds and payouts can be enabled.
 export function cryptoUsdtProvider() {
   return null;
 }
@@ -181,10 +217,56 @@ export function mountPayments(app, store, deps) {
     return { job, isClient, isFreelancer };
   }
 
+  app.get('/api/payment-accounts', async (req, res) => {
+    const rows = await db
+      .prepare(
+        'SELECT id, provider, account_name, account_number, recipient_code, created_at FROM payment_accounts WHERE user_id = ? ORDER BY created_at DESC',
+      )
+      .all(req.user.id);
+    res.json(
+      rows.map(({ recipient_code, account_number, ...row }) => ({
+        ...row,
+        lastFour: account_number.slice(-4),
+        ready: Boolean(recipient_code),
+      })),
+    );
+  });
+  app.get('/api/payment-banks', async (_req, res) => {
+    const provider = providerFor('paystack');
+    if (!provider?.listBanks)
+      return res
+        .status(503)
+        .json({ error: 'Bank selection is unavailable until the payment provider is configured.' });
+    res.json(await provider.listBanks());
+  });
+  app.get('/api/payment-transfers', async (req, res) => {
+    res.json(
+      await db
+        .prepare(
+          `SELECT payment_transfers.id, COALESCE(payment_transfers.provider_amount_minor, payment_transfers.amount_minor) AS amount_minor,
+      COALESCE(payment_transfers.provider_currency, payment_transfers.currency) AS currency, payment_transfers.status,
+      payment_transfers.created_at, milestones.title AS milestone_title, projects.title AS project_title
+      FROM payment_transfers JOIN milestones ON milestones.id = payment_transfers.milestone_id
+      JOIN projects ON projects.id = milestones.project_id WHERE projects.freelancer_user_id = ? ORDER BY payment_transfers.created_at DESC`,
+        )
+        .all(req.user.id),
+    );
+  });
+  app.get('/api/payment-providers', (_req, res) =>
+    res.json({
+      paystack: Boolean(providerFor('paystack')),
+      crypto_usdt: Boolean(providerFor('crypto_usdt')),
+      crypto_usdt_network: 'TRC20',
+    }),
+  );
   app.post('/api/payment-accounts', async (req, res, next) => {
     try {
       const input = accountSchema.parse(req.body);
       const provider = providerFor(input.provider);
+      if (!provider)
+        return res
+          .status(503)
+          .json({ error: 'This payout provider is unavailable. No bank details have been saved.' });
       let recipientCode = null;
       if (provider) {
         const created = await provider.createRecipient({
@@ -226,6 +308,77 @@ export function mountPayments(app, store, deps) {
     } catch (error) {
       next(error);
     }
+  });
+
+  // Every project the user is party to, with milestones, latest funding and transfers, in one call
+  // (replaces the browser's per-project and per-milestone fan-out). Same scope as GET /api/projects.
+  // Money is shown only to the client and the assigned freelancer, as the funding route requires.
+  app.get('/api/workspace/escrow-summary', async (req, res) => {
+    const userId = req.user.id;
+    const projects = await db
+      .prepare(
+        `SELECT projects.id, projects.title, projects.status, projects.created_at,
+           projects.freelancer_user_id, job_posts.client_user_id
+         FROM projects JOIN job_posts ON job_posts.id = projects.job_id
+         WHERE job_posts.client_user_id = ? OR projects.freelancer_user_id = ?
+           OR EXISTS (SELECT 1 FROM expert_team_members WHERE team_id = projects.assigned_team_id AND user_id = ?)
+         ORDER BY projects.created_at DESC`,
+      )
+      .all(userId, userId, userId);
+    const within = (ids) => ids.map(() => '?').join(', ');
+    const projectIds = projects.map((project) => project.id);
+    const milestones = projectIds.length
+      ? await db
+          .prepare(
+            `SELECT id, project_id, title, description, amount, currency, status, created_at
+             FROM milestones WHERE project_id IN (${within(projectIds)}) ORDER BY created_at`,
+          )
+          .all(...projectIds)
+      : [];
+    const isParty = (project) =>
+      project.client_user_id === userId || project.freelancer_user_id === userId;
+    const moneyIds = milestones
+      .filter((milestone) => isParty(projects.find((p) => p.id === milestone.project_id)))
+      .map((milestone) => milestone.id);
+    const fundings = moneyIds.length
+      ? await db
+          .prepare(
+            `SELECT * FROM milestone_fundings WHERE milestone_id IN (${within(moneyIds)})
+             ORDER BY created_at DESC`,
+          )
+          .all(...moneyIds)
+      : [];
+    const transfers = moneyIds.length
+      ? await db
+          .prepare(
+            `SELECT id, milestone_id, status, failure_reason, created_at,
+               COALESCE(provider_amount_minor, amount_minor) AS amount_minor,
+               COALESCE(provider_currency, currency) AS currency
+             FROM payment_transfers WHERE milestone_id IN (${within(moneyIds)})
+             ORDER BY created_at DESC`,
+          )
+          .all(...moneyIds)
+      : [];
+    res.json({
+      projects: projects.map(({ client_user_id, freelancer_user_id, ...project }) => {
+        const isClient = client_user_id === userId;
+        const isFreelancer = freelancer_user_id === userId;
+        return {
+          ...project,
+          isClient,
+          isFreelancer,
+          isTeamMember: !isClient && !isFreelancer,
+          milestones: milestones
+            .filter((milestone) => milestone.project_id === project.id)
+            .map((milestone) => ({
+              ...milestone,
+              amount: Number(milestone.amount),
+              funding: fundings.find((funding) => funding.milestone_id === milestone.id) ?? null,
+              transfers: transfers.filter((transfer) => transfer.milestone_id === milestone.id),
+            })),
+        };
+      }),
+    });
   });
 
   app.get('/api/milestones/:id/transfers', async (req, res) => {
@@ -314,7 +467,8 @@ export function mountPayments(app, store, deps) {
           .run(fundingId);
         logHandledError(req, res, 'payment_fund_init_error', error);
         return res.status(502).json({
-          error: 'The payment provider could not initialize this transaction. No funds have been held.',
+          error:
+            'The payment provider could not initialize this transaction. No funds have been held.',
         });
       }
       await transaction(async () => {
@@ -412,7 +566,9 @@ export function mountPayments(app, store, deps) {
         // it isn't 'held' — still blocks any further automatic refund attempt on this funding.
         const status = error.outcome === 'rejected' ? 'refund_failed' : 'refund_unknown';
         await transaction(async () => {
-          await db.prepare('UPDATE milestone_fundings SET status = ? WHERE id = ?').run(status, funding.id);
+          await db
+            .prepare('UPDATE milestone_fundings SET status = ? WHERE id = ?')
+            .run(status, funding.id);
         });
         return res.status(502).json({
           error:
@@ -453,7 +609,7 @@ export function mountPayments(app, store, deps) {
 
       const account = await db
         .prepare(
-          'SELECT * FROM payment_accounts WHERE user_id = ? AND provider = ? AND recipient_code IS NOT NULL',
+          'SELECT * FROM payment_accounts WHERE user_id = ? AND provider = ? AND recipient_code IS NOT NULL ORDER BY created_at DESC LIMIT 1',
         )
         .get(project.freelancer_user_id, input.provider);
       const provider = providerFor(input.provider);
@@ -551,7 +707,7 @@ export function mountPayments(app, store, deps) {
         await transaction(async () => {
           await db
             .prepare(
-              "UPDATE payment_transfers SET status = ?, failure_reason = ?, updated_at = ? WHERE id = ?",
+              'UPDATE payment_transfers SET status = ?, failure_reason = ?, updated_at = ? WHERE id = ?',
             )
             .run(status, error.message, new Date().toISOString(), transferId);
           if (isRejected)
@@ -655,7 +811,8 @@ export function mountPointsPurchase(app, store, deps) {
           .run(purchaseId);
         logHandledError(req, res, 'payment_purchase_init_error', error);
         return res.status(502).json({
-          error: 'The payment provider could not initialize this transaction. No purchase has been made.',
+          error:
+            'The payment provider could not initialize this transaction. No purchase has been made.',
         });
       }
       await transaction(async () => {

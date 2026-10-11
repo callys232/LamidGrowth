@@ -8,7 +8,10 @@ export function VerifyAccountVerificationSlide(page: ReturnType<typeof useVerify
   return (
     <div className="auth-main">
       <Brand />
-      <Link to={`/login?returnTo=${encodeURIComponent(returnDestination(page.params))}`} className="back-link">
+      <Link
+        to={`/login?returnTo=${encodeURIComponent(returnDestination(page.params))}`}
+        className="back-link"
+      >
         Back to sign in
       </Link>
       <div className="auth-content">

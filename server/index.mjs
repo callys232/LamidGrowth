@@ -21,6 +21,7 @@ import { randomUUID } from 'node:crypto';
 import { createErrorLogger, errorDetails } from '../src/app/errorLog.mjs';
 import { escalateOverdueReviews } from '../src/app/scoping.mjs';
 import { scanAllSubscriptions } from '../src/app/signals.mjs';
+import { isDatabaseConnectionError } from './databaseErrors.mjs';
 
 const errorLogger = createErrorLogger();
 for (const event of ['uncaughtException', 'unhandledRejection']) {
@@ -74,7 +75,23 @@ if (clusterEnabled && cluster.isPrimary && workerCount > 1) {
     });
 } else {
   try {
-    await startServer();
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await startServer();
+        break;
+      } catch (error) {
+        if (
+          attempt >= 5 ||
+          !error.databaseFailure ||
+          !(isDatabaseConnectionError(error) || ['55P03', '57014'].includes(error.code))
+        )
+          throw error;
+        errorLogger('startup_retry', { attempt, error: errorDetails(error) });
+        await new Promise((resolve) =>
+          setTimeout(resolve, Math.min(30_000, 2000 * 2 ** (attempt - 1))),
+        );
+      }
+    }
   } catch (error) {
     errorLogger('startup_error', { error: errorDetails(error) });
     process.exit(1);
@@ -113,6 +130,7 @@ async function startServer() {
   // process from stealing the slot, not this one from re-entering itself. Same in-flight guard as
   // mailWorker below.
   let ticking = null;
+  let nextTickAt = 0;
   // F-SI-04: goal-subscription scanning previously ran only when a user hit the manual scan
   // endpoint. It's throttled to once a minute here (not every 1000ms tick) since it's a full
   // subscription sweep, not a per-object check like the other ticks.
@@ -122,7 +140,7 @@ async function startServer() {
   let lastPlanBilling = 0;
   const planProvider = paystackProvider();
   const worker = setInterval(() => {
-    if (ticking) return;
+    if (ticking || Date.now() < nextTickAt) return;
     ticking = (async () => {
       try {
         if (!(await acquireServiceLease(store, 'workflow-scheduler', owner))) return;
@@ -139,6 +157,7 @@ async function startServer() {
           await grantDueAllowances(store);
         }
       } catch (error) {
+        if (error.databaseFailure) nextTickAt = Date.now() + 30_000;
         errorLogger('workflow_worker_error', { error: errorDetails(error) });
       }
     })().finally(() => {
@@ -147,11 +166,15 @@ async function startServer() {
   }, 1000);
   worker?.unref();
   let delivering = null;
+  let nextMailAt = 0;
   const mailWorker = setInterval(() => {
-    if (!delivering)
+    if (!delivering && Date.now() >= nextMailAt)
       delivering = mail
         .tick()
-        .catch((error) => errorLogger('mail_queue_error', { error: errorDetails(error) }))
+        .catch((error) => {
+          if (error.databaseFailure) nextMailAt = Date.now() + 30_000;
+          errorLogger('mail_queue_error', { error: errorDetails(error) });
+        })
         .finally(() => {
           delivering = null;
         });
@@ -160,11 +183,16 @@ async function startServer() {
 
   // Safe for every process to run redundantly — a plain indexed DELETE, not a business
   // action — so no cluster-leader guard is needed here (unlike the ticker above).
+  let sweeping = false;
   const sweep = setInterval(async () => {
+    if (sweeping) return;
+    sweeping = true;
     try {
       await pruneRateLimitBuckets(store);
     } catch (error) {
       errorLogger('rate_limit_sweep_error', { error: errorDetails(error) });
+    } finally {
+      sweeping = false;
     }
   }, 60_000);
   sweep.unref();

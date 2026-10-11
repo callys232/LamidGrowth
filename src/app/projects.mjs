@@ -101,16 +101,141 @@ export function mountProjects(app, store, deps) {
       await db
         .prepare(
           `SELECT projects.* FROM projects JOIN job_posts ON job_posts.id = projects.job_id
-           WHERE projects.workspace_id = ? AND (job_posts.client_user_id = ? OR projects.freelancer_user_id = ?)
+           WHERE job_posts.client_user_id = ? OR projects.freelancer_user_id = ?
+             OR EXISTS (SELECT 1 FROM expert_team_members WHERE team_id = projects.assigned_team_id AND user_id = ?)
            ORDER BY projects.created_at DESC`,
         )
-        .all(req.workspace.id, req.user.id, req.user.id),
+        .all(req.user.id, req.user.id, req.user.id),
     );
+  });
+
+  app.get('/api/disputes', async (req, res) => {
+    const rows = await db
+      .prepare(
+        `SELECT disputes.*, milestones.title AS milestone_title, projects.title AS project_title,
+      projects.id AS project_id, job_posts.client_user_id, projects.freelancer_user_id
+      FROM disputes JOIN milestones ON milestones.id = disputes.subject_id AND disputes.subject_type = 'milestone'
+      JOIN projects ON projects.id = milestones.project_id JOIN job_posts ON job_posts.id = projects.job_id
+      WHERE job_posts.client_user_id = ? OR projects.freelancer_user_id = ? ORDER BY disputes.created_at DESC`,
+      )
+      .all(req.user.id, req.user.id);
+    const result = await Promise.all(
+      rows.map(async (row) => {
+        const record = await db
+          .prepare(
+            "SELECT data, version FROM records WHERE kind = 'dispute_resolution' AND data::jsonb ->> 'disputeId' = ? ORDER BY created_at DESC LIMIT 1",
+          )
+          .get(row.id);
+        return {
+          ...row,
+          resolution: record ? { ...JSON.parse(record.data), version: record.version } : null,
+        };
+      }),
+    );
+    res.json(result);
+  });
+  app.post('/api/disputes/:id/resolution', async (req, res) => {
+    const input = z
+      .object({
+        outcome: z.enum(['revision', 'refund', 'release']),
+        note: z.string().trim().min(1).max(4000),
+      })
+      .strict()
+      .parse(req.body);
+    const resolution = await transaction(async () => {
+      const dispute = await db
+        .prepare('SELECT * FROM disputes WHERE id = ? FOR UPDATE')
+        .get(req.params.id);
+      if (!dispute || dispute.subject_type !== 'milestone') fail('Dispute not found.', 404);
+      const milestone = await milestoneFor(dispute.subject_id);
+      const project = await projectFor(milestone.project_id);
+      const { isClient, isFreelancer } = await requireParty(project, req.user.id);
+      if (!isClient && !isFreelancer)
+        fail('Only the client and assigned freelancer can resolve this dispute.', 403);
+      if (dispute.status !== 'open') fail('This dispute has already been resolved.', 409);
+      const previous = await db
+        .prepare(
+          "SELECT id FROM records WHERE kind = 'dispute_resolution' AND data::jsonb ->> 'disputeId' = ?",
+        )
+        .get(dispute.id);
+      const data = {
+        disputeId: dispute.id,
+        outcome: input.outcome,
+        note: input.note,
+        proposedBy: req.user.id,
+        status: 'proposed',
+        proposedAt: new Date().toISOString(),
+      };
+      if (previous) {
+        await db
+          .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+          .run(JSON.stringify(data), previous.id);
+      } else await store.insert(project.workspace_id, 'dispute_resolution', data);
+      await log(
+        project.workspace_id,
+        req.user.name,
+        'Dispute resolution proposed',
+        dispute.id,
+        input.outcome,
+      );
+      return data;
+    });
+    res.status(201).json(resolution);
+  });
+  app.post('/api/disputes/:id/respond', async (req, res) => {
+    const input = z
+      .object({ decision: z.enum(['accept', 'reject']), version: z.number().int().positive() })
+      .strict()
+      .parse(req.body);
+    await transaction(async () => {
+      const dispute = await db
+        .prepare('SELECT * FROM disputes WHERE id = ? FOR UPDATE')
+        .get(req.params.id);
+      if (!dispute || dispute.subject_type !== 'milestone') fail('Dispute not found.', 404);
+      const milestone = await milestoneFor(dispute.subject_id);
+      const project = await projectFor(milestone.project_id);
+      const { isClient, isFreelancer } = await requireParty(project, req.user.id);
+      if (!isClient && !isFreelancer)
+        fail('Only the client and assigned freelancer can resolve this dispute.', 403);
+      const record = await db
+        .prepare(
+          "SELECT * FROM records WHERE kind = 'dispute_resolution' AND data::jsonb ->> 'disputeId' = ? FOR UPDATE",
+        )
+        .get(dispute.id);
+      if (!record || dispute.status !== 'open' || Number(record.version) !== input.version)
+        fail('This proposal changed or is no longer available. Refresh first.', 409);
+      const data = JSON.parse(record.data);
+      if (data.proposedBy === req.user.id || data.status !== 'proposed')
+        fail('Only the other party can respond to a pending proposal.', 403);
+      data.status = input.decision === 'accept' ? 'accepted' : 'rejected';
+      data.respondedBy = req.user.id;
+      data.respondedAt = new Date().toISOString();
+      await db
+        .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+        .run(JSON.stringify(data), record.id);
+      if (input.decision === 'accept') {
+        await db
+          .prepare('UPDATE disputes SET status = ? WHERE id = ?')
+          .run(`resolved_${data.outcome}`, dispute.id);
+        if (data.outcome !== 'refund')
+          await db
+            .prepare('UPDATE milestones SET status = ? WHERE id = ?')
+            .run(data.outcome === 'release' ? 'approved' : 'revision_requested', milestone.id);
+      }
+      await log(
+        project.workspace_id,
+        req.user.name,
+        `Dispute proposal ${input.decision}`,
+        dispute.id,
+        data.outcome,
+      );
+    });
+    res.json({ ok: true });
   });
 
   app.get('/api/projects/:id', async (req, res) => {
     const project = await projectFor(req.params.id);
-    await requireParty(project, req.user.id);
+    const { isClient, isFreelancer, isTeamMember } = await requireParty(project, req.user.id);
     const milestoneRows = await db
       .prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY created_at')
       .all(project.id);
@@ -166,7 +291,7 @@ export function mountProjects(app, store, deps) {
             .all(project.assigned_team_id),
         }
       : null;
-    res.json({ ...project, milestones, assignedTeam });
+    res.json({ ...project, milestones, assignedTeam, isClient, isFreelancer, isTeamMember });
   });
 
   app.post('/api/projects', async (req, res) => {
@@ -321,9 +446,10 @@ export function mountProjects(app, store, deps) {
     const project = await projectFor(milestone.project_id);
     const { isFreelancer, isTeamMember } = await requireParty(project, req.user.id);
     if (!isFreelancer && !isTeamMember)
-      return res
-        .status(403)
-        .json({ error: 'Only the assigned freelancer or their assigned expert team can submit this milestone.' });
+      return res.status(403).json({
+        error:
+          'Only the assigned freelancer or their assigned expert team can submit this milestone.',
+      });
     const input = submissionSchema.parse(req.body);
     // Resolve each uploadedFileId up front, outside the transaction — the submitter must own the
     // file they're attaching (same workspace + uploader as files.mjs's fileFor() enforces), and
@@ -331,7 +457,12 @@ export function mountProjects(app, store, deps) {
     const resolvedAssets = [];
     for (const asset of input.assets) {
       if (asset.url) {
-        resolvedAssets.push({ url: asset.url, kind: asset.kind, uploadedFileId: null, contentHash: null });
+        resolvedAssets.push({
+          url: asset.url,
+          kind: asset.kind,
+          uploadedFileId: null,
+          contentHash: null,
+        });
         continue;
       }
       const file = await db
@@ -339,9 +470,17 @@ export function mountProjects(app, store, deps) {
           'SELECT content FROM uploaded_files WHERE id = ? AND workspace_id = ? AND uploaded_by = ?',
         )
         .get(asset.uploadedFileId, req.workspace.id, req.user.id);
-      if (!file) return res.status(404).json({ error: 'One of the attached files was not found in your workspace.' });
+      if (!file)
+        return res
+          .status(404)
+          .json({ error: 'One of the attached files was not found in your workspace.' });
       const contentHash = createHash('sha256').update(file.content).digest('hex');
-      resolvedAssets.push({ url: null, kind: asset.kind, uploadedFileId: asset.uploadedFileId, contentHash });
+      resolvedAssets.push({
+        url: null,
+        kind: asset.kind,
+        uploadedFileId: asset.uploadedFileId,
+        contentHash,
+      });
     }
     const submissionId = randomUUID();
     await transaction(async () => {
@@ -356,7 +495,15 @@ export function mountProjects(app, store, deps) {
       for (const asset of resolvedAssets) {
         await db
           .prepare('INSERT INTO submission_assets VALUES (?, ?, ?, ?, ?, ?, ?)')
-          .run(randomUUID(), submissionId, asset.url, asset.kind, new Date().toISOString(), asset.uploadedFileId, asset.contentHash);
+          .run(
+            randomUUID(),
+            submissionId,
+            asset.url,
+            asset.kind,
+            new Date().toISOString(),
+            asset.uploadedFileId,
+            asset.contentHash,
+          );
       }
       await db
         .prepare('UPDATE milestones SET status = ? WHERE id = ?')
@@ -412,11 +559,18 @@ export function mountProjects(app, store, deps) {
       const assetsEvidence = [];
       for (const asset of assets) {
         if (!asset.uploaded_file_id) {
-          assetsEvidence.push({ kind: asset.kind, inspected: false, mimeType: null, contentHash: null });
+          assetsEvidence.push({
+            kind: asset.kind,
+            inspected: false,
+            mimeType: null,
+            contentHash: null,
+          });
           continue;
         }
         const file = await db
-          .prepare('SELECT filename, mime_type, size_bytes, content FROM uploaded_files WHERE id = ?')
+          .prepare(
+            'SELECT filename, mime_type, size_bytes, content FROM uploaded_files WHERE id = ?',
+          )
           .get(asset.uploaded_file_id);
         const inspected = Boolean(file && file.mime_type === 'text/plain');
         if (inspected) inspectedText += ` ${file.content.toString('utf-8')}`;
@@ -469,8 +623,20 @@ export function mountProjects(app, store, deps) {
         });
         const assetSources = assets.map((asset, index) =>
           assetsEvidence[index].inspected
-            ? { kind: asset.kind, inspected: true, mimeType: assetsEvidence[index].mimeType, contentHash: asset.content_hash, textContent: inspectedText.trim() }
-            : { kind: asset.kind, inspected: false, url: asset.url || null, mimeType: assetsEvidence[index].mimeType, contentHash: asset.content_hash },
+            ? {
+                kind: asset.kind,
+                inspected: true,
+                mimeType: assetsEvidence[index].mimeType,
+                contentHash: asset.content_hash,
+                textContent: inspectedText.trim(),
+              }
+            : {
+                kind: asset.kind,
+                inspected: false,
+                url: asset.url || null,
+                mimeType: assetsEvidence[index].mimeType,
+                contentHash: asset.content_hash,
+              },
         );
         const review = await provider.review(
           {

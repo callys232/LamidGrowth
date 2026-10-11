@@ -1,13 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { wordSet, scoreBid } from './text.mjs';
+import { skillFit as scoreSkillFit } from './matchScore.mjs';
 import {
   requirementSchema,
   checkEligibility,
   credentialsByProfile,
   restrictedProfileIds,
 } from './expertEligibility.mjs';
-import { DOMAINS, FUNCTIONS, INDUSTRIES, SENIORITY, ENGAGEMENT_MODELS } from './expertiseTaxonomy.mjs';
+import {
+  DOMAINS,
+  FUNCTIONS,
+  INDUSTRIES,
+  SENIORITY,
+  ENGAGEMENT_MODELS,
+} from './expertiseTaxonomy.mjs';
 
 const profileSchema = z
   .object({
@@ -271,7 +278,10 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   // moment this expert claims a review-queue entry (see scoping.mjs's claim route).
   app.patch('/api/talent/profile/review-availability', async (req, res) => {
     const profile = await profileFor(req.user.id);
-    if (!profile) return res.status(404).json({ error: 'Create a talent profile before setting review availability.' });
+    if (!profile)
+      return res
+        .status(404)
+        .json({ error: 'Create a talent profile before setting review availability.' });
     const input = z
       .object({
         timezone: z.string().trim().max(60).optional(),
@@ -287,9 +297,19 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
       )
       .run(
         input.timezone ?? profile.timezone ?? null,
-        input.asyncReviewEligible === undefined ? profile.async_review_eligible : (input.asyncReviewEligible ? 1 : 0),
-        input.urgentReviewEligible === undefined ? profile.urgent_review_eligible : (input.urgentReviewEligible ? 1 : 0),
-        input.expectedResponseHours === undefined ? profile.expected_response_hours : input.expectedResponseHours,
+        input.asyncReviewEligible === undefined
+          ? profile.async_review_eligible
+          : input.asyncReviewEligible
+            ? 1
+            : 0,
+        input.urgentReviewEligible === undefined
+          ? profile.urgent_review_eligible
+          : input.urgentReviewEligible
+            ? 1
+            : 0,
+        input.expectedResponseHours === undefined
+          ? profile.expected_response_hours
+          : input.expectedResponseHours,
         req.user.id,
       );
     res.json(await profileFor(req.user.id));
@@ -436,7 +456,13 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
             "UPDATE review_queue_entries SET qualification_revoked_at = ? WHERE qualifying_credential_id = ? AND status = 'completed' AND qualification_revoked_at IS NULL",
           )
           .run(now, credential.id);
-        await log(req.workspace.id, req.user.name, 'Credential revoked', credential.id, input.reason ?? '');
+        await log(
+          req.workspace.id,
+          req.user.name,
+          'Credential revoked',
+          credential.id,
+          input.reason ?? '',
+        );
       });
     } else
       await db
@@ -675,15 +701,22 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
         .status(403)
         .json({ error: 'Only the job owner can compare candidates for this project.' });
     const jobWords = wordSet(`${job.title} ${job.category} ${job.description} ${job.deliverables}`);
-    const rows = await db.prepare('SELECT * FROM talent_profiles').all();
+    const rows = await db
+      .prepare(
+        'SELECT talent_profiles.* FROM talent_profiles JOIN users ON users.id = talent_profiles.user_id WHERE users.demo = 0 AND users.disabled_at IS NULL AND users.id <> ?',
+      )
+      .all(req.user.id);
     const results = rows
       .map((row) => {
         const skills = JSON.parse(row.skills);
         const profileWords = wordSet(`${row.headline} ${skills.join(' ')}`);
-        const overlap = [...profileWords].filter((word) => jobWords.has(word)).length;
-        const skillFit =
-          profileWords.size === 0 ? 0 : Math.round((overlap / profileWords.size) * 70);
-        const rateFit = !row.hourly_rate ? 15 : row.hourly_rate * 100 <= job.budget_max ? 15 : 0;
+        const skillFit = scoreSkillFit(profileWords, jobWords);
+        const rateFit =
+          row.hourly_rate != null &&
+          row.currency === job.currency &&
+          row.hourly_rate <= job.budget_max
+            ? 15
+            : 0;
         const vettingBonus = row.vetting_status === 'verified' ? 15 : 0;
         return {
           userId: row.user_id,
@@ -704,23 +737,29 @@ export function mountTalent(app, store, { ecosystemAdminEmails }) {
   // The inverse: for the current freelancer, rank every open job by fit to their own
   // profile, so they can prioritize which projects to bid on rather than browsing blind.
   app.get('/api/talent/job-matches', async (req, res) => {
+    if (req.user.demo) return res.json([]);
     const profile = await profileFor(req.user.id);
     if (!profile)
       return res.status(400).json({ error: 'Create your talent profile to get job matches.' });
     const profileWords = wordSet(`${profile.headline} ${profile.skills.join(' ')}`);
-    const jobs = await db.prepare("SELECT * FROM job_posts WHERE status = 'open'").all();
+    const jobs = await db
+      .prepare(
+        `SELECT job_posts.* FROM job_posts JOIN users ON users.id = job_posts.client_user_id
+      WHERE job_posts.status = 'open' AND users.demo = 0 AND users.disabled_at IS NULL AND job_posts.client_user_id <> ?`,
+      )
+      .all(req.user.id);
     const results = jobs
       .map((job) => {
         const jobWords = wordSet(
           `${job.title} ${job.category} ${job.description} ${job.deliverables}`,
         );
-        const overlap = [...profileWords].filter((word) => jobWords.has(word)).length;
-        const skillFit = jobWords.size === 0 ? 0 : Math.round((overlap / jobWords.size) * 70);
-        const rateFit =
-          !profile.hourly_rate || profile.hourly_rate * 100 <= job.budget_max ? 15 : 0;
-        const budgetFit = job.budget_max >= (profile.hourly_rate || 0) * 100 ? 15 : 0;
+        const skillFit = scoreSkillFit(profileWords, jobWords);
+        const sameCurrency = profile.currency === job.currency && profile.hourly_rate != null;
+        const rateFit = sameCurrency && profile.hourly_rate <= job.budget_max ? 15 : 0;
+        const budgetFit = sameCurrency && profile.hourly_rate <= job.budget_min ? 15 : 0;
         return {
           jobId: job.id,
+          job,
           title: job.title,
           category: job.category,
           budgetMin: job.budget_min,

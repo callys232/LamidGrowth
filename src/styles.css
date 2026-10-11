@@ -5994,3 +5994,30 @@ small {
     break-inside: avoid;
   }
 }
+
+/* Demo banner persona/tier switcher (WorkspaceShell). */
+.demo-banner-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+.demo-banner-controls select {
+  width: auto;
+  min-width: 96px;
+  flex-shrink: 0;
+}
+@media (max-width: 560px) {
+  .demo-banner-controls {
+    flex-wrap: wrap;
+  }
+}
+.demo-banner-controls select {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}

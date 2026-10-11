@@ -1,0 +1,2783 @@
+{
+  "catalog": {
+    "engines": [
+      {
+        "code": "S01",
+        "toolId": "T01",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "Purpose & Strategic Direction",
+        "standard": "Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation",
+        "purpose": "Checks that the organisation’s purpose, values and priorities are clear, shared, and actually used in decisions.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 6 anchored questions based on Mission, vision and values (Collins & Porras core ideology); ISO 9001 §4.1 context of the organisation, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T01",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "d45ca80763dc",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — anchored questionnaires … discount unevidenced answers"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S03",
+        "toolId": "T02",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "Strategy Alignment Matrix",
+        "standard": "Hoshin Kanri X-matrix; McKinsey 7-S",
+        "purpose": "Links objectives to the initiatives and spend under way, so you can see what serves no objective and which objectives have no funded work.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Links your objectives to the initiatives and spend under way, and compares each objective’s share of spend with its share of importance.",
+        "limits": "It works only from the objectives, initiatives and figures you list; it does not judge whether the objectives themselves are right.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T02",
+        "canonicalCapabilities": [
+          "T-027"
+        ],
+        "validation": {
+          "toolVersion": "ed83e8498282",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S09",
+        "toolId": "T03",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "Strategic Priority Ranking",
+        "standard": "Multi-criteria decision analysis (weighted scoring)",
+        "purpose": "Ranks your actual strategic priorities against weighted criteria and shows how sensitive the ranking is to the weights.",
+        "dimensionLabels": [],
+        "kind": "selection",
+        "computes": "Weighted scoring of your options against your criteria, normalised for scale, with a check on how sensitive the winner is to the weights.",
+        "limits": "Criteria, weights and scores are yours; it does not research or verify the options.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T03",
+        "canonicalCapabilities": [
+          "T-026"
+        ],
+        "validation": {
+          "toolVersion": "c5bb3bc6d994",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S06",
+        "toolId": "T04",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "OKR & Strategy Execution Review",
+        "standard": "OKRs (Doerr); Balanced Scorecard reviews (Kaplan & Norton)",
+        "purpose": "Tracks objectives and key results against the time elapsed, so you see what is on pace and what is falling behind.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Progress of each key result from its start value toward its target, compared with how much of the period has passed, rolled up by objective.",
+        "limits": "Values are what you enter; it does not pull figures from other systems or judge whether targets are ambitious enough.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T04",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "cb04f5779c91",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — OKR progress handles targets that should go down"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S07",
+        "toolId": "T05",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "External Environment Scan",
+        "standard": "PESTLE; Porter’s Five Forces",
+        "purpose": "Ranks the external factors that matter by impact and likelihood and checks no heading was overlooked.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Ranks the external factors you list by impact × likelihood and checks every PESTLE heading and competitive force was considered.",
+        "limits": "It does not research the market; factors and ratings are yours.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T05",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "0cc270103fa4",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "C06",
+        "toolId": "T63",
+        "homeEngine": "Clarity",
+        "area": "Strategy",
+        "seriesName": "Strategy",
+        "engineName": "Operating Model Review",
+        "standard": "McKinsey 7-S; Galbraith Star Model",
+        "purpose": "Assesses whether structure, decision rights, processes, people, measures and information fit the strategy.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 6 anchored questions based on McKinsey 7-S; Galbraith Star Model, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T63",
+        "canonicalCapabilities": [
+          "T-003"
+        ],
+        "validation": {
+          "toolVersion": "e77141486175",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R02",
+        "toolId": "T06",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Delivery Flow Metrics",
+        "standard": "Kanban flow metrics; Little’s Law",
+        "purpose": "Measures how fast and how predictably work flows: throughput, cycle time, work in progress and flow efficiency.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.",
+        "limits": "Reads only the period figures you enter; it is not connected to your task tools.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T06",
+        "canonicalCapabilities": [
+          "T-100",
+          "T-104"
+        ],
+        "validation": {
+          "toolVersion": "b85023cc4d07",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Delivery Flow Metrics flags data that breaks Little’s Law"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R03",
+        "toolId": "T07",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Drift & Stability Monitor",
+        "standard": "Statistical Process Control (XmR chart; Western Electric and Nelson rules)",
+        "purpose": "Tells real drift from routine variation in any metric, so you react to signals and not to noise.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Natural process limits for any metric and the standard control-chart rules that separate real drift from routine variation.",
+        "limits": "Reads only the values you enter; it detects that something changed, not why.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T07",
+        "canonicalCapabilities": [
+          "T-101",
+          "T-119"
+        ],
+        "validation": {
+          "toolVersion": "555bade3e049",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Drift & Stability Monitor: XmR limits …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R06",
+        "toolId": "T08",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Dependency Board",
+        "standard": "Dependency tracking (DSM; programme board practice)",
+        "purpose": "Tracks what teams need from each other and when, and shows which dependencies are late and who is most often late.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Which dependencies between teams are late or overdue, and which providing teams are most often late.",
+        "limits": "Works from the dependencies and dates you record; it does not read project tools.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T08",
+        "canonicalCapabilities": [
+          "T-010"
+        ],
+        "validation": {
+          "toolVersion": "b249497d83df",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R05",
+        "toolId": "T09",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Workload & Capacity Balance",
+        "standard": "Capacity planning and utilisation (85% ceiling)",
+        "purpose": "Compares demand with capacity for each team or person and suggests where spare capacity could absorb overload.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Utilisation of each team or person against an 85% safe ceiling, and where spare capacity could absorb overload.",
+        "limits": "It does not know whether skills transfer between teams; check each suggested move.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T09",
+        "canonicalCapabilities": [
+          "T-043",
+          "T-102"
+        ],
+        "validation": {
+          "toolVersion": "c97c5aeeb37e",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "P14",
+        "toolId": "T10",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Bottleneck & Process Improvement",
+        "standard": "Theory of Constraints (Goldratt); Lean value-stream thinking",
+        "purpose": "Finds the step that limits throughput and where improvement would actually raise output.",
+        "dimensionLabels": [],
+        "kind": "optimisation",
+        "computes": "Finds the bottleneck step from the capacities you enter for each step, and where improvement would actually raise throughput.",
+        "limits": "It works on the step figures you enter; it does not measure your process or its costs.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T10",
+        "canonicalCapabilities": [
+          "T-009"
+        ],
+        "validation": {
+          "toolVersion": "095a941380ae",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R25",
+        "toolId": "T11",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Root Cause Analysis",
+        "standard": "5 Whys; Ishikawa (fishbone); Kepner-Tregoe Problem Analysis",
+        "purpose": "Structures the search for a root cause and tests candidate causes against the evidence and the facts.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Builds the cause chains, ranks root causes by evidence and by whether they explain the facts, and shows which fishbone categories were not considered.",
+        "limits": "It organises and tests your analysis; it cannot find causes you have not listed.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T11",
+        "canonicalCapabilities": [
+          "T-007"
+        ],
+        "validation": {
+          "toolVersion": "b2cefc788b5b",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S05",
+        "toolId": "T12",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Operating Rhythm & Meeting Design",
+        "standard": "Governance calendar; meeting-load analysis",
+        "purpose": "Shows what your recurring meetings cost, how much is status updates, and whether weekly, monthly and quarterly reviews exist.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "The time your recurring meetings cost per person, how much of it is status updates, and whether the weekly, monthly and quarterly review levels exist.",
+        "limits": "It uses the meetings you list; it does not read calendars or judge meeting quality.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T12",
+        "canonicalCapabilities": [
+          "T-097",
+          "T-099"
+        ],
+        "validation": {
+          "toolVersion": "2762708c573a",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "P10",
+        "toolId": "T13",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Productivity & Output Metrics",
+        "standard": "OEE quality rate (ISO 22400); SPACE framework for knowledge work",
+        "purpose": "Compares quality-adjusted output per hour across teams and over time.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Quality-adjusted output per 100 hours for each team, the change from last period, and the spread between the best team and the median.",
+        "limits": "Output units must mean the same thing across teams; it cannot normalise for different kinds of work.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T13",
+        "canonicalCapabilities": [
+          "T-160"
+        ],
+        "validation": {
+          "toolVersion": "d58420159220",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q39",
+        "toolId": "T14",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Collaboration Network Map",
+        "standard": "Organisational Network Analysis (Cross & Parker)",
+        "purpose": "Maps who relies on whom and finds overloaded connectors, isolated teams and single points of failure.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Connections per person or team, collaboration load share, single points of failure and isolated groups.",
+        "limits": "Built from the relationships you list; it does not read email or chat data.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T14",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "3216ae78475c",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Collaboration Network finds the people whose absence …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "P24",
+        "toolId": "T15",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Technology ROI & Total Cost",
+        "standard": "Total cost of ownership; return on investment",
+        "purpose": "Compares what each system costs with the value of the time it saves, plus adoption and unused licences.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Return on each system from total annual cost against the value of time saved, plus adoption and unused licences.",
+        "limits": "Time saved is your estimate; it does not measure usage from the systems themselves.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T15",
+        "canonicalCapabilities": [
+          "T-161"
+        ],
+        "validation": {
+          "toolVersion": "c0b61d05fa90",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "P25",
+        "toolId": "T16",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Innovation Funnel",
+        "standard": "ISO 56002 innovation management; Stage-Gate (Cooper)",
+        "purpose": "Measures conversion between innovation stages, time to market and return on innovation spend.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Conversion between innovation stages, time to market and revenue returned per unit of innovation spend.",
+        "limits": "Works from your stage counts; it does not judge the quality of individual ideas.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T16",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "0906e2c58c12",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "R26",
+        "toolId": "T17",
+        "homeEngine": "Consistency",
+        "area": "Operations",
+        "seriesName": "Operations",
+        "engineName": "Data Quality Check",
+        "standard": "DAMA-DMBOK data quality dimensions; ISO 8000",
+        "purpose": "Assesses whether the data behind decisions is accurate, complete, timely, consistent and owned.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 7 anchored questions based on DAMA-DMBOK data quality dimensions; ISO 8000, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T17",
+        "canonicalCapabilities": [
+          "T-028"
+        ],
+        "validation": {
+          "toolVersion": "353ca4a6c39e",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q44",
+        "toolId": "T18",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Decision Quality",
+        "standard": "Decision Quality (Spetzler, Winter & Meyer; Strategic Decisions Group)",
+        "purpose": "Scores one decision against the six requirements of decision quality, limited by its weakest link.",
+        "dimensionLabels": [],
+        "kind": "decision-quality",
+        "computes": "Scores one decision against a fixed set of requirements (options, criteria, owner, information and more), limited by its weakest requirement.",
+        "limits": "It rates how the decision is being made, not whether the eventual choice is right.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T18",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "ac1b2461bfab",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q02",
+        "toolId": "T19",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Decision Register",
+        "standard": "Decision log / Architecture Decision Records practice",
+        "purpose": "Keeps a record of decisions and measures cycle time, stalled and recurring decisions, missing owners and overdue reviews.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Decision cycle time, stalled and recurring decisions, missing owners and rationale, overdue reviews and reversal rate.",
+        "limits": "Built from the decisions you record; it does not judge whether a decision was right.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T19",
+        "canonicalCapabilities": [
+          "T-012",
+          "T-188"
+        ],
+        "validation": {
+          "toolVersion": "2ff9c01e4884",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q29",
+        "toolId": "T20",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Decision Rights Matrix",
+        "standard": "RACI; Bain RAPID; delegation of authority",
+        "purpose": "Checks every decision has exactly one accountable owner and finds roles holding too many final calls.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Checks each decision has exactly one accountable owner and someone responsible, and finds roles that hold too many final calls.",
+        "limits": "It checks the matrix you enter, not whether people follow it in practice.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T20",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "ab212821ab3d",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Decision Rights Matrix catches missing and duplicate …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q21",
+        "toolId": "T21",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Option Comparison",
+        "standard": "Kepner-Tregoe Decision Analysis; multi-criteria decision analysis",
+        "purpose": "Scores options against weighted criteria and shows how fragile the winner is.",
+        "dimensionLabels": [],
+        "kind": "selection",
+        "computes": "Weighted scoring of your options against your criteria, normalised for scale, with a check on how sensitive the winner is to the weights.",
+        "limits": "Criteria, weights and scores are yours; it does not research or verify the options.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T21",
+        "canonicalCapabilities": [
+          "T-018",
+          "T-019"
+        ],
+        "validation": {
+          "toolVersion": "0f010c5fca26",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q03",
+        "toolId": "T22",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Scenarios & Expected Value",
+        "standard": "Decision analysis: expected value, regret and value of information; scenario planning",
+        "purpose": "Compares options across possible futures and shows what better information would be worth.",
+        "dimensionLabels": [],
+        "kind": "scenario-decision",
+        "computes": "Compares your options across the futures you define under three decision rules, and reports what perfect information about the future would be worth.",
+        "limits": "The futures, their likelihoods and payoffs are yours; it does not forecast which future will happen.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T22",
+        "canonicalCapabilities": [
+          "T-013",
+          "T-021",
+          "T-023"
+        ],
+        "validation": {
+          "toolVersion": "f918d03f6aa8",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q05",
+        "toolId": "T23",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Decision Timing & Cost of Delay",
+        "standard": "Cost of Delay and WSJF (Reinertsen); Eisenhower matrix",
+        "purpose": "Orders pending decisions by the cost of waiting and flags deadlines that can no longer be met.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Orders pending items by cost of delay divided by duration (WSJF), places them on the Eisenhower matrix, and flags deadlines that can no longer be met.",
+        "limits": "Cost of delay is your estimate; the order is only as good as those figures.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T23",
+        "canonicalCapabilities": [
+          "T-015"
+        ],
+        "validation": {
+          "toolVersion": "6651681aa70a",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Cost of Delay orders by WSJF …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q06",
+        "toolId": "T24",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Priority Conflict Check",
+        "standard": "Pairwise trade-off analysis",
+        "purpose": "Checks objectives pair by pair for conflicts that have no stated trade-off.",
+        "dimensionLabels": [],
+        "kind": "conflict",
+        "computes": "Checks the objectives you enter pair by pair and flags tensions that have no stated trade-off.",
+        "limits": "It only finds conflicts among the objectives you enter; it does not know your other goals.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T24",
+        "canonicalCapabilities": [
+          "T-016"
+        ],
+        "validation": {
+          "toolVersion": "492e4ba2b825",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q17",
+        "toolId": "T25",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Stakeholder Map",
+        "standard": "Mendelow power–interest grid; Mitchell, Agle & Wood salience",
+        "purpose": "Maps stakeholders by power, interest and position, and flags powerful opponents.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Places stakeholders on the power–interest grid, rates their salience, and computes power-weighted support.",
+        "limits": "Positions are your read of each stakeholder; it does not survey them.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T25",
+        "canonicalCapabilities": [
+          "T-031"
+        ],
+        "validation": {
+          "toolVersion": "147879759a92",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "S08",
+        "toolId": "T26",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Force Field Analysis",
+        "standard": "Lewin’s force field analysis",
+        "purpose": "Weighs the forces for and against a change and names the resistance to reduce first.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Totals driving and resisting forces and names the resisting forces to reduce first.",
+        "limits": "Strengths are your judgement; it does not measure the forces.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T26",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "a0c50a041c16",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q35",
+        "toolId": "T27",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Decision Method Selector",
+        "standard": "Cynefin framework (Snowden); one-way / two-way door test",
+        "purpose": "Recommends how much process a decision needs and which method to use.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which tools to use.",
+        "limits": "The answer depends on how you describe the situation; it does not make the decision.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T27",
+        "canonicalCapabilities": [
+          "T-020"
+        ],
+        "validation": {
+          "toolVersion": "e58ef30f00a5",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q58",
+        "toolId": "T30",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Benefits & After-Action Review",
+        "standard": "Benefits realisation (MSP; PMI); After Action Review",
+        "purpose": "Compares planned with realised value and records what was learned.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Planned against realised value per item and overall, with the lessons recorded.",
+        "limits": "Values are what you report; attributing results to one decision is your judgement.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T30",
+        "canonicalCapabilities": [
+          "T-162"
+        ],
+        "validation": {
+          "toolVersion": "4110aa77049a",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q27",
+        "toolId": "T35",
+        "homeEngine": "Clarity",
+        "area": "Decisions",
+        "seriesName": "Decisions",
+        "engineName": "Forecast Calibration",
+        "standard": "Brier score and calibration (Tetlock; Good Judgment Project)",
+        "purpose": "Measures how good people’s judgement actually is from predictions recorded and later resolved.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Brier scores per person and overall, and how often things predicted at each confidence level actually happened.",
+        "limits": "Only resolved predictions count; it measures past judgement, not ability on new kinds of question.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T35",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "566b0d9839df",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Forecast Calibration computes Brier scores"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q15",
+        "toolId": "T28",
+        "homeEngine": "Consistency",
+        "area": "Risk",
+        "seriesName": "Risk",
+        "engineName": "Early Warning Indicators",
+        "standard": "Key Risk Indicators (COSO ERM; ISO 31000)",
+        "purpose": "Tracks leading indicators against amber and red thresholds and shows how soon they will breach.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Red, amber or green status for each indicator against your thresholds, its direction of travel, and how soon it reaches red at the current pace.",
+        "limits": "Values are entered by you; it is not connected to live data.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T28",
+        "canonicalCapabilities": [
+          "T-030"
+        ],
+        "validation": {
+          "toolVersion": "37bcfcfab44d",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q43",
+        "toolId": "T29",
+        "homeEngine": "Consistency",
+        "area": "Risk",
+        "seriesName": "Risk",
+        "engineName": "Risk Register",
+        "standard": "ISO 31000 risk management; COSO ERM",
+        "purpose": "Keeps risks with owners and controls, and shows the heat map, risks above appetite and overdue actions.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Inherent and estimated residual risk, a heat map, risks above appetite, overdue actions and missing owners.",
+        "limits": "Scores are your judgement; residual risk is estimated from the control rating, not tested.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T29",
+        "canonicalCapabilities": [
+          "T-032"
+        ],
+        "validation": {
+          "toolVersion": "9d289c1d8da9",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q86",
+        "toolId": "T36",
+        "homeEngine": "Consistency",
+        "area": "Risk",
+        "seriesName": "Risk",
+        "engineName": "Business Continuity (BIA)",
+        "standard": "ISO 22301 business impact analysis",
+        "purpose": "Sets recovery priorities and finds activities that would not recover in time.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Recovery priority, activities whose recovery objective or tested recovery is too slow, untested plans and single-person dependencies.",
+        "limits": "Works from the times and test results you record; it does not run a recovery test.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T36",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "a8b19eb23c7c",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "X02",
+        "toolId": "T37",
+        "homeEngine": "Consistency",
+        "area": "Risk",
+        "seriesName": "Risk",
+        "engineName": "Cyber Security Posture",
+        "standard": "NIST Cybersecurity Framework 2.0; ISO/IEC 27001",
+        "purpose": "Assesses security across the six NIST CSF functions, with evidence.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 9 anchored questions based on NIST Cybersecurity Framework 2.0; ISO/IEC 27001, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T37",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "0e72bedda235",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "X06",
+        "toolId": "T39",
+        "homeEngine": "Consistency",
+        "area": "Risk",
+        "seriesName": "Risk",
+        "engineName": "Organisational Resilience",
+        "standard": "ISO 22316 organisational resilience",
+        "purpose": "Assesses the attributes that let an organisation absorb shocks and adapt.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 7 anchored questions based on ISO 22316 organisational resilience, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T39",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "1a9f1cde2c32",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q99",
+        "toolId": "T32",
+        "homeEngine": "Consistency",
+        "area": "Governance",
+        "seriesName": "Governance",
+        "engineName": "Governance Assessment",
+        "standard": "ISO 37000 governance of organisations; OECD Principles; King IV",
+        "purpose": "Assesses governance against recognised principles, with evidence for each answer.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 7 anchored questions based on ISO 37000 governance of organisations; OECD Principles; King IV, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T32",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "2a89166d1e96",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Q76",
+        "toolId": "T33",
+        "homeEngine": "Consistency",
+        "area": "Governance",
+        "seriesName": "Governance",
+        "engineName": "Commitments & Obligations Register",
+        "standard": "Obligations register (ISO 37301); collaborative relationships (ISO 44001)",
+        "purpose": "Tracks contracts, partnership terms, public pledges and mandates against their due dates.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Which commitments are overdue, due soon or not started, the rate at which commitments have been kept, and missing owners.",
+        "limits": "Tracks the commitments you record; it does not read contracts.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T33",
+        "canonicalCapabilities": [
+          "T-112",
+          "T-135"
+        ],
+        "validation": {
+          "toolVersion": "0960ce06f047",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "X04",
+        "toolId": "T34",
+        "homeEngine": "Consistency",
+        "area": "Governance",
+        "seriesName": "Governance",
+        "engineName": "Compliance Assessment",
+        "standard": "ISO 37301 compliance management systems",
+        "purpose": "Shows which compliance obligations are controlled and evidenced, by regulation.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "The share of obligations that are controlled and evidenced, gaps by regulation, and reviews older than a year.",
+        "limits": "It does not interpret the law; the obligations and their status are yours. Not a legal opinion.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T34",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "9585e222cd34",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "X05",
+        "toolId": "T38",
+        "homeEngine": "Consistency",
+        "area": "Governance",
+        "seriesName": "Governance",
+        "engineName": "Ethics & Integrity",
+        "standard": "ISO 37001 anti-bribery; ISO 37002 whistleblowing",
+        "purpose": "Assesses conduct standards, conflicts of interest, speak-up channels and consequences.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 6 anchored questions based on ISO 37001 anti-bribery; ISO 37002 whistleblowing, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T38",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "470ceeb8df8e",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F06",
+        "toolId": "T61",
+        "homeEngine": "Consistency",
+        "area": "Governance",
+        "seriesName": "Governance",
+        "engineName": "Financial Controls Review",
+        "standard": "COSO Internal Control – Integrated Framework (2013)",
+        "purpose": "Reviews key financial controls by process using COSO deficiency levels.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Control effectiveness by process using COSO deficiency levels, plus untested and unowned controls.",
+        "limits": "Uses the test results you record; it does not test controls or replace an audit.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T61",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "160bce32fca2",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A05",
+        "toolId": "T31",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Culture & Values Assessment",
+        "standard": "Culture traits model (Denison & Mishra, 1995); team psychological safety (Edmondson, 1999) — original question wording",
+        "purpose": "Assesses involvement, consistency, adaptability, mission and psychological safety. Best answered by many people and averaged.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 8 anchored questions based on Culture traits model (Denison & Mishra, 1995); team psychological safety (Edmondson, 1999) — original question wording, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T31",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "84d51dfe9b9a",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A02",
+        "toolId": "T40",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Skills Gap Analysis",
+        "standard": "SFIA skills framework",
+        "purpose": "Compares required and current skill levels by role and finds skills held by only one person.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "The gap between required and current skill levels by role, coverage, and skills held by only one person.",
+        "limits": "Levels are your assessment; it does not test anyone’s skills.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T40",
+        "canonicalCapabilities": [
+          "T-065"
+        ],
+        "validation": {
+          "toolVersion": "ea1f7d33e613",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A03",
+        "toolId": "T41",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Workforce Plan",
+        "standard": "ISO 30409 workforce planning",
+        "purpose": "Compares future demand with projected supply for each role and sets the hire or develop route.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Projected supply against demand for each role, the gap, how much internal moves can cover, and the hire or develop route.",
+        "limits": "Demand and leaver numbers are your estimates; it does not forecast the business.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T41",
+        "canonicalCapabilities": [
+          "T-066"
+        ],
+        "validation": {
+          "toolVersion": "7b402445ab65",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A22",
+        "toolId": "T42",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Succession & Bench Strength",
+        "standard": "Succession planning (ready-now / ready-later bench)",
+        "purpose": "Measures succession coverage for each critical seat.",
+        "dimensionLabels": [],
+        "kind": "bench-strength",
+        "computes": "Measures succession coverage for each critical seat from the successors and readiness you enter.",
+        "limits": "It works from the figures you enter; it does not assess the people themselves.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T42",
+        "canonicalCapabilities": [
+          "T-070"
+        ],
+        "validation": {
+          "toolVersion": "b0bf61d47826",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A07",
+        "toolId": "T43",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Human Capital Metrics",
+        "standard": "ISO 30414 human capital reporting",
+        "purpose": "Calculates the standard people measures: turnover, hiring, mobility, training, absence and productivity.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "The ISO 30414 core people measures you have data for: turnover, hiring, time to fill, mobility, training, absence and productivity.",
+        "limits": "Uses the period totals you enter; it does not read HR or payroll systems.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T43",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "aa6475ac23b9",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A09",
+        "toolId": "T44",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Performance–Potential Grid",
+        "standard": "9-box talent review",
+        "purpose": "Places people on the 9-box grid and flags key talent at risk of leaving.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Places each person on the 9-box grid, shows the distribution, and flags key talent at risk of leaving.",
+        "limits": "Ratings are managers’ judgements; calibrate them before acting.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T44",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "a471975f2838",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A11",
+        "toolId": "T45",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Engagement Survey",
+        "standard": "Employee Net Promoter Score (eNPS)",
+        "purpose": "Scores engagement from staff answers by team, protecting anonymity in small teams.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "eNPS overall and by team from staff answers, response rates, and anonymity protection for small teams.",
+        "limits": "It scores survey results you collected; it does not run the survey or explain the reasons behind scores.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T45",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "1e34250fe859",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Engagement Survey computes eNPS …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A15",
+        "toolId": "T46",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Development ROI",
+        "standard": "Kirkpatrick four levels; Phillips ROI methodology",
+        "purpose": "Shows how deeply each programme is evaluated and its return after attribution.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Evaluation depth per Kirkpatrick level and Phillips ROI after adjusting the benefit for attribution and confidence.",
+        "limits": "Benefit, attribution and confidence are estimates; the ROI is only as good as them.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T46",
+        "canonicalCapabilities": [
+          "T-161"
+        ],
+        "validation": {
+          "toolVersion": "16a902c247a4",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A23",
+        "toolId": "T47",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Competency & 360 Review",
+        "standard": "Behavioural competency framework; 360-degree feedback",
+        "purpose": "Compares self and others’ ratings against expected levels to find gaps and blind spots.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Gaps against expected levels using others’ ratings, plus blind spots and hidden strengths where self and others disagree.",
+        "limits": "Ratings are opinions; use them for development conversations, not as a sole basis for pay or dismissal.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T47",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "f886b1a67225",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "A25",
+        "toolId": "T48",
+        "homeEngine": "Capability",
+        "area": "People",
+        "seriesName": "People",
+        "engineName": "Next-Role Readiness",
+        "standard": "Role requirement gap analysis",
+        "purpose": "Measures how ready a person is for a target role and how long the gaps take to close.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "How far a person meets a target role’s requirements and how long the gaps take to close.",
+        "limits": "Levels and timings are your assessment.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T48",
+        "canonicalCapabilities": [
+          "T-080"
+        ],
+        "validation": {
+          "toolVersion": "52dfee2213b8",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "C08",
+        "toolId": "T49",
+        "homeEngine": "Growth",
+        "area": "Change",
+        "seriesName": "Change",
+        "engineName": "Change Readiness",
+        "standard": "Five readiness beliefs (Armenakis & Harris); Kotter’s 8 steps",
+        "purpose": "Finds each affected group’s barrier point so effort goes where the change is stuck.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Readiness of each affected group across the five change beliefs, weighted by group size, and the weakest belief to work on first.",
+        "limits": "Scores are your assessment of each group; ideally ask the groups themselves. Uses a published research model with original wording, not a licensed survey.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T49",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "21a7c020a101",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Change Readiness finds each group’s weakest belief"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Z06",
+        "toolId": "T50",
+        "homeEngine": "Growth",
+        "area": "Change",
+        "seriesName": "Change",
+        "engineName": "Transformation Programme Tracker",
+        "standard": "PMI Standard for Program Management; MSP",
+        "purpose": "Tracks milestones and benefits for a transformation programme.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Milestone delivery and slippage, and benefits forecast against plan.",
+        "limits": "Dates and values are what you record; it does not read project plans.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T50",
+        "canonicalCapabilities": [
+          "T-174"
+        ],
+        "validation": {
+          "toolVersion": "c7854474ecd0",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "Z01",
+        "toolId": "T51",
+        "homeEngine": "Growth",
+        "area": "Growth",
+        "seriesName": "Growth",
+        "engineName": "Growth Opportunity Scoring",
+        "standard": "RICE scoring; Ansoff matrix; McKinsey Three Horizons",
+        "purpose": "Ranks growth opportunities and shows how effort is spread across the three horizons.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "RICE score (reach × impact × confidence ÷ effort) for each opportunity and the effort mix across the three horizons.",
+        "limits": "All inputs are your estimates; it does not research markets.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T51",
+        "canonicalCapabilities": [
+          "T-033"
+        ],
+        "validation": {
+          "toolVersion": "7e78d9198120",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "G03",
+        "toolId": "T52",
+        "homeEngine": "Growth",
+        "area": "Growth",
+        "seriesName": "Growth",
+        "engineName": "Growth Pathways",
+        "standard": "Portfolio sequencing under capacity",
+        "purpose": "Compares growth pathways and returns a sequenced portfolio that fits your capacity.",
+        "dimensionLabels": [],
+        "kind": "growth-pathways",
+        "computes": "Compares the growth pathways you enter and returns a sequenced portfolio that fits your capacity.",
+        "limits": "Pathway values and costs are your estimates; it does not find new pathways or supply market data.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T52",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "0c274462ab6a",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "G07",
+        "toolId": "T53",
+        "homeEngine": "Growth",
+        "area": "Growth",
+        "seriesName": "Growth",
+        "engineName": "Growth Plan Feasibility",
+        "standard": "Capacity-constrained roadmap; critical path",
+        "purpose": "Sequences the growth plan under capacity and dependencies and reports the critical path.",
+        "dimensionLabels": [],
+        "kind": "roadmap",
+        "computes": "Sequences the initiatives you enter into periods, respecting dependencies and per-period capacity, and reports the critical path.",
+        "limits": "Effort, value and dependencies are your estimates; it does not estimate the work or assign people.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T53",
+        "canonicalCapabilities": [
+          "T-039"
+        ],
+        "validation": {
+          "toolVersion": "82762e263f30",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "G04",
+        "toolId": "T54",
+        "homeEngine": "Growth",
+        "area": "Growth",
+        "seriesName": "Growth",
+        "engineName": "Modernisation Roadmap",
+        "standard": "TOGAF ADM migration planning",
+        "purpose": "Sequences modernisation work under capacity and dependencies.",
+        "dimensionLabels": [],
+        "kind": "roadmap",
+        "computes": "Sequences the initiatives you enter into periods, respecting dependencies and per-period capacity, and reports the critical path.",
+        "limits": "Effort, value and dependencies are your estimates; it does not estimate the work or assign people.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T54",
+        "canonicalCapabilities": [
+          "T-039",
+          "T-148"
+        ],
+        "validation": {
+          "toolVersion": "d78f914c5240",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "G06",
+        "toolId": "T55",
+        "homeEngine": "Growth",
+        "area": "Growth",
+        "seriesName": "Growth",
+        "engineName": "Digital Maturity",
+        "standard": "Digital maturity models (MIT CISR; TM Forum DMM)",
+        "purpose": "Assesses digital maturity across strategy, customer, operations, technology and people.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 6 anchored questions based on Digital maturity models (MIT CISR; TM Forum DMM), by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T55",
+        "canonicalCapabilities": [
+          "T-004",
+          "T-146"
+        ],
+        "validation": {
+          "toolVersion": "7b403c557cd8",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F01",
+        "toolId": "T56",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "Financial Health Ratios",
+        "standard": "Management accounts ratios",
+        "purpose": "Calculates margins, growth, burn, runway and revenue per head from your period figures.",
+        "dimensionLabels": [],
+        "kind": "financial",
+        "computes": "Profit-and-loss arithmetic on the periods you enter: gross and operating margin, revenue growth, net burn, runway and revenue per head.",
+        "limits": "It does not forecast future periods and does not value the business: every figure describes the historical periods you entered.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T56",
+        "canonicalCapabilities": [
+          "T-001"
+        ],
+        "validation": {
+          "toolVersion": "20a0699c9285",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F02",
+        "toolId": "T57",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "Rolling Forecast & 13-Week Cash",
+        "standard": "13-week direct cash flow forecast; driver-based rolling forecast",
+        "purpose": "Projects cash week by week for 13 weeks and revenue, cost and cash for 12 months.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Week-by-week cash for the next 13 weeks with the low point, and a 12-month revenue, cost and cash projection from your growth assumptions.",
+        "limits": "It projects from the flows and growth rates you enter; it does not know about payments you have not listed.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T57",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "e83969fabb64",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — 13-week cash finds the low point …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F03",
+        "toolId": "T58",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "KPI Driver Tree",
+        "standard": "DuPont analysis",
+        "purpose": "Breaks return on equity into margin, turnover and leverage and shows which moved it.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Splits return on equity into margin, asset turnover and leverage, and shows which driver moved it since the prior period.",
+        "limits": "Uses the totals you enter; it does not read accounts or adjust for one-off items.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T58",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "152b19b539e7",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F04",
+        "toolId": "T59",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "Cost & Spend Analysis",
+        "standard": "Pareto (ABC) spend analysis",
+        "purpose": "Finds the few cost lines that make up most of the spend, and the ones growing fastest.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Ranks cost lines into A, B and C classes by cumulative share of spend, totals by category, and flags fast-growing lines.",
+        "limits": "Finds where spend is concentrated, not whether it is wasteful.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T59",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "b14c65901964",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F05",
+        "toolId": "T60",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "Business Valuation",
+        "standard": "Discounted cash flow (income approach, IVS 105)",
+        "purpose": "Values the business from your cash-flow forecast with a sensitivity range.",
+        "dimensionLabels": [],
+        "kind": "schema",
+        "computes": "Enterprise and equity value from your cash-flow forecast, discount rate and long-term growth, with a sensitivity range.",
+        "limits": "An indicative income-approach value only; it is not a formal valuation opinion and uses your forecast as given.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T60",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "bb98966a8078",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — Business Valuation matches a hand-worked DCF …"
+            ]
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      },
+      {
+        "code": "F07",
+        "toolId": "T62",
+        "homeEngine": "Finance",
+        "area": "Finance",
+        "seriesName": "Finance",
+        "engineName": "Finance Function Maturity",
+        "standard": "FP&A maturity models",
+        "purpose": "Assesses reporting, planning, analysis, partnering and systems in the finance function.",
+        "dimensionLabels": [],
+        "kind": "anchored",
+        "computes": "Scores your answers to 6 anchored questions based on FP&A maturity models, by area and overall, counting unevidenced answers for less.",
+        "limits": "It reflects the answers given; it is a structured self-assessment, not an audit or certification.",
+        "pointsCost": 35,
+        "canonicalCapabilityId": "T62",
+        "canonicalCapabilities": [],
+        "validation": {
+          "toolVersion": "a9c123bd20c5",
+          "implemented": {
+            "status": "current",
+            "evidence": [
+              "tests/tool-catalog.test.mjs — every tool runs end to end on its worked example"
+            ]
+          },
+          "calculationTested": {
+            "status": "none",
+            "evidence": null
+          },
+          "methodReviewed": {
+            "status": "none",
+            "evidence": null
+          },
+          "taskEvaluated": {
+            "status": "none",
+            "evidence": null
+          },
+          "operationallyTested": {
+            "status": "none",
+            "evidence": null
+          }
+        }
+      }
+    ],
+    "count": 63
+  },
+  "coverage": {
+    "totalEntries": 63,
+    "validation": {
+      "implemented": 63,
+      "calculationTested": 12,
+      "methodReviewed": 0,
+      "taskEvaluated": 0,
+      "operationallyTested": 0
+    },
+    "byArchetype": {
+      "anchored": 10,
+      "schema": 42,
+      "selection": 2,
+      "optimisation": 1,
+      "decision-quality": 1,
+      "scenario-decision": 1,
+      "conflict": 1,
+      "bench-strength": 1,
+      "growth-pathways": 1,
+      "roadmap": 2,
+      "financial": 1
+    },
+    "originalCodes": 248,
+    "stillRunning": 207
+  }
+}

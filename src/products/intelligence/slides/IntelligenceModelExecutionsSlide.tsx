@@ -23,12 +23,15 @@ export function IntelligenceModelExecutionsSlide({ settings }: { settings?: bool
   return (
     <section className="panel settings-card">
       <h3>Recent model executions</h3>
-      <p>What actually ran under each use case's approval — real provenance, not just configuration.</p>
+      <p>
+        What actually ran under each use case's approval — real provenance, not just configuration.
+      </p>
       <ol className="activity-feed-list">
         {executions.slice(0, 20).map((execution) => (
           <li key={execution.id} className="activity-feed-row">
             <span className="activity-feed-title">
-              <strong>{execution.use_case}</strong> — {execution.provider ?? 'unknown'} / {execution.model ?? 'unknown'}
+              <strong>{execution.use_case}</strong> — {execution.provider ?? 'unknown'} /{' '}
+              {execution.model ?? 'unknown'}
             </span>
             <small>{new Date(execution.executed_at).toLocaleString()}</small>
           </li>

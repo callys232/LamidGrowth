@@ -4,7 +4,13 @@ import './engine-forms.css';
 
 /** `rating: null` means "not rated" — the server leaves it out of the score and reports it as a
  * coverage gap, instead of treating an untouched control as a rating of 0. */
-type Row = { label: string; rating: number | null; weight: number; evidence: number; note?: string };
+type Row = {
+  label: string;
+  rating: number | null;
+  weight: number;
+  evidence: number;
+  note?: string;
+};
 
 /** Renders the module's own declared dimensions (not a generic questionnaire) — the
  * engine supplies the questions, the caller supplies ratings. Matches the server's

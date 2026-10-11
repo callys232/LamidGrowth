@@ -6,6 +6,7 @@ const connectionCodes = new Set([
   'EHOSTUNREACH',
   'ENETUNREACH',
   'EAI_AGAIN',
+  'ENOTFOUND',
   '57P01',
   '57P02',
   '57P03',

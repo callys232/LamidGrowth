@@ -140,3 +140,112 @@
   flex: 1;
   min-width: 0;
 }
+.escrow-summary-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0 20px;
+}
+.escrow-summary-values dt {
+  font-size: 12px;
+  text-transform: capitalize;
+  color: var(--text-muted);
+}
+.escrow-summary-values dd {
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+.consultant-match-list {
+  display: grid;
+  gap: 14px;
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+}
+.consultant-match-list > li {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface-alt);
+}
+.account-service {
+  min-width: 0;
+}
+.account-service > h2,
+.account-service > h3 {
+  margin-top: 16px;
+}
+.account-service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.account-service .settings-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  min-width: 0;
+  background: var(--surface-alt);
+}
+.account-service-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.internal-milestones {
+  list-style: none;
+  padding: 0;
+}
+.internal-milestones label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+}
+.internal-milestones label:hover {
+  background: var(--surface);
+}
+.internal-milestones input {
+  width: auto;
+}
+.account-metric {
+  font-size: 30px;
+}
+.account-secret {
+  display: block;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  padding: 12px;
+}
+.account-service progress {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.account-service .form-grid,
+.internal-project-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.account-service .form-grid > p,
+.account-service .form-grid > .button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.account-service .settings-card {
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+.account-service .settings-card:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+@media (max-width: 640px) {
+  .account-service .form-grid,
+  .internal-project-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

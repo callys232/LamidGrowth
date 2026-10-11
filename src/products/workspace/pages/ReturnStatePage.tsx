@@ -1,3 +1,4 @@
+import { PageHeading } from '../../../shared/workspace/PageHeading';
 import { useCallback, useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { api } from '../../../api';
@@ -5,7 +6,10 @@ import { Empty } from '../../../shared/ui/Empty';
 import { SkeletonList } from '../../../shared/ui/Skeleton';
 
 type Lane = 'tasks' | 'learning' | 'goals' | 'audit' | 'workflows';
-type ReturnStateResponse = Record<Lane, { lastReviewedAt: string | null; items: Record<string, unknown>[] }>;
+type ReturnStateResponse = Record<
+  Lane,
+  { lastReviewedAt: string | null; items: Record<string, unknown>[] }
+>;
 
 const LANE_LABELS: Record<Lane, string> = {
   tasks: 'Tasks needing attention',
@@ -73,51 +77,62 @@ function useReturnStatePage() {
 export function ReturnStatePage() {
   const page = useReturnStatePage();
   return (
-    <section className="panel">
-      <div className="panel-heading">
-        <div>
-          <h2>What's new</h2>
-          <span>What changed across your work since you last checked each area.</span>
+    <>
+      <PageHeading
+        eyebrow="ACCOUNT · WHAT’S NEW"
+        title="What’s new"
+        description="What changed since you last looked: tasks, goals, learning, audit and workflows."
+      />
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>What's new</h2>
+            <span>What changed across your work since you last checked each area.</span>
+          </div>
         </div>
-      </div>
-      {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
-      {page.loading && <SkeletonList rows={5} />}
-      {!page.loading &&
-        page.data &&
-        LANES.map((lane) => {
-          const lane_data = page.data![lane];
-          return (
-            <div key={lane} style={{ marginTop: 20 }}>
-              <div className="panel-heading">
-                <div>
-                  <h3>{LANE_LABELS[lane]}</h3>
-                  <span>
-                    {lane_data.lastReviewedAt
-                      ? `Last reviewed ${new Date(lane_data.lastReviewedAt).toLocaleString()}`
-                      : 'Never reviewed'}
-                  </span>
+        {page.error && <p className="activity-feed-status activity-feed-error">{page.error}</p>}
+        {page.loading && <SkeletonList rows={5} />}
+        {!page.loading &&
+          page.data &&
+          LANES.map((lane) => {
+            const lane_data = page.data![lane];
+            return (
+              <div key={lane} style={{ marginTop: 20 }}>
+                <div className="panel-heading">
+                  <div>
+                    <h3>{LANE_LABELS[lane]}</h3>
+                    <span>
+                      {lane_data.lastReviewedAt
+                        ? `Last reviewed ${new Date(lane_data.lastReviewedAt).toLocaleString()}`
+                        : 'Never reviewed'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={page.busy}
+                    onClick={() => page.markReviewed(lane)}
+                  >
+                    Mark reviewed
+                  </button>
                 </div>
-                <button type="button" disabled={page.busy} onClick={() => page.markReviewed(lane)}>
-                  Mark reviewed
-                </button>
+                {lane_data.items.length === 0 ? (
+                  <Empty title="Nothing new">You're caught up here.</Empty>
+                ) : (
+                  <ol className="activity-feed-list">
+                    {lane_data.items.map((item, index) => (
+                      <li key={index} className="activity-feed-row">
+                        <span className="activity-feed-icon">
+                          <Bell size={15} />
+                        </span>
+                        <span className="activity-feed-title">{itemLabel(lane, item)}</span>
+                      </li>
+                    ))}
+                  </ol>
+                )}
               </div>
-              {lane_data.items.length === 0 ? (
-                <Empty title="Nothing new">You're caught up here.</Empty>
-              ) : (
-                <ol className="activity-feed-list">
-                  {lane_data.items.map((item, index) => (
-                    <li key={index} className="activity-feed-row">
-                      <span className="activity-feed-icon">
-                        <Bell size={15} />
-                      </span>
-                      <span className="activity-feed-title">{itemLabel(lane, item)}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </div>
-          );
-        })}
-    </section>
+            );
+          })}
+      </section>
+    </>
   );
 }

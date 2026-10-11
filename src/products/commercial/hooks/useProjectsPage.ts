@@ -50,6 +50,9 @@ export type AssignedTeam = {
   members: AssignedTeamMember[];
 };
 export type Project = {
+  isClient?: boolean;
+  isFreelancer?: boolean;
+  isTeamMember?: boolean;
   id: string;
   workspace_id: string;
   job_id: string;
@@ -70,8 +73,10 @@ export type MilestoneFunding = {
   status: 'pending' | 'held' | 'released' | 'refunded';
   amount_minor: number;
   currency: string;
+  created_at?: string;
   held_at: string | null;
   released_at: string | null;
+  refunded_at?: string | null;
 };
 export type ProjectMessage = {
   id: string;
