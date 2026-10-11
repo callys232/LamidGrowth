@@ -668,7 +668,7 @@ export function resolve(code) {
       status: 410,
       error: r?.replacedBy
         ? `${r.reason} Use ${r.replacedBy.name} (${r.replacedBy.code}) instead.`
-        : (r?.reason ?? 'This tool is no longer offered.'),
+        : (r?.reason ?? 'This engine is no longer offered.'),
       retired: r,
     };
   }

@@ -292,7 +292,7 @@
         "name": "Delivery Flow Metrics",
         "purpose": "Measures how fast and how predictably work flows: throughput, cycle time, work in progress and flow efficiency.",
         "computes": "Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.",
-        "limits": "Reads only the period figures you enter; it is not connected to your task tools.",
+        "limits": "Reads only the period figures you enter; it is not connected to your task-management apps.",
         "spec": {
           "kind": "schema",
           "fields": [

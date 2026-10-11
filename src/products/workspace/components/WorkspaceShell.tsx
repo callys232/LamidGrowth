@@ -277,7 +277,7 @@ export function WorkspaceShell() {
           {nav.more.length > 0 && (
             <details className="ws-nav-more">
               <summary>
-                More tools <span className="ws-nav-more-count">{nav.more.length}</span>
+                More features <span className="ws-nav-more-count">{nav.more.length}</span>
               </summary>
               {nav.more.map(link)}
             </details>

@@ -125,7 +125,7 @@ export function PricingCards({
         <p>
           {billables ? (
             <>
-              Points cover every tool and engine call — 1 point costs{' '}
+              Points cover every engine call — 1 point costs{' '}
               {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}. No hidden tiers:
               this is the same price list the app bills against.
             </>
@@ -202,7 +202,7 @@ export function PricingCompare({ billables }: { billables: Billables | null }) {
   const shown = open ? rows : rows.slice(0, PREVIEW_ROWS);
   const filters = [
     { id: 'all', label: 'All billables' },
-    { id: 'free', label: 'Free tools' },
+    { id: 'free', label: 'Free engines' },
     ...engines.map((e) => ({ id: e, label: e })),
   ];
 
@@ -234,8 +234,8 @@ export function PricingCompare({ billables }: { billables: Billables | null }) {
             <table className="pricing-table">
               <thead>
                 <tr>
-                  <th>Tool</th>
                   <th>Engine</th>
+                  <th>Suite</th>
                   <th>Oversight</th>
                   <th>Cost</th>
                 </tr>

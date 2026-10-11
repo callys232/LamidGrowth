@@ -39,7 +39,7 @@ const VIEWS = [
   'Consultant Finder',
   'Actions',
   'Rhythm',
-  'Tools',
+  'Engines',
   'Analytics',
   'Profile',
   'Payout Accounts',
@@ -445,7 +445,7 @@ export function MarketingDemoPage() {
               ))}
             </section>
           )}
-          {view === 'Tools' && <DemoTools key={key} plan={plan} />}
+          {view === 'Engines' && <DemoTools key={key} plan={plan} />}
           {view === 'Analytics' && <AnalyticsSummary state={state} />}
           {(['Profile', 'Payout Accounts', 'Privacy & Security', 'Disputes'] as const).includes(
             view as 'Profile',
@@ -672,22 +672,22 @@ function DemoTools({ plan }: { plan?: DemoPlan }) {
   }, [code, engines]);
   return (
     <section className="marketing-demo-panel">
-      <h2>Tool demonstrations</h2>
+      <h2>Engine demonstrations</h2>
       <p>
-        The included suites follow the selected plan. Use “Show every tool” to demonstrate other
+        The included suites follow the selected plan. Use “Show every engine” to demonstrate other
         plans. Runs are uncharged and do not change workspace entitlements.
       </p>
       <div className="marketing-demo-selectors">
-        <Field label="Find a tool">
+        <Field label="Find an engine">
           <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} />
         </Field>
         <label>
           <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} /> Show
-          every tool
+          every engine
         </label>
       </div>
       {error && <p role="alert">{error}</p>}
-      <Field label="Select a tool">
+      <Field label="Select an engine">
         <select value={code} onChange={(e) => setCode(e.target.value)}>
           <option value="">Choose a diagnostic</option>
           {engines.map((e) => (
@@ -712,9 +712,9 @@ function SandboxDiagnostic({ code }: { code: string }) {
         muted
         loop
         playsInline
-        aria-label="Selected tool walkthrough"
+        aria-label="Selected engine walkthrough"
       />
-      <p>Video: instructional overview. Form: actual tool analysis with illustrative inputs.</p>
+      <p>Video: instructional overview. Form: actual engine analysis with illustrative inputs.</p>
       {error && <p role="alert">{error}</p>}
       {manifest && (
         <>

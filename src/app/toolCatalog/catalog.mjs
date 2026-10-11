@@ -529,7 +529,7 @@ for (const [toolId] of Object.entries(TOOLS)) {
   sources.sort(
     (a, b) => rank[MAP[a].verdict] - rank[MAP[b].verdict] || ORDER.indexOf(a) - ORDER.indexOf(b),
   );
-  if (!sources.length) throw new Error(`Tool ${toolId} has no source code`);
+  if (!sources.length) throw new Error(`Engine ${toolId} has no source code`);
   PRIMARY[toolId] = PRIMARY_OVERRIDE[toolId] ?? sources[0];
   for (const c of sources) CODE_TO_TOOL[c] = toolId;
 }
@@ -570,9 +570,9 @@ export function retirement(code) {
   const replacedBy =
     m.target && TOOLS[m.target] ? { code: PRIMARY[m.target], name: TOOLS[m.target].name } : null;
   const reason = {
-    VIEW: 'This was a summary of other results and is no longer a separate paid tool.',
+    VIEW: 'This was a summary of other results and is no longer a separate paid engine.',
     CONTENT: 'This was reference material and has moved to Resources.',
-    RETIRE: 'This tool had no recognised method behind it and has been withdrawn.',
+    RETIRE: 'This engine had no recognised method behind it and has been withdrawn.',
   }[m.verdict];
   return { verdict: m.verdict, reason, replacedBy };
 }

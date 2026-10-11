@@ -62,7 +62,7 @@ export const START_HERE: FeaturedTool[] = [
       },
       {
         title: 'Done in two minutes',
-        body: 'Six questions, scored by area and overall — the quickest tool to try.',
+        body: 'Six questions, scored by area and overall — the quickest engine to try.',
       },
     ],
     basedOn: 'Mission, vision and values; ISO 9001',

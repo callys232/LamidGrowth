@@ -127,7 +127,7 @@ export function ToolCatalog({
 
   return (
     <section className="ws-catalog" data-tone={activeArea?.tone ?? 'intelligence'}>
-      <div className="ws-catalog-filters" role="tablist" aria-label="Tool areas">
+      <div className="ws-catalog-filters" role="tablist" aria-label="Engine areas">
         {['All', ...AREAS.map((a) => a.name)].map((name) => {
           const meta = areaOf(name);
           const Icon = meta?.icon;
@@ -168,7 +168,7 @@ export function ToolCatalog({
             </>
           ) : (
             <span>
-              <strong>All tools</strong>
+              <strong>All engines</strong>
               <small>Every area, from strategy to finance</small>
             </span>
           )}
@@ -177,8 +177,8 @@ export function ToolCatalog({
           <Search size={15} aria-hidden="true" />
           <input
             type="search"
-            aria-label="Search tools"
-            placeholder="Search tools — e.g. cash, risk, OKR"
+            aria-label="Search engines"
+            placeholder="Search engines — e.g. cash, risk, OKR"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -192,7 +192,7 @@ export function ToolCatalog({
         ) : visible.length === 0 ? (
           <div className="ws-panel-state ws-empty">
             <Search size={26} aria-hidden="true" />
-            <h3>No tools match</h3>
+            <h3>No engines match</h3>
             <p>Try a broader word — for example cash, risk or OKR.</p>
           </div>
         ) : area === 'All' ? (
@@ -223,7 +223,7 @@ export function ToolCatalog({
                         <small>{a.helps}</small>
                       </span>
                       <span className="ws-section-count">
-                        {tools.length} {tools.length === 1 ? 'tool' : 'tools'}
+                        {tools.length} {tools.length === 1 ? 'engine' : 'engines'}
                       </span>
                       <ChevronDown className="ws-section-chevron" size={18} aria-hidden="true" />
                     </button>
@@ -238,7 +238,7 @@ export function ToolCatalog({
             })}
             {ungrouped.length > 0 && (
               <div className="ws-catalog-group">
-                <h3>Other tools</h3>
+                <h3>Other engines</h3>
                 <ul className="ws-tool-rows">{ungrouped.map(row)}</ul>
               </div>
             )}

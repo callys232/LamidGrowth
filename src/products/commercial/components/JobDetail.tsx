@@ -220,7 +220,7 @@ export function JobDetail({
       <p>
         {job.budget_min}–{job.budget_max} {job.currency} · {job.timeline}
       </p>
-      <h3>Document tools</h3>
+      <h3>Document actions</h3>
       <div className="job-pricing-tools">
         <Button
           variant="secondary"

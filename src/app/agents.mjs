@@ -128,7 +128,7 @@ async function loadAuthorizedJob(ctx, jobId) {
     .get(job.id, ctx.principal.id);
   if (!isClient && !hasBid)
     throw Object.assign(
-      new Error('You must be the job owner or have a bid on this job to use this tool.'),
+      new Error('You must be the job owner or have a bid on this job to use this feature.'),
       { status: 403 },
     );
   return job;
@@ -147,7 +147,7 @@ async function loadAuthorizedProposal(ctx, proposalId) {
   const isClient = job && job.client_user_id === ctx.principal.id;
   if (!isAuthor && !isClient)
     throw Object.assign(
-      new Error('You must be the proposal author or the job owner to use this tool.'),
+      new Error('You must be the proposal author or the job owner to use this feature.'),
       { status: 403 },
     );
   return { proposal, job };

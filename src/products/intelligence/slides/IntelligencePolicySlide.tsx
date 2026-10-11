@@ -79,7 +79,7 @@ export function IntelligencePolicySlide({
                   ['job', 'Jobs'],
                   ['proposal', 'Proposals'],
                   ['submission', 'Deliverable submissions'],
-                  ['tool_result', 'Tool results'],
+                  ['tool_result', 'Engine results'],
                 ] as const
               ).map(([key, label]) => (
                 <label className="checkbox-field" key={key}>
@@ -104,7 +104,7 @@ export function IntelligencePolicySlide({
                   ['action.prepare', 'Create actions'],
                   ['progress.snapshot', 'Record progress'],
                   ['review.reminder', 'Create reminders'],
-                  ['capability.run', 'Run tools (charges points)'],
+                  ['capability.run', 'Run engines (charges points)'],
                 ] as const
               ).map(([key, label]) => (
                 <Field key={key} label={label}>

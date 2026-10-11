@@ -70,7 +70,7 @@ export function mountPublicPricing(app, store) {
       deepReview: {
         name: 'AI Deep Review',
         description:
-          'A thorough, evidence-grounded objective review — heavier than a Companion tool call.',
+          'A thorough, evidence-grounded objective review — heavier than a Companion engine call.',
         pointsCost: engineReviewCost,
       },
     });
@@ -109,7 +109,7 @@ export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
         ).map((row) => row.id)
       : [];
     if (validAgentIds.length !== input.agentIds.length)
-      return res.status(400).json({ error: 'One or more selected tools do not exist.' });
+      return res.status(400).json({ error: 'One or more selected engines do not exist.' });
     const id = randomUUID();
     const now = new Date().toISOString();
     await transaction(async () => {
@@ -159,7 +159,7 @@ export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
           ).map((row) => row.id)
         : [];
       if (validAgentIds.length !== input.agentIds.length)
-        return res.status(400).json({ error: 'One or more selected tools do not exist.' });
+        return res.status(400).json({ error: 'One or more selected engines do not exist.' });
     }
     const now = new Date().toISOString();
     await transaction(async () => {

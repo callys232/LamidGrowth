@@ -7,7 +7,7 @@ export function AboutHeroSlide({ embedded = false }: DocumentPageProps) {
   return <DocumentHeroSlide page={content} embedded={embedded} />;
 }
 
-/** The Problem Wasn't That We Needed More Tools */
+/** The Problem Wasn't That We Needed More Apps */
 export function TheProblemWasnTThatWeNeededMoreToolsSlide1({
   embedded = false,
 }: DocumentPageProps) {

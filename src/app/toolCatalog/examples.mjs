@@ -233,7 +233,13 @@ export const EXAMPLES = {
     hourlyCost: 40,
     systems: [
       { system: 'CRM', annualCost: 24000, licensedUsers: 40, activeUsers: 32, hoursSaved: 1 },
-      { system: 'BI tool', annualCost: 18000, licensedUsers: 30, activeUsers: 9, hoursSaved: 0.5 },
+      {
+        system: 'BI platform',
+        annualCost: 18000,
+        licensedUsers: 30,
+        activeUsers: 9,
+        hoursSaved: 0.5,
+      },
     ],
   },
   T16: {

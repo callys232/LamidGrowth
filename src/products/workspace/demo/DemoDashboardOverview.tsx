@@ -17,7 +17,7 @@ export function DemoDashboardOverview({
   createGoal: () => void;
   createAction: () => void;
   editGoal: (id: string) => void;
-  open: (view: 'Goals' | 'Projects' | 'Escrows' | 'Actions' | 'Rhythm' | 'Tools') => void;
+  open: (view: 'Goals' | 'Projects' | 'Escrows' | 'Actions' | 'Rhythm' | 'Engines') => void;
 }) {
   const active = state.objectives.filter((o) => o.status === 'Active');
   const pending = state.actions.filter((a) => a.status === 'Needs review');
@@ -73,8 +73,8 @@ export function DemoDashboardOverview({
               You’re working toward {active.length} objectives. Keep your priorities close, and your
               next action closer.
             </p>
-            <Button variant="light" onClick={() => open('Tools')}>
-              <Sparkles size={15} /> Explore decision tools
+            <Button variant="light" onClick={() => open('Engines')}>
+              <Sparkles size={15} /> Explore decision engines
             </Button>
           </div>
           <div className="focus-orbit" aria-hidden="true">

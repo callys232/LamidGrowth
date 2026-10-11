@@ -113,7 +113,7 @@ async function pinSources(db, workspaceId, sources) {
   for (const src of sources) {
     // A tool's lineage must be checkable later, so it may only cite kinds that can be verified.
     if (!CHECKABLE_SOURCE_KINDS.has(src.kind))
-      fail(`Source kind "${src.kind}" cannot be cited by a tool run.`, 400);
+      fail(`Source kind "${src.kind}" cannot be cited by an engine run.`, 400);
     const now = await currentSourceVersion(db, workspaceId, src);
     if (!now) fail(`Source ${src.kind} ${src.id} was not found in this workspace.`, 404);
     if (src.version != null && now.version != null && String(src.version) !== now.version)

@@ -80,8 +80,8 @@ export function traceability(agentCallers = {}) {
       // No capability has an acceptance pack yet; a partial tool link is not acceptance.
       acceptance: 'not established',
       gap: tools.length
-        ? 'Catalog tools compute part of this capability; its full scope and acceptance criteria are not implemented or tested.'
-        : 'No catalog tool computes this capability.',
+        ? 'Catalog engines compute part of this capability; its full scope and acceptance criteria are not implemented or tested.'
+        : 'No catalog engine computes this capability.',
     };
   });
 }

@@ -23,7 +23,7 @@ export function CreatorsContent() {
               <p data-source-paragraph={section.paragraphs[1].sourceParagraph}>
                 {section.paragraphs[1].text}
               </p>
-              <ul className="creator-tool-names" aria-label={`${section.title} tools`}>
+              <ul className="creator-tool-names" aria-label={`${section.title} engines`}>
                 {tools[index].map((tool) => (
                   <li key={tool.id}>{tool.name}</li>
                 ))}
@@ -43,7 +43,7 @@ export function CreatorsContent() {
         })}
       </div>
       <section className="creator-closing" aria-labelledby="creator-closing-title">
-        <div className="creator-path" aria-label="Creator tools and areas">
+        <div className="creator-path" aria-label="Creator engines and areas">
           {tools.map((group, index) => (
             <div key={index}>
               <span>0{index + 1}</span>

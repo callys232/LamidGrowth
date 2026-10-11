@@ -21,7 +21,7 @@ export function RhythmDiagnosis() {
           onSubmit={(input) => void run(input).catch(() => {})}
         />
       ) : (
-        !error && <p role="status">Loading the Rhythm tool…</p>
+        !error && <p role="status">Loading the Rhythm engine…</p>
       )}
     </div>
   );

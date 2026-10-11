@@ -112,7 +112,7 @@ const tools = {
   // the workspace's AI rules. Its `status` lets a later step branch on a provisional or
   // insufficient-evidence result (e.g. to ask for the missing evidence).
   'capability.run': {
-    name: 'Run a catalog tool on this goal',
+    name: 'Run a catalog engine on this goal',
     engine: 'Shared',
     band: 'A2',
     writes: true,
@@ -194,7 +194,7 @@ const conditionSchema = z
 const stepSchema = z
   .object({
     id: z.string().regex(/^[a-zA-Z][a-zA-Z0-9_-]{0,39}$/),
-    toolId: z.string().refine((id) => Object.hasOwn(tools, id), 'Unknown or unavailable tool'),
+    toolId: z.string().refine((id) => Object.hasOwn(tools, id), 'Unknown or unavailable engine'),
     input: z.record(z.unknown()).default({}),
     dependsOn: z.array(z.string()).max(20).default([]),
     condition: conditionSchema.optional(),
@@ -205,7 +205,7 @@ const stepSchema = z
     // across the whole run.
     compensateToolId: z
       .string()
-      .refine((id) => Object.hasOwn(tools, id), 'Unknown or unavailable tool')
+      .refine((id) => Object.hasOwn(tools, id), 'Unknown or unavailable engine')
       .optional(),
     compensateInput: z.record(z.unknown()).default({}),
   })
@@ -531,7 +531,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         }
         const tool = tools[step.toolId];
         if (!tool || step.toolVersion !== '1.0.0')
-          fail('The registered tool version is unavailable.');
+          fail('The registered engine version is unavailable.');
         // Event waits (F-WF-01): this step type is never actually executed here — it parks until
         // POST /workflows/:id/events supplies a matching correlationKey via resolveEvent().
         if (step.toolId === 'event.wait' && step.state === 'pending') {
@@ -685,7 +685,7 @@ export function createWorkflowRuntime(store, now = () => Date.now()) {
         run.state = 'failed';
         await persist(
           run,
-          error instanceof z.ZodError ? 'Tool input no longer matches its schema.' : error.message,
+          error instanceof z.ZodError ? 'Engine input no longer matches its schema.' : error.message,
         );
         await log(run.workspace_id, run.principal_id, 'Workflow failed', run.id, run.reason);
       });

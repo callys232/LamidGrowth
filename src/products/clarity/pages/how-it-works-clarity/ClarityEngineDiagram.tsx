@@ -27,19 +27,19 @@ export function ClarityEngineDiagram() {
   return (
     <section className="clarity-vector-slide" aria-labelledby="clarity-vector-heading">
       <span className="clarity-suite-label">THE CLARITY ENGINE AT A GLANCE</span>
-      <h2 id="clarity-vector-heading">One question. A connected set of tools.</h2>
-      <p>Strategy sets the direction. Decision tools help you compare the next move.</p>
+      <h2 id="clarity-vector-heading">One question. A connected set of engines.</h2>
+      <p>Strategy sets the direction. Decision engines help you compare the next move.</p>
       <div className="clarity-vector-frame">
         <svg
           viewBox="0 0 940 570"
           role="img"
           aria-labelledby="clarity-vector-title clarity-vector-description"
         >
-          <title id="clarity-vector-title">Clarity engine and representative tools</title>
+          <title id="clarity-vector-title">Clarity suite and representative engines</title>
           <desc id="clarity-vector-description">
-            Your question and evidence feed the Clarity engine. Its Strategy tools include Purpose
+            Your question and evidence feed the Clarity suite. Its Strategy engines include Purpose
             and Strategic Direction, Strategy Alignment Matrix, Strategic Priority Ranking, and
-            External Environment Scan. Its Decisions tools include Decision Quality, Option
+            External Environment Scan. Its Decisions engines include Decision Quality, Option
             Comparison, Scenarios and Expected Value, and Priority Conflict Check. Analysis, scope,
             and limitations support your next step. You make the final decision.
           </desc>
@@ -108,7 +108,7 @@ export function ClarityEngineDiagram() {
         </svg>
       </div>
       <Link className="clarity-suite-link" to="/os/engines">
-        Explore the Clarity tools <span aria-hidden="true">↗</span>
+        Explore the Clarity engines <span aria-hidden="true">↗</span>
       </Link>
     </section>
   );

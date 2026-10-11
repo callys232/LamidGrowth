@@ -75,8 +75,8 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
   return (
     <div className="pricing-bundle-builder">
       <p className="pricing-bundle-intro">
-        Grow your toolkit in the areas that matter most. Pick the tools you want, and we'll total
-        the points — priced at the same{' '}
+        Grow your engine suite in the areas that matter most. Pick the engines you want, and we'll
+        total the points — priced at the same{' '}
         {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}/point rate as everything
         else, no markup.
       </p>
@@ -122,7 +122,7 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
           <h4>Your bundle</h4>
           {selectedTools.length === 0 ? (
             <p className="pricing-bundle-empty">
-              Pick at least one tool to start building your bundle.
+              Pick at least one engine to start building your bundle.
             </p>
           ) : (
             <ul className="pricing-bundle-cart-list">
@@ -168,7 +168,7 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
                 +
               </button>
             </div>
-            <p>A buffer for repeat runs, on top of what your selected tools need.</p>
+            <p>A buffer for repeat runs, on top of what your selected engines need.</p>
           </div>
 
           <div className="pricing-bundle-cycle" role="radiogroup" aria-label="Billing cycle">

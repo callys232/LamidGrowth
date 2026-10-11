@@ -14,7 +14,7 @@ function PlaybookVector({ category, compact = false }: { category: string; compa
       viewBox="0 0 480 190"
       className="playbook-vector"
       role="img"
-      aria-label={`${category}: provide inputs, analyse with tools, review the result`}
+      aria-label={`${category}: provide inputs, analyse with engines, review the result`}
     >
       <path
         d="M100 95H380"
@@ -25,7 +25,7 @@ function PlaybookVector({ category, compact = false }: { category: string; compa
       />
       {[
         ['Inputs', 'Your evidence'],
-        ['Tools', category],
+        ['Engines', category],
         ['Review', 'Your next action'],
       ].map(([title, label], index) => (
         <g key={title} transform={`translate(${20 + index * 160} 34)`}>
@@ -147,7 +147,7 @@ export function InsightPlaybooks() {
           <span className="sr-only">Search playbooks</span>
           <input
             type="search"
-            placeholder="Search tools or playbooks"
+            placeholder="Search engines or playbooks"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -195,7 +195,7 @@ export function InsightPlaybooks() {
             </div>
             <div className="playbook-card-copy">
               <span className="playbook-kicker">
-                {p.category} · {p.tools.length} tools
+                {p.category} · {p.tools.length} engines
               </span>
               <h3>{p.title}</h3>
               <p>{p.description}</p>
@@ -212,7 +212,7 @@ export function InsightPlaybooks() {
         ))}
       </div>
       {!filtered.length && (
-        <p className="playbook-empty">No playbooks match. Try another tool name or choose All.</p>
+        <p className="playbook-empty">No playbooks match. Try another engine name or choose All.</p>
       )}
       {active && (
         <Modal title={active.title} onClose={() => setActive(null)} wide>
@@ -222,8 +222,8 @@ export function InsightPlaybooks() {
                 <span className="playbook-kicker">{active.category} PLAYBOOK</span>
                 <p>{active.description}</p>
                 <p className="playbook-note">
-                  Use each tool separately. The template helps you prepare and review; it does not
-                  run the tools automatically.
+                  Use each engine separately. The template helps you prepare and review; it does not
+                  run the engines automatically.
                 </p>
               </div>
               <PlaybookVector category={active.category} />
@@ -260,8 +260,8 @@ export function InsightPlaybooks() {
                         <summary>Scope & limitations</summary>
                         <p>{tool.limits}</p>
                       </details>
-                      <Link className="playbook-tool-link" to={`/os/engines?tool=${tool.code}`}>
-                        Open this tool <ArrowUpRight size={16} aria-hidden="true" />
+                      <Link className="playbook-tool-link" to={`/os/engines?engine=${tool.code}`}>
+                        Open this engine <ArrowUpRight size={16} aria-hidden="true" />
                       </Link>
                     </section>
                   </div>

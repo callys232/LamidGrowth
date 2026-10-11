@@ -104,7 +104,8 @@ export const flow = {
   },
   computes:
     'Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.',
-  limits: 'Reads only the period figures you enter; it is not connected to your task tools.',
+  limits:
+    'Reads only the period figures you enter; it is not connected to your task-management apps.',
 };
 
 /* T07 — Drift & Stability Monitor (XmR control chart; Western Electric / Nelson rules) */
@@ -333,7 +334,8 @@ export const dependencies = {
   },
   computes:
     'Which dependencies between teams are late or overdue, and which providing teams are most often late.',
-  limits: 'Works from the dependencies and dates you record; it does not read project tools.',
+  limits:
+    'Works from the dependencies and dates you record; it does not read project-management apps.',
 };
 
 /* T09 — Workload & Capacity Balance */
@@ -421,7 +423,7 @@ export const capacity = {
 const CATEGORIES = [
   'People',
   'Process',
-  'Tools and equipment',
+  'Machines and equipment',
   'Materials and inputs',
   'Environment',
   'Measurement',
@@ -821,7 +823,7 @@ export const techRoi = {
   tables: [
     {
       key: 'systems',
-      label: 'Systems and tools',
+      label: 'Systems and software',
       minRows: 1,
       columns: [
         F.text('system', 'System', { required: true }),

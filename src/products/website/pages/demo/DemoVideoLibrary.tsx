@@ -113,17 +113,17 @@ export function DemoVideoLibrary({ primary = false }: { primary?: boolean }) {
           <p className="demo-video-disclosure">
             {selected.id === 'integrations'
               ? 'Illustrative connection flow with sample data. Live connections require provider authorization and administrator setup.'
-              : 'Illustrative data shown in a sample walkthrough. Tool demos use calculations from the implemented tools.'}
+              : 'Illustrative data shown in a sample walkthrough. Engine demos use calculations from the implemented engines.'}
           </p>
           <Link
             className="button button-primary"
             to={
               selected.id === 'integrations'
                 ? '/os/integrations'
-                : `/os/engines${selected.code ? `?tool=${selected.code}` : ''}`
+                : `/os/engines${selected.code ? `?engine=${selected.code}` : ''}`
             }
           >
-            {selected.id === 'integrations' ? 'Connect your services' : 'Try the tools'}
+            {selected.id === 'integrations' ? 'Connect your services' : 'Try the engines'}
             <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
           <Link className="demo-guided-link" to={`/demo/request?tour=${selected.id}`}>

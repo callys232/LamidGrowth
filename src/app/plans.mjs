@@ -22,27 +22,27 @@ export const PLANS = {
   free: {
     id: 'free', name: 'Free', seats: ['Clarity'], members: 1,
     monthlyMinor: 0, annualMinor: 0, monthlyPoints: 0, selfServe: false,
-    summary: 'Try LAMID ONE with the strategy and decision tools. Includes the 500-point welcome reward once your account is verified.',
+    summary: 'Try LAMID ONE with the strategy and decision engines. Includes the 500-point welcome reward once your account is verified.',
   },
   personal: {
     id: 'personal', name: 'Personal', seats: ['Clarity', 'Consistency'], members: 1,
     monthlyMinor: 2500, annualMinor: 25000, monthlyPoints: 600, selfServe: true,
-    summary: 'For individuals and creators: strategy, decision, operations, risk and governance tools.',
+    summary: 'For individuals and creators: strategy, decision, operations, risk and governance engines.',
   },
   professional: {
     id: 'professional', name: 'Professional', seats: ['Clarity', 'Consistency', 'Growth', 'Finance'], members: 1,
     monthlyMinor: 3900, annualMinor: 39000, monthlyPoints: 1500, selfServe: true,
-    summary: 'For professionals, founders and consultants: adds the growth, change and finance tools.',
+    summary: 'For professionals, founders and consultants: adds the growth, change and finance engines.',
   },
   team: {
     id: 'team', name: 'Team', seats: [...SEATS], members: 10, perPerson: true, minPeople: 3, maxPeople: 10,
     monthlyMinor: 2900, annualMinor: 29000, monthlyPoints: 1000, selfServe: true,
-    summary: 'For teams and small businesses: every tool, including the people tools, for 3 to 10 people.',
+    summary: 'For teams and small businesses: every engine, including the people engines, for 3 to 10 people.',
   },
   enterprise: {
     id: 'enterprise', name: 'Enterprise', seats: [...SEATS], members: 200, byQuote: true,
     monthlyMinor: null, annualMinor: null, monthlyPoints: null, selfServe: false,
-    summary: 'For large organisations and institutions: every tool, up to 200 people or more by agreement.',
+    summary: 'For large organisations and institutions: every engine, up to 200 people or more by agreement.',
   },
 };
 
@@ -129,7 +129,7 @@ export function quote(input) {
   if (plan.perPerson && (people < plan.minPeople || people > plan.maxPeople))
     throw new PlanError(`The Team plan is for ${plan.minPeople} to ${plan.maxPeople} people. Above that, talk to us about Enterprise.`);
   const extras = [...new Set(extraSeats)];
-  if (extras.length && plan.perPerson) throw new PlanError('Team already includes every tool seat.');
+  if (extras.length && plan.perPerson) throw new PlanError('Team already includes every suite seat.');
   const already = extras.filter((s) => plan.seats.includes(s));
   if (already.length) throw new PlanError(`${plan.name} already includes ${already.join(', ')}.`);
   const unit = interval === 'annual' ? plan.annualMinor : plan.monthlyMinor;

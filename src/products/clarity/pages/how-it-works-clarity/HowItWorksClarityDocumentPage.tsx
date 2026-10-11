@@ -75,7 +75,7 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
             <span className="clarity-suite-label">INSIDE THE CLARITY SUITE</span>
             <h2 id="clarity-suite-title">Understand the situation. Choose your next move.</h2>
             <p>
-              Clarity brings Strategy and Decisions tools together. Start with a question, supply
+              Clarity brings Strategy and Decisions engines together. Start with a question, supply
               the relevant evidence, and use the results to support your judgment.
             </p>
           </div>
@@ -89,12 +89,12 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
                   <span>Identify what you want to understand.</span>
                 </li>
                 <li>
-                  <strong>Choose a tool</strong>
-                  <span>Select the tool that fits your question.</span>
+                  <strong>Choose an engine</strong>
+                  <span>Select the engine that fits your question.</span>
                 </li>
                 <li>
                   <strong>Provide the inputs</strong>
-                  <span>Add the information the tool requires.</span>
+                  <span>Add the information the engine requires.</span>
                 </li>
                 <li>
                   <strong>Review the analysis</strong>
@@ -103,9 +103,9 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
               </ol>
             </article>
             <article className="clarity-suite-card" {...cardInteraction('strategy')}>
-              <span className="clarity-suite-label">02 / STRATEGY TOOLS</span>
+              <span className="clarity-suite-label">02 / STRATEGY ENGINES</span>
               <h3>Find what matters most</h3>
-              <ToolReadMore label="strategy tools">
+              <ToolReadMore label="strategy engines">
                 <ul>
                   <li>
                     <strong>Purpose &amp; Strategic Direction</strong>
@@ -129,9 +129,9 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
               </ToolReadMore>
             </article>
             <article className="clarity-suite-card" {...cardInteraction('decisions')}>
-              <span className="clarity-suite-label">03 / DECISION TOOLS</span>
+              <span className="clarity-suite-label">03 / DECISION ENGINES</span>
               <h3>Compare before you commit</h3>
-              <ToolReadMore label="decisions tools">
+              <ToolReadMore label="decision engines">
                 <ul>
                   <li>
                     <strong>Decision Quality</strong>
@@ -157,7 +157,7 @@ export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPage
               <h3 data-source-paragraph={251}>{content.sections[3].title}</h3>
               <p data-source-paragraph={252}>{content.sections[3].paragraphs[1].text}</p>
               <Link className="clarity-suite-link" to="/os/engines">
-                Explore the tools <span aria-hidden="true">↗</span>
+                Explore the engines <span aria-hidden="true">↗</span>
               </Link>
             </article>
           </div>

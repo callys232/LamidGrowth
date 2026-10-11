@@ -213,7 +213,7 @@ export const toolRoutes: SandboxRoute[] = [
       deepReview: {
         name: 'AI Deep Review',
         description:
-          'A thorough, evidence-grounded objective review — heavier than a Companion tool call.',
+          'A thorough, evidence-grounded objective review — heavier than a Companion engine call.',
         pointsCost: 100,
       },
     }),

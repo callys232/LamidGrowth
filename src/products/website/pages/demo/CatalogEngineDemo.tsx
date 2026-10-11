@@ -37,7 +37,7 @@ export function CatalogEngineDemo({
             <div className="engine-demo-visual">
               {failed ? (
                 <p role="alert">
-                  The walkthrough could not load. You can still review this tool’s scope below.
+                  The walkthrough could not load. You can still review this engine’s scope below.
                 </p>
               ) : (
                 <video
@@ -70,10 +70,10 @@ export function CatalogEngineDemo({
               </ul>
             </aside>
             <footer>
-              <p>Instructional walkthrough of this tool’s declared inputs and outputs.</p>
+              <p>Instructional walkthrough of this engine’s declared inputs and outputs.</p>
               <Link
                 className="button button-primary"
-                to={`/os/engines?tool=${encodeURIComponent(engine.code)}`}
+                to={`/os/engines?engine=${encodeURIComponent(engine.code)}`}
               >
                 Get your diagnosis
               </Link>
@@ -95,7 +95,7 @@ export function AllEngineDemos() {
         <div className="demo-section-head">
           <h2>Explore every engine</h2>
           <p>
-            Watch how each tool uses your inputs, what it calculates, and how to interpret its
+            Watch how each engine uses your inputs, what it calculates, and how to interpret its
             scope.
           </p>
         </div>

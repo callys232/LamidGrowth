@@ -156,7 +156,7 @@ export function SchemaForm({
               Example figures loaded. Replace them with your own before relying on the result.
             </span>
           ) : (
-            <span>Not sure what to enter? Load a worked example to see how the tool works.</span>
+            <span>Not sure what to enter? Load a worked example to see how the engine works.</span>
           )}
           <Button
             variant="secondary"

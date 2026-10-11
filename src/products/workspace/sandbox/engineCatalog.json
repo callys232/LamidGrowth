@@ -275,7 +275,7 @@
         "dimensionLabels": [],
         "kind": "schema",
         "computes": "Throughput, cycle time, work in progress, predictability and flow efficiency, with a Little’s Law consistency check.",
-        "limits": "Reads only the period figures you enter; it is not connected to your task tools.",
+        "limits": "Reads only the period figures you enter; it is not connected to your task-management apps.",
         "pointsCost": 35,
         "canonicalCapabilityId": "T06",
         "canonicalCapabilities": [
@@ -369,7 +369,7 @@
         "dimensionLabels": [],
         "kind": "schema",
         "computes": "Which dependencies between teams are late or overdue, and which providing teams are most often late.",
-        "limits": "Works from the dependencies and dates you record; it does not read project tools.",
+        "limits": "Works from the dependencies and dates you record; it does not read project-management apps.",
         "pointsCost": 35,
         "canonicalCapabilityId": "T08",
         "canonicalCapabilities": [
@@ -1206,7 +1206,7 @@
         "purpose": "Recommends how much process a decision needs and which method to use.",
         "dimensionLabels": [],
         "kind": "schema",
-        "computes": "Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which tools to use.",
+        "computes": "Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which engines to use.",
         "limits": "The answer depends on how you describe the situation; it does not make the decision.",
         "pointsCost": 35,
         "canonicalCapabilityId": "T27",

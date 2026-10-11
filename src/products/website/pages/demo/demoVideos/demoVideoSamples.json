@@ -207,7 +207,7 @@
         }
       ],
       "mostProbable": "Reviewer moved to part-time in March",
-      "categoriesNotConsidered": ["Tools and equipment", "Environment", "Measurement"]
+      "categoriesNotConsidered": ["Machines and equipment", "Environment", "Measurement"]
     }
   }
 }

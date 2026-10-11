@@ -199,7 +199,7 @@ export function ConnectorsPage() {
       <PageHeading
         eyebrow="ACCOUNT · INTEGRATIONS"
         title="Integrations"
-        description="Connect the tools your work already lives in."
+        description="Connect the apps your work already lives in."
       />
       <section className="panel">
         <div className="panel-heading">

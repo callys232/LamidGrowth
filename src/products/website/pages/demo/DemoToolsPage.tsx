@@ -59,7 +59,7 @@ export function DemoToolsPage() {
                 Try {HERO_TOOL.name} <ArrowDown aria-hidden="true" size={16} />
               </button>
               <a className="demo-hero-link" href="#start-here">
-                Or pick another tool
+                Or pick another engine
               </a>
             </div>
           </div>
@@ -85,7 +85,7 @@ export function DemoToolsPage() {
 
           {/* One frame: pick a tool from the tabs and the same panel shows it — no card grid. */}
           <div className="demo-start" ref={pickedRef}>
-            <div className="demo-start-tabs" role="tablist" aria-label="Tools to start with">
+            <div className="demo-start-tabs" role="tablist" aria-label="Engines to start with">
               {START_HERE.map((tool) => (
                 <button
                   key={tool.code}

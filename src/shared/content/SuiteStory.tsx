@@ -20,7 +20,7 @@ const config = {
   Capability: {
     heading: 'Build the ability to take the next step.',
     description:
-      'The Capability suite brings People tools together to understand skills, plan capacity, and prepare people for what comes next.',
+      'The Capability suite brings People engines together to understand skills, plan capacity, and prepare people for what comes next.',
     groups: ['People'],
     input: 'Role requirements + people evidence',
     outcome: 'A clearer development priority',
@@ -34,7 +34,7 @@ const config = {
   Consistency: {
     heading: 'Keep delivery steady. Make room to adapt.',
     description:
-      'The Consistency suite connects Operations, Risk, and Governance tools to examine delivery, surface warning signs, and review commitments.',
+      'The Consistency suite connects Operations, Risk, and Governance engines to examine delivery, surface warning signs, and review commitments.',
     groups: ['Operations', 'Risk', 'Governance'],
     input: 'Delivery data + risks + commitments',
     outcome: 'A clearer review and action priority',
@@ -130,7 +130,7 @@ export function SuiteStory({
                   </li>
                 ))}
               </ol>
-              <p>Review each tool’s scope and limitations. You make the final decision.</p>
+              <p>Review each engine’s scope and limitations. You make the final decision.</p>
             </article>
             {settings.groups.map((area) => (
               <article className="suite-card suite-tool-group" key={area} {...interaction(area)}>
@@ -143,7 +143,7 @@ export function SuiteStory({
                     <Users aria-hidden="true" />
                   )}
                 </span>
-                <span className="suite-eyebrow">{area.toUpperCase()} TOOLS</span>
+                <span className="suite-eyebrow">{area.toUpperCase()} ENGINES</span>
                 <h3>
                   {area === 'People'
                     ? 'Prepare people for the work ahead'
@@ -153,7 +153,7 @@ export function SuiteStory({
                         ? 'Spot what could interrupt progress'
                         : 'Keep commitments visible'}
                 </h3>
-                <ToolReadMore label={`${area} tools`}>
+                <ToolReadMore label={`${area} engines`}>
                   <ul>
                     {catalog
                       .filter((tool) => tool.area === area)
@@ -193,7 +193,7 @@ export function SuiteStory({
                 ? 'A foundation for your next stage.'
                 : 'A connected system for reliable progress.'}
             </h2>
-            <p>Representative tools in the {suite} suite. Analysis supports your judgment.</p>
+            <p>Representative engines in the {suite} suite. Analysis supports your judgment.</p>
           </header>
           <div className="suite-vector-frame">
             <svg
@@ -201,12 +201,11 @@ export function SuiteStory({
               role="img"
               aria-labelledby={`suite-svg-title-${suite} suite-svg-desc-${suite}`}
             >
-              <title id={`suite-svg-title-${suite}`}>{suite} engine and tools</title>
+              <title id={`suite-svg-title-${suite}`}>{suite} suite and engines</title>
               <desc id={`suite-svg-desc-${suite}`}>
-                {settings.input} informs the {suite} engine. It includes{' '}
-                {settings.groups.join(', ')} tools: {catalog.map((t) => t.name).join(', ')}.
-                Analysis, scope, and limitations support {settings.outcome.toLowerCase()}. You make
-                the final decision.
+                {settings.input} informs the {suite} suite. It includes {settings.groups.join(', ')}{' '}
+                engines: {catalog.map((t) => t.name).join(', ')}. Analysis, scope, and limitations
+                support {settings.outcome.toLowerCase()}. You make the final decision.
               </desc>
               <rect x="210" y="16" width="480" height="62" rx="20" className="suite-svg-input" />
               <text x="450" y="54" textAnchor="middle" className="suite-svg-copy">
@@ -333,7 +332,7 @@ export function SuiteStory({
             </svg>
           </div>
           <Link to="/os/engines" className="suite-cta">
-            Explore the {suite} tools <ArrowRight size={17} aria-hidden="true" />
+            Explore the {suite} engines <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </section>
       </DocumentPageLayout>

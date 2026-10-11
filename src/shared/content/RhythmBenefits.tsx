@@ -30,7 +30,7 @@ export function RhythmBenefits() {
   return (
     <section className="rhythm-demo-benefits" aria-labelledby="rhythm-benefits-heading">
       <h3 id="rhythm-benefits-heading">What you gain</h3>
-      <ul ref={list} className="rhythm-benefit-cards" aria-label="Rhythm tool benefits">
+      <ul ref={list} className="rhythm-benefit-cards" aria-label="Rhythm engine benefits">
         {benefits.map(({ title, Icon }, index) => (
           <li
             key={title}

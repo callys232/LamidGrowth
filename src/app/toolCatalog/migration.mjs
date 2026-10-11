@@ -60,7 +60,7 @@ export const MAP = {
   R12: m(
     'MERGE',
     'T06',
-    'One dimension is named “Strategy Execution Tracker”, which is another tool’s name (copy error).',
+    'One dimension is named “Strategy Execution Tracker”, which is another engine’s name (copy error).',
   ),
   R13: m('MERGE', 'T45', 'Engagement is measured by asking staff, not by trending cycle time.'),
   R14: m('MERGE', 'T06', '“Real-time pulse” is not true: values are typed in by hand.'),
@@ -73,11 +73,11 @@ export const MAP = {
   ),
   R18: m('MERGE', 'T31', 'Culture fit is not a time series.'),
   R19: m('RETIRE', '', 'Dimensions such as “Structural Rhythm Field” have no measurable meaning.'),
-  R20: m('VIEW', 'T06', 'A department filter on flow metrics, not a separate tool.'),
+  R20: m('VIEW', 'T06', 'A department filter on flow metrics, not a separate engine.'),
   R21: m('VIEW', 'T06', 'A business-unit filter on flow metrics.'),
   R22: m('VIEW', 'T06', 'An enterprise roll-up of flow metrics.'),
   R23: m('MERGE', 'T07'),
-  R24: m('MERGE', 'T07', 'History belongs to every series, not to a separate tool.'),
+  R24: m('MERGE', 'T07', 'History belongs to every series, not to a separate engine.'),
   R25: m(
     'REBUILD',
     'T11',
@@ -165,7 +165,7 @@ export const MAP = {
     '',
     'No recognised method; “Fear-Driven Tone Detection” cannot be self-rated reliably.',
   ),
-  Q20: m('RETIRE', '', 'Describes a Companion feature, not a tool.'),
+  Q20: m('RETIRE', '', 'Describes a Companion feature, not an engine.'),
   Q21: m(
     'KEEP',
     'T21',

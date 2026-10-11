@@ -129,7 +129,7 @@ export function RhythmContent() {
             </li>
           </ol>
           <details className="rhythm-tool-limit">
-            <summary>What this tool can tell you</summary>
+            <summary>What this engine can tell you</summary>
             <p>
               The diagnosis uses the meetings you list. It does not read calendars or judge meeting
               quality. Review the findings against your context before changing your cadence.

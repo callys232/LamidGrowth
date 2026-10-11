@@ -496,13 +496,13 @@ export const methodSelector = {
         `${i.decision}: ${domain} domain, ${summary.doorType} door.`,
         approach,
         depth,
-        `Tools to use next: ${tools.join(', ')}.`,
+        `Engines to use next: ${tools.join(', ')}.`,
       ],
       warnings,
     );
   },
   computes:
-    'Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which tools to use.',
+    'Classifies the decision situation (Cynefin domain and reversibility) and recommends how much process it needs and which engines to use.',
   limits: 'The answer depends on how you describe the situation; it does not make the decision.',
 };
 

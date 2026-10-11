@@ -42,7 +42,7 @@ export function PricingBillablesPage() {
       <PageHeading
         eyebrow="MONEY · PLANS & BILLING"
         title="Plans & billing"
-        description="What each tool costs in points, and the plans that bundle them."
+        description="What each engine costs in points, and the plans that bundle them."
       />
       <section className="panel">
         <div className="panel-heading">
@@ -101,13 +101,13 @@ export function PricingBillablesPage() {
             <section className="panel settings-card">
               <h3>Buy points</h3>
               <p>
-                Points cover every billable tool and engine call.
+                Points cover every billable engine call.
                 {page.billables && (
                   <>
                     {' '}
                     1 point costs{' '}
                     {formatMinor(page.billables.pointsUnitPriceMinor, page.billables.currency)}. See
-                    what each tool costs on the <Link to="/pricing">pricing page</Link>.
+                    what each engine costs on the <Link to="/pricing">pricing page</Link>.
                   </>
                 )}
               </p>
@@ -135,7 +135,7 @@ export function PricingBillablesPage() {
 
             <section className="panel settings-card">
               <h3>Bundles</h3>
-              <p>A bundle packages a points allotment and a set of tools into one price.</p>
+              <p>A bundle packages a points allotment and a set of engines into one price.</p>
               {page.bundles.length === 0 ? (
                 <Empty title="No bundles published yet">Published bundles will appear here.</Empty>
               ) : (
@@ -174,8 +174,7 @@ export function PricingBillablesPage() {
             <section className="panel settings-card">
               <h3>Billables</h3>
               <p>
-                Every registered tool and engine is billed the same way the Companion runs it — in
-                points.
+                Every registered engine is billed the same way the Companion runs it — in points.
                 {page.billables && (
                   <>
                     {' '}
@@ -249,8 +248,8 @@ export function PricingBillablesPage() {
                   </select>
                 </Field>
                 <Field
-                  label="Included tools & engines"
-                  hint="Select every tool this bundle grants access to"
+                  label="Included engines"
+                  hint="Select every engine this bundle grants access to"
                   style={{ gridColumn: '1 / -1' }}
                 >
                   <div

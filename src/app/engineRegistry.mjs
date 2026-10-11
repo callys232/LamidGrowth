@@ -1995,7 +1995,7 @@ export const MODULE_REGISTRY = {
     dimensionLabels: [
       'Decision Architecture Completeness',
       'Layer Integration Quality',
-      'Tool-Process Coherence',
+      'System-Process Coherence',
       'Executive Architecture Index',
     ],
     driverContext:
@@ -5740,7 +5740,7 @@ export const MODULE_REGISTRY = {
     seriesName: 'P-Series — Enterprise Productivity',
     engineName: 'Productivity Integration',
     purpose:
-      'Assesses how well your tools, teams, and processes integrate — and where work gets retyped, re-approved, or redone between them.',
+      'Assesses how well your systems, teams, and processes integrate — and where work gets retyped, re-approved, or redone between them.',
     dimensionLabels: [
       'Vertical Productivity Integration',
       'Horizontal Productivity Integration',
@@ -6147,7 +6147,7 @@ export const MODULE_REGISTRY = {
     seriesName: 'P-Series — Enterprise Productivity',
     engineName: 'Systems Productivity',
     purpose:
-      'Measures whether your systems help or hinder output — the tools that save hours, and the ones that quietly consume them.',
+      'Measures whether your systems help or hinder output — the ones that save hours, and the ones that quietly consume them.',
     dimensionLabels: [
       'System Performance Quality',
       'System Integration Completeness',
@@ -6255,7 +6255,7 @@ export const MODULE_REGISTRY = {
     seriesName: 'P-Series — Enterprise Productivity',
     engineName: 'Change',
     purpose:
-      'Measures how your organization absorbs change — how fast teams return to full output after each reorganisation, tool, or process shift.',
+      'Measures how your organization absorbs change — how fast teams return to full output after each reorganisation, system, or process shift.',
     dimensionLabels: [
       'Change Initiation Quality',
       'Change Management Effectiveness',

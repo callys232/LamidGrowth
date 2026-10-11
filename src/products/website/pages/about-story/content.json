@@ -9,18 +9,18 @@
   "indexing": "index, follow",
   "canonical": "/about/story",
   "seo_title": "Our Story | Why We Built LAMID ONE",
-  "meta_description": "For 35+ years, consulting work meant moving between disconnected tools, rebuilding context, and watching momentum stall. LAMID ONE was built piece by piece to change that.",
-  "title": "We Didn't Set Out to Build Another Tool.",
-  "description": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist tools, but the work kept becoming fragmented.",
+  "meta_description": "For 35+ years, consulting work meant moving between disconnected apps, rebuilding context, and watching momentum stall. LAMID ONE was built piece by piece to change that.",
+  "title": "We Didn't Set Out to Build Another App.",
+  "description": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist apps, but the work kept becoming fragmented.",
   "hero": {
-    "title": "We Didn't Set Out to Build Another Tool.",
+    "title": "We Didn't Set Out to Build Another App.",
     "paragraphs": [
       {
-        "text": "We Didn't Set Out to Build Another Tool.",
+        "text": "We Didn't Set Out to Build Another App.",
         "sourceParagraph": 1051
       },
       {
-        "text": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist tools, but the work kept becoming fragmented.",
+        "text": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist apps, but the work kept becoming fragmented.",
         "sourceParagraph": 1052
       },
       {
@@ -49,11 +49,11 @@
       ]
     },
     {
-      "label": "But the Tools Were Not Connected",
-      "title": "But the Tools Were Not Connected",
+      "label": "But the Apps Were Not Connected",
+      "title": "But the Apps Were Not Connected",
       "paragraphs": [
         {
-          "text": "But the Tools Were Not Connected",
+          "text": "But the Apps Were Not Connected",
           "sourceParagraph": 1057
         },
         {
@@ -195,7 +195,7 @@
           "sourceParagraph": 7953
         },
         {
-          "text": "We have more tools than ever before, but less coherence. More information, but less understanding. More ambition, but less dependable follow‑through.",
+          "text": "We have more apps than ever before, but less coherence. More information, but less understanding. More ambition, but less dependable follow‑through.",
           "sourceParagraph": 7955
         },
         {

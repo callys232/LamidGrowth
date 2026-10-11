@@ -41,9 +41,9 @@ export function RhythmToolPreview({ label }: { label: string }) {
               <RhythmBenefits />
               <div className="rhythm-demo-action">
                 <p className="rhythm-demo-caption">
-                  Sample walkthrough with illustrative meeting data and a real tool result.
+                  Sample walkthrough with illustrative meeting data and a real engine result.
                 </p>
-                <Link to="/os/engines?tool=S05" className="button button-primary">
+                <Link to="/os/engines?engine=S05" className="button button-primary">
                   Get your diagnosis
                 </Link>
               </div>

@@ -34,9 +34,9 @@ export function IntelligenceCatalogSection() {
     <section className="engine-catalog">
       <div className="engine-container">
         <div className="engine-catalog-head">
-          <h2>63 Tools, Each Built on a Recognised Method.</h2>
+          <h2>63 Engines, Each Built on a Recognised Method.</h2>
           <p>
-            Every tool follows an established method — ISO 31000 for risk, NIST CSF for security,
+            Every engine follows an established method — ISO 31000 for risk, NIST CSF for security,
             OKRs, Theory of Constraints — and calculates from what you enter. No number is invented.
             Running one is a signed-in workspace action; this is the catalog.
           </p>
@@ -49,7 +49,7 @@ export function IntelligenceCatalogSection() {
           <div key={area} className="engine-catalog-group">
             <div className="engine-catalog-group-head">
               <h3>{area}</h3>
-              <span>{count} tools</span>
+              <span>{count} engines</span>
             </div>
             <div className="engine-catalog-series">
               <ul>

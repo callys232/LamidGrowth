@@ -48,10 +48,11 @@ type Coverage = {
 export function EnginesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { catalog, error } = useEngineCatalog();
-  const selected = useMemo(
-    () => catalog?.engines.find((engine) => engine.code === searchParams.get('tool')) ?? null,
-    [catalog, searchParams],
-  );
+  const selected = useMemo(() => {
+    // ?tool= is the old parameter name; links already shared with it keep working.
+    const code = searchParams.get('engine') ?? searchParams.get('tool');
+    return catalog?.engines.find((engine) => engine.code === code) ?? null;
+  }, [catalog, searchParams]);
   // The demo never loads a tool's server manifest: tools run only in a real workspace.
   const run = useEngineRun(readDemoSession() ? null : (selected?.code ?? null));
   const [coverage, setCoverage] = useState<Coverage | null>(null);
@@ -63,8 +64,9 @@ export function EnginesPage() {
   // Opening a tool is a navigation: linkable, and the back button returns to the catalog.
   const open = (engine: EngineSummary | null) => {
     const next = new URLSearchParams(searchParams);
-    if (engine) next.set('tool', engine.code);
-    else next.delete('tool');
+    next.delete('tool');
+    if (engine) next.set('engine', engine.code);
+    else next.delete('engine');
     setSearchParams(next);
     window.scrollTo({ top: 0 });
   };
@@ -74,7 +76,7 @@ export function EnginesPage() {
   const kpis: Kpi[] = [
     {
       domain: 'intelligence',
-      label: 'Tools available',
+      label: 'Engines available',
       value: String(total),
       hint: catalog?.locked?.length
         ? `${catalog.locked.length} more with another seat`
@@ -114,7 +116,7 @@ export function EnginesPage() {
         data-scroll-feedback="off"
       >
         <button type="button" className="ws-back" onClick={() => open(null)}>
-          <ArrowLeft size={15} aria-hidden="true" /> All tools
+          <ArrowLeft size={15} aria-hidden="true" /> All engines
         </button>
         <header className="ws-workbench-head">
           <span className="ws-tool-icon ws-workbench-icon" aria-hidden="true">
@@ -140,7 +142,7 @@ export function EnginesPage() {
       <PageHeader
         eyebrow="INTELLIGENCE · ENGINES"
         title="Engines"
-        description="The decision and analysis tools open to your workspace, and what each one calculates."
+        description="The decision and analysis engines open to your workspace, and what each one calculates."
         kpis={catalog ? kpis : []}
         loadingKpis={catalog ? 0 : 4}
       />
@@ -211,10 +213,10 @@ function EngineDetailPanel({
         <div className="ws-demo-run">
           <PlayCircle size={22} aria-hidden="true" />
           <div>
-            <strong>Running tools needs your own workspace</strong>
+            <strong>Running engines needs your own workspace</strong>
             <p>
               Every result is calculated on our servers from the figures you enter, so the sample
-              workspace can show what a tool measures but not run it.
+              workspace can show what an engine measures but not run it.
             </p>
             <div className="ws-demo-run-actions">
               <Link className="button button-primary" to="/signup">
