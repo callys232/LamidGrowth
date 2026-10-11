@@ -1,12 +1,15 @@
-import { PageHeading } from '../../../shared/workspace/PageHeading';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Lock } from 'lucide-react';
+import { ArrowLeft, Cpu, Lock, PlayCircle } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
 import { SkeletonList } from '../../../shared/ui/Skeleton';
+import { PageHeader } from '../../../shared/workspace/ui/PageHeader';
+import type { Kpi } from '../../workspace/overview/overviewModel';
+import { readDemoSession } from '../../workspace/sandbox/demoSession';
 import { useEngineCatalog, type EngineSummary } from '../hooks/useEngineCatalog';
 import { useEngineRun } from '../hooks/useEngineRun';
+import { AREAS, areaOf, ToolCatalog } from '../components/ToolCatalog';
 import { AssessmentForm } from '../components/AssessmentForm';
 import { FinancialForm } from '../components/FinancialForm';
 import { TimeseriesForm } from '../components/TimeseriesForm';
@@ -27,19 +30,6 @@ import { EngineResultView } from '../components/EngineResultView';
 import { EngineScope } from '../components/EngineScope';
 import './engines-page.css';
 
-const AREAS = [
-  'All',
-  'Strategy',
-  'Decisions',
-  'Operations',
-  'Risk',
-  'Governance',
-  'People',
-  'Change',
-  'Growth',
-  'Finance',
-];
-
 /** /os/engines — the standards-based tool catalog: 63 tools, each built on a recognised method
  * (see server: src/app/toolCatalog/*, src/app/engines.mjs). Every run charges points and returns
  * deterministic arithmetic — no tool on this page produces a number a model invented. */
@@ -56,155 +46,138 @@ type Coverage = {
 };
 
 export function EnginesPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { catalog, error } = useEngineCatalog();
-  const [tab, setTab] = useState('All');
-  const [selected, setSelected] = useState<EngineSummary | null>(null);
-  useEffect(() => {
-    const code = searchParams.get('tool');
-    const tool = catalog?.engines.find((engine) => engine.code === code);
-    if (tool) setSelected(tool);
-  }, [catalog, searchParams]);
-  const run = useEngineRun(selected?.code ?? null);
+  const selected = useMemo(
+    () => catalog?.engines.find((engine) => engine.code === searchParams.get('tool')) ?? null,
+    [catalog, searchParams],
+  );
+  // The demo never loads a tool's server manifest: tools run only in a real workspace.
+  const run = useEngineRun(readDemoSession() ? null : (selected?.code ?? null));
   const [coverage, setCoverage] = useState<Coverage | null>(null);
   useEffect(() => {
     api<Coverage>('/engines/catalog/coverage', undefined, 'GET')
       .then(setCoverage)
       .catch(() => {});
   }, []);
+  // Opening a tool is a navigation: linkable, and the back button returns to the catalog.
+  const open = (engine: EngineSummary | null) => {
+    const next = new URLSearchParams(searchParams);
+    if (engine) next.set('tool', engine.code);
+    else next.delete('tool');
+    setSearchParams(next);
+    window.scrollTo({ top: 0 });
+  };
 
-  const filtered = useMemo(() => {
-    if (!catalog) return [];
-    return tab === 'All' ? catalog.engines : catalog.engines.filter((e) => e.area === tab);
-  }, [catalog, tab]);
-  const filteredLocked = useMemo(() => {
-    if (!catalog?.locked) return [];
-    return tab === 'All' ? catalog.locked : catalog.locked.filter((e) => e.area === tab);
-  }, [catalog, tab]);
+  const locked = catalog?.locked ?? [];
+  const total = catalog?.engines.length ?? 0;
+  const kpis: Kpi[] = [
+    {
+      domain: 'intelligence',
+      label: 'Tools available',
+      value: String(total),
+      hint: catalog?.locked?.length
+        ? `${catalog.locked.length} more with another seat`
+        : 'All included in your plan',
+      to: '/os/engines',
+    },
+    {
+      domain: 'intelligence',
+      label: 'Subject areas',
+      value: String(AREAS.filter((a) => catalog?.engines.some((e) => e.area === a.name)).length),
+      hint: 'Strategy to finance',
+      to: '/os/engines',
+    },
+    {
+      domain: 'money',
+      label: 'Figures hand-checked',
+      value: coverage ? String(coverage.validation.calculationTested) : '—',
+      hint: 'Results matched to worked answers',
+      to: '/os/engines',
+    },
+    {
+      domain: 'work',
+      label: 'Methods reviewed',
+      value: coverage ? String(coverage.validation.methodReviewed) : '—',
+      hint: 'Independently reviewed so far',
+      to: '/os/engines',
+    },
+  ];
+
+  if (selected) {
+    const meta = areaOf(selected.area);
+    const Icon = meta?.icon ?? Cpu;
+    return (
+      <div
+        className="ws-page ws-workbench"
+        data-domain={meta?.tone ?? 'intelligence'}
+        data-scroll-feedback="off"
+      >
+        <button type="button" className="ws-back" onClick={() => open(null)}>
+          <ArrowLeft size={15} aria-hidden="true" /> All tools
+        </button>
+        <header className="ws-workbench-head">
+          <span className="ws-tool-icon ws-workbench-icon" aria-hidden="true">
+            <Icon size={22} />
+          </span>
+          <div>
+            <span className="ws-workbench-eyebrow">
+              {selected.area ?? selected.homeEngine} · {selected.pointsCost} points per run
+            </span>
+            <h1>{selected.engineName}</h1>
+            <p>{selected.standard ?? selected.seriesName}</p>
+          </div>
+        </header>
+        <section className="ws-panel ws-workbench-panel">
+          <EngineDetailPanel key={selected.code} engine={selected} run={run} />
+        </section>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <PageHeading
+    <div className="ws-page" data-domain="intelligence" data-scroll-feedback="off">
+      <PageHeader
         eyebrow="INTELLIGENCE · ENGINES"
         title="Engines"
         description="The decision and analysis tools open to your workspace, and what each one calculates."
+        kpis={catalog ? kpis : []}
+        loadingKpis={catalog ? 0 : 4}
       />
-      <section className="panel">
-        <div className="panel-heading">
-          <div>
-            <h2>Tools</h2>
-            <span>Each tool follows a recognised method and calculates from your own figures.</span>
-          </div>
-        </div>
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
 
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
+      <ToolCatalog engines={catalog?.engines ?? null} onOpen={open} idPrefix="engines" />
 
-        {coverage && (
-          <p className="activity-feed-status">
-            {coverage.totalEntries} tools, each built on a named method or standard.{' '}
-            {coverage.validation.calculationTested} have figures checked against hand-worked
-            answers; {coverage.validation.methodReviewed} have had their method independently
-            reviewed.
-          </p>
-        )}
-
-        <div className="engines-tabs">
-          {AREAS.map((name) => (
-            <button
-              key={name}
-              type="button"
-              className={name === tab ? 'engines-tab is-active' : 'engines-tab'}
-              onClick={() => setTab(name)}
-            >
-              {name}
-              {catalog && name !== 'All' && (
-                <span className="engines-tab-count">
-                  {catalog.engines.filter((e) => e.area === name).length}
+      {catalog && locked.length > 0 && (
+        <section className="ws-tool-group ws-tool-locked" aria-label="Locked for your plan">
+          <header>
+            <h2>Locked for your plan</h2>
+            <span>
+              Included with another seat — unlock it without a full tier upgrade.{' '}
+              <Link to="/os/pricing">See seats and bundles</Link>
+            </span>
+          </header>
+          <div className="ws-tool-grid">
+            {locked.map((engine) => (
+              <div className="ws-tool" data-locked key={engine.code}>
+                <span className="ws-tool-top">
+                  <span className="ws-tool-icon" aria-hidden="true">
+                    <Lock size={15} />
+                  </span>
+                  <span className="ws-tool-area">{engine.area ?? engine.homeEngine}</span>
                 </span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {!catalog ? (
-          <div className="engines-layout">
-            <SkeletonList rows={8} />
-          </div>
-        ) : (
-          <div className="engines-layout">
-            <ul className="engines-list">
-              {filtered.map((engine) => (
-                <li key={engine.code}>
-                  <button
-                    type="button"
-                    className={
-                      selected?.code === engine.code
-                        ? 'engines-list-item is-active'
-                        : 'engines-list-item'
-                    }
-                    onClick={() => setSelected(engine)}
-                  >
-                    <strong>{engine.engineName}</strong>
-                    <small>
-                      {engine.standard ?? engine.seriesName} · {engine.pointsCost} pts
-                    </small>
-                  </button>
-                </li>
-              ))}
-            </ul>
-
-            <div className="engines-detail">
-              {!selected ? (
-                <Empty title="Pick a diagnostic">
-                  Choose one from the list to see what it measures and run it.
-                </Empty>
-              ) : (
-                <EngineDetailPanel key={selected.code} engine={selected} run={run} />
-              )}
-            </div>
-          </div>
-        )}
-
-        {filteredLocked.length > 0 && (
-          <div className="engines-locked" style={{ marginTop: 24 }}>
-            <div className="panel-heading">
-              <div>
-                <h3>Locked for your plan</h3>
-                <span>
-                  These engines exist but aren't included in your current tier or bundles — unlock
-                  the matching seat to get access without a full tier upgrade.
-                </span>
+                <strong>{engine.engineName}</strong>
+                <span className="ws-tool-method">Requires the {engine.homeEngine} seat</span>
               </div>
-            </div>
-            <ul className="engines-list">
-              {filteredLocked.map((engine) => (
-                <li key={engine.code}>
-                  <div
-                    className="engines-list-item"
-                    style={{ opacity: 0.6, display: 'flex', alignItems: 'center', gap: 8 }}
-                  >
-                    <Lock size={14} />
-                    <span>
-                      <strong>{engine.engineName}</strong>
-                      <small>
-                        {engine.code} · {engine.seriesName} · requires the {engine.homeEngine} seat
-                      </small>
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <Link to="/os/pricing" className="button button-secondary">
-              See seats and bundles on Pricing
-            </Link>
+            ))}
           </div>
-        )}
-      </section>
-    </>
+        </section>
+      )}
+    </div>
   );
 }
 
@@ -233,7 +206,27 @@ function EngineDetailPanel({
         </p>
       )}
 
-      {!manifest ? (
+      {readDemoSession() ? (
+        // Tools calculate on the server; the sample workspace never sends data there.
+        <div className="ws-demo-run">
+          <PlayCircle size={22} aria-hidden="true" />
+          <div>
+            <strong>Running tools needs your own workspace</strong>
+            <p>
+              Every result is calculated on our servers from the figures you enter, so the sample
+              workspace can show what a tool measures but not run it.
+            </p>
+            <div className="ws-demo-run-actions">
+              <Link className="button button-primary" to="/signup">
+                Create your workspace
+              </Link>
+              <Link className="button button-secondary" to="/demo#try-decision-quality">
+                Try Decision Quality live
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : !manifest ? (
         <SkeletonList rows={3} />
       ) : result ? (
         <EngineResultView

@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { m, useReducedMotion } from 'motion/react';
-import { ArrowDown, ArrowRight, Clock } from 'lucide-react';
+import { useReducedMotion } from 'motion/react';
+import { ArrowDown, Clock } from 'lucide-react';
 import { DecisionQualityPreview } from './DecisionQualityPreview';
 import { DemoVideoPlayer } from './DemoVideoPlayer';
 import { DemoVideoLibrary } from './DemoVideoLibrary';
 import { AllEngineDemos } from './CatalogEngineDemo';
 import { DemoProfileLauncher } from './DemoProfileLauncher';
 import './demo-videos.css';
-import { DemoToolPanel, EASE, PushDown } from './DemoToolPanel';
+import { DemoToolPanel, PushDown } from './DemoToolPanel';
 import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
 import '../../../engines/pages/engines-page.css';
 import './demo-tools.css';
@@ -24,9 +24,8 @@ export function DemoToolsPage() {
   const [picked, setPicked] = useState<FeaturedTool | null>(null);
   const reduced = useReducedMotion();
 
-  useEffect(() => {
-    if (picked) pickedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [picked]);
+  // The first tool shows until the visitor picks another; picking never scrolls the page away.
+  const current = picked ?? START_HERE[0];
 
   return (
     <div className="demo-tools-page" data-scroll-feedback="off">
@@ -84,43 +83,32 @@ export function DemoToolsPage() {
             </p>
           </div>
 
-          <ul className="demo-cards">
-            {START_HERE.map((tool, i) => (
-              <m.li
-                key={tool.code}
-                initial={reduced ? false : { opacity: 0, y: -16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.45, delay: i * 0.08, ease: EASE }}
-              >
+          {/* One frame: pick a tool from the tabs and the same panel shows it — no card grid. */}
+          <div className="demo-start" ref={pickedRef}>
+            <div className="demo-start-tabs" role="tablist" aria-label="Tools to start with">
+              {START_HERE.map((tool) => (
                 <button
+                  key={tool.code}
                   type="button"
-                  className={picked?.code === tool.code ? 'demo-card is-active' : 'demo-card'}
-                  aria-pressed={picked?.code === tool.code}
+                  role="tab"
+                  className="demo-start-tab"
+                  aria-selected={current.code === tool.code}
+                  aria-controls="demo-start-panel"
                   onClick={() => setPicked(tool)}
                 >
                   <strong>{tool.name}</strong>
-                  <span className="demo-card-hook">{tool.hook}</span>
-                  <span className="demo-card-foot">
-                    <span>
-                      <Clock aria-hidden="true" size={13} /> ~{tool.minutes} min
-                    </span>
-                    <span className="demo-card-try">
-                      Try it <ArrowRight aria-hidden="true" size={14} />
-                    </span>
+                  <span>
+                    <Clock aria-hidden="true" size={12} /> ~{tool.minutes} min
                   </span>
                 </button>
-              </m.li>
-            ))}
-          </ul>
-
-          {picked && (
-            <div ref={pickedRef} className="demo-picked">
-              <PushDown key={picked.code} reduced={reduced}>
-                <DemoToolPanel tool={picked} startOpen />
+              ))}
+            </div>
+            <div className="demo-start-panel" id="demo-start-panel" role="tabpanel">
+              <PushDown key={current.code} reduced={reduced}>
+                <DemoToolPanel tool={current} startOpen />
               </PushDown>
             </div>
-          )}
+          </div>
         </div>
       </section>
 

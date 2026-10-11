@@ -2,17 +2,25 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Play } from 'lucide-react';
 import { Modal } from '../../../../shared/ui/Modal';
+import { ToolCatalog } from '../../../engines/components/ToolCatalog';
 import { useEngineCatalog, type EngineSummary } from '../../../engines/hooks/useEngineCatalog';
 import './engine-demo-preview.css';
 
-export function CatalogEngineDemo({ engine }: { engine: EngineSummary }) {
+export function CatalogEngineDemo({
+  engine,
+  compact = false,
+}: {
+  engine: EngineSummary;
+  /** A small text-style trigger for catalog rows. */
+  compact?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [failed, setFailed] = useState(false);
   return (
     <>
       <button
         type="button"
-        className="button button-secondary"
+        className={compact ? 'ws-row-demo' : 'button button-secondary'}
         aria-label={`Demo engine: ${engine.engineName}`}
         aria-haspopup="dialog"
         onClick={() => {
@@ -20,8 +28,8 @@ export function CatalogEngineDemo({ engine }: { engine: EngineSummary }) {
           setOpen(true);
         }}
       >
-        <Play size={16} aria-hidden="true" />
-        Demo engine
+        <Play size={compact ? 14 : 16} aria-hidden="true" />
+        {compact ? 'Watch demo' : 'Demo engine'}
       </button>
       {open && (
         <Modal title={`${engine.engineName} demo`} onClose={() => setOpen(false)} wide>
@@ -77,18 +85,10 @@ export function CatalogEngineDemo({ engine }: { engine: EngineSummary }) {
   );
 }
 
+/** /demo — every engine in the shared catalog layout (area filter, one fixed card, collapsed area
+ * dropdowns). Each row's action opens that engine's walkthrough in a popup. */
 export function AllEngineDemos() {
   const { catalog, error } = useEngineCatalog('/engines/catalog');
-  const [query, setQuery] = useState('');
-  const [area, setArea] = useState('');
-  const engines = catalog?.engines ?? [];
-  const visible = engines.filter(
-    (engine) =>
-      (!area || engine.area === area) &&
-      `${engine.engineName} ${engine.purpose} ${engine.area}`
-        .toLowerCase()
-        .includes(query.toLowerCase()),
-  );
   return (
     <section id="all-engine-demos" className="demo-slide">
       <div className="demo-tools-container">
@@ -99,46 +99,12 @@ export function AllEngineDemos() {
             scope.
           </p>
         </div>
-        <div className="catalog-demo-filters">
-          <label>
-            Find a tool
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tools"
-            />
-          </label>
-          <label>
-            Subject area
-            <select value={area} onChange={(e) => setArea(e.target.value)}>
-              <option value="">All areas</option>
-              {[...new Set(engines.map((e) => e.area).filter(Boolean))].map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
         {error && <p role="alert">{error}</p>}
-        {!catalog && !error && <p role="status">Loading engine demos…</p>}
-        {catalog && (
-          <p aria-live="polite">
-            {visible.length} of {engines.length} tools
-          </p>
-        )}
-        <ul className="catalog-demo-grid">
-          {visible.map((engine) => (
-            <li key={engine.code}>
-              <span>{engine.area}</span>
-              <h3>{engine.engineName}</h3>
-              <p>{engine.purpose}</p>
-              <CatalogEngineDemo engine={engine} />
-            </li>
-          ))}
-        </ul>
-        {catalog && !visible.length && <p>No tools match. Try another search or area.</p>}
+        <ToolCatalog
+          engines={catalog?.engines ?? (error ? [] : null)}
+          action={(engine) => <CatalogEngineDemo engine={engine} compact />}
+          idPrefix="demo-engines"
+        />
       </div>
     </section>
   );

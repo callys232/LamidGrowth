@@ -1,3 +1,4 @@
+/* Engines page: legacy list/detail styles, then the catalog (areas, tool cards) and workbench. */
 .engines-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -88,4 +89,876 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--accent, var(--text-muted));
+}
+
+/* ---------- Engines catalog: areas, search, tool cards, workbench ---------- */
+.ws-tool,
+.ws-area,
+.ws-tool-group {
+  --tone: var(--ws-intelligence);
+}
+[data-tone='work'] {
+  --tone: var(--ws-work);
+}
+[data-tone='money'] {
+  --tone: var(--ws-money);
+}
+[data-tone='talent'] {
+  --tone: var(--ws-talent);
+}
+[data-tone='risk'] {
+  --tone: var(--ws-risk);
+}
+[data-tone='opportunities'] {
+  --tone: var(--ws-opportunities);
+}
+[data-tone='intelligence'] {
+  --tone: var(--ws-intelligence);
+}
+[data-tone='account'] {
+  --tone: var(--ws-account);
+}
+
+.ws-areas {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.ws-area {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'icon name count'
+    'helps helps helps';
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.ws-area:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--tone) 45%, var(--line-soft, var(--border)));
+}
+.ws-area[aria-pressed='true'] {
+  border-color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 10%, var(--surface));
+  box-shadow: inset 0 0 0 1px var(--tone);
+}
+.ws-area:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: 2px;
+}
+.ws-area-icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 13%, transparent);
+}
+.ws-area-name {
+  grid-area: name;
+  font-size: 14px;
+  font-weight: 650;
+}
+.ws-area-count {
+  grid-area: count;
+  min-width: 24px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  text-align: center;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+}
+.ws-area-helps {
+  grid-area: helps;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-area-all {
+  grid-template-areas: 'name count';
+  grid-template-columns: minmax(0, 1fr) auto;
+  --tone: var(--ink);
+}
+.ws-area-all .ws-area-count {
+  color: var(--ink);
+  background: var(--surface-2, var(--border));
+}
+.ws-tool-search {
+  padding: 0;
+}
+
+.ws-tool-group {
+  display: grid;
+  gap: 12px;
+}
+.ws-tool-group > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid color-mix(in srgb, var(--tone) 35%, transparent);
+}
+.ws-tool-group > header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--ink);
+}
+.ws-tool-group > header span {
+  font-size: 13px;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  gap: 12px;
+}
+.ws-tool {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.ws-tool::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--tone);
+}
+.ws-tool:not([data-locked]):hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--tone) 45%, var(--line-soft, var(--border)));
+  box-shadow: 0 16px 32px -22px color-mix(in srgb, var(--tone) 85%, transparent);
+}
+.ws-tool:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: 2px;
+}
+.ws-tool-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.ws-tool-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 13%, transparent);
+}
+.ws-tool-area {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tone);
+}
+.ws-tool-cost {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-tool > strong {
+  font-size: 15px;
+  line-height: 1.3;
+}
+.ws-tool-method {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary, var(--text-muted));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ws-tool-purpose {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ws-tool-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft, var(--border));
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--tone);
+}
+.ws-tool-go svg {
+  transition: transform 0.25s ease;
+}
+.ws-tool:hover .ws-tool-go svg {
+  transform: translateX(3px);
+}
+.ws-tool[data-locked] {
+  --tone: var(--line-strong, var(--border));
+  cursor: default;
+  opacity: 0.72;
+}
+.ws-tool-locked > header a {
+  color: var(--ws-intelligence);
+}
+
+/* Workbench: one tool, full width. */
+.ws-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ws-back:hover {
+  border-color: var(--ws-accent);
+}
+.ws-workbench-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.ws-workbench-icon {
+  --tone: var(--ws-accent);
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+}
+.ws-workbench-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ws-accent);
+}
+.ws-workbench-head h1 {
+  margin: 4px 0 6px;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.15;
+  color: var(--ink);
+}
+.ws-workbench-head p {
+  margin: 0;
+  max-width: 70ch;
+  font-size: 14px;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-workbench-panel {
+  padding: 20px 22px 24px;
+}
+.ws-workbench-panel .engines-detail-inner > h3:first-child {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .ws-areas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .ws-areas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ws-area-helps {
+    display: none;
+  }
+  .ws-workbench-panel {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-tool,
+  .ws-area,
+  .ws-tool-go svg {
+    transition: none;
+  }
+  .ws-tool:hover,
+  .ws-area:hover {
+    transform: none;
+  }
+}
+
+/* Demo: tools describe themselves but run only in a real workspace. */
+.ws-demo-run {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid color-mix(in srgb, var(--ws-accent, var(--ws-intelligence)) 35%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ws-accent, var(--ws-intelligence)) 8%, transparent);
+}
+.ws-demo-run > svg {
+  flex-shrink: 0;
+  color: var(--ws-accent, var(--ws-intelligence));
+}
+.ws-demo-run strong {
+  font-size: 15px;
+  color: var(--ink);
+}
+.ws-demo-run p {
+  margin: 4px 0 12px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-demo-run-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- Catalog sections: one header per area, opening into a list of tools ---------- */
+.ws-section {
+  --tone: var(--ws-intelligence);
+}
+.ws-sections {
+  display: grid;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.ws-section + .ws-section {
+  border-top: 1px solid var(--line-soft, var(--border));
+}
+.ws-section > h2 {
+  margin: 0;
+  font: inherit;
+}
+.ws-section-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.ws-section-head::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--tone);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ws-section-head:hover {
+  background: color-mix(in srgb, var(--tone) 5%, transparent);
+}
+.ws-section[data-open] .ws-section-head {
+  background: color-mix(in srgb, var(--tone) 7%, transparent);
+}
+.ws-section[data-open] .ws-section-head::before {
+  opacity: 1;
+}
+.ws-section-head:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: -2px;
+}
+.ws-section-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 13%, transparent);
+}
+.ws-section-title {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.ws-section-title strong {
+  font-size: 16px;
+  font-weight: 650;
+}
+.ws-section-title small {
+  font-size: 13px;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-section-count {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+  white-space: nowrap;
+}
+.ws-section-chevron {
+  color: var(--text-secondary, var(--text-muted));
+  transition: transform 0.25s ease;
+}
+.ws-section[data-open] .ws-section-chevron {
+  transform: rotate(180deg);
+  color: var(--tone);
+}
+
+.ws-tool-rows {
+  margin: 0;
+  padding: 4px 12px 12px 72px;
+  list-style: none;
+  animation: ws-rows-in 0.25s ease;
+}
+@keyframes ws-rows-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.ws-tool-rows li + li {
+  border-top: 1px solid var(--line-soft, var(--border));
+}
+.ws-tool-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.ws-tool-row:hover {
+  background: color-mix(in srgb, var(--tone) 6%, transparent);
+}
+.ws-tool-row:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: -2px;
+}
+.ws-tool-row-name {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.ws-tool-row-name strong {
+  font-size: 14px;
+  font-weight: 650;
+}
+.ws-tool-row-name small {
+  font-size: 12px;
+  color: var(--text-secondary, var(--text-muted));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ws-tool-row-purpose {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-secondary, var(--text-muted));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ws-tool-row-cost {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary, var(--text-muted));
+  white-space: nowrap;
+}
+.ws-tool-row-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--tone);
+  white-space: nowrap;
+}
+.ws-tool-row-go svg {
+  transition: transform 0.2s ease;
+}
+.ws-tool-row:hover .ws-tool-row-go svg {
+  transform: translateX(3px);
+}
+@media (max-width: 900px) {
+  .ws-tool-rows {
+    padding-left: 12px;
+  }
+  .ws-tool-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+  }
+  .ws-tool-row-purpose {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .ws-tool-row-cost {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .ws-section-head {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 14px;
+  }
+  .ws-section-count {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-section-head,
+  .ws-section-chevron,
+  .ws-tool-row,
+  .ws-tool-row-go svg {
+    transition: none;
+  }
+  .ws-tool-rows {
+    animation: none;
+  }
+}
+
+/* ---------- Catalog card: area filter + one fixed frame whose contents change ---------- */
+.ws-catalog {
+  --tone: var(--ws-intelligence);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 16px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.ws-catalog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line-soft, var(--border));
+  background: var(--surface-0, transparent);
+}
+.ws-catalog-filter:not([data-tone]) {
+  --tone: var(--ws-intelligence);
+}
+.ws-catalog-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border: 1px solid var(--line-soft, var(--border));
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.ws-catalog-filter svg {
+  color: var(--tone);
+}
+.ws-catalog-filter span {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-secondary, var(--text-muted));
+  background: var(--surface-2, var(--border));
+}
+.ws-catalog-filter:hover {
+  border-color: color-mix(in srgb, var(--tone) 50%, var(--line-soft, var(--border)));
+}
+.ws-catalog-filter[aria-selected='true'] {
+  border-color: var(--tone);
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 11%, var(--surface));
+}
+.ws-catalog-filter[aria-selected='true'] span {
+  color: var(--surface);
+  background: var(--tone);
+}
+.ws-catalog-filter:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: 2px;
+}
+.ws-catalog-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line-soft, var(--border));
+  background: color-mix(in srgb, var(--tone) 5%, transparent);
+}
+.ws-catalog-context {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.ws-catalog-context > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.ws-catalog-context strong {
+  font-size: 16px;
+  color: var(--ink);
+}
+.ws-catalog-context small {
+  font-size: 13px;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-catalog-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 340px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong, var(--border));
+  border-radius: 10px;
+  background: var(--surface);
+}
+.ws-catalog-search:focus-within {
+  border-color: var(--tone);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 18%, transparent);
+}
+.ws-catalog-search svg {
+  flex-shrink: 0;
+  color: var(--text-secondary, var(--text-muted));
+}
+.ws-catalog-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+}
+/* The frame: same height for every area, so switching never moves the page. */
+.ws-catalog-body {
+  /* Tall enough for all nine area headers collapsed; scrolls (without a visible bar) when open. */
+  height: 648px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.ws-catalog-body::-webkit-scrollbar {
+  display: none;
+}
+.ws-catalog-body > .ws-tool-rows,
+.ws-catalog-group .ws-tool-rows {
+  padding: 4px 12px 8px;
+  animation: ws-rows-in 0.2s ease;
+}
+.ws-catalog-body > .ws-empty {
+  height: 100%;
+  align-content: center;
+}
+.ws-catalog-group {
+  --tone: var(--ws-intelligence);
+}
+.ws-catalog-group + .ws-catalog-group {
+  border-top: 1px solid var(--line-soft, var(--border));
+}
+.ws-catalog-group > h3 {
+  margin: 0;
+  font: inherit;
+}
+/* "Other tools" (no area) keeps a plain label. */
+.ws-catalog-group > h3:not(:has(button)) {
+  padding: 12px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+/* Area header inside the catalog card: collapsed until opened. */
+.ws-catalog-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.ws-catalog-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--tone);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ws-catalog-toggle:hover {
+  background: color-mix(in srgb, var(--tone) 5%, transparent);
+}
+.ws-catalog-group[data-open] > h3 {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+}
+.ws-catalog-group[data-open] .ws-catalog-toggle {
+  background: color-mix(in srgb, var(--tone) 8%, var(--surface));
+  border-bottom: 1px solid var(--line-soft, var(--border));
+}
+.ws-catalog-group[data-open] .ws-catalog-toggle::before {
+  opacity: 1;
+}
+.ws-catalog-group[data-open] .ws-section-chevron {
+  transform: rotate(180deg);
+  color: var(--tone);
+}
+.ws-catalog-toggle:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: -2px;
+}
+@media (max-width: 560px) {
+  .ws-catalog-toggle {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+  .ws-catalog-toggle .ws-section-count {
+    display: none;
+  }
+}
+.ws-catalog .ws-tool-row {
+  --tone: inherit;
+}
+@media (max-width: 760px) {
+  .ws-catalog-body {
+    height: 70vh;
+  }
+  .ws-catalog-search {
+    flex: 1 1 100%;
+  }
+}
+@media (max-width: 560px) {
+  .ws-catalog-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .ws-catalog-filter {
+    flex-shrink: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-catalog-filter {
+    transition: none;
+  }
+  .ws-catalog-body > .ws-tool-rows,
+  .ws-catalog-group .ws-tool-rows {
+    animation: none;
+  }
+}
+
+/* Rows whose action is its own control (e.g. the /demo walkthrough popup). */
+.ws-tool-row-static {
+  cursor: default;
+}
+.ws-tool-row-action {
+  display: inline-flex;
+  justify-content: flex-end;
+}
+.ws-row-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--tone) 40%, var(--line-soft, var(--border)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tone);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+.ws-row-demo:hover {
+  border-color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 10%, transparent);
+}
+.ws-row-demo:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: 2px;
 }

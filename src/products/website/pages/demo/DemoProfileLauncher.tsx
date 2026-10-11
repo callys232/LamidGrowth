@@ -99,6 +99,9 @@ const SIZES: Record<DemoTier, { label: string; detail: string }> = {
  * login, nothing saved beyond this browser session). */
 export function DemoProfileLauncher() {
   const [tier, setTier] = useState<DemoTier>('individual');
+  const [profile, setProfile] = useState<DemoProfile>('Founder');
+  const persona = PERSONAS[profile];
+  const Icon = persona.icon;
   return (
     <section className="marketing-demo demo-launcher" aria-labelledby="demo-launcher-title">
       <header className="marketing-demo-hero">
@@ -110,46 +113,69 @@ export function DemoProfileLauncher() {
         </p>
       </header>
 
-      <div className="demo-size" role="radiogroup" aria-label="Workspace size">
-        {TIERS.map((value) => (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={tier === value}
-            onClick={() => setTier(value)}
-          >
-            <strong>{SIZES[value].label}</strong>
-            <span>{SIZES[value].detail}</span>
-          </button>
-        ))}
-      </div>
+      {/* One frame: choose a profile and the same card shows it — no grid of cards. */}
+      <div className="demo-chooser">
+        <div className="demo-chooser-tabs" role="tablist" aria-label="Demo profiles">
+          {PROFILES.map((name) => {
+            const TabIcon = PERSONAS[name].icon;
+            return (
+              <button
+                key={name}
+                type="button"
+                role="tab"
+                className="demo-chooser-tab"
+                data-tone={PERSONAS[name].tone}
+                aria-selected={profile === name}
+                aria-controls="demo-persona-panel"
+                onClick={() => setProfile(name)}
+              >
+                <TabIcon size={15} aria-hidden="true" />
+                {name}
+              </button>
+            );
+          })}
+        </div>
 
-      <div className="demo-personas">
-        {PROFILES.map((profile) => {
-          const persona = PERSONAS[profile];
-          const Icon = persona.icon;
-          return (
+        <div
+          className="demo-persona"
+          id="demo-persona-panel"
+          role="tabpanel"
+          data-tone={persona.tone}
+        >
+          <div className="demo-persona-main">
+            <span className="demo-persona-icon" aria-hidden="true">
+              <Icon size={24} />
+            </span>
+            <div className="demo-persona-copy">
+              <span className="demo-persona-focus">{persona.focus}</span>
+              <strong>{profile}</strong>
+              <span className="demo-persona-summary">{persona.summary}</span>
+            </div>
+          </div>
+
+          <div className="demo-persona-side">
+            <div className="demo-size" role="radiogroup" aria-label="Workspace size">
+              {TIERS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={tier === value}
+                  onClick={() => setTier(value)}
+                >
+                  <strong>{SIZES[value].label}</strong>
+                  <span>{SIZES[value].detail}</span>
+                </button>
+              ))}
+            </div>
             <Link
-              className="demo-persona"
-              data-tone={persona.tone}
-              key={profile}
+              className="demo-persona-go"
               to={`/demo/workspace?${new URLSearchParams({ profile, tier })}`}
             >
-              <span className="demo-persona-icon" aria-hidden="true">
-                <Icon size={20} />
-              </span>
-              <span className="demo-persona-copy">
-                <span className="demo-persona-focus">{persona.focus}</span>
-                <strong>{profile}</strong>
-                <span className="demo-persona-summary">{persona.summary}</span>
-              </span>
-              <span className="demo-persona-go">
-                Open workspace <ArrowRight size={15} aria-hidden="true" />
-              </span>
+              Open the {profile} workspace <ArrowRight size={16} aria-hidden="true" />
             </Link>
-          );
-        })}
+          </div>
+        </div>
       </div>
     </section>
   );
