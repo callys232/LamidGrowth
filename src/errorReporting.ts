@@ -1,8 +1,13 @@
 import { readDemoSession } from './products/workspace/sandbox/demoSession';
+import { trackDemo } from './products/workspace/sandbox/demoAccess';
 
 export function reportClientError(type: 'render' | 'error' | 'rejection', value: unknown) {
-  // Demo visitors never reach the server, not even for error reports.
-  if (readDemoSession()) return;
+  const demo = readDemoSession();
+  if (demo) {
+    // Record the failure category and page, without exception text or visitor data.
+    void trackDemo('client_failed', window.location.pathname, demo.profile, demo.tier);
+    return;
+  }
   const error = value instanceof Error ? value : new Error(String(value));
   const apiBase = import.meta.env.VITE_API_BASE_URL || '';
   void fetch(`${apiBase}/api/client-errors`, {

@@ -9,6 +9,10 @@ import { z } from 'zod';
 import { openStore, verifyPassword } from '../../server/store.mjs';
 import { databaseFailureResponse } from '../../server/databaseErrors.mjs';
 import { permissionsFor, requirePermission } from './policy.mjs';
+import { mountDemoAdmin } from './demoAccess.mjs';
+import { mountResendWebhook } from './mailDelivery.mjs';
+import { mountMailOperations } from './mailOperations.mjs';
+import { defaultMailer } from './mail.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
 import { mountAI, defaultAiProvider, reviewSchema as aiReviewSchema } from './ai.mjs';
@@ -316,6 +320,16 @@ export async function createApp({
       },
     }),
   );
+  app.use('/api/demo/progress/save', express.json({ limit: '2mb' }));
+  app.use(
+    '/api/webhooks/resend',
+    express.json({
+      limit: '256kb',
+      verify: (req, _res, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+  );
   app.use(
     express.json({
       limit: '32kb',
@@ -327,6 +341,12 @@ export async function createApp({
   mountPaystackWebhook(app, store, { paymentProvider });
   mountKycWebhook(app, store, { kycProvider });
   mountConnectorWebhook(app, store);
+  mountResendWebhook(app, store, {
+    key:
+      securityKey || process.env.ACCOUNT_SECURITY_KEY
+        ? Buffer.from(securityKey || process.env.ACCOUNT_SECURITY_KEY, 'hex')
+        : null,
+  });
   app.use('/api', (req, res, next) => {
     // Health polling must not perform a rate-limit write before the bounded readiness query.
     if (['GET', 'HEAD'].includes(req.method) && ['/health', '/ready'].includes(req.path))
@@ -520,6 +540,11 @@ export async function createApp({
       'Removed by account owner',
     );
     res.json({ ok: true });
+  });
+  mountDemoAdmin(app, store, ecosystemAdminEmails, { resendWelcome: accounts.resendDemoWelcome });
+  mountMailOperations(app, store, {
+    adminEmails: ecosystemAdminEmails,
+    provider: mailProvider || defaultMailer(),
   });
   app.get('/api/admin/welcome-rewards', async (req, res) => {
     if (!ecosystemAdminEmails.includes(req.user.email))
@@ -1328,6 +1353,7 @@ export async function createApp({
         name: req.user.name,
         email: req.user.email,
         demo: Boolean(req.user.demo),
+        ecosystemAdmin: ecosystemAdminEmails.includes(req.user.email),
       },
       workspace: req.workspace,
       permissions: permissionsFor(req.workspace.role),

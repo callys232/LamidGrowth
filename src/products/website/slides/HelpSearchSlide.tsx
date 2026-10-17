@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import pages from '../../../content/catalog';
+import pages from '../../../content/pageIndex';
 
 export function HelpSearchSlide() {
   const [query, setQuery] = useState('');

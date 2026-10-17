@@ -1,6 +1,12 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import pages from './content/catalog';
+import pages from './content/pageIndex';
+import { DemoAccessGate } from './products/website/pages/demo/DemoAccessGate';
+const DemoLeadsPage = lazy(() =>
+  import('./products/website/pages/demo/DemoLeadsPage').then((module) => ({
+    default: module.DemoLeadsPage,
+  })),
+);
 const AuthPage = lazy(() =>
   import('./products/accounts/pages/AuthPage').then((module) => ({ default: module.AuthPage })),
 );
@@ -12,11 +18,6 @@ const DemoToolsPage = lazy(() =>
 const DemoWorkspacePage = lazy(() =>
   import('./products/website/pages/demo/DemoWorkspacePage').then((module) => ({
     default: module.DemoWorkspacePage,
-  })),
-);
-const ClassicDemoPage = lazy(() =>
-  import('./products/website/pages/demo/ClassicDemoPage').then((module) => ({
-    default: module.ClassicDemoPage,
   })),
 );
 const PasswordRecovery = lazy(() =>
@@ -392,7 +393,9 @@ export function App() {
             path="/demo"
             element={
               <ContentPage>
-                <DemoToolsPage />
+                <DemoAccessGate>
+                  <DemoToolsPage />
+                </DemoAccessGate>
               </ContentPage>
             }
           />
@@ -428,10 +431,18 @@ export function App() {
               </ContentPage>
             }
           />
-          <Route path="/demo/workspace" element={<DemoWorkspacePage />} />
-          <Route path="/demo/classic" element={<ClassicDemoPage />} />
+          <Route
+            path="/demo/workspace"
+            element={
+              <DemoAccessGate>
+                <DemoWorkspacePage />
+              </DemoAccessGate>
+            }
+          />
+          <Route path="/demo/classic" element={<Navigate to="/demo/workspace" replace />} />
           <Route path="/os/demo" element={<Navigate to="/demo#profile-demos" replace />} />
           <Route path="/os" element={<WorkspaceShell />}>
+            <Route path="settings/demo-leads" element={<DemoLeadsPage />} />
             <Route index element={<Dashboard />} />
             <Route path="today" element={<ActionsPage today />} />
             <Route path="clarity" element={<Clarity />} />

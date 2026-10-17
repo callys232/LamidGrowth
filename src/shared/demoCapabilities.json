@@ -1,0 +1,25 @@
+{
+  "tiers": { "individual": "personal", "team": "team", "enterprise": "enterprise" },
+  "features": {
+    "engines": {
+      "mode": "interactive",
+      "description": "Run every analysis engine included in your selected tier, without spending points."
+    },
+    "learning": {
+      "mode": "interactive",
+      "description": "Create paths and modules, enroll, record progress, leave feedback and create sample certificates. Demo scores are self-reported."
+    },
+    "progress": {
+      "mode": "interactive",
+      "description": "Save sample workspace changes and resume them using your personal email link."
+    },
+    "ai": {
+      "mode": "account_required",
+      "description": "Live specialist AI chat and background AI tasks require your own workspace with AI enabled."
+    },
+    "external": {
+      "mode": "preview",
+      "description": "Payments, external messages and third-party connections use sample data; the demo does not carry out real transactions."
+    }
+  }
+}

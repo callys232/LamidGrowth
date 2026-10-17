@@ -16,8 +16,8 @@ export function setWorkspaceScope(id: string) {
 const apiBase = import.meta.env?.VITE_API_BASE_URL || '';
 
 /** A replacement for the network: given the request, resolve the parsed JSON or throw ApiError.
- * The public demo sets one (the in-browser sandbox) so the real workspace runs on sample data
- * without any request reaching the server. */
+ * The public demo sets one so workspace operations run on sample data. Verified access,
+ * progress synchronization, diagnostics and engine calculation use the dedicated demo API. */
 export type ApiTransport = (request: {
   path: string;
   method: string;
@@ -36,6 +36,16 @@ export async function api<T>(
 ): Promise<T> {
   if (transport)
     return (await transport({ path, method: body === undefined ? 'GET' : method, body })) as T;
+  return networkApi<T>(path, body, method, idempotencyKey);
+}
+
+/** Always reaches the server, including when workspace requests use the demo sandbox. */
+export async function networkApi<T>(
+  path: string,
+  body?: unknown,
+  method = 'POST',
+  idempotencyKey?: string,
+): Promise<T> {
   const response = await fetch(`${apiBase}/api${path}`, {
     method: body === undefined ? 'GET' : method,
     credentials: apiBase ? 'include' : 'same-origin',

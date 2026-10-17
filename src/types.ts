@@ -50,7 +50,7 @@ export interface AuditEvent {
   createdAt: string;
 }
 export interface WorkspaceState {
-  user: { id: string; name: string; email: string | null; demo: boolean };
+  user: { id: string; name: string; email: string | null; demo: boolean; ecosystemAdmin?: boolean };
   workspace: {
     id: string;
     name: string;

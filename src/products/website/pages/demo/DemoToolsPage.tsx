@@ -13,11 +13,8 @@ import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
 import '../../../engines/pages/engines-page.css';
 import './demo-tools.css';
 
-/** /demo — public, no signup required. Three slides: a hero that plays a real Decision Quality
- * result, the same tool live with its benefits, then four more hand-picked tools to start with.
- * Every run is real compute (POST /engines/:code/demo-run — same as the authenticated path, no
- * charge, no persistence, no account), so a visitor sees one genuine result before deciding to
- * sign up, rather than being handed a fake full workspace. */
+/** Demo catalogue, shown after email verification. Profile workspaces save sample progress;
+ * standalone engine previews still run without creating a paid account. */
 export function DemoToolsPage() {
   const heroToolRef = useRef<HTMLElement>(null);
   const pickedRef = useRef<HTMLDivElement>(null);

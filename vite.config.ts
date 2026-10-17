@@ -8,6 +8,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
+          if (id.replaceAll('\\', '/').includes('/node_modules/three/')) return 'vendor-three';
           if (
             /node_modules\/(react|react-dom|scheduler|react-router|react-router-dom)\//.test(
               id.replaceAll('\\', '/'),

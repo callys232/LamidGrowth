@@ -5,7 +5,8 @@ set -euo pipefail
 
 git pull --ff-only
 npm ci
-npm run build
-pm2 restart lamid-api
+npm run deployment:check
+npm run release:check
+pm2 restart lamid-api --update-env
 pm2 save
 echo "==> Deployed. Tail logs with: pm2 logs lamid-api"

@@ -1,5 +1,7 @@
 import { ApiError } from '../../../../api';
-import engineSnapshot from '../engineCatalog.json' with { type: 'json' };
+import { demoRequest } from '../demoAccess';
+import { readDemoSession } from '../demoSession';
+import type { EngineCatalog } from '../../../engines/hooks/useEngineCatalog';
 import type { SandboxRoute } from '../router';
 import type { SandboxData } from '../types';
 
@@ -19,7 +21,8 @@ const adminOnly = (message: string) => () => {
 /** Points price the server quotes when POINTS_UNIT_PRICE_MINOR is unset (src/app/billing.mjs). */
 const POINTS_UNIT_PRICE_MINOR = 10;
 const POINTS_BALANCE = 1200;
-const catalog = engineSnapshot.catalog;
+const currentCatalog = () =>
+  demoRequest<EngineCatalog>('engines/catalog', { tier: readDemoSession()!.tier });
 
 const fundingRows = (data: SandboxData) =>
   data.projects.flatMap((project) =>
@@ -198,10 +201,10 @@ export const toolRoutes: SandboxRoute[] = [
   {
     method: 'GET',
     pattern: '/billables',
-    handler: () => ({
+    handler: async () => ({
       pointsUnitPriceMinor: POINTS_UNIT_PRICE_MINOR,
       currency: 'USD',
-      tools: catalog.engines.map((engine) => ({
+      tools: (await currentCatalog()).engines.map((engine) => ({
         id: engine.code,
         name: engine.engineName,
         home_engine: engine.homeEngine,
@@ -497,83 +500,45 @@ export const toolRoutes: SandboxRoute[] = [
       return { items: matching, total: matching.length };
     },
   },
-  { method: 'GET', pattern: '/engines', handler: () => catalog },
-  { method: 'GET', pattern: '/engines/catalog/coverage', handler: () => engineSnapshot.coverage },
   {
     method: 'GET',
-    pattern: '/learning/paths',
-    handler: ({ store }) => {
-      const data = store.read();
-      const domain = data.talentProfile?.domains[0] ?? data.state.workspace.context;
-      return [
-        {
-          title: 'Decision quality foundations',
-          description: 'Frame decisions, weigh alternatives and record what you will learn.',
-          hours: 3,
-        },
-        {
-          title: `${domain} delivery essentials`,
-          description: 'Scope work into milestones, agree acceptance criteria and review delivery.',
-          hours: 5,
-        },
-        {
-          title: 'Running a weekly operating rhythm',
-          description: 'Reviews, priorities and follow-through that keep important work moving.',
-          hours: 2,
-        },
-      ].map((path, i) => ({
-        id: `demo-path-${i}`,
-        title: path.title,
-        description: path.description,
-        domain,
-        function: null,
-        industry: null,
-        estimated_hours: path.hours,
-        points_cost: null,
-        language: 'en',
-        coach_user_id: null,
-        created_by: null,
-        modules: ['Read', 'Practise', 'Check'].map((step, m) => ({
-          id: `demo-path-${i}-module-${m}`,
-          path_id: `demo-path-${i}`,
-          title: `${step}: ${path.title.toLowerCase()}`,
-          description: path.description,
-          format: (['reading', 'exercise', 'assessment'] as const)[m],
-          order_index: m,
-          estimated_minutes: 20 + m * 10,
-          content_url: null,
-          quiz_skill: null,
-        })),
-        prerequisites: [],
-        feedback: { count: 4 + i * 3, average: 4.6 - i * 0.2 },
-      }));
+    pattern: '/engines',
+    handler: () => demoRequest('engines/catalog', { tier: readDemoSession()!.tier }),
+  },
+  {
+    method: 'GET',
+    pattern: '/engines/catalog',
+    handler: async () => {
+      const catalog = await currentCatalog();
+      const engines = [...catalog.engines, ...(catalog.locked ?? [])];
+      return { engines, count: engines.length };
     },
   },
   {
     method: 'GET',
-    pattern: '/learning/enrollments/mine',
-    handler: ({ store }) => {
-      const data = store.read();
-      return [
-        {
-          id: 'demo-enrollment-0',
-          path_id: 'demo-path-0',
-          path_title: 'Decision quality foundations',
-          user_id: data.state.user.id,
-          status: 'in_progress',
-          progress: 34,
-          assigned_by: null,
-          due_at: iso(data, 14),
-          completed_at: null,
-        },
-      ];
-    },
+    pattern: '/engines/:code',
+    handler: ({ params }) =>
+      demoRequest('engines/detail', { tier: readDemoSession()!.tier, code: params.code }),
   },
-  { method: 'GET', pattern: '/learning/compliance/mine', handler: () => [] },
+  {
+    method: 'POST',
+    pattern: '/engines/:code/run',
+    handler: ({ params, body }) =>
+      demoRequest('engines/run', {
+        tier: readDemoSession()!.tier,
+        code: params.code,
+        input: (body as { input: unknown }).input,
+      }),
+  },
   {
     method: 'GET',
-    pattern: '/learning/enrollments/attention',
-    handler: () => ({ needsYou: [], stalled: [] }),
+    pattern: '/engines/catalog/coverage',
+    handler: async () =>
+      (
+        await demoRequest<{ coverage: unknown }>('engines/catalog', {
+          tier: readDemoSession()!.tier,
+        })
+      ).coverage,
   },
 
   // ---------- Account ----------

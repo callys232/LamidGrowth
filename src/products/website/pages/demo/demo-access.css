@@ -1,0 +1,34 @@
+.demo-access {
+  max-width: 540px;
+  margin: 64px auto;
+  padding: 24px;
+}
+.demo-access form,
+.demo-access label {
+  display: grid;
+  gap: 12px;
+}
+.demo-access form {
+  gap: 20px;
+}
+.demo-access input:not([type='checkbox']),
+.demo-access select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 8px;
+  font: inherit;
+}
+.demo-access .demo-access-consent {
+  display: flex;
+  align-items: start;
+}
+.demo-access input[type='checkbox'] {
+  margin-top: 4px;
+}
+.demo-progress-notice {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border, #ccc);
+  font-size: 14px;
+}

@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import type { useAuthPage } from '../hooks/useAuthPage';
+import { demoIdentity } from '../../workspace/sandbox/demoAccess';
 export function AccountCredentialsForm({
   submit,
   login,
@@ -21,6 +22,7 @@ export function AccountCredentialsForm({
           <Field label="Your name">
             <input
               name="name"
+              defaultValue={demoIdentity()?.name || ''}
               autoComplete="name"
               required
               maxLength={100}
@@ -31,6 +33,7 @@ export function AccountCredentialsForm({
         <Field label="Email address">
           <input
             name="email"
+            defaultValue={demoIdentity()?.email || ''}
             type="email"
             autoComplete="email"
             required

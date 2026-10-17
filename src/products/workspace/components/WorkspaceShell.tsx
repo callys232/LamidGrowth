@@ -27,6 +27,8 @@ import {
 import { api, ApiError, setWorkspaceScope } from '../../../api';
 import { PROFILES, TIERS, type DemoProfile, type DemoTier } from '../demo/personaList';
 import { endDemoSession, readDemoSession, startDemoSession } from '../sandbox/demoSession';
+import { trackDemo } from '../sandbox/demoAccess';
+import { DemoProgressNotice } from '../../website/pages/demo/DemoProgressNotice';
 import { useWorkspaceActivity } from '../hooks/useWorkspaceActivity';
 import { pageTheme } from '../../../pageThemes';
 import { domainForPath } from '../../../shared/workspace/domains';
@@ -69,6 +71,10 @@ export function WorkspaceShell() {
   // Demo visitors: which sample persona this tab is showing (null for real accounts).
   const demoSession = readDemoSession();
   const location = useLocation();
+  useEffect(() => {
+    const demo = readDemoSession();
+    if (demo) void trackDemo('page_viewed', location.pathname, demo.profile, demo.tier);
+  }, [location.pathname]);
   // Switching persona re-enters the demo in-app (no page reload, which a static host would answer
   // with its own 404 on a deep link) and returns to the same page on the new persona's sandbox.
   const switchDemo = (profile: DemoProfile, tier: DemoTier) => {
@@ -374,6 +380,7 @@ export function WorkspaceShell() {
               {pending > 0 && <span />}
             </Link>
             <span className="topbar-divider" />
+            {state.user.ecosystemAdmin && <Link to="/os/settings/demo-leads">Demo leads</Link>}
             <span className="avatar avatar-small">{state.user.name[0]}</span>
           </div>
         </header>
@@ -381,7 +388,7 @@ export function WorkspaceShell() {
           <div className="demo-banner">
             <span>
               <span className="gold-dot" /> Your own sample workspace. Explore freely; changes are
-              saved in this session.
+              saved for your next visit. Keep your personal email link to return.
             </span>
             {demoSession && (
               <span className="demo-banner-controls">
@@ -417,11 +424,24 @@ export function WorkspaceShell() {
                 </button>
               </span>
             )}
-            <Link to="/signup">
+            <Link
+              to="/signup"
+              onClick={() => {
+                if (demoSession)
+                  void trackDemo(
+                    'signup_clicked',
+                    '/signup',
+                    demoSession.profile,
+                    demoSession.tier,
+                  );
+                endDemoSession();
+              }}
+            >
               Create your workspace <ArrowUpRight size={13} />
             </Link>
           </div>
         )}
+        {state.user.demo && <DemoProgressNotice />}
         <main
           id="workspace-main"
           className="workspace-main"

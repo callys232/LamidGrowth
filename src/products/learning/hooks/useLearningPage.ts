@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api } from '../../../api';
 import { useWorkspace } from '../../workspace/components/WorkspaceShell';
+import { readDemoSession } from '../../workspace/sandbox/demoSession';
 
 export type LearningModule = {
   id: string;
@@ -52,7 +53,10 @@ export type ComplianceRow = {
 export type AttentionResponse = { needsYou: LearningEnrollment[]; stalled: LearningEnrollment[] };
 
 export function useLearningPage() {
-  const { notify } = useWorkspace();
+  const { notify, state } = useWorkspace();
+  const isDemo = Boolean(readDemoSession());
+  const [completedModules, setCompletedModules] = useState<string[]>([]);
+  const [certificates, setCertificates] = useState<{ enrollment_id: string }[]>([]);
   const [catalog, setCatalog] = useState<LearningPath[]>([]);
   const [enrollments, setEnrollments] = useState<LearningEnrollment[]>([]);
   const [compliance, setCompliance] = useState<ComplianceRow[]>([]);
@@ -81,6 +85,12 @@ export function useLearningPage() {
       setEnrollments(
         await api<LearningEnrollment[]>('/learning/enrollments/mine', undefined, 'GET'),
       );
+      if (isDemo) {
+        setCompletedModules(await api<string[]>('/learning/completions/mine', undefined, 'GET'));
+        setCertificates(
+          await api<{ enrollment_id: string }[]>('/learning/certificates/mine', undefined, 'GET'),
+        );
+      }
     } catch (e) {
       setError((e as Error).message);
     }
@@ -167,9 +177,15 @@ export function useLearningPage() {
 
   async function issueCertificate(enrollmentId: string) {
     setBusy(true);
+    setError('');
     try {
       await api(`/learning/enrollments/${enrollmentId}/certificate`, {});
-      notify('Certificate issued.');
+      await loadEnrollments();
+      notify(
+        isDemo
+          ? 'Sample certificate created. This is not a real credential.'
+          : 'Certificate issued.',
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -179,6 +195,7 @@ export function useLearningPage() {
 
   async function submitFeedback(pathId: string, rating: number, comment: string) {
     setBusy(true);
+    setError('');
     try {
       await api(`/learning/paths/${pathId}/feedback`, { rating, comment });
       await loadCatalog();
@@ -191,6 +208,10 @@ export function useLearningPage() {
   }
 
   return {
+    isDemo,
+    userId: state.user.id,
+    completedModules,
+    certificates,
     catalog,
     enrollments,
     compliance,
@@ -203,5 +224,25 @@ export function useLearningPage() {
     completeModule,
     issueCertificate,
     submitFeedback,
+    async addModule(event: FormEvent<HTMLFormElement>) {
+      event.preventDefault();
+      const form = event.currentTarget,
+        data = new FormData(form);
+      setBusy(true);
+      setError('');
+      try {
+        await api(`/learning/paths/${data.get('pathId')}/modules`, {
+          title: data.get('title'),
+          format: data.get('format'),
+        });
+        form.reset();
+        await loadCatalog();
+        notify('Module added.');
+      } catch (cause) {
+        setError((cause as Error).message);
+      } finally {
+        setBusy(false);
+      }
+    },
   };
 }

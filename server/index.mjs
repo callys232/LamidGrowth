@@ -14,6 +14,7 @@ import cluster from 'node:cluster';
 import { createApp } from '../src/app/app.mjs';
 import { mountFrontend } from '../src/app/frontend.mjs';
 import { pruneRateLimitBuckets } from '../src/app/ratelimit.mjs';
+import { pruneRetainedMailAndDemos } from '../src/app/retention.mjs';
 import { acquireServiceLease, validateProductionConfig } from '../src/app/operations.mjs';
 import { runPlanRenewals, grantDueAllowances } from '../src/app/plans.mjs';
 import { paystackProvider, settlementAmount } from '../src/app/payments.mjs';
@@ -189,6 +190,17 @@ async function startServer() {
     sweeping = true;
     try {
       await pruneRateLimitBuckets(store);
+      if (
+        process.env.RETENTION_ENABLED === 'true' &&
+        (await acquireServiceLease(
+          store,
+          'mail-demo-retention',
+          `retention:${randomUUID()}`,
+          Date.now(),
+          86400000,
+        ))
+      )
+        await pruneRetainedMailAndDemos(store, { apply: true });
     } catch (error) {
       errorLogger('rate_limit_sweep_error', { error: errorDetails(error) });
     } finally {

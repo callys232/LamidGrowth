@@ -79,6 +79,60 @@ const CALCULATION_TESTS = {
   T60: ['tests/tool-catalog.test.mjs — Business Valuation matches a hand-worked DCF …'],
 };
 
+// Explicit arithmetic, counting and classification reference cases for the remaining tools.
+// These do not imply independent method review or real-world outcome evaluation.
+for (const id of [
+  'T02',
+  'T03',
+  'T05',
+  'T08',
+  'T09',
+  'T10',
+  'T11',
+  'T12',
+  'T13',
+  'T15',
+  'T16',
+  'T18',
+  'T19',
+  'T21',
+  'T22',
+  'T24',
+  'T25',
+  'T26',
+  'T27',
+  'T28',
+  'T29',
+  'T30',
+  'T33',
+  'T34',
+  'T36',
+  'T40',
+  'T41',
+  'T42',
+  'T43',
+  'T44',
+  'T46',
+  'T47',
+  'T48',
+  'T50',
+  'T51',
+  'T52',
+  'T53',
+  'T54',
+  'T56',
+  'T58',
+  'T59',
+  'T61',
+]) {
+  CALCULATION_TESTS[id] = [`tests/engine-reference.test.mjs — ${id}: hand-worked reference case`];
+}
+for (const id of ['T17', 'T31', 'T32', 'T37', 'T38', 'T39', 'T55', 'T62', 'T63']) {
+  CALCULATION_TESTS[id] = [
+    `tests/engine-reference.test.mjs — ${id}: anchored endpoints and evidence discount`,
+  ];
+}
+
 /** { [toolId]: { version, reviewer, date, notes } } — none recorded yet. */
 const METHOD_REVIEWS = {};
 /** { [toolId]: { version, evaluationPack, threshold, result, date } } — none recorded yet. */

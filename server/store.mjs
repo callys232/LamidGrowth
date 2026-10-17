@@ -1,4 +1,6 @@
 import pg from 'pg';
+import { DEMO_SCHEMA_SQL } from './demoSchema.mjs';
+import { MAIL_SCHEMA_SQL } from './mailSchema.mjs';
 import { MANIFEST_SYNC } from '../src/app/toolCatalog/catalog.mjs';
 import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
@@ -109,7 +111,7 @@ export async function withClient(pool, schema, work) {
   }
 }
 
-function createDb(pool, schema) {
+export function createDb(pool, schema) {
   const run = (fn) => {
     const active = als.getStore();
     return active
@@ -206,7 +208,7 @@ function sanitizeSchemaName(name) {
 // Kept schema-agnostic (no explicit schema-qualified names) so the exact same DDL text is used
 // for the real `public` schema and every disposable per-test-file schema alike — routed by
 // each connection's `search_path`, set at connection-startup time in `openStore` below.
-const SCHEMA_SQL = `
+export const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
 
 CREATE TABLE IF NOT EXISTS users (
@@ -958,6 +960,8 @@ export async function openStore(filename, { poolMax } = {}) {
       await client.query(SEED_SQL);
       await client.query('INSERT INTO migrations VALUES (1, $1)', [new Date().toISOString()]);
     }
+    await client.query(DEMO_SCHEMA_SQL);
+    await client.query(MAIL_SCHEMA_SQL);
     await client.query(`CREATE TABLE IF NOT EXISTS refund_receipts (
       reference_id TEXT NOT NULL, reason TEXT NOT NULL, created_at BIGINT NOT NULL,
       PRIMARY KEY (reference_id, reason)

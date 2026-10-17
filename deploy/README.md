@@ -1,5 +1,7 @@
 # Deploying the API to a VPS
 
+For the current demo/email release, follow [Manual deployment and Resend activation](../docs/mail-deployment-2026-10-17.md), including webhook setup and post-deploy health checks.
+
 The frontend is built and hosted on Vercel from this same repo. This backend (Express +
 Postgres) runs separately, as a persistent process — Vercel does not run it.
 
@@ -17,6 +19,10 @@ next commands when it finishes.
 
 ## `.env` on the VPS
 
+The demo registration, saved progress, email queue, and administrator workflow are described in
+[Demo registration and account handoff](../docs/demo-flow.md). Deploy both API and frontend for
+these changes; the API applies the additive demo schema automatically on startup.
+
 Create `~/app/.env` (as the `lamid` user) by hand over SSH — never paste secrets into a chat
 tool. Required/relevant keys:
 
@@ -29,6 +35,7 @@ tool. Required/relevant keys:
 | `PAYSTACK_SECRET_KEY`     | Live secret key                                                                                                                                                                    |
 | `RESEND_API_KEY`          | or `SENDGRID_API_KEY`                                                                                                                                                              |
 | `MAIL_FROM`               | Sender address                                                                                                                                                                     |
+| `DEMO_PUBLIC_ORIGIN`      | Public frontend HTTPS origin for demo welcome links; defaults to the first `FRONTEND_ORIGINS` entry, then `PUBLIC_ORIGIN`. Demo registration requires a configured mail provider.  |
 | `TRUST_PROXY_HOPS`        | Set to `1` — nginx sits in front of the app, so this makes `req.ip` reflect the real client IP instead of nginx's, which matters for per-IP rate limiting                          |
 | `PORT`                    | Optional, defaults to `3000`                                                                                                                                                       |
 | `CLUSTER`                 | Optional, defaults to `true` in production (the app forks its own workers — see `server/index.mjs`)                                                                                |
@@ -72,6 +79,10 @@ su - lamid -c 'pm2 save'
 
 ## Redeploying after future changes
 
+See [release readiness](../docs/release-readiness.md) for the required test database, Chromium
+setup, release checks, diagnostics and non-destructive deployment smoke command. The redeploy
+script validates production configuration and passes the release gate before restarting the API.
+
 ```
 sudo su - lamid
 cd app
@@ -97,6 +108,11 @@ Should return `{"status":"ok"}`. Then load the Vercel frontend and confirm sign-
 work end to end (check the browser network tab for any CORS or cookie errors on first try).
 
 ## Reviewing errors
+
+For the deeper Resend, queue and frontend-link findings, see the
+[email readiness audit](../docs/email-readiness-audit-2026-10-16.md). Account links can use
+`ACCOUNT_PUBLIC_ORIGIN` when the frontend is hosted separately; otherwise they use the first
+`FRONTEND_ORIGINS` entry, then `PUBLIC_ORIGIN`. Include the chosen frontend in the allowlist.
 
 The API writes structured error records to stderr and to `data/logs/errors-YYYY-MM-DD.jsonl`
 (UTC dates). This includes HTTP responses with status 400 or higher, unexpected exceptions,

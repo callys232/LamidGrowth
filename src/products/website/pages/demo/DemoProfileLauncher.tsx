@@ -109,7 +109,8 @@ export function DemoProfileLauncher() {
         <h1 id="demo-launcher-title">Choose a profile. Step into its dashboard.</h1>
         <p>
           Every sample workspace has its own goals, projects with escrow, a dispute, job matches and
-          activity — fictional data, no login, nothing leaves your browser.
+          activity — fictional data, no password needed. Your demo progress is saved so you can
+          continue from your personal email link on another device.
         </p>
       </header>
 

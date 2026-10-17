@@ -5,6 +5,9 @@ import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import { documentAgentIds, useCompanionChat, type AgentManifest } from '../hooks/useCompanionChat';
 import { CompanionTasks } from '../components/CompanionTasks';
+import { Link } from 'react-router-dom';
+import { readDemoSession } from '../../workspace/sandbox/demoSession';
+import demoCapabilities from '../../../shared/demoCapabilities.json';
 
 const gateLabel: Record<AgentManifest['humanGate'], string> = {
   none: 'Observes only',
@@ -25,6 +28,28 @@ const QUICK_PICK_IDS = [
 
 /** /os/companion/chat — the multi-agent Companion chat surface. */
 export function CompanionChatPage() {
+  if (readDemoSession())
+    return (
+      <section className="companion-chat">
+        <h1>Explore the Companion</h1>
+        <p>
+          The sample workspace supports the decision and analysis engines included in your selected
+          tier. {demoCapabilities.features.ai.description}
+        </p>
+        <p>
+          <Link className="button button-primary" to="/os/engines">
+            Try your demo engines
+          </Link>
+        </p>
+        <p>
+          <Link to="/signup">Create your workspace</Link>
+        </p>
+      </section>
+    );
+  return <LiveCompanionChatPage />;
+}
+
+function LiveCompanionChatPage() {
   const [agents, setAgents] = useState<AgentManifest[]>([]);
   useEffect(() => {
     api<AgentManifest[]>('/companion/agents', undefined, 'GET')

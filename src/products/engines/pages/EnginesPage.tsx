@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Cpu, Lock, PlayCircle } from 'lucide-react';
+import { ArrowLeft, Cpu, Lock } from 'lucide-react';
 import { api } from '../../../api';
 import { Empty } from '../../../shared/ui/Empty';
 import { SkeletonList } from '../../../shared/ui/Skeleton';
@@ -53,8 +53,7 @@ export function EnginesPage() {
     const code = searchParams.get('engine') ?? searchParams.get('tool');
     return catalog?.engines.find((engine) => engine.code === code) ?? null;
   }, [catalog, searchParams]);
-  // The demo never loads a tool's server manifest: tools run only in a real workspace.
-  const run = useEngineRun(readDemoSession() ? null : (selected?.code ?? null));
+  const run = useEngineRun(selected?.code ?? null);
   const [coverage, setCoverage] = useState<Coverage | null>(null);
   useEffect(() => {
     api<Coverage>('/engines/catalog/coverage', undefined, 'GET')
@@ -124,7 +123,10 @@ export function EnginesPage() {
           </span>
           <div>
             <span className="ws-workbench-eyebrow">
-              {selected.area ?? selected.homeEngine} · {selected.pointsCost} points per run
+              {selected.area ?? selected.homeEngine} ·{' '}
+              {readDemoSession()
+                ? 'Demo run — no account points charged'
+                : `${selected.pointsCost} points per run`}
             </span>
             <h1>{selected.engineName}</h1>
             <p>{selected.standard ?? selected.seriesName}</p>
@@ -208,27 +210,13 @@ function EngineDetailPanel({
         </p>
       )}
 
-      {readDemoSession() ? (
-        // Tools calculate on the server; the sample workspace never sends data there.
-        <div className="ws-demo-run">
-          <PlayCircle size={22} aria-hidden="true" />
-          <div>
-            <strong>Running engines needs your own workspace</strong>
-            <p>
-              Every result is calculated on our servers from the figures you enter, so the sample
-              workspace can show what an engine measures but not run it.
-            </p>
-            <div className="ws-demo-run-actions">
-              <Link className="button button-primary" to="/signup">
-                Create your workspace
-              </Link>
-              <Link className="button button-secondary" to="/demo#try-decision-quality">
-                Try Decision Quality live
-              </Link>
-            </div>
-          </div>
-        </div>
-      ) : !manifest ? (
+      {readDemoSession() && (
+        <p>
+          Try any tool included in your selected demo tier. Inputs are sent to the server to
+          calculate your result; no account points are charged.
+        </p>
+      )}
+      {!manifest ? (
         <SkeletonList rows={3} />
       ) : result ? (
         <EngineResultView

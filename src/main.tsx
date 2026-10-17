@@ -16,6 +16,7 @@ import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import { reportClientError } from './errorReporting';
 import { readDemoSession } from './products/workspace/sandbox/demoSession';
+import { endDemoSession } from './products/workspace/sandbox/demoSession';
 import './styles.css';
 import './readability.css';
 import './design-system.css';
@@ -78,8 +79,12 @@ function start() {
 }
 // Demo visitors: load the in-browser sandbox and route every api() call to it before anything
 // renders. Everyone else never downloads the sandbox code.
-if (readDemoSession())
+if (readDemoSession() && window.location.pathname.startsWith('/os'))
   void import('./products/workspace/sandbox/session')
     .then(({ activateSandboxIfDemo }) => activateSandboxIfDemo())
+    .catch(() => {
+      endDemoSession();
+      window.location.replace('/demo');
+    })
     .finally(start);
 else start();

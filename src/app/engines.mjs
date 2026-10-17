@@ -560,8 +560,36 @@ function computeEngineRun(ref, input, kindOverride) {
     }
 
     case 'financial': {
-      if (!input.periods)
-        throw new EngineInputError('`periods` is required for a financial module.');
+      if (!Array.isArray(input.periods) || input.periods.length === 0)
+        throw new EngineInputError(
+          'Add at least one financial period with revenue, COGS and operating costs.',
+        );
+      for (const [index, period] of input.periods.entries()) {
+        if (!period || typeof period !== 'object' || Array.isArray(period))
+          throw new EngineInputError(
+            `Period ${index + 1} must contain revenue, COGS and operating costs.`,
+          );
+        for (const field of ['revenue', 'cogs', 'opex']) {
+          const value = period[field];
+          if (
+            !['number', 'string'].includes(typeof value) ||
+            String(value).trim() === '' ||
+            !Number.isFinite(Number(value))
+          )
+            throw new EngineInputError(`Period ${index + 1}: ${field} must be a finite number.`);
+        }
+      }
+      for (const field of ['cashBalance', 'headcount']) {
+        const value = input[field];
+        if (
+          value !== undefined &&
+          (!['number', 'string'].includes(typeof value) ||
+            String(value).trim() === '' ||
+            !Number.isFinite(Number(value)) ||
+            Number(value) < 0)
+        )
+          throw new EngineInputError(`${field} must be a finite, non-negative number.`);
+      }
       summary = computeFinancials(input);
       working = financialsToPrompt(summary);
       break;
@@ -786,28 +814,36 @@ export function mountPublicEngines(app) {
   });
 
   app.get('/api/engines/:code', async (req, res) => {
-    const r = resolve(req.params.code);
-    if (r.error) return res.status(r.status).json({ error: r.error, retired: r.retired });
-    const summary = manifestSummary(r.primary.code);
-    const kind = TOOLS[r.toolId].engine === 'existing' ? TOOLS[r.toolId].kind : null;
-    // A tool on an original archetype keeps that archetype's form spec (periods, metrics…).
-    const config = configFor(r.primary);
-    const inputs = kind ? { ...(config.inputs ?? {}), kind } : inputSpecFor(r.toolId);
-    res.json({
-      ...summary,
-      ...(r.ref.code !== r.primary.code ? { requestedCode: r.ref.code } : {}),
-      driverContext: null,
-      correctionProtocols: [],
-      inputs,
-      // A worked example (illustrative figures) the form can load so the tool opens in a working state.
-      example: EXAMPLES[r.toolId] ?? null,
-      // The fixed question bank Q44 (decision-quality) is scored against — the frontend needs
-      // this to render the form at all, since it isn't user-defined like the other archetypes.
-      ...(kind === 'decision-quality'
-        ? { decisionQuality: { requirements: REQUIREMENTS, questions: DQ_QUESTIONS } }
-        : {}),
-    });
+    const detail = demoEngineDetail(req.params.code);
+    if (detail.error)
+      return res.status(detail.status).json({ error: detail.error, retired: detail.retired });
+    res.json(detail);
   });
+}
+
+/** Shared public manifest, also used by verified demo tool execution. */
+export function demoEngineDetail(code) {
+  const r = resolve(code);
+  if (r.error) return r;
+  const summary = manifestSummary(r.primary.code);
+  const kind = TOOLS[r.toolId].engine === 'existing' ? TOOLS[r.toolId].kind : null;
+  // A tool on an original archetype keeps that archetype's form spec (periods, metrics…).
+  const config = configFor(r.primary);
+  const inputs = kind ? { ...(config.inputs ?? {}), kind } : inputSpecFor(r.toolId);
+  return {
+    ...summary,
+    ...(r.ref.code !== r.primary.code ? { requestedCode: r.ref.code } : {}),
+    driverContext: null,
+    correctionProtocols: [],
+    inputs,
+    // A worked example (illustrative figures) the form can load so the tool opens in a working state.
+    example: EXAMPLES[r.toolId] ?? null,
+    // The fixed question bank Q44 (decision-quality) is scored against — the frontend needs
+    // this to render the form at all, since it isn't user-defined like the other archetypes.
+    ...(kind === 'decision-quality'
+      ? { decisionQuality: { requirements: REQUIREMENTS, questions: DQ_QUESTIONS } }
+      : {}),
+  };
 }
 
 export function mountEngines(app, store) {

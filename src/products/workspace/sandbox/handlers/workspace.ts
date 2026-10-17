@@ -55,7 +55,8 @@ export const workspaceRoutes: SandboxRoute[] = [
     method: 'POST',
     pattern: '/objectives',
     handler: ({ store, body }) => {
-      const input = body as Omit<Objective, 'id' | 'version' | 'createdAt'>;
+      const input = { ...(body as Omit<Objective, 'id' | 'version' | 'createdAt'>) };
+      input.status ??= 'Active';
       if (input.status === 'Complete')
         throw new ApiError(
           'Create an active or paused objective, then review its completion.',
@@ -101,7 +102,8 @@ export const workspaceRoutes: SandboxRoute[] = [
     method: 'POST',
     pattern: '/actions',
     handler: ({ store, body }) => {
-      const input = body as Omit<Action, 'id' | 'version' | 'createdAt'>;
+      const input = { ...(body as Omit<Action, 'id' | 'version' | 'createdAt'>) };
+      input.status ??= 'Planned';
       if (input.status !== 'Planned') throw new ApiError('New actions must start as Planned.', 400);
       const data = record(store, 'action', input.title, input.status);
       const goal = data.state.objectives.find((o) => o.id === input.objectiveId);

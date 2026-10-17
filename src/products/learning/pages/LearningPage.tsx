@@ -19,6 +19,13 @@ export function LearningPage() {
         title="Learning"
         description="Paths you’re enrolled in, what’s due next, and what your team must complete."
       />
+      {page.isDemo && (
+        <p className="panel">
+          Explore learning with sample data. Progress is saved in your demo. Assessments use
+          self-reported scores; certificates are samples and do not create real credentials. No
+          points are charged.
+        </p>
+      )}
       <section className="panel">
         <div className="panel-heading">
           <div>
@@ -88,14 +95,20 @@ export function LearningPage() {
                     </small>
                   </span>
                   <StatusPill status={enrollment.status.replace('_', ' ')} />
-                  {enrollment.status === 'completed' && (
-                    <Button
-                      variant="secondary"
-                      disabled={page.busy}
-                      onClick={() => void page.issueCertificate(enrollment.id)}
-                    >
-                      Issue certificate
-                    </Button>
+                  {page.certificates.some(
+                    (certificate) => certificate.enrollment_id === enrollment.id,
+                  ) ? (
+                    <span>Sample certificate created</span>
+                  ) : (
+                    enrollment.status === 'completed' && (
+                      <Button
+                        variant="secondary"
+                        disabled={page.busy}
+                        onClick={() => void page.issueCertificate(enrollment.id)}
+                      >
+                        {page.isDemo ? 'Create sample certificate' : 'Issue certificate'}
+                      </Button>
+                    )
                   )}
                 </li>
               ))}
@@ -155,7 +168,7 @@ export function LearningPage() {
               <input name="domain" placeholder="Optional" />
             </Field>
             <Field label="Estimated hours">
-              <input name="estimatedHours" type="number" min={0} step="0.5" />
+              <input name="estimatedHours" type="number" min={0.5} max={1000} step="0.5" />
             </Field>
             <Field label="Points cost" hint="Leave blank for a free path">
               <input name="pointsCost" type="number" min={0} />
@@ -168,6 +181,45 @@ export function LearningPage() {
 
         <section className="panel settings-card">
           <h3>Catalog</h3>
+          {page.catalog.some(
+            (path) =>
+              path.created_by === page.userId &&
+              (!page.isDemo || !page.enrollments.some((row) => row.path_id === path.id)),
+          ) && (
+            <form onSubmit={page.addModule}>
+              <h4>Add a module</h4>
+              <p>Add modules to a path you created before enrolling.</p>
+              <Field label="Learning path">
+                <select name="pathId" required>
+                  {page.catalog
+                    .filter(
+                      (path) =>
+                        path.created_by === page.userId &&
+                        (!page.isDemo || !page.enrollments.some((row) => row.path_id === path.id)),
+                    )
+                    .map((path) => (
+                      <option key={path.id} value={path.id}>
+                        {path.title}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              <Field label="Module title">
+                <input name="title" required maxLength={200} />
+              </Field>
+              <Field label="Format">
+                <select name="format">
+                  <option value="reading">Reading</option>
+                  <option value="video">Video</option>
+                  <option value="exercise">Exercise</option>
+                  <option value="assessment">Assessment</option>
+                </select>
+              </Field>
+              <Button type="submit" disabled={page.busy}>
+                Add module
+              </Button>
+            </form>
+          )}
           <p>
             Every published path, platform-wide — filterable by the same domain/function/industry
             taxonomy used for experts.
@@ -193,8 +245,19 @@ export function LearningPage() {
                         : ''}
                     </small>
                   </span>
-                  <Button disabled={page.busy} onClick={() => void page.enroll(path.id)}>
-                    Enroll
+                  <Button
+                    disabled={
+                      page.busy ||
+                      page.enrollments.some((row) => row.path_id === path.id) ||
+                      !path.modules.length
+                    }
+                    onClick={() => void page.enroll(path.id)}
+                  >
+                    {page.enrollments.some((row) => row.path_id === path.id)
+                      ? 'Enrolled'
+                      : !path.modules.length
+                        ? 'Add modules first'
+                        : 'Enroll'}
                   </Button>
                 </li>
               ))}
@@ -223,6 +286,7 @@ export function LearningPage() {
                   page.enrollments.some((e) => e.path_id === path.id && e.status === 'in_progress'),
                 )
                 .flatMap((path) => path.modules.map((module) => ({ path, module })))
+                .filter(({ module }) => !page.completedModules.includes(module.id))
                 .map(({ path, module }) => (
                   <li key={module.id} className="activity-feed-row">
                     <span className="activity-feed-title">

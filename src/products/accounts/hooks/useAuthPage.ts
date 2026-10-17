@@ -1,5 +1,7 @@
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { endDemoSession } from '../../workspace/sandbox/demoSession';
+import { demoIdentity } from '../../workspace/sandbox/demoAccess';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../../../api';
 import { contexts } from '../../../shared/lib/contexts';
@@ -7,13 +9,16 @@ import type { Context } from '../../../types';
 import { returnDestination } from '../returnDestination';
 
 function contextFromParams(params: URLSearchParams): Context {
-  const requested = params.get('context');
+  const requested = params.get('context') || demoIdentity()?.profile;
   return (contexts as readonly string[]).includes(requested ?? '')
     ? (requested as Context)
     : 'Professional';
 }
 
 export function useAuthPage({ login = false }: { login?: boolean }) {
+  useEffect(() => {
+    endDemoSession();
+  }, []);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [step, setStep] = useState(login ? 1 : 0);
@@ -58,16 +63,7 @@ export function useAuthPage({ login = false }: { login?: boolean }) {
     }
   }
   async function demo() {
-    setBusy(true);
-    setError('');
-    try {
-      await api('/auth/demo', {});
-      navigate('/os');
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
+    navigate('/demo');
   }
   return {
     login,

@@ -1,4 +1,4 @@
-import pages from '../../content/catalog';
+import pages from '../../content/pageIndex';
 export function documentRoute(path: string) {
   return path.startsWith('/os/workflows/') ? '/os/workflows/[id]' : path;
 }

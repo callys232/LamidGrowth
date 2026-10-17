@@ -8,7 +8,9 @@ import {
 } from 'node:crypto';
 import { z } from 'zod';
 import { hashPassword, verifyPassword, seedWorkspace } from '../../server/store.mjs';
-import { createMailOutbox, defaultMailer } from './mail.mjs';
+import { createMailOutbox, defaultMailer, mailFrontendOrigin } from './mail.mjs';
+import { accountAccessEmail } from './emails/accountAccess.mjs';
+import { mountDemoAccess } from './demoAccess.mjs';
 import { createRateLimiter } from './ratelimit.mjs';
 import { welcomeRewardPoints } from './rewards.mjs';
 import {
@@ -51,6 +53,9 @@ export async function mountAccounts(
     mailProvider = defaultMailer(),
     securityKey = process.env.ACCOUNT_SECURITY_KEY,
     publicOrigin = process.env.PUBLIC_ORIGIN || 'http://localhost:3000',
+    accountPublicOrigin = process.env.ACCOUNT_PUBLIC_ORIGIN ||
+      process.env.FRONTEND_ORIGINS?.split(',')[0]?.trim() ||
+      publicOrigin,
     welcomeIpVelocityLimit = 3,
     errorLogger,
     ecosystemAdminEmails = [],
@@ -72,7 +77,9 @@ export async function mountAccounts(
   const key = Buffer.from(securityKey, 'hex');
   const sign = (s) => createHmac('sha256', key).update(s).digest('hex');
   const mail = createMailOutbox(store, mailProvider, key, errorLogger);
+  const mailWorkerId = `${process.pid}:${randomUUID()}`;
   const origin = new URL(publicOrigin);
+  const accountOrigin = mailFrontendOrigin({ origin: accountPublicOrigin, production });
   if (production && (origin.protocol !== 'https:' || origin.username || origin.password))
     throw new Error('PUBLIC_ORIGIN must be an HTTPS origin in production.');
   // Preserve established accounts and balances; never give them a second signup reward.
@@ -125,6 +132,13 @@ export async function mountAccounts(
     if (production && !mail.configured)
       fail('Account email delivery is temporarily unavailable. Please try again later.', 503);
   }
+  const demo = mountDemoAccess(app, store, {
+    provider: mailProvider,
+    key,
+    origin: origin.origin,
+    production,
+    errorLogger,
+  });
   function device(req, res) {
     const raw = (req.headers.cookie || '')
       .split(';')
@@ -171,7 +185,7 @@ export async function mountAccounts(
     // An older queued email must not arrive after a new challenge was issued.
     await db
       .prepare(
-        "UPDATE mail_outbox SET status = 'superseded', payload = '' WHERE user_id = ? AND status = 'pending'",
+        "UPDATE mail_outbox SET status = 'superseded', payload = '', lease_until = NULL WHERE user_id = ? AND status IN ('pending', 'sending')",
       )
       .run(user.id);
     await db
@@ -181,20 +195,13 @@ export async function mountAccounts(
       .prepare('INSERT INTO account_tokens VALUES (?, ?, ?, ?, ?, NULL, ?)')
       .run(id, user.id, purpose, digest(token), expires, Date.now());
     const path = purpose === 'verification' ? '/verify' : '/reset-password';
-    const link = `${origin.origin}${path}?token=${token}`;
+    const link = `${accountOrigin.origin}${path}?token=${token}`;
     await mail.enqueue(
       id,
       user.id,
       {
         to: user.email,
-        subject:
-          purpose === 'verification'
-            ? 'Verify your LAMID ONE account'
-            : 'Reset your LAMID ONE password',
-        text:
-          purpose === 'verification'
-            ? `Your verification code is ${code}. It expires in 10 minutes.\n\nYou can also verify here: ${link}\n\nIf you did not request this, ignore this email.`
-            : `Reset your password using this single-use link, valid for 10 minutes:\n${link}\n\nIf you did not request this, ignore this email.`,
+        ...accountAccessEmail({ purpose, code, link }),
       },
       expires,
     );
@@ -464,6 +471,18 @@ export async function mountAccounts(
       await db
         .prepare('UPDATE users SET verified_at = COALESCE(verified_at, ?) WHERE id = ?')
         .run(Date.now(), userId);
+      const verifiedUser = await db.prepare('SELECT email FROM users WHERE id = ?').get(userId);
+      const converted = await db
+        .prepare(
+          'UPDATE demo_registrations SET converted_at = COALESCE(converted_at, ?) WHERE email = ? RETURNING id',
+        )
+        .get(Date.now(), verifiedUser.email);
+      if (converted)
+        await db
+          .prepare(
+            "UPDATE demo_mail_outbox SET status = 'cancelled', payload = '', lease_until = NULL WHERE id = ? AND status IN ('pending', 'sending')",
+          )
+          .run(`demo-followup:${converted.id}`);
       return award(userId);
     });
     if (!result)
@@ -569,11 +588,9 @@ export async function mountAccounts(
       )
       .get(tokenHash, Date.now());
     if (!pending)
-      return res
-        .status(400)
-        .json({
-          error: 'This verification challenge is invalid or expired. Please sign in again.',
-        });
+      return res.status(400).json({
+        error: 'This verification challenge is invalid or expired. Please sign in again.',
+      });
     const secretRow = await db
       .prepare('SELECT secret_encrypted FROM mfa_secrets WHERE user_id = ?')
       .get(pending.user_id);
@@ -683,5 +700,32 @@ export async function mountAccounts(
     },
   };
 
-  return { mail, credit, mfa };
+  return {
+    resendDemoWelcome: demo.resendWelcome,
+    mail: {
+      configured: mail.configured,
+      async tick() {
+        await db
+          .prepare(
+            'INSERT INTO mail_worker_health (worker_id, started_at) VALUES (?, ?) ON CONFLICT (worker_id) DO UPDATE SET started_at = EXCLUDED.started_at',
+          )
+          .run(mailWorkerId, Date.now());
+        try {
+          await mail.tick();
+          await demo.mail.tick();
+          await db
+            .prepare('UPDATE mail_worker_health SET completed_at = ? WHERE worker_id = ?')
+            .run(Date.now(), mailWorkerId);
+        } catch (error) {
+          await db
+            .prepare('UPDATE mail_worker_health SET failed_at = ? WHERE worker_id = ?')
+            .run(Date.now(), mailWorkerId)
+            .catch(() => {});
+          throw error;
+        }
+      },
+    },
+    credit,
+    mfa,
+  };
 }

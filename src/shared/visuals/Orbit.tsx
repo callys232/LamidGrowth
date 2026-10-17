@@ -7,6 +7,12 @@ export function OrbitVisual({ small = false }: { small?: boolean }) {
   useEffect(() => {
     const host = ref.current;
     if (!host) return;
+    // Keep the CSS visual on small screens and when motion is reduced. Avoid downloading
+    // WebGL solely for decoration on devices where it adds cost without useful information.
+    if (reduced || window.matchMedia('(max-width: 640px)').matches) {
+      host.dataset.renderer = 'fallback';
+      return;
+    }
     let disposed = false;
     let cleanup: (() => void) | undefined;
     const observer = new IntersectionObserver(

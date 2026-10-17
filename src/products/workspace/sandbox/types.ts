@@ -9,6 +9,7 @@ import type {
 } from '../../talent/hooks/useTalentPage';
 import type { ActivityItem } from '../hooks/useActivityFeed';
 import type { Dispute } from '../../commercial/pages/DisputesPage';
+import type { LearningEnrollment, LearningPath } from '../../learning/hooks/useLearningPage';
 import type {
   Bid,
   JobWatch,
@@ -22,6 +23,13 @@ export const SANDBOX_SCHEMA_VERSION = 2;
 
 /** Everything one demo persona's workspace holds, in the shapes the real endpoints return. */
 export type SandboxData = {
+  learning?: {
+    paths: LearningPath[];
+    enrollments: LearningEnrollment[];
+    completions: Record<string, { score: number | null; graded: false }>;
+    feedback: Record<string, { rating: number; comment: string }>;
+    certificates: Record<string, { id: string; enrollment_id: string; demo: true }>;
+  };
   /** When each notification was marked read in this demo session, keyed by notification id. */
   readNotices?: Record<string, string>;
   /** KPI values recorded in this demo session, keyed by KPI id. */
