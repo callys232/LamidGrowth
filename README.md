@@ -1,5 +1,7 @@
 # LAMID ONE
 
+**Current handover:** The [digitalization, administrator and technical documentation pack](docs/handover/README.md) includes six updated Markdown/PDF documents and a generated source inventory. Regenerate with `node scripts/build-handover-docs.mjs`.
+
 **Backend routes:** Express route modules are in [`src/app`](src/app/README.md). Server startup and SQLite persistence remain in `server/`.
 
 **Frontend editing:** Pages now live in named [product folders](src/products/README.md), with reusable slides, local components and state hooks. Start with the [page/component editing guide](docs/PAGE_COMPONENT_GUIDE.md). The homepage has its own [composition and styles](src/products/website/pages/home/README.md).
