@@ -1,0 +1,79 @@
+.user-guide {
+  grid-column: 1 / -1;
+  min-width: 0;
+  width: 100%;
+}
+#user-guide-title {
+  scroll-margin-top: 7rem;
+}
+.user-guide header {
+  max-width: 48rem;
+  margin-bottom: 2rem;
+}
+.user-guide label {
+  display: block;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+.user-guide input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.user-guide-layout {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
+  gap: 2rem;
+  align-items: start;
+}
+.user-guide nav ol {
+  padding-left: 1.4rem;
+  margin-top: 0;
+}
+.user-guide li {
+  padding-left: 0.2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.65;
+}
+.user-guide article {
+  scroll-margin-top: 7rem;
+  border-top: 1px solid currentColor;
+  padding: 1.5rem 0;
+  overflow-wrap: anywhere;
+}
+.user-guide article h3 {
+  margin-top: 0;
+}
+.user-guide article ol {
+  padding-left: 1.4rem;
+}
+.user-guide-note {
+  border-left: 3px solid currentColor;
+  padding-left: 1rem;
+}
+.user-guide-links {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+.user-guide a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.user-guide :focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .user-guide-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}

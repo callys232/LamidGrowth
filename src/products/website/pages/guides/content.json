@@ -6,19 +6,19 @@
   "route": "/guides",
   "indexing": "index, follow",
   "canonical": "/guides",
-  "seo_title": "Guides | LAMID ONE",
-  "meta_description": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
-  "title": "Practical Guidance for Real Work.",
-  "description": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
+  "seo_title": "User Guide | LAMID ONE",
+  "meta_description": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
+  "title": "Your LAMID ONE User Guide.",
+  "description": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
   "hero": {
-    "title": "Practical Guidance for Real Work.",
+    "title": "Your LAMID ONE User Guide.",
     "paragraphs": [
       {
-        "text": "Practical Guidance for Real Work.",
+        "text": "Your LAMID ONE User Guide.",
         "sourceParagraph": 755
       },
       {
-        "text": "Use frameworks, playbooks, and structured approaches for decisions, capability, teams, and execution.",
+        "text": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
         "sourceParagraph": 756
       },
       {

@@ -63,7 +63,7 @@ export const destinations: Record<string, string> = {
   'Explore Resources': '/resources',
   'Browse Insights': '/insights',
   'Browse playbooks': '/insights#playbook-library',
-  'Browse Guides': '/guides',
+  'Browse Guides': '/guides#user-guide-title',
   'Browse Case Studies': '/case-studies',
   'Explore Research': '/research',
   'Browse Product Guides': '/help/product',

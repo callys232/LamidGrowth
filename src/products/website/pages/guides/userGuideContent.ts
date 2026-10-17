@@ -1,0 +1,175 @@
+// Edit user-facing instructions here. Keep links and button names aligned with the product.
+export const userGuideTopics = [
+  {
+    id: 'try-demo',
+    title: 'Try the demo',
+    summary: 'Explore a sample workspace before creating an account.',
+    steps: [
+      'Open the demo and enter your name and email address. Choose the optional reminder only if you want a follow-up.',
+      'Open the welcome email and follow your personal confirmation link. Check spam or junk if it has not arrived.',
+      'Choose a profile and tier, then explore the tools included in that tier. A locked tool belongs to another tier.',
+      'Keep your personal link to return to saved demo progress, including on another device. Wait for the save confirmation before leaving.',
+    ],
+    note: 'One demo registration is allowed per IP address, including shared office or home networks. Return through your existing email link rather than registering again. The link lasts 30 days. Demo data is fictional, tool runs cost no points, and demo work is separate from your real account.',
+    links: [{ label: 'Open demo', to: '/demo' }],
+  },
+  {
+    id: 'create-account',
+    title: 'Create and verify your account',
+    summary: 'Move from the demo to a workspace of your own.',
+    steps: [
+      'Choose the account signup option from your verified demo journey. Your demo name and email should already be filled in.',
+      'Review those details and complete the signup form. Use the same email to connect the demo registration with your account.',
+      'Open the account verification email and use its link or verification code before it expires. Account verification challenges last 10 minutes.',
+      'Sign in and choose the workspace you want to use. Your new workspace contains your real work; sample demo records are not copied into it.',
+    ],
+    note: 'Entering the same email directly on a new signup page does not prove ownership. Complete email verification even if you already explored the demo.',
+    links: [
+      { label: 'Create account', to: '/signup' },
+      { label: 'Sign in', to: '/login' },
+    ],
+  },
+  {
+    id: 'find-your-work',
+    title: 'Find your way around',
+    summary: 'Check your workspace and find the right tool.',
+    steps: [
+      'Start at Overview to see the current workspace. Check the workspace selector before creating or changing records.',
+      'Open Today to see work that needs attention. Use the sidebar to move between work, people, intelligence and account tools.',
+      'Use workspace search, or press Ctrl+K on Windows and Command+K on Mac, to find a page quickly.',
+      'On a small screen, open the navigation menu to reach the same tools. User guide is available near Settings.',
+    ],
+    note: 'Available tools and actions depend on your selected plan, workspace and role. Some tools appear under More tools.',
+    links: [
+      { label: 'Overview', to: '/os' },
+      { label: 'Today', to: '/os/today' },
+    ],
+  },
+  {
+    id: 'objectives-actions',
+    title: 'Set an objective and take action',
+    summary: 'Turn an intended outcome into work you can follow through.',
+    steps: [
+      'Open Clarity and create an objective. Give it a specific outcome and enough context to explain why it matters.',
+      'Add an action and connect it to the objective where appropriate. Choose an owner and due date when the form offers them.',
+      'Review your actions in Consistency or Today. Update each status as work progresses.',
+      'Review progress against the intended outcome. If an approval is required, send the work through that approval rather than treating completion as approval.',
+    ],
+    note: 'Start with one objective and one useful next action. You can add more structure as your work develops.',
+    links: [
+      { label: 'Clarity', to: '/os/clarity' },
+      { label: 'Consistency', to: '/os/consistency' },
+    ],
+  },
+  {
+    id: 'run-tools',
+    title: 'Run a decision tool',
+    summary: 'Find an engine, enter inputs and interpret its result.',
+    steps: [
+      'Open Engines and search or browse for the decision you need to make.',
+      'Read the tool description, required inputs and any method notes. Use an example to understand the expected format before entering your own data.',
+      'Complete the form and correct any validation messages. Review the displayed points cost before running a tool in a real account.',
+      'Read the result alongside its assumptions and your evidence. Use it to support a decision and decide the next action yourself.',
+    ],
+    note: 'The selected demo tier controls which tools you can run. Demo runs do not spend points. A calculated result does not replace professional review or establish that every assumption is correct.',
+    links: [{ label: 'Engines', to: '/os/engines' }],
+  },
+  {
+    id: 'learning',
+    title: 'Follow a learning path',
+    summary: 'Enroll, work through modules and check your progress.',
+    steps: [
+      'Open Learning and choose a path relevant to a capability you want to develop.',
+      'Review the path details and enroll where the option is available.',
+      'Work through the modules in order. Record completion and any assessment information requested by the path.',
+      'Return to your enrollment to review progress and leave feedback when available.',
+    ],
+    note: 'Demo assessment scores are self-reported. Demo certificates are samples and do not create real credentials.',
+    links: [
+      { label: 'Learning', to: '/os/learning' },
+      { label: 'Capability', to: '/os/capability' },
+    ],
+  },
+  {
+    id: 'work-with-others',
+    title: 'Work with a team',
+    summary: 'Keep membership, responsibilities and shared work in the right workspace.',
+    steps: [
+      'Select the team workspace before opening shared work.',
+      'Use Members to review membership or invite people if your role allows it. Use Teams to organize the groups you work with.',
+      'Agree who owns each action and who reviews or approves it. Check the owner and status before handing work over.',
+      'If an action is unavailable, ask a workspace administrator to check your role and the workspace plan.',
+    ],
+    note: 'Changing a demo profile explores another sample context; it does not change your real membership or permissions.',
+    links: [
+      { label: 'Members', to: '/os/settings/members' },
+      { label: 'Teams', to: '/os/teams' },
+    ],
+  },
+  {
+    id: 'review-progress',
+    title: 'Build a weekly review habit',
+    summary: 'Use a short review to keep priorities and follow-through connected.',
+    steps: [
+      'Open Today and review overdue work and items needing attention.',
+      'Check Progress against your objectives. Look at what changed, not only the number of completed actions.',
+      'Use Rhythm to review your routine and decide what should continue, change or stop.',
+      'Choose the next useful action and confirm its owner and timing. Use the Companion for help thinking through the situation when available.',
+    ],
+    note: 'Review suggestions before acting on them. You remain responsible for decisions, approvals and changes to your work.',
+    links: [
+      { label: 'Progress', to: '/os/progress' },
+      { label: 'Rhythm', to: '/os/rhythm' },
+      { label: 'Companion', to: '/os/companion' },
+    ],
+  },
+  {
+    id: 'plans-points',
+    title: 'Understand plans and points',
+    summary: 'Check access and costs before using paid features.',
+    steps: [
+      'Review Pricing to compare plan access. A tool being listed does not mean every plan includes it.',
+      'Check your workspace balance and the cost shown for an operation before confirming it.',
+      'If you have insufficient points or a locked feature, review your plan or ask the person responsible for workspace billing.',
+      'Review Finance for the records available to your role. Check the outcome of a payment before trying it again.',
+    ],
+    note: 'Real-account operations may spend points. Demo exploration does not authorize a purchase or charge points.',
+    links: [
+      { label: 'Pricing', to: '/pricing' },
+      { label: 'Finance', to: '/os/finance' },
+    ],
+  },
+  {
+    id: 'account-security',
+    title: 'Recover access and protect your account',
+    summary: 'Handle forgotten passwords and personal access links.',
+    steps: [
+      'If you forgot your password, open password recovery and enter your account email.',
+      'Open the recovery message and use its single-use link within 10 minutes. Request a new message if the challenge expires.',
+      'Review account settings and the security options available to you. Sign out when you finish on a shared device.',
+      'Keep passwords, verification codes and personal demo links private. Send support a description of the problem rather than those credentials.',
+    ],
+    note: 'A demo return link resumes a sample workspace. It is separate from your real-account password recovery link.',
+    links: [
+      { label: 'Recover password', to: '/forgot-password' },
+      { label: 'Account help', to: '/help/account' },
+    ],
+  },
+  {
+    id: 'troubleshooting',
+    title: 'Get unstuck',
+    summary: 'Resolve missing email, save problems, expired links or unavailable tools.',
+    steps: [
+      'Missing email: check the address you entered, spam and junk folders. If it still does not arrive, contact support with the approximate request time.',
+      'Demo already used on this IP: find the original welcome email and return through that link. A shared network also shares the one-registration limit.',
+      'Save pending or failed: keep the demo open, check your connection and use the retry option. If another tab or device changed the same demo, follow the conflict notice before continuing.',
+      'Expired link or locked feature: use the correct account recovery flow or ask support about demo access; check the selected tier and your workspace role for tool access.',
+      'When contacting support, include the page, what you were trying to do and any displayed request reference. Leave out passwords, codes, private links and sensitive input data.',
+    ],
+    note: 'Support can investigate delivery or access problems. Repeated registration attempts do not bypass the one-demo-per-IP rule.',
+    links: [
+      { label: 'Contact support', to: '/support' },
+      { label: 'Help centre', to: '/help' },
+    ],
+  },
+];

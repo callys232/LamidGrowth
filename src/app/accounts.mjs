@@ -351,6 +351,7 @@ export async function mountAccounts(
             'INSERT INTO users (id,email,password,name,demo,created_at,verified_at,disabled_at,points_balance) VALUES (?,?,?,?,0,?,NULL,NULL,0)',
           )
           .run(user, input.email, password, input.name, new Date().toISOString());
+        await db.prepare('INSERT INTO user_guide_onboarding (user_id) VALUES (?)').run(user);
         // AU-03 fix: `context` is a self-described audience label used only for onboarding/UX
         // tailoring — it must never itself confer a paid/verified entitlement tier. Every new
         // workspace starts at the lowest tier regardless of which audience the signer-upper

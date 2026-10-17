@@ -208,6 +208,10 @@ function sanitizeSchemaName(name) {
 // Kept schema-agnostic (no explicit schema-qualified names) so the exact same DDL text is used
 // for the real `public` schema and every disposable per-test-file schema alike — routed by
 // each connection's `search_path`, set at connection-startup time in `openStore` below.
+export const ONBOARDING_SCHEMA_SQL = `CREATE TABLE IF NOT EXISTS user_guide_onboarding (
+  user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  first_shown_at BIGINT
+);`;
 export const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
 
@@ -216,6 +220,7 @@ CREATE TABLE IF NOT EXISTS users (
   demo INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL,
   verified_at BIGINT, disabled_at BIGINT, points_balance INTEGER NOT NULL DEFAULT 0
 );
+${ONBOARDING_SCHEMA_SQL}
 CREATE TABLE IF NOT EXISTS workspaces (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL UNIQUE REFERENCES users(id), name TEXT NOT NULL,
   context TEXT NOT NULL, tier TEXT NOT NULL DEFAULT 'individual', member_limit INTEGER NOT NULL DEFAULT 1
@@ -962,6 +967,7 @@ export async function openStore(filename, { poolMax } = {}) {
     }
     await client.query(DEMO_SCHEMA_SQL);
     await client.query(MAIL_SCHEMA_SQL);
+    await client.query(ONBOARDING_SCHEMA_SQL);
     await client.query(`CREATE TABLE IF NOT EXISTS refund_receipts (
       reference_id TEXT NOT NULL, reason TEXT NOT NULL, created_at BIGINT NOT NULL,
       PRIMARY KEY (reference_id, reason)

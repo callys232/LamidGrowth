@@ -1,4 +1,5 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
+import { Link } from 'react-router-dom';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
 import { HelpHeroSlide, BrowseByNeedSlide1, GetUnblockedQuicklySlide2 } from './slides';
@@ -11,6 +12,10 @@ export function HelpDocumentPage({ embedded = false }: DocumentPageProps) {
       embedded={embedded}
       hero={<HelpHeroSlide embedded={embedded} />}
     >
+      <p>
+        <Link to="/guides#user-guide-title">Open the user guide</Link> for demo setup, account
+        creation, workspace tools and troubleshooting.
+      </p>
       <BrowseByNeedSlide1 embedded={embedded} />
       <GetUnblockedQuicklySlide2 embedded={embedded} />
     </DocumentPageLayout>

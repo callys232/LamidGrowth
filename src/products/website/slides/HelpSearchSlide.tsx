@@ -6,7 +6,7 @@ export function HelpSearchSlide() {
   const [query, setQuery] = useState('');
   const matches = pages.filter(
     (page) =>
-      page.route.startsWith('/help/') &&
+      (page.route.startsWith('/help/') || page.route === '/guides') &&
       `${page.title} ${page.description}`.toLowerCase().includes(query.toLowerCase()),
   );
   return (

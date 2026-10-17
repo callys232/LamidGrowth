@@ -1,6 +1,7 @@
 import {
   ArrowUpRight,
   Bell,
+  BookOpen,
   Check,
   ChevronDown,
   Command,
@@ -29,6 +30,7 @@ import { PROFILES, TIERS, type DemoProfile, type DemoTier } from '../demo/person
 import { endDemoSession, readDemoSession, startDemoSession } from '../sandbox/demoSession';
 import { trackDemo } from '../sandbox/demoAccess';
 import { DemoProgressNotice } from '../../website/pages/demo/DemoProgressNotice';
+import { FirstSignupGuide } from '../../accounts/components/FirstSignupGuide';
 import { useWorkspaceActivity } from '../hooks/useWorkspaceActivity';
 import { pageTheme } from '../../../pageThemes';
 import { domainForPath } from '../../../shared/workspace/domains';
@@ -303,6 +305,10 @@ export function WorkspaceShell() {
           </NavLink>
         </nav>
         <div className="sidebar-bottom">
+          <Link to="/guides#user-guide-title" className="sidebar-link">
+            <BookOpen size={18} />
+            User guide
+          </Link>
           <div className="control-note">
             <ShieldCheck size={16} />
             <span>
@@ -480,6 +486,7 @@ export function WorkspaceShell() {
           </button>
         </div>
       )}
+      <FirstSignupGuide userId={state.user.id} demo={state.user.demo} />
       {modal === 'objective' && (
         <ObjectiveForm
           context={state.workspace.context}

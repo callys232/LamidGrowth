@@ -71,6 +71,18 @@ test(
       context: 'SME',
     });
     assert.equal(signup.status, 201, JSON.stringify(signup.data));
+    const newUser = await store.db
+      .prepare('SELECT id FROM users WHERE email = ?')
+      .get('conversion@example.test');
+    assert.equal(
+      (
+        await store.db
+          .prepare('SELECT first_shown_at FROM user_guide_onboarding WHERE user_id = ?')
+          .get(newUser.id)
+      ).first_shown_at,
+      null,
+      'Signup creates one pending user-guide offer',
+    );
     await accounts.mail.tick();
     assert.match(captured[0].text, /https:\/\/app\.example\.test\/verify\?token=/);
     assert.ok(!captured[0].text.includes('https://api.example.test'));

@@ -13,6 +13,7 @@ import { mountDemoAdmin } from './demoAccess.mjs';
 import { mountResendWebhook } from './mailDelivery.mjs';
 import { mountMailOperations } from './mailOperations.mjs';
 import { defaultMailer } from './mail.mjs';
+import { mountUserGuideOnboarding } from './onboarding.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
 import { mountAI, defaultAiProvider, reviewSchema as aiReviewSchema } from './ai.mjs';
@@ -542,6 +543,7 @@ export async function createApp({
     res.json({ ok: true });
   });
   mountDemoAdmin(app, store, ecosystemAdminEmails, { resendWelcome: accounts.resendDemoWelcome });
+  mountUserGuideOnboarding(app, store);
   mountMailOperations(app, store, {
     adminEmails: ecosystemAdminEmails,
     provider: mailProvider || defaultMailer(),
