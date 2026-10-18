@@ -45,10 +45,11 @@ cat <<'EOF'
 ==> Base provisioning done. Next steps (as the 'lamid' user):
 
   sudo su - lamid
-  git clone https://github.com/callys232/LamidGrowth.git app
+  git clone --filter=blob:none --sparse https://github.com/callys232/LamidGrowth.git app
   cd app
+  git sparse-checkout set --no-cone '/*' '!/lamiddoc/'
   npm ci
-  nano .env               # paste production secrets — see deploy/README.md
+  nano .env               # production settings: GitHub lamiddoc/deploy/README.md
   npm run build
   pm2 start deploy/ecosystem.config.cjs
   pm2 save

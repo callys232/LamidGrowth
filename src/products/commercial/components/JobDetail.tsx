@@ -8,7 +8,7 @@ import {
   ListChecks,
   NotebookText,
 } from 'lucide-react';
-import { api } from '../../../api';
+import { api, apiUrl } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import { Modal } from '../../../shared/ui/Modal';
@@ -273,7 +273,7 @@ export function JobDetail({
             <p>{toolResult.response}</p>
             <a
               className="button button-secondary"
-              href={`/api/agent-runs/${toolResult.runId}/pdf`}
+              href={apiUrl(`/agent-runs/${toolResult.runId}/pdf`)}
               target="_blank"
               rel="noreferrer"
             >

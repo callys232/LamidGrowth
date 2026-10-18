@@ -370,7 +370,11 @@ export function WorkspaceShell() {
             <span>{String(current)}</span>
           </div>
           <div>
-            <button className="search-button" onClick={() => setModal('search')}>
+            <button
+              className="search-button"
+              aria-label="Search workspace"
+              onClick={() => setModal('search')}
+            >
               <Search size={16} />
               <span>Search your workspace</span>
               <kbd>
@@ -391,7 +395,7 @@ export function WorkspaceShell() {
           </div>
         </header>
         {state.user.demo && (
-          <div className="demo-banner">
+          <div className="demo-banner" role="region" aria-label="Demo controls">
             <span>
               <span className="gold-dot" /> Your own sample workspace. Explore freely; changes are
               saved for your next visit. Keep your personal email link to return.

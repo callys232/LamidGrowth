@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { writeProductContent, readProductPages } from './page-content.mjs';
 
 export function importPithyCopy() {
-  const source = JSON.parse(readFileSync('document-study/pithy-v1.4-source.json', 'utf8'));
+  const source = JSON.parse(readFileSync('lamiddoc/document-study/pithy-v1.4-source.json', 'utf8'));
   const paragraphs = source.paragraphs;
   const previous = readProductPages();
   const starts = paragraphs.flatMap((p, i) => (p.style === 'RouteMeta' ? [i] : []));

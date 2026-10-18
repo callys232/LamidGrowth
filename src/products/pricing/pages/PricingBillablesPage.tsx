@@ -91,8 +91,17 @@ export function PricingBillablesPage() {
                   {pendingBundle.extraPoints > 0 && (
                     <> plus {pendingBundle.extraPoints} extra points</>
                   )}
-                  . We've filled in the total below — {pendingBundle.totalPoints} points.
+                  . The server confirms current prices at checkout. Buying points alone below does
+                  not unlock tools.
                 </p>
+                <Button
+                  disabled={page.busy}
+                  onClick={() =>
+                    void page.purchaseCustomBundle(pendingBundle.toolIds, pendingBundle.extraPoints)
+                  }
+                >
+                  Buy selected tools and points (one-time)
+                </Button>
                 <Button variant="ghost" onClick={dismissPendingBundle}>
                   Dismiss
                 </Button>
@@ -124,7 +133,6 @@ export function PricingBillablesPage() {
                 <Button
                   disabled={page.busy || customPoints < 1}
                   onClick={() => {
-                    if (pendingBundle) clearPendingBundle();
                     void page.purchasePoints(customPoints);
                   }}
                 >
@@ -148,7 +156,9 @@ export function PricingBillablesPage() {
                         <br />
                         <small>
                           {bundle.description} · {bundle.points_included} points ·{' '}
-                          {bundle.billing_cycle === 'monthly' ? 'per month' : 'one-time'}
+                          {bundle.billing_cycle === 'monthly'
+                            ? 'Unavailable: billing terms need updating'
+                            : 'one-time'}
                           {bundle.items.length > 0 && (
                             <> · includes {bundle.items.map((i) => i.name).join(', ')}</>
                           )}
@@ -156,7 +166,7 @@ export function PricingBillablesPage() {
                       </span>
                       <StatusPill status={formatMinor(bundle.price_minor, bundle.currency)} />
                       <Button
-                        disabled={page.busy}
+                        disabled={page.busy || bundle.billing_cycle !== 'one_time'}
                         onClick={() => void page.purchaseBundle(bundle.id)}
                       >
                         Buy bundle
@@ -244,7 +254,6 @@ export function PricingBillablesPage() {
                 <Field label="Billing cycle">
                   <select name="billingCycle" defaultValue="one_time">
                     <option value="one_time">One-time</option>
-                    <option value="monthly">Monthly</option>
                   </select>
                 </Field>
                 <Field

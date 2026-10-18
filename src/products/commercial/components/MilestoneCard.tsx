@@ -1,6 +1,6 @@
 import { CheckCircle2, CircleDashed, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { api } from '../../../api';
+import { api, apiUrl } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import type { Milestone, MilestoneFunding, VerificationCase } from '../hooks/useProjectsPage';
@@ -98,12 +98,30 @@ export function MilestoneCard({
   const [verificationConsent, setVerificationConsent] = useState(false);
   const [lastVerification, setLastVerification] = useState<VerificationCase | null>(null);
   const [funding, setFunding] = useState<MilestoneFunding | null>(null);
+  const [fundingLoading, setFundingLoading] = useState(Boolean(onLoadFunding));
+  const [fundingError, setFundingError] = useState('');
   const [invoice, setInvoice] = useState<{ runId: string; response: string } | null>(null);
   const [invoicing, setInvoicing] = useState(false);
   const [invoiceError, setInvoiceError] = useState('');
 
   useEffect(() => {
-    if (onLoadFunding) void onLoadFunding(milestone.id).then(setFunding);
+    let active = true;
+    if (!onLoadFunding) return;
+    setFundingLoading(true);
+    setFundingError('');
+    void onLoadFunding(milestone.id)
+      .then((value) => {
+        if (active) setFunding(value);
+      })
+      .catch((error) => {
+        if (active) setFundingError((error as Error).message);
+      })
+      .finally(() => {
+        if (active) setFundingLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, [milestone.id, milestone.status, onLoadFunding]);
 
   const latestSubmission = milestone.submissions[0];
@@ -176,8 +194,22 @@ export function MilestoneCard({
       {(onFund || onRelease) && (
         <div style={{ paddingLeft: 38, display: 'flex', alignItems: 'center', gap: 8 }}>
           <small>Escrow: </small>
-          <StatusPill status={funding?.status ?? 'not funded'} />
-          {isClient && onFund && !funding && (
+          <StatusPill
+            status={
+              fundingLoading
+                ? 'loading'
+                : fundingError
+                  ? 'unavailable'
+                  : (funding?.status ?? 'not funded')
+            }
+          />
+          {fundingError && <span role="alert">Unable to load escrow: {fundingError}</span>}
+          {funding?.status === 'reconciliation_required' && (
+            <span role="alert">
+              Payment needs manual reconciliation. Do not send another payment.
+            </span>
+          )}
+          {isClient && onFund && !funding && !fundingLoading && !fundingError && (
             <Button variant="secondary" disabled={busy} onClick={() => onFund(milestone.id)}>
               Fund milestone
             </Button>
@@ -329,7 +361,8 @@ export function MilestoneCard({
               <p>{invoice.response}</p>
               <a
                 className="button button-secondary"
-                href={`/api/agent-runs/${invoice.runId}/pdf`}
+                href={apiUrl(`/agent-runs/${invoice.runId}/pdf`)}
+                download={invoice.runId.startsWith('demo-') ? 'sample-invoice.pdf' : undefined}
                 target="_blank"
                 rel="noreferrer"
               >

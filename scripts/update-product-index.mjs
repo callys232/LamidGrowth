@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import path from 'node:path';
 const manifest = JSON.parse(fs.readFileSync('src/content/page-manifest.json', 'utf8'));
 const products = fs
   .readdirSync('src/products', { withFileTypes: true })
@@ -6,18 +7,23 @@ const products = fs
   .map((e) => e.name)
   .sort();
 let overview =
-  '# Products and their pages\n\nSee [the editing guide](../../docs/PAGE_COMPONENT_GUIDE.md) for the page/slide conventions. Each folder owns its product screens and document copy. A document-only folder does not represent an implemented backend capability.\n\n| Product | Interactive screens | Document pages |\n| --- | --- | --- |\n';
+  '# Products and their pages\n\nEach source folder owns its product screens and document copy. These indexes are archived outside the runtime source tree. A document-only folder does not represent an implemented backend capability.\n\n| Product | Interactive screens | Document pages |\n| --- | --- | --- |\n';
 for (const name of products) {
   const base = `src/products/${name}`;
+  const archive = `lamiddoc/${base}`;
+  fs.mkdirSync(archive, { recursive: true });
+  const link = (target) => path.relative(archive, target).replaceAll('\\', '/');
   const pages = fs.existsSync(`${base}/pages`)
     ? fs.readdirSync(`${base}/pages`).filter((p) => p.endsWith('.tsx'))
     : [];
   const documents = manifest.filter((p) => p.product === name);
   overview += `| [${name}](./${name}/README.md) | ${pages.map((p) => p.replace('.tsx', '')).join(', ') || 'Document copy only'} | ${documents.length} |\n`;
-  let text = `# ${name[0].toUpperCase() + name.slice(1)}\n\nProduct-owned pages and components. [Editing guide](../../../docs/PAGE_COMPONENT_GUIDE.md) · [All products](../README.md)\n\n`;
+  let text = `# ${name[0].toUpperCase() + name.slice(1)}\n\nProduct-owned pages and components in [the source folder](${link(base)}). [All products](../README.md)\n\n`;
   if (pages.length)
     text +=
-      '## Interactive pages\n\n' + pages.map((p) => `- [${p}](./pages/${p})`).join('\n') + '\n\n';
+      '## Interactive pages\n\n' +
+      pages.map((p) => `- [${p}](${link(`${base}/pages/${p}`)})`).join('\n') +
+      '\n\n';
   for (const dir of ['slides', 'components', 'hooks'])
     if (fs.existsSync(`${base}/${dir}`))
       text +=
@@ -25,7 +31,7 @@ for (const name of products) {
         fs
           .readdirSync(`${base}/${dir}`)
           .filter((p) => /\.tsx?$/.test(p))
-          .map((p) => `- [${p}](./${dir}/${p})`)
+          .map((p) => `- [${p}](${link(`${base}/${dir}/${p}`)})`)
           .join('\n') +
         '\n\n';
   if (documents.length)
@@ -34,11 +40,11 @@ for (const name of products) {
       documents
         .map(
           (p) =>
-            `| ${p.route} | [${p.exportName}](${p.component.replace(base, '.')}) | [content.json](${p.content.replace(base, '.')}) |`,
+            `| ${p.route} | [${p.exportName}](${link(p.component)}) | [content.json](${link(p.content)}) |`,
         )
         .join('\n') +
       '\n';
-  fs.writeFileSync(`${base}/README.md`, text);
+  fs.writeFileSync(`${archive}/README.md`, text);
 }
-fs.writeFileSync('src/products/README.md', overview);
+fs.writeFileSync('lamiddoc/src/products/README.md', overview);
 console.log(`Updated ${products.length} product indexes.`);

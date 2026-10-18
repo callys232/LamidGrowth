@@ -14,6 +14,15 @@ export function setWorkspaceScope(id: string) {
 // the backend's origin (e.g. https://api.lamidgrowth.com, no trailing slash) only when the
 // frontend is deployed separately from the backend (e.g. Vercel + a standalone API host).
 const apiBase = import.meta.env?.VITE_API_BASE_URL || '';
+/** Use the same API origin for downloads and JSON requests on split-host deployments. */
+export function apiUrl(path: string) {
+  const sample = /^\/agent-runs\/(demo-[^/]+)\/pdf$/.exec(path);
+  if (sample) {
+    const pdf = sessionStorage.getItem(`lamid-demo-document:${sample[1]}`);
+    if (pdf) return pdf;
+  }
+  return `${apiBase.replace(/\/$/, '')}/api${path}`;
+}
 
 /** A replacement for the network: given the request, resolve the parsed JSON or throw ApiError.
  * The public demo sets one so workspace operations run on sample data. Verified access,
@@ -46,7 +55,7 @@ export async function networkApi<T>(
   method = 'POST',
   idempotencyKey?: string,
 ): Promise<T> {
-  const response = await fetch(`${apiBase}/api${path}`, {
+  const response = await fetch(apiUrl(path), {
     method: body === undefined ? 'GET' : method,
     credentials: apiBase ? 'include' : 'same-origin',
     headers:

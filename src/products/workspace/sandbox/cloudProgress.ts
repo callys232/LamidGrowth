@@ -21,6 +21,17 @@ function status(value: DemoSaveStatus) {
   lastStatus = value;
   window.dispatchEvent(new CustomEvent('demo-save-status', { detail: value }));
 }
+function canonical(value: unknown): string {
+  return JSON.stringify(value, (_key, item) =>
+    item && typeof item === 'object' && !Array.isArray(item)
+      ? Object.fromEntries(
+          Object.keys(item)
+            .sort()
+            .map((key) => [key, item[key]]),
+        )
+      : item,
+  );
+}
 
 /** Optimistic revision checks prevent two devices from silently overwriting each other. */
 export async function connectDemoProgress(
@@ -46,7 +57,19 @@ export async function connectDemoProgress(
     tier,
   });
   revision = remote.revision;
-  const unsaved = cached?.dirty && sessionStorage.getItem(key);
+  let unsaved = cached?.dirty && sessionStorage.getItem(key);
+  // A page may close after the server commits but before this tab records the acknowledgement.
+  // Identical content proves that save succeeded; different content still requires conflict review.
+  if (unsaved && remote.data) {
+    try {
+      if (canonical(JSON.parse(unsaved)) === canonical(remote.data)) {
+        unsaved = false;
+        sessionStorage.setItem(`${key}:sync`, JSON.stringify({ revision, dirty: false }));
+      }
+    } catch {
+      /* Preserve malformed local data for explicit recovery. */
+    }
+  }
   const needsInitialSave =
     !remote.data || remote.data.version !== SANDBOX_SCHEMA_VERSION || Boolean(unsaved);
   if (unsaved) {

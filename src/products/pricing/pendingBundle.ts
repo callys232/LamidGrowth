@@ -7,6 +7,7 @@ export const PENDING_BUNDLE_KEY = 'lamid_pending_bundle';
 
 export type PendingBundle = {
   toolNames: string[];
+  toolIds: string[];
   extraPoints: number;
   totalPoints: number;
   billingCycle: 'one_time' | 'monthly';
@@ -20,6 +21,8 @@ export function readPendingBundle(): PendingBundle | null {
     if (
       !parsed ||
       !Array.isArray(parsed.toolNames) ||
+      !Array.isArray(parsed.toolIds) ||
+      !parsed.toolIds.every((id: unknown) => typeof id === 'string') ||
       typeof parsed.totalPoints !== 'number' ||
       typeof parsed.extraPoints !== 'number'
     )

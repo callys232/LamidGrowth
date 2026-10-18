@@ -3,7 +3,7 @@ dist
 .npm-cache
 data
 artifacts
-document-study
+lamiddoc/document-study
 package-lock.json
 src/content
 test-results

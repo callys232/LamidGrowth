@@ -14,7 +14,7 @@ export function createSessionStore(
   storage: Storage = sessionStorage,
 ): SandboxStore {
   const fresh = () => {
-    const data = seed();
+    const data = upgradeCommerce(seed());
     storage.setItem(key, JSON.stringify(data));
     return data;
   };
@@ -24,7 +24,12 @@ export function createSessionStore(
       if (!raw) return fresh();
       try {
         const data = JSON.parse(raw) as SandboxData;
-        return data?.version === SANDBOX_SCHEMA_VERSION ? data : fresh();
+        if (data?.version !== SANDBOX_SCHEMA_VERSION) return fresh();
+        if (!data.commerceVersion) {
+          upgradeCommerce(data);
+          storage.setItem(key, JSON.stringify(data));
+        }
+        return data;
       } catch {
         return fresh();
       }
@@ -36,4 +41,29 @@ export function createSessionStore(
       fresh();
     },
   };
+}
+
+/** Add a contractor example without discarding an existing visitor's saved sample work. */
+function upgradeCommerce(data: SandboxData) {
+  if (data.commerceVersion) return data;
+  const project = data.projects[1] ?? data.projects[0];
+  if (project) {
+    project.isClient = false;
+    project.isFreelancer = true;
+    project.freelancer_user_id = data.state.user.id;
+    project.milestones.push({
+      id: `demo-invoice-${project.id}`,
+      project_id: project.id,
+      title: 'Approved sample handover',
+      description: 'Contractor invoice example; no real payment is due.',
+      amount: 1200,
+      currency: 'USD',
+      status: 'approved',
+      deliverables: [],
+      submissions: [],
+      pendingVerification: null,
+    });
+  }
+  data.commerceVersion = 1;
+  return data;
 }

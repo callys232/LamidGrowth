@@ -70,7 +70,18 @@ export type CriterionResult = {
 };
 export type MilestoneFunding = {
   id: string;
-  status: 'pending' | 'held' | 'released' | 'refunded';
+  status:
+    | 'awaiting_provider'
+    | 'pending'
+    | 'held'
+    | 'released'
+    | 'refunded'
+    | 'refunding'
+    | 'refund_pending'
+    | 'refund_failed'
+    | 'init_failed'
+    | 'amount_mismatch'
+    | 'reconciliation_required';
   amount_minor: number;
   currency: string;
   created_at?: string;
@@ -230,8 +241,12 @@ export function useProjectDetail(projectId: string) {
   async function fundMilestone(milestoneId: string) {
     setBusy(true);
     try {
-      const result = await api<{ authorizationUrl: string }>(`/milestones/${milestoneId}/fund`, {});
-      window.open(result.authorizationUrl, '_blank', 'noopener');
+      const result = await api<{ authorizationUrl?: string; demo?: boolean }>(
+        `/milestones/${milestoneId}/fund`,
+        {},
+      );
+      if (result.demo) await refresh();
+      else if (result.authorizationUrl) window.open(result.authorizationUrl, '_blank', 'noopener');
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -239,18 +254,22 @@ export function useProjectDetail(projectId: string) {
     }
   }
 
-  async function loadFunding(milestoneId: string) {
-    try {
-      return await api<MilestoneFunding | null>(
-        `/milestones/${milestoneId}/funding`,
-        undefined,
-        'GET',
-      );
-    } catch (e) {
-      setError((e as Error).message);
-      return null;
-    }
-  }
+  // Refresh funding once when refreshed project data arrives, without changing on every render.
+  const loadFunding = useCallback(
+    async (milestoneId: string) => {
+      try {
+        return await api<MilestoneFunding | null>(
+          `/milestones/${milestoneId}/funding`,
+          undefined,
+          'GET',
+        );
+      } catch (e) {
+        setError((e as Error).message);
+        throw e;
+      }
+    },
+    [project],
+  );
 
   async function releaseMilestone(milestoneId: string) {
     setBusy(true);
@@ -276,14 +295,14 @@ export function useProjectDetail(projectId: string) {
     }
   }
 
-  async function loadMessages() {
+  const loadMessages = useCallback(async () => {
     try {
       return await api<ProjectMessage[]>(`/projects/${projectId}/messages`, undefined, 'GET');
     } catch (e) {
       setError((e as Error).message);
       return [];
     }
-  }
+  }, [projectId]);
 
   async function sendMessage(body: string) {
     setBusy(true);

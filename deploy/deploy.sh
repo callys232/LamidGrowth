@@ -3,6 +3,8 @@
 #   cd ~/app && ./deploy/deploy.sh
 set -euo pipefail
 
+# Keep reference documents out of the VPS working tree. They remain available in GitHub.
+git sparse-checkout set --no-cone '/*' '!/lamiddoc/'
 git pull --ff-only
 npm ci
 npm run deployment:check

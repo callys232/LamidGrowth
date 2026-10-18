@@ -14,7 +14,7 @@ const bundleSchema = z
       .regex(/^[A-Z]{3}$/)
       .default('USD'),
     pointsIncluded: z.number().int().min(0).default(0),
-    billingCycle: z.enum(['one_time', 'monthly']).default('one_time'),
+    billingCycle: z.literal('one_time').default('one_time'),
     agentIds: z.array(z.string().trim().min(1)).max(200).default([]),
   })
   .strict();
@@ -78,7 +78,9 @@ export function mountPublicPricing(app, store) {
 
   app.get('/api/bundles', async (req, res) => {
     const bundles = await db
-      .prepare("SELECT * FROM bundles WHERE status = 'active' ORDER BY price_minor")
+      .prepare(
+        "SELECT * FROM bundles WHERE status = 'active' AND billing_cycle = 'one_time' ORDER BY price_minor",
+      )
       .all();
     res.json(await Promise.all(bundles.map((bundle) => bundleWithItems(db, bundle.id))));
   });

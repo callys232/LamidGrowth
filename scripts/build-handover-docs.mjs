@@ -8,7 +8,7 @@ import { PLANS } from '../src/app/plans.mjs';
 
 // Read source, never .env or live services. Run from the repository root.
 const root = process.cwd();
-const out = path.join(root, 'docs/handover');
+const out = path.join(root, 'lamiddoc/docs/handover');
 fs.mkdirSync(out, { recursive: true });
 const files = [];
 function walk(dir) {

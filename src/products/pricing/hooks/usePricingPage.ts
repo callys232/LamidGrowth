@@ -81,6 +81,21 @@ export function usePricingPage() {
     }
   }
 
+  async function purchaseCustomBundle(toolIds: string[], extraPoints: number) {
+    setBusy(true);
+    setError('');
+    try {
+      const result = await api<{ authorizationUrl: string }>('/points/purchase', {
+        toolIds,
+        extraPoints,
+      });
+      window.location.href = result.authorizationUrl;
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function purchaseBundle(bundleId: string) {
     setBusy(true);
     setError('');
@@ -164,6 +179,7 @@ export function usePricingPage() {
     busy,
     error,
     purchasePoints,
+    purchaseCustomBundle,
     purchaseBundle,
     toggleAgent,
     createBundle,

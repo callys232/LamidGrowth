@@ -4,6 +4,7 @@ import { talentRoutes } from './handlers/talent';
 import { toolRoutes } from './handlers/tools';
 import { learningRoutes } from './handlers/learning';
 import { workRoutes } from './handlers/work';
+import { commerceRoutes } from './handlers/commerce';
 import { workspaceRoutes } from './handlers/workspace';
 import { seedPersona } from './personas';
 import { createSandboxRouter } from './router';
@@ -36,7 +37,14 @@ async function activate(): Promise<boolean> {
   const store = createSessionStore(key, () => seedPersona(profile, tier, new Date()));
   const sync = await connectDemoProgress(profile, tier, key, store);
   const router = createSandboxRouter(
-    [...workspaceRoutes, ...workRoutes, ...talentRoutes, ...learningRoutes, ...toolRoutes],
+    [
+      ...commerceRoutes,
+      ...workspaceRoutes,
+      ...workRoutes,
+      ...talentRoutes,
+      ...learningRoutes,
+      ...toolRoutes,
+    ],
     store,
   );
   setApiTransport(async (request) => {

@@ -192,7 +192,7 @@ export function ToolCatalog({
         ) : visible.length === 0 ? (
           <div className="ws-panel-state ws-empty">
             <Search size={26} aria-hidden="true" />
-            <h3>No engines match</h3>
+            <h2>No engines match</h2>
             <p>Try a broader word — for example cash, risk or OKR.</p>
           </div>
         ) : area === 'All' ? (
@@ -207,7 +207,7 @@ export function ToolCatalog({
                   data-tone={a.tone}
                   data-open={expanded || undefined}
                 >
-                  <h3>
+                  <h2>
                     <button
                       type="button"
                       className="ws-catalog-toggle"
@@ -227,7 +227,7 @@ export function ToolCatalog({
                       </span>
                       <ChevronDown className="ws-section-chevron" size={18} aria-hidden="true" />
                     </button>
-                  </h3>
+                  </h2>
                   {expanded && (
                     <ul className="ws-tool-rows" id={groupId}>
                       {tools.map(row)}
@@ -238,7 +238,7 @@ export function ToolCatalog({
             })}
             {ungrouped.length > 0 && (
               <div className="ws-catalog-group">
-                <h3>Other engines</h3>
+                <h2>Other engines</h2>
                 <ul className="ws-tool-rows">{ungrouped.map(row)}</ul>
               </div>
             )}

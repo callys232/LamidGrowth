@@ -46,7 +46,6 @@ const messageInput = z
   })
   .strict();
 
-
 /** Runs the request's toolRun, if any, through the agent's adapter and returns it as a source
  * the review can cite. The tool's own result is authoritative; the model only explains it. */
 async function runRequestedTool(ctx, agentId, input) {
@@ -88,7 +87,10 @@ const toolCallsOf = (ran) =>
 const permissionForBand = { A1: 'work:write', A2: 'workspace:manage', A3: 'workspace:manage' };
 
 async function reviewSources(ctx, deps, useCase, question, extraKinds = [], requested = []) {
-  const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+  const model = await requireApprovedModel(ctx.store, useCase, {
+    provider: deps.aiProvider,
+    workspaceId: ctx.workspace.id,
+  });
   const sources = [
     ...requested,
     ...(await collectAgentSources(ctx.store, ctx.workspace.id, extraKinds)),
@@ -186,7 +188,19 @@ async function saveCreationAsset(ctx, { kind, title, content, jobId = null, prop
   const createdAt = new Date().toISOString();
   await ctx.store.db
     .prepare('INSERT INTO creation_assets VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(id, ctx.workspace.id, ctx.principal.id, kind, title, content, 1, null, jobId, proposalId, createdAt);
+    .run(
+      id,
+      ctx.workspace.id,
+      ctx.principal.id,
+      kind,
+      title,
+      content,
+      1,
+      null,
+      jobId,
+      proposalId,
+      createdAt,
+    );
   return id;
 }
 
@@ -194,7 +208,8 @@ async function saveCreationAsset(ctx, { kind, title, content, jobId = null, prop
  * calendar year (INV-2026-0001, 0002, ...). The amount is copied from the approved milestone at
  * issue time, so a later regeneration always shows the same invoice. */
 async function issueInvoice(db, milestone, issuerUserId) {
-  const existing = () => db.prepare('SELECT * FROM invoices WHERE milestone_id = ?').get(milestone.id);
+  const existing = () =>
+    db.prepare('SELECT * FROM invoices WHERE milestone_id = ?').get(milestone.id);
   const found = await existing();
   if (found) return found;
   const issuedAt = new Date().toISOString();
@@ -234,7 +249,10 @@ async function issueInvoice(db, milestone, issuerUserId) {
 }
 
 async function draftJobDocument(ctx, deps, useCase, job, question, templateFallback) {
-  const model = await requireApprovedModel(ctx.store, useCase, { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+  const model = await requireApprovedModel(ctx.store, useCase, {
+    provider: deps.aiProvider,
+    workspaceId: ctx.workspace.id,
+  });
   const kind = useCase.replace('companion.', '');
   const response = deps.aiProvider ? null : templateFallback(job);
   const result = deps.aiProvider
@@ -394,17 +412,38 @@ const agents = {
       // F-SI-01: requireApprovedModel is called before the KPI loop (rather than after, as
       // before) so the approved model registry id is available to attach as real provenance on
       // each intelligence result the loop writes below.
-      const model = await requireApprovedModel(ctx.store, 'companion.performance-analytics', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+      const model = await requireApprovedModel(ctx.store, 'companion.performance-analytics', {
+        provider: deps.aiProvider,
+        workspaceId: ctx.workspace.id,
+      });
       const defs = await ctx.store.db
         .prepare('SELECT * FROM kpi_definitions WHERE workspace_id = ? ORDER BY created_at')
         .all(ctx.workspace.id);
       const kpis = [];
       for (const def of defs) {
         const [latest, previous] = await ctx.store.db
-          .prepare('SELECT * FROM kpi_observations WHERE kpi_id = ? ORDER BY observed_at DESC LIMIT 2')
+          .prepare(
+            'SELECT * FROM kpi_observations WHERE kpi_id = ? ORDER BY observed_at DESC LIMIT 2',
+          )
           .all(def.id);
-        const trend = latest && previous ? (latest.value > previous.value ? 'up' : latest.value < previous.value ? 'down' : 'flat') : null;
-        kpis.push({ id: def.id, name: def.name, unit: def.unit, target: def.target, latest: latest?.value ?? null, trend, latestObservationId: latest?.id ?? null, previousObservationId: previous?.id ?? null });
+        const trend =
+          latest && previous
+            ? latest.value > previous.value
+              ? 'up'
+              : latest.value < previous.value
+                ? 'down'
+                : 'flat'
+            : null;
+        kpis.push({
+          id: def.id,
+          name: def.name,
+          unit: def.unit,
+          target: def.target,
+          latest: latest?.value ?? null,
+          trend,
+          latestObservationId: latest?.id ?? null,
+          previousObservationId: previous?.id ?? null,
+        });
       }
       for (const k of kpis) {
         if (!k.trend) continue;
@@ -417,15 +456,22 @@ const agents = {
           summary: `${k.name}: ${k.latest}${k.unit ? ` ${k.unit}` : ''} (${k.trend})`,
           sources: [
             { kind: 'kpi_definition', id: k.id },
-            ...(k.latestObservationId ? [{ kind: 'kpi_observation', id: k.latestObservationId }] : []),
-            ...(k.previousObservationId ? [{ kind: 'kpi_observation', id: k.previousObservationId }] : []),
+            ...(k.latestObservationId
+              ? [{ kind: 'kpi_observation', id: k.latestObservationId }]
+              : []),
+            ...(k.previousObservationId
+              ? [{ kind: 'kpi_observation', id: k.previousObservationId }]
+              : []),
           ],
           modelRegistryId: model.id,
         });
       }
       const summaryFacts = kpis.length
         ? kpis
-            .map((k) => `${k.name}: ${k.latest ?? 'no data'}${k.unit ? ` ${k.unit}` : ''}${k.trend ? ` (${k.trend})` : ''}`)
+            .map(
+              (k) =>
+                `${k.name}: ${k.latest ?? 'no data'}${k.unit ? ` ${k.unit}` : ''}${k.trend ? ` (${k.trend})` : ''}`,
+            )
             .join('; ')
         : 'No KPIs are defined yet for this workspace.';
       if (!deps.aiProvider) {
@@ -478,20 +524,32 @@ const agents = {
     input: messageInput,
     async execute(ctx, input, deps) {
       const open = await ctx.store.db
-        .prepare("SELECT * FROM opportunities WHERE workspace_id = ? AND status NOT IN ('won', 'lost') ORDER BY value_estimate DESC NULLS LAST, created_at DESC")
+        .prepare(
+          "SELECT * FROM opportunities WHERE workspace_id = ? AND status NOT IN ('won', 'lost') ORDER BY value_estimate DESC NULLS LAST, created_at DESC",
+        )
         .all(ctx.workspace.id);
-      const model = await requireApprovedModel(ctx.store, 'companion.opportunity-signals', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+      const model = await requireApprovedModel(ctx.store, 'companion.opportunity-signals', {
+        provider: deps.aiProvider,
+        workspaceId: ctx.workspace.id,
+      });
       const summaryFacts = open.length
         ? `${open.length} open opportunit${open.length === 1 ? 'y' : 'ies'} on file: ${open
             .slice(0, 5)
-            .map((o) => `"${o.title}" (${o.status}${o.value_estimate ? `, est. ${o.value_estimate}` : ''})`)
+            .map(
+              (o) =>
+                `"${o.title}" (${o.status}${o.value_estimate ? `, est. ${o.value_estimate}` : ''})`,
+            )
             .join('; ')}.`
         : 'No open opportunities are on file yet.';
       if (!deps.aiProvider) {
         return {
           response: `${summaryFacts} (AI is not configured, so this is a deterministic summary only.)`,
           toolCalls: [],
-          evidence: { opportunityIds: open.map((o) => o.id), method: 'template-only', modelRegistryId: model.id },
+          evidence: {
+            opportunityIds: open.map((o) => o.id),
+            method: 'template-only',
+            modelRegistryId: model.id,
+          },
         };
       }
       const result = await deps.aiProvider.review(
@@ -504,7 +562,11 @@ const agents = {
       return {
         response: result.review.summary,
         toolCalls: [],
-        evidence: { opportunityIds: open.map((o) => o.id), modelRegistryId: model.id, responseId: result.responseId },
+        evidence: {
+          opportunityIds: open.map((o) => o.id),
+          modelRegistryId: model.id,
+          responseId: result.responseId,
+        },
       };
     },
   },
@@ -516,15 +578,40 @@ const agents = {
     humanGate: 'none',
     input: messageInput,
     async execute(ctx, input, deps) {
-      const model = await requireApprovedModel(ctx.store, 'companion.experiment-builder', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+      const model = await requireApprovedModel(ctx.store, 'companion.experiment-builder', {
+        provider: deps.aiProvider,
+        workspaceId: ctx.workspace.id,
+      });
       const title = input.message.slice(0, 120);
       const id = randomUUID();
       const createdAt = new Date().toISOString();
       await ctx.store.db
         .prepare('INSERT INTO experiments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(id, ctx.workspace.id, title, input.message, 'To be defined — refine via PATCH before starting.', 'draft', '', null, null, createdAt, null, null, null, null);
+        .run(
+          id,
+          ctx.workspace.id,
+          title,
+          input.message,
+          'To be defined — refine via PATCH before starting.',
+          'draft',
+          '',
+          null,
+          null,
+          createdAt,
+          null,
+          null,
+          null,
+          null,
+        );
       await ctx.store.log(ctx.workspace.id, ctx.principal.name, 'Experiment drafted', id, title);
-      const created = { id, title, hypothesis: input.message, metric: 'To be defined', status: 'draft', createdAt };
+      const created = {
+        id,
+        title,
+        hypothesis: input.message,
+        metric: 'To be defined',
+        status: 'draft',
+        createdAt,
+      };
       if (!deps.aiProvider) {
         return {
           response: `Draft experiment "${title}" created (id: ${id}, status: draft). Define a metric and start it via PATCH /api/experiments/${id}/start when ready. (AI is not configured, so no refinement was suggested.)`,
@@ -534,7 +621,8 @@ const agents = {
       }
       const result = await deps.aiProvider.review(
         {
-          question: 'Given this draft experiment, suggest a sharper hypothesis phrasing and a concrete, measurable metric. Do not claim the experiment has run — it is still a draft.',
+          question:
+            'Given this draft experiment, suggest a sharper hypothesis phrasing and a concrete, measurable metric. Do not claim the experiment has run — it is still a draft.',
           sources: [{ id, kind: 'experiment', data: created }],
         },
         {},
@@ -688,7 +776,10 @@ const agents = {
           evidence: null,
         };
       const { proposal, job } = await loadAuthorizedProposal(ctx, input.proposalId);
-      const model = await requireApprovedModel(ctx.store, 'companion.change-order', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+      const model = await requireApprovedModel(ctx.store, 'companion.change-order', {
+        provider: deps.aiProvider,
+        workspaceId: ctx.workspace.id,
+      });
       const requestedChange = input.message;
       const result = deps.aiProvider
         ? await deps.aiProvider.review(
@@ -713,8 +804,20 @@ const agents = {
         response: finalResponse,
         toolCalls: [],
         evidence: result
-          ? { proposalId: proposal.id, jobId: job?.id, assetId, modelRegistryId: model.id, responseId: result.responseId }
-          : { proposalId: proposal.id, jobId: job?.id, assetId, method: 'template-only', modelRegistryId: model.id },
+          ? {
+              proposalId: proposal.id,
+              jobId: job?.id,
+              assetId,
+              modelRegistryId: model.id,
+              responseId: result.responseId,
+            }
+          : {
+              proposalId: proposal.id,
+              jobId: job?.id,
+              assetId,
+              method: 'template-only',
+              modelRegistryId: model.id,
+            },
       };
     },
   },
@@ -918,10 +1021,15 @@ const agents = {
       const allowedNext = TRANSITIONS[stage] || [];
       let suggestedStage = null;
       if (!TERMINAL.has(stage) && actions.length > 0) {
-        if (done === actions.length && allowedNext.includes('achieved')) suggestedStage = 'achieved';
-        else if (stage === 'active' && allowedNext.includes('progressing')) suggestedStage = 'progressing';
+        if (done === actions.length && allowedNext.includes('achieved'))
+          suggestedStage = 'achieved';
+        else if (stage === 'active' && allowedNext.includes('progressing'))
+          suggestedStage = 'progressing';
       }
-      const model = await requireApprovedModel(ctx.store, 'companion.goal-advisor', { provider: deps.aiProvider, workspaceId: ctx.workspace.id });
+      const model = await requireApprovedModel(ctx.store, 'companion.goal-advisor', {
+        provider: deps.aiProvider,
+        workspaceId: ctx.workspace.id,
+      });
       const summaryFacts = `Goal "${goal.title}" is at stage "${stage}" with ${actions.length} linked action(s), ${done} done.`;
       const conclusion = suggestedStage || stage;
       await upsertIntelligenceResult(ctx.store, {
@@ -958,7 +1066,15 @@ const agents = {
                 : ' This goal has reached a terminal stage.'
           } (AI is not configured, so this is a deterministic summary only.)`,
           toolCalls: [],
-          evidence: { goalId: goal.id, stage, actionCount: actions.length, done, method: 'template-only', modelRegistryId: model.id, recommendationId: recommendation?.id ?? null },
+          evidence: {
+            goalId: goal.id,
+            stage,
+            actionCount: actions.length,
+            done,
+            method: 'template-only',
+            modelRegistryId: model.id,
+            recommendationId: recommendation?.id ?? null,
+          },
         };
       }
       const result = await deps.aiProvider.review(
@@ -1055,10 +1171,14 @@ export function createAgentRuntime(store, deps) {
     if (agentId === 'invoice-generator') {
       if (!input.milestoneId)
         reject('Select a milestone before generating an invoice. No points have been charged.');
-      // Deliberately not rejecting here on an unapproved milestone's status — execute() itself
-      // already handles that gracefully (a real, charged, evidence-bearing "not yet approved"
-      // response), which is the tested, intended behavior. Only authorization is checked here.
-      await loadAuthorizedMilestone({ store, workspace, principal }, input.milestoneId);
+      const { milestone } = await loadAuthorizedMilestone(
+        { store, workspace, principal },
+        input.milestoneId,
+      );
+      if (milestone.status !== 'approved')
+        reject(
+          'The milestone must be approved before generating an invoice. No points have been charged.',
+        );
     }
     // invoice/quote/estimate generators are deterministic (computed from recorded job/milestone
     // data, never call deps.aiProvider) and must stay available even when no AI provider is

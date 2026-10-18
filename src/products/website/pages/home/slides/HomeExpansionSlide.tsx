@@ -20,6 +20,7 @@ export function HomeExpansionSlide() {
           </h2>
         </header>
         <ol
+          tabIndex={0}
           ref={path}
           className={`home-expansion-path${visible ? ' is-visible' : ''}`}
           data-source-paragraph={copy.paragraphs[1].sourceParagraph}

@@ -3,12 +3,12 @@
    the active link, the section heading and, on pages, the accents of that tool. */
 :root,
 :root[data-theme='light'] {
-  --ws-work: #18858c;
-  --ws-money: #2e8f4e;
+  --ws-work: #13757c;
+  --ws-money: #267c42;
   --ws-talent: #6a4fbf;
-  --ws-opportunities: #b86e0a;
+  --ws-opportunities: #995a08;
   --ws-risk: #c12129;
-  --ws-intelligence: #2f6fd6;
+  --ws-intelligence: #245fbf;
   --ws-account: #5a6472;
 }
 :root[data-theme='dark'],

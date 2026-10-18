@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bot } from 'lucide-react';
-import { api } from '../../../api';
+import { api, apiUrl } from '../../../api';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import { documentAgentIds, useCompanionChat, type AgentManifest } from '../hooks/useCompanionChat';
@@ -122,7 +122,7 @@ function LiveCompanionChatPage() {
                     <div className="companion-chat-document-actions">
                       <a
                         className="companion-chat-download"
-                        href={`/api/agent-runs/${turn.runId}/pdf`}
+                        href={apiUrl(`/agent-runs/${turn.runId}/pdf`)}
                         target="_blank"
                         rel="noreferrer"
                       >

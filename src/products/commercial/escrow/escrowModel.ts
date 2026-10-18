@@ -8,6 +8,7 @@ export type CurrencyTotal = {
   released: number;
   refunded: number;
   pending: number;
+  review: number;
   total: number;
 };
 export type TimelineStep = {
@@ -37,10 +38,17 @@ export function currencyTotals(projects: SummaryProject[]): CurrencyTotal[] {
         released: 0,
         refunded: 0,
         pending: 0,
+        review: 0,
         total: 0,
       };
       const amount = Number(funding.amount_minor);
-      row[funding.status] += amount;
+      if (funding.status === 'init_failed') continue;
+      const bucket = ['held', 'released', 'refunded', 'pending'].includes(funding.status)
+        ? (funding.status as 'held' | 'released' | 'refunded' | 'pending')
+        : funding.status === 'awaiting_provider'
+          ? 'pending'
+          : 'review';
+      row[bucket] += amount;
       row.total += amount;
       totals.set(funding.currency, row);
     }
@@ -111,6 +119,7 @@ const PAYOUT_LABEL: Record<string, string> = {
   amount_mismatch: 'Payout held for review',
   processing: 'Payout processing',
   pending: 'Payout queued',
+  reversed: 'Payout reversed — reconciliation required',
 };
 
 /** A milestone's money story, oldest first: funding started → held → released or refunded,
@@ -152,8 +161,7 @@ export function milestoneTimeline(milestone: SummaryMilestone): TimelineStep[] {
         transfer.currency,
       )}`,
       at: transfer.created_at,
-      tone:
-        transfer.status === 'failed' || transfer.status === 'amount_mismatch' ? 'risk' : 'money',
+      tone: ['failed', 'amount_mismatch', 'reversed'].includes(transfer.status) ? 'risk' : 'money',
     });
   return steps;
 }

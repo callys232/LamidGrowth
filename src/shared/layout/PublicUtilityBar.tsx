@@ -89,7 +89,7 @@ export function PublicUtilityBar({
   };
 
   return (
-    <div className="utility-bar" ref={bar}>
+    <div className="utility-bar" ref={bar} role="region" aria-label="Site utilities">
       <div className="utility-inner">
         <div className="utility-group">
           <button

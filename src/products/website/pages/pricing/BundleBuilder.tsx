@@ -4,20 +4,11 @@ import { api, ApiError } from '../../../../api';
 import { writePendingBundle } from '../../../pricing/pendingBundle';
 import { formatMinor, type Billables } from './usePublicBillables';
 
-/** Self-serve "build your own bundle" tool for the public pricing page — pick tools across
- * engines, watch a running cart total, then check out. There is no bundle-discount or recurring-
- * subscription mechanism in the backend (see payments.mjs: every purchase, points or bundle, is a
- * single one-time Paystack charge; billing_cycle is a display label only, even on
- * admin-authored bundles), so this doesn't invent one — it prices a custom selection at the same
- * standard per-point rate as everything else and checks out through the same points-purchase
- * endpoint every other purchase on this app already uses. Signed-in visitors land straight on
- * Paystack; a 401 here means no session, so the selection is stashed (pendingBundle.ts) and the
- * visitor is sent to sign up, picking back up on /os/pricing. */
+/** Custom tools are priced by the server and unlocked after payment confirmation. */
 export function BundleBuilder({ billables }: { billables: Billables }) {
   const navigate = useNavigate();
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [extraPoints, setExtraPoints] = useState(0);
-  const [billingCycle, setBillingCycle] = useState<'one_time' | 'monthly'>('one_time');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,16 +43,18 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
     setError('');
     try {
       const result = await api<{ authorizationUrl: string }>('/points/purchase', {
-        points: totalPoints,
+        toolIds: selectedTools.map((t) => t.id),
+        extraPoints,
       });
       window.location.href = result.authorizationUrl;
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         writePendingBundle({
           toolNames: selectedTools.map((t) => t.name),
+          toolIds: selectedTools.map((t) => t.id),
           extraPoints,
           totalPoints,
-          billingCycle,
+          billingCycle: 'one_time',
         });
         navigate('/signup');
         return;
@@ -171,27 +164,10 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
             <p>A buffer for repeat runs, on top of what your selected engines need.</p>
           </div>
 
-          <div className="pricing-bundle-cycle" role="radiogroup" aria-label="Billing cycle">
-            <button
-              type="button"
-              role="radio"
-              aria-checked={billingCycle === 'one_time'}
-              className={billingCycle === 'one_time' ? 'is-active' : ''}
-              onClick={() => setBillingCycle('one_time')}
-            >
-              One-time
-            </button>
-            <button
-              type="button"
-              role="radio"
-              aria-checked={billingCycle === 'monthly'}
-              className={billingCycle === 'monthly' ? 'is-active' : ''}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly
-            </button>
-          </div>
-
+          <p>
+            One-time purchase. Selected tool access and points are added after payment confirmation.
+            No automatic renewal.
+          </p>
           <div className="pricing-bundle-total">
             <span>{totalPoints} points total</span>
             <strong>{formatMinor(totalPriceMinor, billables.currency)}</strong>

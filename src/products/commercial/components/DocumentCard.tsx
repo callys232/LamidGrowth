@@ -1,3 +1,4 @@
+import { apiUrl } from '../../../api';
 import type { LucideIcon } from 'lucide-react';
 import { parseSpecialistDocument } from '../lib/parseSpecialistDocument';
 
@@ -39,7 +40,7 @@ export function DocumentCard({
       {runId && (
         <a
           className="button button-secondary"
-          href={`/api/agent-runs/${runId}/pdf`}
+          href={apiUrl(`/agent-runs/${runId}/pdf`)}
           target="_blank"
           rel="noreferrer"
         >

@@ -185,11 +185,18 @@ const purchaseSchema = z
   .object({
     points: z.number().int().min(1).max(100000).optional(),
     bundleId: z.string().trim().min(1).optional(),
+    toolIds: z.array(z.string().trim().min(1)).min(1).max(300).optional(),
+    extraPoints: z.number().int().min(0).max(100000).optional(),
   })
   .strict()
-  .refine((value) => (value.points == null) !== (value.bundleId == null), {
-    message: 'Provide exactly one of points or bundleId.',
-  });
+  .refine(
+    (value) =>
+      [value.points, value.bundleId, value.toolIds].filter((v) => v != null).length === 1 &&
+      (value.extraPoints == null || value.toolIds != null),
+    {
+      message: 'Provide exactly one of points, bundleId or toolIds. Extra points require toolIds.',
+    },
+  );
 
 const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
@@ -401,7 +408,7 @@ export function mountPayments(app, store, deps) {
         return res.status(403).json({ error: 'Only the project owner can fund this milestone.' });
       const existing = await db
         .prepare(
-          "SELECT 1 FROM milestone_fundings WHERE milestone_id = ? AND status IN ('pending', 'held')",
+          "SELECT 1 FROM milestone_fundings WHERE milestone_id = ? AND status NOT IN ('init_failed', 'refunded')",
         )
         .get(milestone.id);
       if (existing)
@@ -426,9 +433,20 @@ export function mountPayments(app, store, deps) {
       // — a crash or DB hiccup between "Paystack accepted this" and "we saved that" would
       // otherwise leave a real pending transaction with no local trace to reconcile against.
       // 'awaiting_provider' marks that gap explicitly; it becomes 'pending' only once dispatch is
-      // confirmed, or 'init_failed' (which the uniqueness/existing-funding check above ignores,
-      // same as 'pending'/'held' do, so a genuine retry is not blocked) if dispatch never happens.
+      // confirmed. A known initialization failure can be retried; every active or uncertain
+      // funding blocks another checkout until it is reconciled.
       await transaction(async () => {
+        // Serialize funding claims across processes, including the gap before provider dispatch.
+        await db.prepare('SELECT id FROM milestones WHERE id = ? FOR UPDATE').get(milestone.id);
+        const claimed = await db
+          .prepare(
+            "SELECT 1 FROM milestone_fundings WHERE milestone_id = ? AND status NOT IN ('init_failed', 'refunded')",
+          )
+          .get(milestone.id);
+        if (claimed)
+          throw Object.assign(new Error('This milestone already has an active funding.'), {
+            status: 409,
+          });
         await db
           .prepare(
             `INSERT INTO milestone_fundings
@@ -473,7 +491,9 @@ export function mountPayments(app, store, deps) {
       }
       await transaction(async () => {
         await db
-          .prepare("UPDATE milestone_fundings SET status = 'pending' WHERE id = ?")
+          .prepare(
+            "UPDATE milestone_fundings SET status = 'pending' WHERE id = ? AND status = 'awaiting_provider'",
+          )
           .run(fundingId);
         await log(
           project.workspace_id,
@@ -516,6 +536,21 @@ export function mountPayments(app, store, deps) {
       if (milestone.status !== 'disputed')
         return res.status(400).json({
           error: `A refund can only be requested for a disputed milestone (current status: ${milestone.status}).`,
+        });
+      const agreed = await db
+        .prepare(
+          `SELECT 1 FROM disputes d JOIN records r
+        ON r.kind = 'dispute_resolution' AND r.data::jsonb ->> 'disputeId' = d.id
+        WHERE d.subject_type = 'milestone' AND d.subject_id = ? AND d.status = 'resolved_refund'
+        AND r.data::jsonb ->> 'status' = 'accepted' AND r.data::jsonb ->> 'outcome' = 'refund'
+        AND r.data::jsonb ->> 'respondedBy' IS NOT NULL
+        AND r.data::jsonb ->> 'respondedBy' <> r.data::jsonb ->> 'proposedBy'`,
+        )
+        .get(milestone.id);
+      if (!agreed)
+        return res.status(409).json({
+          error:
+            'Both parties must accept a refund resolution in Disputes before requesting a refund.',
         });
       const provider = providerFor('paystack');
       if (!provider)
@@ -742,12 +777,38 @@ export function mountPointsPurchase(app, store, deps) {
       let amountMinor = input.points != null ? input.points * POINTS_UNIT_PRICE_MINOR : null;
       let currency = 'USD';
       let bundleId = null;
+      let customTools = null;
+      if (input.toolIds) {
+        customTools = [];
+        for (const id of new Set(input.toolIds)) {
+          const tool = await db
+            .prepare('SELECT id, points_cost FROM agent_manifests WHERE id = ?')
+            .get(id);
+          if (!tool)
+            return res
+              .status(400)
+              .json({ error: 'An unknown tool was selected. Refresh the catalog.' });
+          customTools.push(tool);
+        }
+        points = customTools.reduce((sum, tool) => sum + tool.points_cost, input.extraPoints || 0);
+        if (points < 1 || points > 100000)
+          return res
+            .status(400)
+            .json({ error: 'The bundle must contain between 1 and 100000 points.' });
+        amountMinor = points * POINTS_UNIT_PRICE_MINOR;
+        bundleId = randomUUID();
+      }
       if (input.bundleId) {
         const bundle = await db
           .prepare("SELECT * FROM bundles WHERE id = ? AND status = 'active'")
           .get(input.bundleId);
         if (!bundle)
           return res.status(404).json({ error: 'This bundle is not available for purchase.' });
+        if (bundle.billing_cycle !== 'one_time')
+          return res.status(409).json({
+            error:
+              'This legacy bundle needs its billing terms corrected before purchase. Choose a one-time bundle or a subscription plan.',
+          });
         points = bundle.points_included;
         amountMinor = bundle.price_minor;
         currency = bundle.currency;
@@ -775,6 +836,21 @@ export function mountPointsPurchase(app, store, deps) {
       // PAY-01: persisted before the provider is ever called — see the identical reasoning in
       // /api/milestones/:id/fund above.
       await transaction(async () => {
+        if (customTools) {
+          const now = new Date().toISOString();
+          await db
+            .prepare(
+              `INSERT INTO bundles (id,name,description,price_minor,currency,points_included,billing_cycle,status,created_by,created_at,updated_at)
+            VALUES (?, 'Custom tool bundle', 'One-time custom selection', ?, ?, ?, 'one_time', 'draft', ?, ?, ?)`,
+            )
+            .run(bundleId, amountMinor, currency, points, req.user.id, now, now);
+          for (const tool of customTools)
+            await db
+              .prepare(
+                'INSERT INTO bundle_items (id,bundle_id,agent_id,created_at) VALUES (?,?,?,?)',
+              )
+              .run(randomUUID(), bundleId, tool.id, now);
+        }
         await db
           .prepare(
             `INSERT INTO points_purchases
@@ -817,7 +893,9 @@ export function mountPointsPurchase(app, store, deps) {
       }
       await transaction(async () => {
         await db
-          .prepare("UPDATE points_purchases SET status = 'pending' WHERE id = ?")
+          .prepare(
+            "UPDATE points_purchases SET status = 'pending' WHERE id = ? AND status = 'awaiting_provider'",
+          )
           .run(purchaseId);
         await log(
           req.workspace.id,
@@ -881,7 +959,9 @@ export function mountPaystackWebhook(app, store, deps) {
       return res.status(401).json({ error: 'Invalid webhook signature.' });
 
     const event = req.body || {};
-    const eventId = String(event.data?.reference || event.data?.id || '');
+    const eventId = String(
+      event.data?.transaction_reference || event.data?.reference || event.data?.id || '',
+    );
     if (!event.event || !eventId)
       return res.status(400).json({ error: 'Malformed webhook payload.' });
     // Paystack reuses the same transaction/transfer reference across related events (e.g. a
@@ -916,7 +996,7 @@ export function mountPaystackWebhook(app, store, deps) {
         .prepare('SELECT * FROM payment_transfers WHERE provider_reference = ?')
         .get(eventId);
       if (transfer) {
-        if (event.event === 'transfer.success') {
+        if (event.event === 'transfer.success' && transfer.status !== 'reversed') {
           const expectedAmount = transfer.provider_amount_minor ?? transfer.amount_minor;
           const expectedCurrency = transfer.provider_currency ?? transfer.currency;
           if (!providerAmountMatches(event, expectedAmount, expectedCurrency)) {
@@ -944,7 +1024,31 @@ export function mountPaystackWebhook(app, store, deps) {
               "UPDATE milestone_fundings SET status = 'released', released_at = ? WHERE milestone_id = ? AND status = 'held'",
             )
             .run(new Date().toISOString(), transfer.milestone_id);
-        } else if (event.event === 'transfer.failed') {
+        } else if (event.event === 'transfer.reversed') {
+          // A reversal after success must never leave the UI claiming the contractor was paid.
+          // Require reconciliation before permitting another transfer or refund.
+          await db
+            .prepare(
+              "UPDATE payment_transfers SET status = 'reversed', failure_reason = ?, updated_at = ? WHERE id = ?",
+            )
+            .run(
+              'Provider reported a transfer reversal. Reconcile before retrying.',
+              new Date().toISOString(),
+              transfer.id,
+            );
+          await db
+            .prepare("UPDATE milestones SET status = 'payment_review' WHERE id = ?")
+            .run(transfer.milestone_id);
+          await db
+            .prepare(
+              "UPDATE milestone_fundings SET status = 'reconciliation_required', released_at = NULL WHERE milestone_id = ? AND status = 'released'",
+            )
+            .run(transfer.milestone_id);
+        } else if (
+          event.event === 'transfer.failed' &&
+          transfer.status !== 'succeeded' &&
+          transfer.status !== 'reversed'
+        ) {
           await db
             .prepare(
               "UPDATE payment_transfers SET status = 'failed', failure_reason = ?, updated_at = ? WHERE id = ?",
@@ -955,7 +1059,7 @@ export function mountPaystackWebhook(app, store, deps) {
       if (event.event === 'charge.success') {
         const purchase = await db
           .prepare(
-            "SELECT * FROM points_purchases WHERE provider_reference = ? AND status = 'pending'",
+            "SELECT * FROM points_purchases WHERE provider_reference = ? AND status IN ('pending', 'awaiting_provider')",
           )
           .get(eventId);
         if (purchase) {
@@ -1012,7 +1116,7 @@ export function mountPaystackWebhook(app, store, deps) {
         }
         const funding = await db
           .prepare(
-            "SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'pending'",
+            "SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status IN ('pending', 'awaiting_provider')",
           )
           .get(eventId);
         if (funding) {
@@ -1033,13 +1137,33 @@ export function mountPaystackWebhook(app, store, deps) {
           }
         }
       }
-      if (event.event === 'refund.processed' || event.event === 'refund.failed') {
+      if (
+        ['refund.pending', 'refund.processing', 'refund.processed', 'refund.failed'].includes(
+          event.event,
+        )
+      ) {
         const funding = await db
           .prepare(
             "SELECT * FROM milestone_fundings WHERE provider_reference = ? AND status = 'refund_pending'",
           )
           .get(eventId);
         if (funding) {
+          if (event.event === 'refund.pending' || event.event === 'refund.processing') return false;
+          if (
+            event.event === 'refund.processed' &&
+            !providerAmountMatches(
+              event,
+              funding.provider_amount_minor ?? funding.amount_minor,
+              funding.provider_currency ?? funding.currency,
+            )
+          ) {
+            await db
+              .prepare(
+                "UPDATE milestone_fundings SET status = 'reconciliation_required' WHERE id = ?",
+              )
+              .run(funding.id);
+            return false;
+          }
           const status = event.event === 'refund.processed' ? 'refunded' : 'refund_failed';
           await db
             .prepare('UPDATE milestone_fundings SET status = ?, refunded_at = ? WHERE id = ?')

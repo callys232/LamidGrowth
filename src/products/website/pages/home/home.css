@@ -2890,7 +2890,7 @@
   --icon-d: #f2777c;
 }
 .lamid-home .home-mechanics-list li:nth-child(2) {
-  --icon-l: #18858c;
+  --icon-l: #13757c;
   --icon-d: #6fd0d6;
 }
 .lamid-home .home-mechanics-list li:nth-child(3) {
@@ -2898,7 +2898,7 @@
   --icon-d: #b4a2f2;
 }
 .lamid-home .home-mechanics-list li:nth-child(4) {
-  --icon-l: #2e8f4e;
+  --icon-l: #267c42;
   --icon-d: #7fd19c;
 }
 .lamid-home .home-mechanics-list li:nth-child(5) {
@@ -3662,7 +3662,7 @@
   --pillar-d: #f2777c;
 }
 .lamid-home .home-pillar-grid > li:nth-child(2) {
-  --pillar-l: #18858c;
+  --pillar-l: #13757c;
   --pillar-d: #6fd0d6;
 }
 .lamid-home .home-pillar-grid > li:nth-child(3) {
@@ -3670,11 +3670,11 @@
   --pillar-d: #b4a2f2;
 }
 .lamid-home .home-pillar-grid > li:nth-child(4) {
-  --pillar-l: #2e8f4e;
+  --pillar-l: #267c42;
   --pillar-d: #7fd19c;
 }
 .lamid-home .home-pillar-grid > li:nth-child(5) {
-  --pillar-l: #b86e0a;
+  --pillar-l: #995a08;
   --pillar-d: #f2b456;
 }
 .lamid-home .home-pillar-grid > li:nth-child(6) {
@@ -3811,7 +3811,7 @@
   --cadence-d: #f2777c;
 }
 .lamid-home .home-rhythm-steps > li:nth-child(2) {
-  --cadence-l: #18858c;
+  --cadence-l: #13757c;
   --cadence-d: #6fd0d6;
 }
 .lamid-home .home-rhythm-steps > li:nth-child(3) {
@@ -3819,7 +3819,7 @@
   --cadence-d: #b4a2f2;
 }
 .lamid-home .home-rhythm-steps > li:nth-child(4) {
-  --cadence-l: #2e8f4e;
+  --cadence-l: #267c42;
   --cadence-d: #7fd19c;
 }
 .lamid-home .home-rhythm-steps > li {

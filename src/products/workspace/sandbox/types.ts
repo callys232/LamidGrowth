@@ -23,6 +23,17 @@ export const SANDBOX_SCHEMA_VERSION = 2;
 
 /** Everything one demo persona's workspace holds, in the shapes the real endpoints return. */
 export type SandboxData = {
+  commerceVersion?: 1;
+  messages?: Record<string, import('../../commercial/hooks/useProjectsPage').ProjectMessage[]>;
+  scopes?: import('../../scoping/hooks/useScopingPage').ScopingCase[];
+  teams?: {
+    id: string;
+    name: string;
+    description: string;
+    lead_user_id: string;
+    created_at: string;
+    members: { id: string; user_id: string; role: string; access_scope: string }[];
+  }[];
   learning?: {
     paths: LearningPath[];
     enrollments: LearningEnrollment[];

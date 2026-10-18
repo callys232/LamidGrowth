@@ -1,3 +1,4 @@
+import { apiUrl } from '../../../api';
 import { Download } from 'lucide-react';
 import type { useSettingsPage } from '../hooks/useSettingsPage';
 export function WorkspaceDataExport({ state }: Pick<ReturnType<typeof useSettingsPage>, 'state'>) {
@@ -11,7 +12,7 @@ export function WorkspaceDataExport({ state }: Pick<ReturnType<typeof useSetting
           your consent.
         </p>
         {state.permissions.includes('workspace:export') && (
-          <a className="button button-secondary" href="/api/export" download>
+          <a className="button button-secondary" href={apiUrl('/export')} download>
             <Download size={16} /> Export workspace data
           </a>
         )}

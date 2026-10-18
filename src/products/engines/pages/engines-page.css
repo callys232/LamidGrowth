@@ -826,12 +826,12 @@
 .ws-catalog-group + .ws-catalog-group {
   border-top: 1px solid var(--line-soft, var(--border));
 }
-.ws-catalog-group > h3 {
+.ws-catalog-group > h2 {
   margin: 0;
   font: inherit;
 }
 /* "Other tools" (no area) keeps a plain label. */
-.ws-catalog-group > h3:not(:has(button)) {
+.ws-catalog-group > h2:not(:has(button)) {
   padding: 12px 22px;
   font-size: 13px;
   font-weight: 700;
@@ -866,7 +866,7 @@
 .ws-catalog-toggle:hover {
   background: color-mix(in srgb, var(--tone) 5%, transparent);
 }
-.ws-catalog-group[data-open] > h3 {
+.ws-catalog-group[data-open] > h2 {
   position: sticky;
   top: 0;
   z-index: 1;
