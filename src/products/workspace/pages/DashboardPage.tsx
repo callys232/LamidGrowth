@@ -7,6 +7,7 @@ import { NeedsYouPanel } from '../overview/NeedsYouPanel';
 import { DashboardActivitySlide } from '../slides/DashboardActivitySlide';
 import { DashboardBriefingSlide } from '../slides/DashboardBriefingSlide';
 import { DashboardObjectivesSlide } from '../slides/DashboardObjectivesSlide';
+import { NextStepGuide } from '../components/NextStepGuide';
 
 /** The Overview: KPIs across work, money, risk and talent, what needs the user now, then the
  * briefing, objectives and activity. Edit each section in ../overview and ../slides. */
@@ -29,6 +30,7 @@ export function Dashboard() {
         kpis={overview.kpis}
         loadingKpis={overview.loading ? 6 : 0}
       />
+      <NextStepGuide />
       <div className="ws-overview-grid">
         <NeedsYouPanel
           items={overview.queue}

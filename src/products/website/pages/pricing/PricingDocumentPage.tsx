@@ -15,6 +15,7 @@ import {
 import { usePublicBillables } from './usePublicBillables';
 import './bundle-builder.css';
 import './pricing-flow.css';
+import { PricingExplainer } from '../../../pricing/components/PricingExplainer';
 
 /** /pricing follows a HubSpot-style pricing flow (see PricingFlow.tsx): hero, sticky plan bar,
  * tier cards, live price cards, bundle calculator, the full billables table, then the closing
@@ -39,6 +40,10 @@ function PricingPage() {
   return (
     <DocumentPageLayout page={content} hero={<PricingHero />} nav={<PricingNav />}>
       <PricingTiers />
+      <PricingExplainer
+        unitPriceMinor={billables?.pointsUnitPriceMinor}
+        currency={billables?.currency}
+      />
       <PricingCards billables={billables} bundles={bundles} error={error} />
       <section className="pricing-block" id="bundle" aria-labelledby="pricing-bundle-title">
         <header className="pricing-block-head">

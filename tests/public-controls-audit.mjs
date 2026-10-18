@@ -8,9 +8,9 @@ const report = {
   controls: [],
   errors: [],
 };
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const save = () =>
-  writeFileSync('test-results/full-ui/public-controls.json', JSON.stringify(report, null, 2));
+  writeFileSync('lamiddoc/test-results/full-ui/public-controls.json', JSON.stringify(report, null, 2));
 const harness = await auditHarness(report);
 const paths = [
   ...new Set([

@@ -33,9 +33,9 @@ try {
     }
   }
 } finally {
-  mkdirSync('test-results/full-ui', { recursive: true });
+  mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
   writeFileSync(
-    'test-results/full-ui/accessibility-regression.json',
+    'lamiddoc/test-results/full-ui/accessibility-regression.json',
     JSON.stringify(report, null, 2),
   );
   await h.close();

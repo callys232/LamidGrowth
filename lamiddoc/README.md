@@ -6,7 +6,11 @@ The VPS deployment script excludes `/lamiddoc/` using Git sparse checkout. New V
 
 Deployment instructions: [VPS setup](deploy/README.md) and [Vercel with a VPS API](docs/vercel-vps-deployment.md). To restore the documentation in a sparse checkout, run `git sparse-checkout disable`.
 
-**Current handover:** The [digitalization, administrator and technical documentation pack](docs/handover/README.md) includes six updated Markdown/PDF documents and a generated source inventory. Regenerate with `node scripts/build-handover-docs.mjs`.
+**Current handover:** The [digitalization, administrator and technical documentation pack](docs/handover/README.md) includes six updated Markdown/PDF documents and a generated source inventory. Regenerate with `node lamiddoc/scripts/build-handover-docs.mjs`.
+
+Historical source-review snapshots now live in `lamiddoc/data/`. Generated test reports live in `lamiddoc/test-results/`; both directories remain Git-ignored and are local archives, not new uploads to GitHub. Report assembly is available at `node lamiddoc/scripts/build-full-ui-review.mjs`. Executable tests stay in `tests/` because VPS release checks require them. Runtime logs and the local PostgreSQL directory remain in `data/`; do not relocate a database while its service may be using it.
+
+The VPS deploy script removes generated reports after successful release checks. Failed-check reports remain available for diagnosis. Moving local files does not reclaim space on an existing server or shrink Git history; deploy the updated script to apply this policy there.
 
 **Backend routes:** Express route modules are in [`src/app`](src/app/README.md). Server startup and SQLite persistence remain in `server/`.
 

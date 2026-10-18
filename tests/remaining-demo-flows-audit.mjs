@@ -6,7 +6,7 @@ const report = {
   cases: [],
 };
 const save = () =>
-  writeFileSync('test-results/full-ui/remaining-demo-flows.json', JSON.stringify(report, null, 2));
+  writeFileSync('lamiddoc/test-results/full-ui/remaining-demo-flows.json', JSON.stringify(report, null, 2));
 const harness = await auditHarness(report);
 try {
   for (const profile of profiles)

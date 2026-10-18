@@ -8,9 +8,9 @@ const report = {
     'Production browser build with real sample handlers and isolated identity/save fixtures. No provider, email or real money.',
   cases: [],
 };
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const harness = await auditHarness(report);
-const output = `test-results/full-ui/audit-fixes-browser${process.env.AUDIT_PROFILE ? '-' + process.env.AUDIT_PROFILE : ''}.json`;
+const output = `lamiddoc/test-results/full-ui/audit-fixes-browser${process.env.AUDIT_PROFILE ? '-' + process.env.AUDIT_PROFILE : ''}.json`;
 try {
   for (const profile of profiles.filter(
     (p) => !process.env.AUDIT_PROFILE || p === process.env.AUDIT_PROFILE,

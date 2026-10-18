@@ -9,6 +9,8 @@ git pull --ff-only
 npm ci
 npm run deployment:check
 npm run release:check
+# Successful audit reports are development artifacts, not application data.
+node --input-type=module -e "import fs from 'node:fs'; fs.rmSync('lamiddoc/test-results', { recursive: true, force: true });"
 pm2 restart lamid-api --update-env
 pm2 save
 echo "==> Deployed. Tail logs with: pm2 logs lamid-api"

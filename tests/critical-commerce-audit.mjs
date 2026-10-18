@@ -8,10 +8,10 @@ const report = {
   cases: [],
 };
 const summaryOnly = process.argv.includes('--summary-only');
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const save = () =>
   writeFileSync(
-    `test-results/full-ui/commerce${summaryOnly ? '-summary' : ''}.json`,
+    `lamiddoc/test-results/full-ui/commerce${summaryOnly ? '-summary' : ''}.json`,
     JSON.stringify(report, null, 2),
   );
 const harness = await auditHarness(report);

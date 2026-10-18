@@ -20,6 +20,8 @@ const steps = [
   ['node', ['tests/demo-save-recovery-browser.mjs']],
   ['node', ['tests/project-message-loop-audit.mjs']],
   ['node', ['tests/accessibility-regression.mjs']],
+  ['node', ['tests/clarity-browser.mjs']],
+  ['node', ['tests/payment-support-browser.mjs']],
 ];
 for (const [command, args] of steps) {
   const result = spawnSync(

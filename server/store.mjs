@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { PAYMENT_REVIEW_SCHEMA_SQL } from './paymentSchema.mjs';
 import { DEMO_SCHEMA_SQL } from './demoSchema.mjs';
 import { MAIL_SCHEMA_SQL } from './mailSchema.mjs';
 import { MANIFEST_SYNC } from '../src/app/toolCatalog/catalog.mjs';
@@ -526,6 +527,7 @@ CREATE TABLE IF NOT EXISTS payment_transfers (
   created_at TEXT NOT NULL, updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS payment_transfers_milestone ON payment_transfers(milestone_id);
+${PAYMENT_REVIEW_SCHEMA_SQL}
 CREATE TABLE IF NOT EXISTS payment_webhook_events (
   id TEXT PRIMARY KEY, provider TEXT NOT NULL, event_type TEXT NOT NULL,
   provider_event_id TEXT NOT NULL, payload TEXT NOT NULL,
@@ -968,6 +970,7 @@ export async function openStore(filename, { poolMax } = {}) {
     await client.query(DEMO_SCHEMA_SQL);
     await client.query(MAIL_SCHEMA_SQL);
     await client.query(ONBOARDING_SCHEMA_SQL);
+    await client.query(PAYMENT_REVIEW_SCHEMA_SQL);
     await client.query(`CREATE TABLE IF NOT EXISTS refund_receipts (
       reference_id TEXT NOT NULL, reason TEXT NOT NULL, created_at BIGINT NOT NULL,
       PRIMARY KEY (reference_id, reason)

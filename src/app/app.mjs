@@ -50,6 +50,7 @@ import { mountFx } from './fx.mjs';
 import { mountConcierge } from './concierge.mjs';
 import { mountBilling } from './billing.mjs';
 import { mountFinance } from './finance.mjs';
+import { mountPaymentOperations } from './paymentOperations.mjs';
 import { mountPeople } from './people.mjs';
 import { mountEngines, mountPublicEngines, engineCountByHomeEngine } from './engines.mjs';
 import { mountCapabilityRuns, mountTraceability } from './capabilities.mjs';
@@ -1952,6 +1953,7 @@ export async function createApp({
   mountConcierge(app, store, { ecosystemAdminEmails });
   mountBilling(app, store, { paymentProvider, ecosystemAdminEmails });
   mountFinance(app, store);
+  mountPaymentOperations(app, store, { paymentProvider, ecosystemAdminEmails });
   mountPeople(app, store);
   mountEngines(app, store);
   mountCapabilityRuns(app, store);

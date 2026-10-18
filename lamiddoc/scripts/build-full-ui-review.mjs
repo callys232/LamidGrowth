@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-const root = 'test-results/full-ui/';
+const root = 'lamiddoc/test-results/full-ui/';
 async function read(name) {
   if (!existsSync(root + name)) return null;
   for (let i = 0; i < 30; i++) {

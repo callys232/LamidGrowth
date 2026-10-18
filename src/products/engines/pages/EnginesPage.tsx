@@ -224,6 +224,7 @@ function EngineDetailPanel({
           balance={result.balance}
           nextSteps={result.nextSteps}
           result={result.result}
+          inputSnapshot={result.inputSnapshot}
         />
       ) : (
         <EngineForm manifest={manifest} submitting={running} onSubmit={submit} />

@@ -8,6 +8,7 @@ import { SkeletonList } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { usePricingPage } from '../hooks/usePricingPage';
 import { clearPendingBundle, readPendingBundle } from '../pendingBundle';
+import { PricingExplainer } from '../components/PricingExplainer';
 
 function formatMinor(amountMinor: number, currency: string) {
   return `${(amountMinor / 100).toFixed(2)} ${currency}`;
@@ -43,6 +44,10 @@ export function PricingBillablesPage() {
         eyebrow="MONEY · PLANS & BILLING"
         title="Plans & billing"
         description="What each engine costs in points, and the plans that bundle them."
+      />
+      <PricingExplainer
+        unitPriceMinor={page.billables?.pointsUnitPriceMinor}
+        currency={page.billables?.currency}
       />
       <section className="panel">
         <div className="panel-heading">

@@ -166,9 +166,9 @@ async function session(profile, tier, mobile = false) {
   return { page, context };
 }
 function save() {
-  mkdirSync('test-results', { recursive: true });
+  mkdirSync('lamiddoc/test-results', { recursive: true });
   writeFileSync(
-    `test-results/deep-demo-browser${focused ? '-focused' : ''}.json`,
+    `lamiddoc/test-results/deep-demo-browser${focused ? '-focused' : ''}.json`,
     JSON.stringify(report, null, 2),
   );
 }

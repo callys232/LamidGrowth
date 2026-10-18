@@ -65,8 +65,8 @@ try {
     additionalMessageFetchesInTwoSeconds: messages - before,
     outcome: messages - before > 2 ? 'repeated-idle-fetch-confirmed' : 'not-reproduced',
   };
-  mkdirSync('test-results/full-ui', { recursive: true });
-  writeFileSync('test-results/full-ui/message-loop.json', JSON.stringify(report, null, 2));
+  mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
+  writeFileSync('lamiddoc/test-results/full-ui/message-loop.json', JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report));
   assert.ok(
     report.additionalMessageFetchesInTwoSeconds <= 2,

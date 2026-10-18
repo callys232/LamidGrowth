@@ -2,9 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import PDFDocument from 'pdfkit';
-import { TOOLS, PRIMARY, homeEngineFor, disclosureFor } from '../src/app/toolCatalog/catalog.mjs';
-import { MAP } from '../src/app/toolCatalog/migration.mjs';
-import { PLANS } from '../src/app/plans.mjs';
+import { TOOLS, PRIMARY, homeEngineFor, disclosureFor } from '../../src/app/toolCatalog/catalog.mjs';
+import { MAP } from '../../src/app/toolCatalog/migration.mjs';
+import { PLANS } from '../../src/app/plans.mjs';
 
 // Read source, never .env or live services. Run from the repository root.
 const root = process.cwd();

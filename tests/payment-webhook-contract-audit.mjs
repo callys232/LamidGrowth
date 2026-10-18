@@ -149,7 +149,7 @@ try {
 } finally {
   report.finished = new Date().toISOString();
   writeFileSync(
-    'test-results/full-ui/payment-webhook-contract.json',
+    'lamiddoc/test-results/full-ui/payment-webhook-contract.json',
     JSON.stringify(report, null, 2),
   );
   await new Promise((done) => server.close(done));

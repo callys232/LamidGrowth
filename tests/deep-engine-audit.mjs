@@ -158,8 +158,8 @@ report.tiers = Object.fromEntries(
     { available: demoToolCatalog(tier).count, locked: demoToolCatalog(tier).locked.length },
   ]),
 );
-mkdirSync('test-results', { recursive: true });
-writeFileSync('test-results/deep-engine-audit.json', JSON.stringify(report, null, 2));
+mkdirSync('lamiddoc/test-results', { recursive: true });
+writeFileSync('lamiddoc/test-results/deep-engine-audit.json', JSON.stringify(report, null, 2));
 console.log(
   JSON.stringify(
     {

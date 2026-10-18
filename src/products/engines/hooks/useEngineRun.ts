@@ -104,6 +104,7 @@ export type EngineResult = {
 };
 
 export type EngineRunResponse = {
+  inputSnapshot?: Record<string, unknown>;
   runId?: string;
   pointsCharged?: number;
   balance?: number;
@@ -142,8 +143,9 @@ export function useEngineRun(code: string | null, demo = false) {
           { input },
           'POST',
         );
-        setResult(response);
-        return response;
+        const completed = { ...response, inputSnapshot: structuredClone(input) };
+        setResult(completed);
+        return completed;
       } catch (e) {
         setError((e as Error).message);
         throw e;

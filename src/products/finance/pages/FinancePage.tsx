@@ -4,6 +4,7 @@ import { Empty } from '../../../shared/ui/Empty';
 import { SkeletonLine } from '../../../shared/ui/Skeleton';
 import { StatusPill } from '../../../shared/workspace/StatusPill';
 import { useFinancePage } from '../hooks/useFinancePage';
+import { PaymentReviewPanel } from '../components/PaymentReviewPanel';
 
 function formatMinor(amountMinor: number, currency: string) {
   return `${(amountMinor / 100).toFixed(2)} ${currency}`;
@@ -194,6 +195,7 @@ export function FinancePage() {
           </>
         )}
       </section>
+      <PaymentReviewPanel />
     </>
   );
 }

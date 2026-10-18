@@ -8,9 +8,9 @@ const report = {
   pages: [],
   errors: [],
 };
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const save = () =>
-  writeFileSync('test-results/full-ui/mobile-accessibility.json', JSON.stringify(report, null, 2));
+  writeFileSync('lamiddoc/test-results/full-ui/mobile-accessibility.json', JSON.stringify(report, null, 2));
 const harness = await auditHarness(report);
 const source = readFileSync('src/App.tsx', 'utf8');
 const workspace = [
@@ -84,7 +84,7 @@ try {
               })),
             }));
             await session.page.screenshot({
-              path: `test-results/full-ui/mobile-${path.replaceAll('/', '-') || 'home'}.png`,
+              path: `lamiddoc/test-results/full-ui/mobile-${path.replaceAll('/', '-') || 'home'}.png`,
               fullPage: true,
             });
           }

@@ -7,5 +7,7 @@ lamiddoc/document-study
 package-lock.json
 src/content
 test-results
+lamiddoc/test-results
+lamiddoc/data
 playwright-report
 src/products/workspace/sandbox/engineCatalog.json

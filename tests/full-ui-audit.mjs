@@ -10,7 +10,7 @@ const selectedProfile = process.argv.find((arg) => arg.startsWith('--profile='))
 const selectedTier = process.argv.find((arg) => arg.startsWith('--tier='))?.slice(7);
 const retryFailures = process.argv.includes('--retry-failures');
 const priorFailures = retryFailures
-  ? JSON.parse(readFileSync('test-results/full-ui/tools.json', 'utf8')).engines.filter(
+  ? JSON.parse(readFileSync('lamiddoc/test-results/full-ui/tools.json', 'utf8')).engines.filter(
       (row) => row.outcome === 'failed',
     )
   : null;
@@ -32,8 +32,8 @@ const report = {
   critical: [],
   errors: [],
 };
-mkdirSync('test-results/full-ui', { recursive: true });
-const filename = `test-results/full-ui/${phase}${retryFailures ? '-retry' : ''}${selectedProfile ? `-${selectedProfile}` : ''}${selectedTier ? `-${selectedTier}` : ''}.json`;
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
+const filename = `lamiddoc/test-results/full-ui/${phase}${retryFailures ? '-retry' : ''}${selectedProfile ? `-${selectedProfile}` : ''}${selectedTier ? `-${selectedTier}` : ''}.json`;
 function save() {
   writeFileSync(filename, JSON.stringify(report, null, 2));
 }

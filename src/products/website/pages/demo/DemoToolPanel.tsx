@@ -150,7 +150,7 @@ function LiveTool({ code }: { code: string }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: EASE }}
         >
-          <EngineResultView result={result.result} />
+          <EngineResultView result={result.result} inputSnapshot={result.inputSnapshot} />
           <div className="demo-panel-signup">
             <p>That’s a real, computed result — not a screenshot.</p>
             <p>Create an account to save it and unlock everything.</p>

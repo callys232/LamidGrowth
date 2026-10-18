@@ -83,8 +83,8 @@ try {
       row.error = error.message.split('\n')[0];
     }
     report.pages.push(row);
-    mkdirSync('test-results', { recursive: true });
-    writeFileSync('test-results/public-browser.json', JSON.stringify(report, null, 2));
+    mkdirSync('lamiddoc/test-results', { recursive: true });
+    writeFileSync('lamiddoc/test-results/public-browser.json', JSON.stringify(report, null, 2));
     if (!row.pass || report.pages.length % 10 === 0)
       console.log(
         `Public pages checked: ${report.pages.length}/${entries.length}${row.pass ? '' : `; failed ${row.path}: ${row.error}`}`,
@@ -102,8 +102,8 @@ try {
   await mobilePage.waitForTimeout(300);
   await mobile.close();
 } finally {
-  mkdirSync('test-results', { recursive: true });
-  writeFileSync('test-results/public-browser.json', JSON.stringify(report, null, 2));
+  mkdirSync('lamiddoc/test-results', { recursive: true });
+  writeFileSync('lamiddoc/test-results/public-browser.json', JSON.stringify(report, null, 2));
   await browser?.close();
   await new Promise((resolve) => server.close(resolve));
 }

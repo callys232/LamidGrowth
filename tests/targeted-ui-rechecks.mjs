@@ -7,7 +7,7 @@ const report = {
     'Production UI with local pricing data from the real catalog. Support submits are blocked; checkout returns simulated 401. No external message or purchase.',
   cases: [],
 };
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const harness = await auditHarness(report);
 try {
   const session = await harness.session('Public', 'individual', true);
@@ -98,7 +98,7 @@ try {
     }
   }
 } finally {
-  writeFileSync('test-results/full-ui/targeted-ui-rechecks.json', JSON.stringify(report, null, 2));
+  writeFileSync('lamiddoc/test-results/full-ui/targeted-ui-rechecks.json', JSON.stringify(report, null, 2));
   await harness.close();
 }
 console.log(JSON.stringify(report, null, 2));

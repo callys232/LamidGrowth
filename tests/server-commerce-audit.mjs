@@ -21,10 +21,10 @@ const refundOnly = process.argv.includes('--refund-browser-only');
 const apiOnly = process.argv.includes('--api-only') || prereqOnly;
 const raceOnly = process.argv.includes('--funding-race-only');
 let holdInitialization = null;
-mkdirSync('test-results/full-ui', { recursive: true });
+mkdirSync('lamiddoc/test-results/full-ui', { recursive: true });
 const save = () =>
   writeFileSync(
-    `test-results/full-ui/server-commerce${refundOnly ? '-refund-browser' : prereqOnly ? '-invoice-prereq' : raceOnly ? '-funding-race' : apiOnly ? '-api-only' : ''}.json`,
+    `lamiddoc/test-results/full-ui/server-commerce${refundOnly ? '-refund-browser' : prereqOnly ? '-invoice-prereq' : raceOnly ? '-funding-race' : apiOnly ? '-api-only' : ''}.json`,
     JSON.stringify(report, null, 2),
   );
 const provider = {

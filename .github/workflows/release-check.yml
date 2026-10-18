@@ -32,4 +32,4 @@ jobs:
         if: always()
         with:
           name: demo-audit-results
-          path: test-results/
+          path: lamiddoc/test-results/

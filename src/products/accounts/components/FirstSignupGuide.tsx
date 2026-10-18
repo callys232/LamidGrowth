@@ -33,8 +33,9 @@ export function FirstSignupGuide({ userId, demo }: { userId: string; demo: boole
   return (
     <Modal title="Welcome to LAMID ONE" wide onClose={() => setShownFor(null)}>
       <p>
-        Here is your user guide to help you get started. It opens automatically only once for your
-        account. You can find it again from User guide in the sidebar.
+        Start with one bottleneck: name the outcome you want, check the evidence, then create an
+        action with an owner and review date. Your Overview shows the next step from your saved
+        work. This guide opens automatically once; find it again from User guide in the sidebar.
       </p>
       <button type="button" className="button" onClick={() => setShownFor(null)}>
         Continue to workspace

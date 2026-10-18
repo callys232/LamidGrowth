@@ -1,6 +1,20 @@
 // Edit user-facing instructions here. Keep links and button names aligned with the product.
 export const userGuideTopics = [
   {
+    id: 'first-outcome',
+    title: 'Start with one bottleneck',
+    summary: 'Diagnose a specific problem and create an action plan you can review.',
+    steps: [
+      'Create one objective from Overview. Describe the outcome, what is blocking it, the constraints and how you will recognize progress.',
+      'Gather evidence before choosing a solution. If an assessment helps answer your question, read its method, required inputs, limitations and points cost first.',
+      'Review the result against your records. A completed calculation does not independently verify your inputs or guarantee an outcome.',
+      'Create an action connected to the objective. Name an owner, set a due date and record the evidence needed for review.',
+      'Use Today to act, Consistency to review submissions and Rhythm to record what changed and what you will try next.',
+    ],
+    note: 'An assessment is optional. Start with one objective and one action; add commercial, learning or team workflows when the work calls for them.',
+    links: [{ label: 'Start from Overview', to: '/os' }],
+  },
+  {
     id: 'try-demo',
     title: 'Try the demo',
     summary: 'Explore a sample workspace before creating an account.',

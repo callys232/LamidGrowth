@@ -1,6 +1,7 @@
 import type { EngineResult } from '../hooks/useEngineRun';
 import { EngineScope } from './EngineScope';
 import './engine-result.css';
+import { Link } from 'react-router-dom';
 
 /** Renders a computed EngineResult: the narrative summary every engine produces, its warnings,
  * and — for the 6 archetypes with a numeric `summary` object — the raw computed figures as a
@@ -18,11 +19,13 @@ export function EngineResultView({
   balance,
   result,
   nextSteps,
+  inputSnapshot,
 }: {
   pointsCharged?: number;
   balance?: number;
   result: EngineResult;
   nextSteps?: string[];
+  inputSnapshot?: Record<string, unknown>;
 }) {
   const flatFields = isPlainObject(result.summary)
     ? primitiveEntries(result.summary as Record<string, unknown>)
@@ -31,6 +34,46 @@ export function EngineResultView({
 
   return (
     <div className="engine-result">
+      <section className="panel settings-card" aria-label="How to use this result">
+        <h3>Use the result to choose your next action</h3>
+        <p>
+          <strong>Method:</strong> {result.standard || result.engineName}. This calculation uses the
+          inputs you supplied; it does not independently verify their accuracy.
+        </p>
+        <p>
+          <strong>Result status:</strong>{' '}
+          {result.status === 'provisional'
+            ? 'Partial inputs; treat the result as provisional.'
+            : result.status === 'insufficient_evidence'
+              ? 'More evidence is needed before drawing a conclusion.'
+              : 'Calculation returned. Review the assumptions and limitations before acting.'}
+        </p>
+        <ol>
+          <li>
+            Check the inputs and worked calculation below against your records. Replace example
+            values with your own evidence.
+          </li>
+          <li>
+            Read the limitations and warnings. Numerical precision does not establish the quality of
+            the evidence or predict success.
+          </li>
+          <li>
+            Choose one action, identify its owner and review date, then compare the outcome with
+            what you expected.
+          </li>
+        </ol>
+        {nextSteps && nextSteps.length > 0 && (
+          <ul>
+            {nextSteps.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ul>
+        )}
+        <p>
+          <Link to="/os/clarity">Connect the finding to an objective</Link> ·{' '}
+          <Link to="/os/consistency">Plan and track an action</Link>
+        </p>
+      </section>
       {pointsCharged !== undefined && balance !== undefined && (
         <div className="engine-result-meta">
           <span>{pointsCharged} points charged</span>
@@ -62,6 +105,16 @@ export function EngineResultView({
       )}
 
       <pre className="engine-result-working">{result.working}</pre>
+      {inputSnapshot && (
+        <details>
+          <summary>Review the submitted inputs</summary>
+          <p>
+            These are the values used in this run, including any example values you kept. They have
+            not been independently verified.
+          </p>
+          <pre className="engine-result-working">{JSON.stringify(inputSnapshot, null, 2)}</pre>
+        </details>
+      )}
 
       <EngineScope computes={result.computes} limits={result.limits} />
 

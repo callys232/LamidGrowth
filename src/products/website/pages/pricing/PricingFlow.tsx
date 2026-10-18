@@ -126,8 +126,8 @@ export function PricingCards({
           {billables ? (
             <>
               Points cover every engine call — 1 point costs{' '}
-              {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}. No hidden tiers:
-              this is the same price list the app bills against.
+              {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}. Tool access and
+              points are separate: check that your plan or bundle includes the tool you want.
             </>
           ) : (
             <SkeletonLine width={320} height={12} />
@@ -144,7 +144,10 @@ export function PricingCards({
         <div className="pricing-cards">
           <article className="pricing-card">
             <h3>Pay as you go</h3>
-            <p>Buy only the points you need, whenever you need them. No subscription required.</p>
+            <p>
+              Top up usage for tools you already have access to. This points purchase is one-time
+              and does not unlock excluded tools.
+            </p>
             <div className="pricing-card-price">
               {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}
               <span>/point</span>

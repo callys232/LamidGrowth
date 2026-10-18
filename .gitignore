@@ -3,6 +3,8 @@ dist/
 data/
 .env
 test-results/
+lamiddoc/test-results/
+lamiddoc/data/
 playwright-report/
 *.log
 .npm-cache/
