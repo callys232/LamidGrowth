@@ -25,7 +25,7 @@ import {
   useNavigate,
   useOutletContext,
 } from 'react-router-dom';
-import { api, ApiError, setWorkspaceScope } from '../../../api';
+import { api, apiValidated, ApiError, setWorkspaceScope } from '../../../api';
 import { PROFILES, TIERS, type DemoProfile, type DemoTier } from '../demo/personaList';
 import { endDemoSession, readDemoSession, startDemoSession } from '../sandbox/demoSession';
 import { trackDemo } from '../sandbox/demoAccess';
@@ -90,7 +90,8 @@ export function WorkspaceShell() {
   const refresh = useCallback(async () => {
     const sequence = ++refreshSequence.current;
     try {
-      const next = await api<WorkspaceState>('/state');
+      const { workspaceStateSchema } = await import('../../../contracts/workspace.mjs');
+      const next = await apiValidated('/state', workspaceStateSchema);
       if (sequence !== refreshSequence.current) return;
       if (displayedWorkspace.current && displayedWorkspace.current !== next.workspace.id) {
         setModal(null);

@@ -6,13 +6,13 @@ The VPS deployment script excludes `/lamiddoc/` using Git sparse checkout. New V
 
 Deployment instructions: [VPS setup](deploy/README.md) and [Vercel with a VPS API](docs/vercel-vps-deployment.md). To restore the documentation in a sparse checkout, run `git sparse-checkout disable`.
 
-**Current handover:** The [digitalization, administrator and technical documentation pack](docs/handover/README.md) includes six updated Markdown/PDF documents and a generated source inventory. Regenerate with `node lamiddoc/scripts/build-handover-docs.mjs`.
+**Current handover:** The six updated Markdown/PDF documents and generated source inventory are stored outside this repository in `Downloads/lamidGrowth`. Regenerate there with `node lamiddoc/scripts/build-handover-docs.mjs`; `LAMID_HANDOVER_DIR` can override the destination. The builder uses the editable Markdown already present in that destination.
 
 Historical source-review snapshots now live in `lamiddoc/data/`. Generated test reports live in `lamiddoc/test-results/`; both directories remain Git-ignored and are local archives, not new uploads to GitHub. Report assembly is available at `node lamiddoc/scripts/build-full-ui-review.mjs`. Executable tests stay in `tests/` because VPS release checks require them. Runtime logs and the local PostgreSQL directory remain in `data/`; do not relocate a database while its service may be using it.
 
 The VPS deploy script removes generated reports after successful release checks. Failed-check reports remain available for diagnosis. Moving local files does not reclaim space on an existing server or shrink Git history; deploy the updated script to apply this policy there.
 
-**Backend routes:** Express route modules are in [`src/app`](src/app/README.md). Server startup and SQLite persistence remain in `server/`.
+**Backend routes:** The Express composition root is `src/app/app.mjs`; cohesive route groups live in `src/app/*.mjs`. Shared request/response schemas live in `src/contracts/`. PostgreSQL connection, schema, and versioned migrations live in `server/`; see [migration guidance](../server/migrations.md).
 
 **Frontend editing:** Pages now live in named [product folders](src/products/README.md), with reusable slides, local components and state hooks. Start with the [page/component editing guide](docs/PAGE_COMPONENT_GUIDE.md). The homepage has its own [composition and styles](src/products/website/pages/home/README.md).
 
@@ -72,44 +72,33 @@ The Companion is a structured planning flow, **not a connected AI model**. It do
 
 ## Project map
 
-| Location                                | Responsibility                                               |
-| --------------------------------------- | ------------------------------------------------------------ |
-| `src/pages/Marketing.tsx`               | Public home, navigation, footer                              |
-| `src/pages/Auth.tsx`                    | Context selection and account journey                        |
-| `src/pages/ContentPage.tsx`             | Source-based editorial and availability surfaces             |
-| `src/pages/workspace/`                  | Separate operating-cycle feature screens                     |
-| `src/components/WorkspaceParts.tsx`     | Shared objective/action display and review controls          |
-| `src/components/WorkspaceShell.tsx`     | Workspace loading, navigation, dialogs, search               |
-| `src/components/ObjectiveEditor.tsx`    | Versioned objective editing                                  |
-| `src/components/ui.tsx`                 | Shared controls and native modal behavior                    |
-| `src/styles.css`, `src/readability.css` | Responsive visual system and legibility overrides            |
-| `src/app/app.mjs`                       | Session, validation, authorization, and API behavior         |
-| `server/store.mjs`                      | SQLite schema, transactions, audit records, sample seed      |
-| `scripts/generate-content.mjs`          | Reproducible extraction from the studied website copy        |
-| `tests/`                                | API and browser verification                                 |
-| `document-study/`                       | Original study and source traceability                       |
-| `docs/`                                 | Architecture, delivery status, and implementation boundaries |
-| `artifacts/`                            | Desktop/mobile screenshots and accessibility review          |
+| Location                    | Responsibility                                                 |
+| --------------------------- | -------------------------------------------------------------- |
+| `src/products/website/`     | Public site and editorial surfaces                             |
+| `src/products/accounts/`    | Account journeys and account UI                                |
+| `src/products/workspace/`   | Workspace shell, operating cycle, and demo sandbox             |
+| `src/shared/`               | Reusable UI, navigation, content, and domain helpers           |
+| `src/contracts/`            | Shared Zod request and response contracts                      |
+| `src/app/app.mjs`           | HTTP composition, authentication, and middleware               |
+| `src/app/*.mjs`             | Cohesive API route modules and policies                        |
+| `server/store.mjs`          | PostgreSQL store, transactions, and schema bootstrap           |
+| `server/migrations.mjs`     | Ordered transactional schema migrations                        |
+| `tests/`                    | Unit, API, database-upgrade, browser, and release verification |
+| `scripts/release-check.mjs` | Required sequential release-check pipeline                     |
+| `lamiddoc/`                 | Development notes, archived studies, and deployment guidance   |
 
 ## Data and security boundaries
 
-The local SQLite database is `data/lamid.db`, excluded from version control. Do not share it: it contains account and workspace data. `DATABASE_PATH` selects an alternative file. `PORT` selects the local HTTP port.
+The application uses PostgreSQL, configured with `DATABASE_URL`; `TEST_DATABASE_URL` must point at a separate test database. Schema changes are applied through ordered, transactional migrations. Never share database credentials or account data.
 
-Passwords use scrypt with a random salt. Session and recovery tokens are random; only token hashes are stored. Recovery tokens expire, are single-use, and reset invalidates existing sessions. In local development, the recovery token is returned as a test-only continuation because no email provider is configured. Production still requires an email delivery adapter before recovery is deployable. Cookies are HttpOnly and SameSite=Lax. Mutations require JSON and reject cross-site requests. Workspace scope is derived from the server session, never from a client-supplied workspace ID. Authentication attempts are rate limited per process/IP. Mutations and corresponding audit entries share database transactions.
+Passwords use scrypt with a random salt. Session and recovery tokens are random; only token hashes are stored. Recovery tokens expire, are single-use, and reset invalidates existing sessions. Cookies are HttpOnly and SameSite=Lax. Mutations require JSON and reject cross-site requests. Workspace scope is derived from the server session and active membership, never trusted from a client-supplied workspace ID. API state is validated against the shared frontend/backend contract. Authentication and mutation rate limits use the database-backed limiter. Mutations and corresponding audit entries share database transactions.
 
-The server binds to loopback intentionally. New accounts receive 100 development points; job posts cost 10 points and bid submissions cost 2 points. Points are an internal ledger, not money, credits, stored value, or a payment balance. Enterprise workspaces support 50–200 active members; the default is 200 and `ENTERPRISE_MEMBER_LIMIT` can set a value within that range. Members can switch between their active workspace memberships, and all workspace services resolve through the selected tenant. Current enrollment adds existing accounts; production invitation delivery is still required. Permanent account deletion is restricted to emails configured in `ECOSYSTEM_ADMIN_EMAILS`; enterprise workspace owners can only disable non-owner members in their own workspace, never delete accounts. Production deployment requires a dedicated deployment design: HTTPS, secure cookies (`COOKIE_SECURE=true`), trusted-proxy configuration, secret management, hardened storage, backups, migrations, distributed abuse controls, observability, and operational acceptance. Node's SQLite API is experimental on the installed runtime. The stored audit history is application-managed and is not tamper-proof storage.
+The server binds to loopback intentionally. Points are represented by a relational ledger; identity, membership, commerce, payment, and other cross-record invariants use relational tables. Bounded workspace objects such as objectives, actions, and reviews use the generic `records` table with workspace scoping and version checks. This is a deliberate boundary, not a rule that all future data should be JSON. See [migration and storage guidance](../server/migrations.md). Production still requires deployment-specific HTTPS, secure-cookie, trusted-proxy, secret-management, backup, observability, and operational acceptance checks.
 
-No email verification/recovery, MFA/SSO, shared membership, RBAC, AI execution, connectors, file processing, billing, payments, or background progression is implemented. Do not expose this build as a production service. All HTML is noindex while content and deployment remain under development.
+For current implementation boundaries and deployment requirements, consult the implementation status and deployment guides rather than the historical foundation notes below.
 
 ## Validation
 
-The initial implementation was checked with:
-
-- Production build and strict TypeScript compilation.
-- Ten API tests: unauthenticated access, tenant isolation, review bypass attempts, stale versions, pause/resume, authentication, strict input validation, cross-origin rejection, atomic plan saving, objective revisions, and scoped exports.
-- Five browser tests: desktop operating cycle, mobile account creation and Companion planning, keyboard search/modal behavior with a dashboard accessibility scan, Three.js rendering/fallback, and reduced-motion behavior.
-- Additional automated accessibility scans on the mobile home, start, login, how-it-works, and governance preview pages.
+The release pipeline requires a dedicated `TEST_DATABASE_URL` distinct from `DATABASE_URL`, checks formatting and the production build, runs the database-backed Node test suite, and executes the sequential browser and accessibility audits:
 
 Automated accessibility checks do not constitute complete accessibility conformance. Manual assistive-technology and broader device testing remain part of release acceptance.
-
-See [delivery status](docs/DELIVERY_STATUS.md) and [architecture decisions](docs/ARCHITECTURE.md) for the next implementation boundaries.

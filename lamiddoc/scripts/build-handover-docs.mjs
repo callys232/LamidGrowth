@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import PDFDocument from 'pdfkit';
 import { TOOLS, PRIMARY, homeEngineFor, disclosureFor } from '../../src/app/toolCatalog/catalog.mjs';
@@ -8,7 +9,7 @@ import { PLANS } from '../../src/app/plans.mjs';
 
 // Read source, never .env or live services. Run from the repository root.
 const root = process.cwd();
-const out = path.join(root, 'lamiddoc/docs/handover');
+const out = process.env.LAMID_HANDOVER_DIR || path.join(os.homedir(), 'Downloads', 'lamidGrowth');
 fs.mkdirSync(out, { recursive: true });
 const files = [];
 function walk(dir) {

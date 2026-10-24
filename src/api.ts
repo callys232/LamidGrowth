@@ -1,3 +1,5 @@
+import type { ZodType } from 'zod';
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -46,6 +48,15 @@ export async function api<T>(
   if (transport)
     return (await transport({ path, method: body === undefined ? 'GET' : method, body })) as T;
   return networkApi<T>(path, body, method, idempotencyKey);
+}
+
+/** Validate responses at important API boundaries rather than trusting a TypeScript cast. */
+export async function apiValidated<T>(path: string, schema: ZodType<T>): Promise<T> {
+  const response = await api<unknown>(path);
+  const result = await schema.safeParseAsync(response);
+  if (!result.success)
+    throw new ApiError(`The server returned an invalid response for ${path}.`, 502);
+  return result.data;
 }
 
 /** Always reaches the server, including when workspace requests use the demo sandbox. */

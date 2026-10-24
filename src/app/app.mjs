@@ -6,6 +6,12 @@ import { mountPublicSupport } from './support.mjs';
 import { mountPublicCompanion } from './companionTasks.mjs';
 import { randomUUID, randomBytes, createHash } from 'node:crypto';
 import { z } from 'zod';
+import {
+  actionSchema,
+  objectiveSchema,
+  reviewSchema,
+  workspaceContextSchema,
+} from '../contracts/workspace.mjs';
 import { openStore, verifyPassword } from '../../server/store.mjs';
 import { databaseFailureResponse } from '../../server/databaseErrors.mjs';
 import { permissionsFor, requirePermission } from './policy.mjs';
@@ -75,53 +81,10 @@ import { errorDetails } from './errorLog.mjs';
 import { suggestGoalPathway } from './goalPathways.mjs';
 import { scopedProvider } from './aiPolicy.mjs';
 import { readAIRules, enforceFeature } from './aiRules.mjs';
+import { mountWorkspaceState } from './workspaceState.mjs';
 
 const text = z.string().trim().min(1).max(500);
 const longText = z.string().trim().max(5000).default('');
-const contexts = z.enum([
-  'Individual',
-  'Professional',
-  'Creator',
-  'Founder',
-  'Team',
-  'SME',
-  'Enterprise',
-  'Institution',
-]);
-const date = z
-  .string()
-  .refine(
-    (value) =>
-      value === '' ||
-      (/^\d{4}-\d{2}-\d{2}$/.test(value) &&
-        !Number.isNaN(Date.parse(value)) &&
-        new Date(value).toISOString().slice(0, 10) === value),
-    'Enter a valid date',
-  );
-const objectiveSchema = z
-  .object({
-    title: text,
-    description: longText,
-    context: contexts,
-    priority: z.enum(['High', 'Medium', 'Low']),
-    status: z.enum(['Active', 'Paused', 'Complete']).default('Active'),
-    targetDate: date.default(''),
-    constraints: longText,
-    success: longText,
-  })
-  .strict();
-const actionSchema = z
-  .object({
-    title: text,
-    objectiveId: z.string().uuid(),
-    status: z.enum(['Planned', 'In progress', 'Needs review', 'Done', 'Paused']).default('Planned'),
-    dueDate: date.default(''),
-    owner: text,
-    requiresApproval: z.boolean().default(false),
-    notes: longText,
-  })
-  .strict();
-const reviewSchema = z.object({ progressed: text, learned: longText, next: text }).strict();
 const jobCategories = z.enum(JOB_CATEGORIES);
 const projectTypes = z.enum(PROJECT_TYPES);
 const currency = z.string().regex(/^[A-Z]{3}$/);
@@ -408,7 +371,7 @@ export async function createApp({
   const accounts = await mountAccounts(app, store, {
     production,
     session,
-    contexts,
+    contexts: workspaceContextSchema,
     enterpriseMemberLimit,
     mailProvider,
     securityKey,
@@ -1334,40 +1297,7 @@ export async function createApp({
     }
     res.status(201).json({ ok: true, userId: member.id, role: input.role });
   });
-  const state = async (req) => {
-    const workspaces = await db
-      .prepare(
-        "SELECT workspaces.id, workspaces.name, workspaces.context, workspaces.tier, workspaces.member_limit, workspace_members.role, workspace_members.status FROM workspace_members JOIN workspaces ON workspaces.id = workspace_members.workspace_id WHERE workspace_members.user_id = ? AND workspace_members.status = 'active' ORDER BY workspace_members.role = 'owner' DESC, workspaces.name",
-      )
-      .all(req.user.id);
-    const [objectives, actions, reviews, audit] = await Promise.all([
-      records(req.workspace.id, 'objective'),
-      records(req.workspace.id, 'action'),
-      records(req.workspace.id, 'review'),
-      db
-        .prepare(
-          'SELECT id, actor, action, object_id AS "objectId", detail, created_at AS "createdAt" FROM audit WHERE workspace_id = ? ORDER BY created_at DESC, seq DESC LIMIT 200',
-        )
-        .all(req.workspace.id),
-    ]);
-    return {
-      user: {
-        id: req.user.id,
-        name: req.user.name,
-        email: req.user.email,
-        demo: Boolean(req.user.demo),
-        ecosystemAdmin: ecosystemAdminEmails.includes(req.user.email),
-      },
-      workspace: req.workspace,
-      permissions: permissionsFor(req.workspace.role),
-      workspaces,
-      objectives,
-      actions,
-      reviews,
-      audit,
-    };
-  };
-  app.get('/api/state', async (req, res) => res.json(await state(req)));
+  mountWorkspaceState(app, { db, records, ecosystemAdminEmails });
   mountDashboardBriefing(app, store, aiProvider);
   app.get('/api/activity', async (req, res) => {
     const agentName = (agentId) => agentManifests.find((a) => a.id === agentId)?.name || agentId;
@@ -1542,7 +1472,7 @@ export async function createApp({
   // more code.
   app.post('/api/workspace/children', requirePermission('workspace:manage'), async (req, res) => {
     const input = z
-      .object({ name: text.max(100), context: contexts })
+      .object({ name: text.max(100), context: workspaceContextSchema })
       .strict()
       .parse(req.body);
     const childId = randomUUID();

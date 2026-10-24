@@ -2,6 +2,7 @@ import pg from 'pg';
 import { PAYMENT_REVIEW_SCHEMA_SQL } from './paymentSchema.mjs';
 import { DEMO_SCHEMA_SQL } from './demoSchema.mjs';
 import { MAIL_SCHEMA_SQL } from './mailSchema.mjs';
+import { applyMigrations } from './migrations.mjs';
 import { MANIFEST_SYNC } from '../src/app/toolCatalog/catalog.mjs';
 import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
@@ -872,6 +873,14 @@ export async function openStore(filename, { poolMax } = {}) {
     throw new Error(
       "TEST_DATABASE_URL is not set. Tests must run against a separate Supabase project from production — set TEST_DATABASE_URL in .env to that project's connection string.",
     );
+  if (
+    isTestContext &&
+    process.env.DATABASE_URL &&
+    process.env.TEST_DATABASE_URL === process.env.DATABASE_URL
+  )
+    throw new Error(
+      'TEST_DATABASE_URL must be distinct from DATABASE_URL. Refusing to run tests against the production database.',
+    );
   const connectionString = isTestContext ? process.env.TEST_DATABASE_URL : process.env.DATABASE_URL;
 
   const bootstrap = new pg.Pool({
@@ -953,25 +962,32 @@ export async function openStore(filename, { poolMax } = {}) {
     await client.query('BEGIN');
     // Serializes concurrent openStore() calls targeting the same schema — e.g. several Node
     // cluster workers all starting up at once against the production 'public' schema — so only
-    // one of them actually runs the migration DDL/seed; the rest block here until it commits, then
-    // correctly see migration 1 already applied and skip straight past it. Without this, several
-    // workers could race on CREATE TABLE / the seed INSERTs simultaneously at startup. Transaction-
-    // scoped, so the lock releases automatically at COMMIT/ROLLBACK below — no separate unlock.
+    // one of them actually runs pending migrations; the rest block here until it commits, then
+    // correctly see the latest schema version and skip already-applied migrations. Without this,
+    // several workers could race on CREATE TABLE / seed operations simultaneously at startup.
+    // Transaction-scoped, so the lock releases automatically at COMMIT/ROLLBACK below.
     await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [schema]);
     await client.query(
       'CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)',
     );
-    const already = await client.query('SELECT 1 FROM migrations WHERE version = 1');
-    if (already.rowCount === 0) {
-      await client.query(SCHEMA_SQL);
-      await client.query(SEED_SQL);
-      await client.query('INSERT INTO migrations VALUES (1, $1)', [new Date().toISOString()]);
-    }
-    await client.query(DEMO_SCHEMA_SQL);
-    await client.query(MAIL_SCHEMA_SQL);
-    await client.query(ONBOARDING_SCHEMA_SQL);
-    await client.query(PAYMENT_REVIEW_SCHEMA_SQL);
-    await client.query(`CREATE TABLE IF NOT EXISTS refund_receipts (
+    await applyMigrations(client, [
+      {
+        version: 1,
+        name: 'initial schema and seed data',
+        up: async (migrationClient) => {
+          await migrationClient.query(SCHEMA_SQL);
+          await migrationClient.query(SEED_SQL);
+        },
+      },
+      {
+        version: 2,
+        name: 'domain schema and operational records',
+        up: async (client) => {
+          await client.query(DEMO_SCHEMA_SQL);
+          await client.query(MAIL_SCHEMA_SQL);
+          await client.query(ONBOARDING_SCHEMA_SQL);
+          await client.query(PAYMENT_REVIEW_SCHEMA_SQL);
+          await client.query(`CREATE TABLE IF NOT EXISTS refund_receipts (
       reference_id TEXT NOT NULL, reason TEXT NOT NULL, created_at BIGINT NOT NULL,
       PRIMARY KEY (reference_id, reason)
     );
@@ -980,12 +996,12 @@ export async function openStore(filename, { poolMax } = {}) {
       GROUP BY reference_id, reason ON CONFLICT DO NOTHING;
     CREATE INDEX IF NOT EXISTS agent_history_owner ON agent_runs(workspace_id, principal_id, created_at);
     CREATE INDEX IF NOT EXISTS companion_task_owner ON records(workspace_id, (data::jsonb->>'ownerId'), seq) WHERE kind = 'companion_task';`);
-    // tasks/project_change_requests were originally added only inside SCHEMA_SQL above, which never
-    // re-runs once migration 1 is recorded — so on any database that had already migrated, these
-    // tables would silently never be created. CREATE TABLE IF NOT EXISTS here is idempotent and
-    // reaches both fresh and already-migrated databases, same fix pattern as the agent_manifests
-    // blocks above.
-    await client.query(`CREATE TABLE IF NOT EXISTS tasks (
+          // tasks/project_change_requests were originally added only inside SCHEMA_SQL above, which never
+          // re-runs once migration 1 is recorded — so on any database that had already migrated, these
+          // tables would silently never be created. CREATE TABLE IF NOT EXISTS here is idempotent and
+          // reaches both fresh and already-migrated databases, same fix pattern as the agent_manifests
+          // blocks above.
+          await client.query(`CREATE TABLE IF NOT EXISTS tasks (
       id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
       title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', status TEXT NOT NULL,
       assignee_user_id TEXT REFERENCES users(id), due_at TEXT,
@@ -1001,12 +1017,12 @@ export async function openStore(filename, { poolMax } = {}) {
       created_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS project_change_requests_project ON project_change_requests(project_id, status);`);
-    // Goal lifecycle + subscriptions. Deliberately separate from the existing 'objective' record
-    // kind (records table) rather than folding into it: objectives already have a stable 3-value
-    // status (Active/Paused/Complete) that a lot of existing code/tests depend on, and the spec's
-    // 12-stage lifecycle is an additive, optional refinement layered on top of a goal (= objective),
-    // not a replacement for that status. One lifecycle row per goal; many subscription rows per goal.
-    await client.query(`CREATE TABLE IF NOT EXISTS goal_lifecycle (
+          // Goal lifecycle + subscriptions. Deliberately separate from the existing 'objective' record
+          // kind (records table) rather than folding into it: objectives already have a stable 3-value
+          // status (Active/Paused/Complete) that a lot of existing code/tests depend on, and the spec's
+          // 12-stage lifecycle is an additive, optional refinement layered on top of a goal (= objective),
+          // not a replacement for that status. One lifecycle row per goal; many subscription rows per goal.
+          await client.query(`CREATE TABLE IF NOT EXISTS goal_lifecycle (
       goal_id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       stage TEXT NOT NULL DEFAULT 'captured', updated_at TEXT NOT NULL
     );
@@ -1017,11 +1033,11 @@ export async function openStore(filename, { poolMax } = {}) {
       attention_policy TEXT NOT NULL DEFAULT 'digest', created_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS goal_subscriptions_goal ON goal_subscriptions(goal_id);`);
-    // Growth engine domain tables. kpi_definitions/kpi_observations already existed in SCHEMA_SQL
-    // but had no application code behind them; opportunities/experiments are new. All three are
-    // additive here (idempotent, unconditional) rather than in SCHEMA_SQL, per the same
-    // migration-gating lesson as tasks/goal_lifecycle above.
-    await client.query(`CREATE TABLE IF NOT EXISTS opportunities (
+          // Growth engine domain tables. kpi_definitions/kpi_observations already existed in SCHEMA_SQL
+          // but had no application code behind them; opportunities/experiments are new. All three are
+          // additive here (idempotent, unconditional) rather than in SCHEMA_SQL, per the same
+          // migration-gating lesson as tasks/goal_lifecycle above.
+          await client.query(`CREATE TABLE IF NOT EXISTS opportunities (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '',
       source TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'identified',
@@ -1035,11 +1051,11 @@ export async function openStore(filename, { poolMax } = {}) {
       started_at TEXT, ended_at TEXT, created_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS experiments_workspace ON experiments(workspace_id, status);`);
-    // Signal Gateway: persisted matches found for a goal_subscriptions row. Evaluation itself is
-    // on-demand (POST /api/goal-subscriptions/:id/scan in signals.mjs), not a cron job — there is
-    // no background worker infrastructure in this codebase yet, and an on-demand scan is honest
-    // about being pull-based rather than silently pretending to be push/real-time.
-    await client.query(`CREATE TABLE IF NOT EXISTS signal_matches (
+          // Signal Gateway: persisted matches found for a goal_subscriptions row. Evaluation itself is
+          // on-demand (POST /api/goal-subscriptions/:id/scan in signals.mjs), not a cron job — there is
+          // no background worker infrastructure in this codebase yet, and an on-demand scan is honest
+          // about being pull-based rather than silently pretending to be push/real-time.
+          await client.query(`CREATE TABLE IF NOT EXISTS signal_matches (
       id TEXT PRIMARY KEY, subscription_id TEXT NOT NULL REFERENCES goal_subscriptions(id),
       goal_id TEXT NOT NULL, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       signal_class TEXT NOT NULL, source_kind TEXT NOT NULL, source_id TEXT NOT NULL,
@@ -1048,14 +1064,14 @@ export async function openStore(filename, { poolMax } = {}) {
       UNIQUE (subscription_id, source_kind, source_id)
     );
     CREATE INDEX IF NOT EXISTS signal_matches_subscription ON signal_matches(subscription_id, matched_at DESC);`);
-    // Real file upload storage. This app's CSRF middleware requires every mutation to be
-    // application/json (see app.mjs), so uploads are JSON-with-base64 rather than multipart —
-    // consistent with the rest of the API instead of carving out a CSRF exception for one route.
-    // Bytes are stored in Postgres (BYTEA), not local disk, since this app has no durable local
-    // filesystem guarantee between deploys. kyc_cases/identity_evidence already existed in
-    // SCHEMA_SQL with zero application code behind them (see kyc.mjs); users.kyc_verified_at is
-    // new and deliberately separate from users.verified_at, which only gates AI-feature access.
-    await client.query(`CREATE TABLE IF NOT EXISTS uploaded_files (
+          // Real file upload storage. This app's CSRF middleware requires every mutation to be
+          // application/json (see app.mjs), so uploads are JSON-with-base64 rather than multipart —
+          // consistent with the rest of the API instead of carving out a CSRF exception for one route.
+          // Bytes are stored in Postgres (BYTEA), not local disk, since this app has no durable local
+          // filesystem guarantee between deploys. kyc_cases/identity_evidence already existed in
+          // SCHEMA_SQL with zero application code behind them (see kyc.mjs); users.kyc_verified_at is
+          // new and deliberately separate from users.verified_at, which only gates AI-feature access.
+          await client.query(`CREATE TABLE IF NOT EXISTS uploaded_files (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       uploaded_by TEXT NOT NULL REFERENCES users(id),
       filename TEXT NOT NULL, mime_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,
@@ -1063,13 +1079,13 @@ export async function openStore(filename, { poolMax } = {}) {
     );
     CREATE INDEX IF NOT EXISTS uploaded_files_workspace ON uploaded_files(workspace_id);
     ALTER TABLE users ADD COLUMN IF NOT EXISTS kyc_verified_at TEXT;`);
-    // Creation Studio: persisted, versioned output for the document-drafting agents
-    // (proposal-drafter, scope-builder, sow-builder, brief-builder, deliverable-builder,
-    // acceptance-builder, contract-builder, change-order), which previously returned one-shot AI
-    // text with nothing saved. root_asset_id is null on a document's first version and points to
-    // that first version's id on every later revision, so "all versions of this document" is one
-    // query regardless of how many revisions exist.
-    await client.query(`CREATE TABLE IF NOT EXISTS creation_assets (
+          // Creation Studio: persisted, versioned output for the document-drafting agents
+          // (proposal-drafter, scope-builder, sow-builder, brief-builder, deliverable-builder,
+          // acceptance-builder, contract-builder, change-order), which previously returned one-shot AI
+          // text with nothing saved. root_asset_id is null on a document's first version and points to
+          // that first version's id on every later revision, so "all versions of this document" is one
+          // query regardless of how many revisions exist.
+          await client.query(`CREATE TABLE IF NOT EXISTS creation_assets (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       created_by TEXT NOT NULL REFERENCES users(id),
       kind TEXT NOT NULL, title TEXT NOT NULL, content TEXT NOT NULL,
@@ -1079,11 +1095,11 @@ export async function openStore(filename, { poolMax } = {}) {
     );
     CREATE INDEX IF NOT EXISTS creation_assets_workspace ON creation_assets(workspace_id, kind);
     CREATE INDEX IF NOT EXISTS creation_assets_root ON creation_assets(root_asset_id);`);
-    // Expert-initiated engagement: today an expert can only pull work (browse the marketplace,
-    // claim a review-queue entry) — nothing lets an expert register interest and be told about
-    // new matching jobs. This is the same on-demand-scan pattern as the Signal Gateway
-    // (goal_subscriptions/signal_matches above), applied to job_posts instead of goal signals.
-    await client.query(`CREATE TABLE IF NOT EXISTS expert_watches (
+          // Expert-initiated engagement: today an expert can only pull work (browse the marketplace,
+          // claim a review-queue entry) — nothing lets an expert register interest and be told about
+          // new matching jobs. This is the same on-demand-scan pattern as the Signal Gateway
+          // (goal_subscriptions/signal_matches above), applied to job_posts instead of goal signals.
+          await client.query(`CREATE TABLE IF NOT EXISTS expert_watches (
       id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id),
       categories TEXT NOT NULL DEFAULT '[]', keywords TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL
@@ -1096,14 +1112,14 @@ export async function openStore(filename, { poolMax } = {}) {
       UNIQUE (watch_id, job_id)
     );
     CREATE INDEX IF NOT EXISTS expert_watch_matches_watch ON expert_watch_matches(watch_id, matched_at DESC);`);
-    // Shared Intelligence & Result Fabric: a typed, freshness-tracked result any agent/engine can
-    // write and any other agent/engine (or the UI) can read back instead of recomputing — the
-    // cross-engine reuse piece that was entirely absent before. One row per (subject, agent);
-    // expires_at makes staleness explicit instead of silently trusting an old computation forever.
-    // intelligence_conflicts is populated when two different agents reach a different conclusion
-    // about the same subject while both results are still fresh — surfaced for a human to resolve,
-    // never auto-reconciled, per "the human enforces AI controls" rather than another AI arbitrating.
-    await client.query(`CREATE TABLE IF NOT EXISTS intelligence_results (
+          // Shared Intelligence & Result Fabric: a typed, freshness-tracked result any agent/engine can
+          // write and any other agent/engine (or the UI) can read back instead of recomputing — the
+          // cross-engine reuse piece that was entirely absent before. One row per (subject, agent);
+          // expires_at makes staleness explicit instead of silently trusting an old computation forever.
+          // intelligence_conflicts is populated when two different agents reach a different conclusion
+          // about the same subject while both results are still fresh — surfaced for a human to resolve,
+          // never auto-reconciled, per "the human enforces AI controls" rather than another AI arbitrating.
+          await client.query(`CREATE TABLE IF NOT EXISTS intelligence_results (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL, agent_id TEXT NOT NULL,
       conclusion TEXT NOT NULL, summary TEXT NOT NULL,
@@ -1119,9 +1135,9 @@ export async function openStore(filename, { poolMax } = {}) {
       detected_at TEXT NOT NULL, resolved INTEGER NOT NULL DEFAULT 0
     );
     CREATE INDEX IF NOT EXISTS intelligence_conflicts_subject ON intelligence_conflicts(workspace_id, subject_kind, subject_id, resolved);`);
-    // Recommendation Lifecycle Manager (spec 20.8 / SI-10): a recommendation an agent makes is a
-    // trackable object with its own state, not just a chat response the user reads once and loses.
-    await client.query(`CREATE TABLE IF NOT EXISTS recommendations (
+          // Recommendation Lifecycle Manager (spec 20.8 / SI-10): a recommendation an agent makes is a
+          // trackable object with its own state, not just a chat response the user reads once and loses.
+          await client.query(`CREATE TABLE IF NOT EXISTS recommendations (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL, agent_id TEXT NOT NULL,
       title TEXT NOT NULL, rationale TEXT NOT NULL DEFAULT '',
@@ -1129,10 +1145,10 @@ export async function openStore(filename, { poolMax } = {}) {
       scheduled_for TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS recommendations_subject ON recommendations(workspace_id, subject_kind, subject_id, status);`);
-    // Scope Reconciliation (spec 25.1 / PS-07): every save of a scoping case snapshots the prior
-    // state as a new version, so "what changed between scope versions and why" is answerable
-    // instead of PATCH silently overwriting the only copy.
-    await client.query(`CREATE TABLE IF NOT EXISTS scope_versions (
+          // Scope Reconciliation (spec 25.1 / PS-07): every save of a scoping case snapshots the prior
+          // state as a new version, so "what changed between scope versions and why" is answerable
+          // instead of PATCH silently overwriting the only copy.
+          await client.query(`CREATE TABLE IF NOT EXISTS scope_versions (
       id TEXT PRIMARY KEY, scoping_case_id TEXT NOT NULL REFERENCES scoping_cases(id),
       version INTEGER NOT NULL, source TEXT NOT NULL,
       snapshot TEXT NOT NULL, reason TEXT NOT NULL DEFAULT '',
@@ -1140,22 +1156,22 @@ export async function openStore(filename, { poolMax } = {}) {
       UNIQUE (scoping_case_id, version)
     );
     CREATE INDEX IF NOT EXISTS scope_versions_case ON scope_versions(scoping_case_id, version);`);
-    // Asynchronous Expert Availability (spec 21.5 / EX-04 / PS-06): reviewer eligibility, timezone,
-    // availability, review SLA and urgent/async capability are tracked, not assumed. A red-band
-    // scoping case at 2am is not a dead end — it queues, and this is what lets the queue expose an
-    // honest expected response window instead of a fabricated one.
-    await client.query(`ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS timezone TEXT;
+          // Asynchronous Expert Availability (spec 21.5 / EX-04 / PS-06): reviewer eligibility, timezone,
+          // availability, review SLA and urgent/async capability are tracked, not assumed. A red-band
+          // scoping case at 2am is not a dead end — it queues, and this is what lets the queue expose an
+          // honest expected response window instead of a fabricated one.
+          await client.query(`ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS timezone TEXT;
       ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS async_review_eligible INTEGER NOT NULL DEFAULT 0;
       ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS urgent_review_eligible INTEGER NOT NULL DEFAULT 0;
       ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS expected_response_hours INTEGER;
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS sla_due_at TEXT;
       ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS seniority TEXT;
       ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS engagement_models TEXT NOT NULL DEFAULT '[]';`);
-    // Outcome Attribution & Learning (spec 20.9 / SI-11): observed results are recorded with an
-    // explicit attribution strength rather than overstating causality — correlation is not the
-    // same claim as verified-causal, and the schema keeps that distinction instead of collapsing
-    // it into a single "it worked" flag.
-    await client.query(`CREATE TABLE IF NOT EXISTS outcomes (
+          // Outcome Attribution & Learning (spec 20.9 / SI-11): observed results are recorded with an
+          // explicit attribution strength rather than overstating causality — correlation is not the
+          // same claim as verified-causal, and the schema keeps that distinction instead of collapsing
+          // it into a single "it worked" flag.
+          await client.query(`CREATE TABLE IF NOT EXISTS outcomes (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       subject_kind TEXT NOT NULL, subject_id TEXT NOT NULL,
       recommendation_id TEXT REFERENCES recommendations(id),
@@ -1163,11 +1179,11 @@ export async function openStore(filename, { poolMax } = {}) {
       observed_at TEXT NOT NULL, created_by TEXT NOT NULL REFERENCES users(id), created_at TEXT NOT NULL
     );
     CREATE INDEX IF NOT EXISTS outcomes_subject ON outcomes(workspace_id, subject_kind, subject_id);`);
-    // Expert Context Handoff (spec 19.4/19.7, EX-04): an explicit, inspectable, revocable record of
-    // exactly which objects a client shared with an engaged expert — not implicit trust from being
-    // assigned to the project. Scope references are typed (kind, id) pairs, resolved read-only and
-    // only while the package is active.
-    await client.query(`CREATE TABLE IF NOT EXISTS context_packages (
+          // Expert Context Handoff (spec 19.4/19.7, EX-04): an explicit, inspectable, revocable record of
+          // exactly which objects a client shared with an engaged expert — not implicit trust from being
+          // assigned to the project. Scope references are typed (kind, id) pairs, resolved read-only and
+          // only while the package is active.
+          await client.query(`CREATE TABLE IF NOT EXISTS context_packages (
       id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       project_id TEXT NOT NULL REFERENCES projects(id), expert_user_id TEXT NOT NULL REFERENCES users(id),
       granted_by TEXT NOT NULL REFERENCES users(id),
@@ -1175,13 +1191,13 @@ export async function openStore(filename, { poolMax } = {}) {
       created_at TEXT NOT NULL, revoked_at TEXT
     );
     CREATE INDEX IF NOT EXISTS context_packages_project ON context_packages(project_id, status);`);
-    // Context Transfer & Multi-Party Rules (spec 20.10 / SI-12): "personal" and "organization" are
-    // not a new scope this platform lacks — they are exactly workspace ownership (workspaces.user_id)
-    // versus workspace_members membership, which already exist. What was missing is the explicit,
-    // audited transfer action between two workspaces a user legitimately belongs to; personal
-    // intelligence does not silently become organization-visible merely because the same person is
-    // in both, and this table is the record of every deliberate crossing.
-    await client.query(`CREATE TABLE IF NOT EXISTS context_transfers (
+          // Context Transfer & Multi-Party Rules (spec 20.10 / SI-12): "personal" and "organization" are
+          // not a new scope this platform lacks — they are exactly workspace ownership (workspaces.user_id)
+          // versus workspace_members membership, which already exist. What was missing is the explicit,
+          // audited transfer action between two workspaces a user legitimately belongs to; personal
+          // intelligence does not silently become organization-visible merely because the same person is
+          // in both, and this table is the record of every deliberate crossing.
+          await client.query(`CREATE TABLE IF NOT EXISTS context_transfers (
       id TEXT PRIMARY KEY,
       source_workspace_id TEXT NOT NULL REFERENCES workspaces(id),
       target_workspace_id TEXT NOT NULL REFERENCES workspaces(id),
@@ -1192,14 +1208,14 @@ export async function openStore(filename, { poolMax } = {}) {
     );
     CREATE INDEX IF NOT EXISTS context_transfers_source ON context_transfers(source_workspace_id, source_record_id);
     CREATE INDEX IF NOT EXISTS context_transfers_target ON context_transfers(target_workspace_id, status);`);
-    // SEC-02: financial ledger and audit evidence must resist ordinary application bugs and
-    // malicious/accidental deletion — no everyday code path may delete a row or alter its
-    // financial/audit fields. The one legitimate exception is a full, Lamid-admin-only account
-    // purge (src/app/app.mjs deleteUser), which physically destroys these rows on request; that
-    // path sets the session-local app.allow_purge flag immediately before deleting, and only
-    // then do the triggers stand aside. CREATE OR REPLACE/DROP TRIGGER IF EXISTS are all
-    // idempotent, safe to run unconditionally on every startup.
-    await client.query(`
+          // SEC-02: financial ledger and audit evidence must resist ordinary application bugs and
+          // malicious/accidental deletion — no everyday code path may delete a row or alter its
+          // financial/audit fields. The one legitimate exception is a full, Lamid-admin-only account
+          // purge (src/app/app.mjs deleteUser), which physically destroys these rows on request; that
+          // path sets the session-local app.allow_purge flag immediately before deleting, and only
+          // then do the triggers stand aside. CREATE OR REPLACE/DROP TRIGGER IF EXISTS are all
+          // idempotent, safe to run unconditionally on every startup.
+          await client.query(`
       CREATE OR REPLACE FUNCTION prevent_ledger_delete() RETURNS TRIGGER AS $$
       BEGIN
         IF current_setting('app.allow_purge', true) = 'on' THEN
@@ -1253,11 +1269,11 @@ export async function openStore(filename, { poolMax } = {}) {
       CREATE TRIGGER audit_no_tamper BEFORE UPDATE ON audit
         FOR EACH ROW EXECUTE FUNCTION prevent_audit_tamper();
     `);
-    // SEC-01: TOTP-based MFA and step-up verification for high-risk actions. The secret is
-    // stored AES-256-GCM encrypted (never in plaintext) using the same account security key
-    // already used to encrypt outbound mail; recovery codes are stored only as salted hashes,
-    // consistent with how passwords are never stored in recoverable form elsewhere in this schema.
-    await client.query(`
+          // SEC-01: TOTP-based MFA and step-up verification for high-risk actions. The secret is
+          // stored AES-256-GCM encrypted (never in plaintext) using the same account security key
+          // already used to encrypt outbound mail; recovery codes are stored only as salted hashes,
+          // consistent with how passwords are never stored in recoverable form elsewhere in this schema.
+          await client.query(`
       CREATE TABLE IF NOT EXISTS mfa_secrets (
         user_id TEXT PRIMARY KEY REFERENCES users(id),
         secret_encrypted TEXT NOT NULL,
@@ -1273,34 +1289,34 @@ export async function openStore(filename, { poolMax } = {}) {
       );
       CREATE INDEX IF NOT EXISTS mfa_recovery_codes_user ON mfa_recovery_codes(user_id, used_at);
     `);
-    // PAY-02: points purchases can be charged to Paystack in a converted currency/amount (see
-    // the FX comment in src/app/payments.mjs) that differs from the canonical USD figures this
-    // table already stores — so a webhook can only validate "does the provider's reported amount
-    // match what we actually asked it to charge" against these, not against amount_minor/currency.
-    await client.query(`
+          // PAY-02: points purchases can be charged to Paystack in a converted currency/amount (see
+          // the FX comment in src/app/payments.mjs) that differs from the canonical USD figures this
+          // table already stores — so a webhook can only validate "does the provider's reported amount
+          // match what we actually asked it to charge" against these, not against amount_minor/currency.
+          await client.query(`
       ALTER TABLE points_purchases ADD COLUMN IF NOT EXISTS provider_amount_minor INTEGER;
       ALTER TABLE points_purchases ADD COLUMN IF NOT EXISTS provider_currency TEXT;
     `);
-    // AU-02: organization hierarchy. A parent workspace (e.g. "UNICEF Global") can own child
-    // workspaces (e.g. country offices) it creates directly — which requires relaxing the old
-    // "one self-owned workspace per user" UNIQUE constraint, since the same admin who owns the
-    // parent becomes the owner-of-record for each child it creates too. This is purely additive:
-    // every existing single-workspace user is completely unaffected, and workspace_members
-    // (which already allowed one user to belong to many workspaces) is untouched.
-    await client.query(`
+          // AU-02: organization hierarchy. A parent workspace (e.g. "UNICEF Global") can own child
+          // workspaces (e.g. country offices) it creates directly — which requires relaxing the old
+          // "one self-owned workspace per user" UNIQUE constraint, since the same admin who owns the
+          // parent becomes the owner-of-record for each child it creates too. This is purely additive:
+          // every existing single-workspace user is completely unaffected, and workspace_members
+          // (which already allowed one user to belong to many workspaces) is untouched.
+          await client.query(`
       ALTER TABLE workspaces DROP CONSTRAINT IF EXISTS workspaces_user_id_key;
       CREATE INDEX IF NOT EXISTS workspaces_user_id ON workspaces(user_id);
       ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS parent_workspace_id TEXT REFERENCES workspaces(id);
       ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS created_at TEXT;
       CREATE INDEX IF NOT EXISTS workspaces_parent ON workspaces(parent_workspace_id);
     `);
-    // SEC-03: a governed contract for a real KYC provider's verification-result callback,
-    // mirroring the same signature-verified, deduplicated webhook pattern already proven for
-    // Paystack (see mountPaystackWebhook). provider_reference correlates an inbound webhook to
-    // exactly one case — the webhook can never target a case by a client-suppliable case id, only
-    // by the reference issued when the case was opened, so a forged or replayed callback cannot
-    // decide an arbitrary case even before signature verification is considered.
-    await client.query(`
+          // SEC-03: a governed contract for a real KYC provider's verification-result callback,
+          // mirroring the same signature-verified, deduplicated webhook pattern already proven for
+          // Paystack (see mountPaystackWebhook). provider_reference correlates an inbound webhook to
+          // exactly one case — the webhook can never target a case by a client-suppliable case id, only
+          // by the reference issued when the case was opened, so a forged or replayed callback cannot
+          // decide an arbitrary case even before signature verification is considered.
+          await client.query(`
       ALTER TABLE kyc_cases ADD COLUMN IF NOT EXISTS provider_reference TEXT;
       CREATE UNIQUE INDEX IF NOT EXISTS kyc_cases_provider_reference
         ON kyc_cases(provider, provider_reference) WHERE provider_reference IS NOT NULL;
@@ -1310,53 +1326,53 @@ export async function openStore(filename, { poolMax } = {}) {
         UNIQUE(provider, provider_event_id)
       );
     `);
-    // F-SC-01/F-SC-02 (spec-review audit): a completed review is bound to the exact scope
-    // version it reviewed, so a material edit after review completion invalidates it rather
-    // than letting a red-band case publish on a stale approval. reviewed_version is set only
-    // when a claimed entry is completed.
-    await client.query(`
+          // F-SC-01/F-SC-02 (spec-review audit): a completed review is bound to the exact scope
+          // version it reviewed, so a material edit after review completion invalidates it rather
+          // than letting a red-band case publish on a stale approval. reviewed_version is set only
+          // when a claimed entry is completed.
+          await client.query(`
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS reviewed_version INTEGER;
     `);
-    // F-SC-03 (spec-review audit): reviewer proposals need real field-level provenance and a
-    // compare/accept/reject workflow, not just free-text notes. proposed_changes holds the
-    // reviewer's suggested field values (camelCase keys matching updateSchema); accepted_fields
-    // and reconciled_at record what the case owner actually reconciled and when. escalated_at/
-    // escalation_count give a real, monitored SLA-breach trail instead of a silent requeue.
-    await client.query(`
+          // F-SC-03 (spec-review audit): reviewer proposals need real field-level provenance and a
+          // compare/accept/reject workflow, not just free-text notes. proposed_changes holds the
+          // reviewer's suggested field values (camelCase keys matching updateSchema); accepted_fields
+          // and reconciled_at record what the case owner actually reconciled and when. escalated_at/
+          // escalation_count give a real, monitored SLA-breach trail instead of a silent requeue.
+          await client.query(`
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS proposed_changes TEXT;
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS accepted_fields TEXT;
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS reconciled_at TEXT;
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS escalated_at TEXT;
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS escalation_count INTEGER NOT NULL DEFAULT 0;
     `);
-    // F-LEARN-01: distinguishes a score the platform actually graded (against a real question
-    // bank via talent.mjs's gradeQuiz, same mechanism as /api/talent/assessments) from one the
-    // learner self-reported for a module with no attached quiz — completion no longer implies
-    // "independently established mastery" when it wasn't.
-    await client.query(`
+          // F-LEARN-01: distinguishes a score the platform actually graded (against a real question
+          // bank via talent.mjs's gradeQuiz, same mechanism as /api/talent/assessments) from one the
+          // learner self-reported for a module with no attached quiz — completion no longer implies
+          // "independently established mastery" when it wasn't.
+          await client.query(`
       ALTER TABLE learning_module_completions ADD COLUMN IF NOT EXISTS graded INTEGER NOT NULL DEFAULT 0;
     `);
-    // F-SI-02 (spec-review audit): ordinary objective edits/deletion previously left dependent
-    // goal_subscriptions monitoring a goal that no longer exists or is already complete. `active`
-    // lets a deleted/completed goal's subscriptions be disabled rather than silently scanned
-    // forever or force-deleted (history is kept for the goal's dashboard).
-    await client.query(`
+          // F-SI-02 (spec-review audit): ordinary objective edits/deletion previously left dependent
+          // goal_subscriptions monitoring a goal that no longer exists or is already complete. `active`
+          // lets a deleted/completed goal's subscriptions be disabled rather than silently scanned
+          // forever or force-deleted (history is kept for the goal's dashboard).
+          await client.query(`
       ALTER TABLE goal_subscriptions ADD COLUMN IF NOT EXISTS active INTEGER NOT NULL DEFAULT 1;
     `);
-    // F-SI-05 (spec-review audit): resolving a conflict previously only flipped a boolean; these
-    // columns record what was actually decided (which side, or a custom reconciled conclusion)
-    // and by whom, so the reconciled result has real provenance.
-    await client.query(`
+          // F-SI-05 (spec-review audit): resolving a conflict previously only flipped a boolean; these
+          // columns record what was actually decided (which side, or a custom reconciled conclusion)
+          // and by whom, so the reconciled result has real provenance.
+          await client.query(`
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolution TEXT;
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_conclusion TEXT;
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_by TEXT;
       ALTER TABLE intelligence_conflicts ADD COLUMN IF NOT EXISTS resolved_at TEXT;
     `);
-    // F-GROW-01 (spec-review audit): KPI definitions had no version/provenance, observations
-    // carried a free-text source instead of real evidence, opportunities had no typed model, and
-    // experiments had no variant/guardrail design or structured completion. All additions are
-    // nullable/defaulted so existing simple KPIs/opportunities/experiments keep working unchanged.
-    await client.query(`
+          // F-GROW-01 (spec-review audit): KPI definitions had no version/provenance, observations
+          // carried a free-text source instead of real evidence, opportunities had no typed model, and
+          // experiments had no variant/guardrail design or structured completion. All additions are
+          // nullable/defaulted so existing simple KPIs/opportunities/experiments keep working unchanged.
+          await client.query(`
       ALTER TABLE kpi_definitions ADD COLUMN IF NOT EXISTS calculation_method TEXT NOT NULL DEFAULT '';
       ALTER TABLE kpi_definitions ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;
       CREATE TABLE IF NOT EXISTS kpi_definition_versions (
@@ -1373,13 +1389,13 @@ export async function openStore(filename, { poolMax } = {}) {
       ALTER TABLE experiments ADD COLUMN IF NOT EXISTS winning_variant TEXT;
       ALTER TABLE experiments ADD COLUMN IF NOT EXISTS per_variant_observed_value TEXT;
     `);
-    // F-CORE-01 (spec-review audit): a real connector registry (governance layer, useful
-    // regardless of which external providers get wired up later) plus a minimal internal event
-    // outbox — no OAuth flow or specific external provider is fabricated (this codebase has none
-    // to ground one in); the 'webhook' connector type is a genuinely working, HMAC-signed inbound
-    // endpoint instead. `seq` (not `id`) is the real monotonic cursor for GET /events?since=,
-    // same BIGSERIAL-alongside-a-UUID-id pattern as `records.seq` elsewhere in this file.
-    await client.query(`
+          // F-CORE-01 (spec-review audit): a real connector registry (governance layer, useful
+          // regardless of which external providers get wired up later) plus a minimal internal event
+          // outbox — no OAuth flow or specific external provider is fabricated (this codebase has none
+          // to ground one in); the 'webhook' connector type is a genuinely working, HMAC-signed inbound
+          // endpoint instead. `seq` (not `id`) is the real monotonic cursor for GET /events?since=,
+          // same BIGSERIAL-alongside-a-UUID-id pattern as `records.seq` elsewhere in this file.
+          await client.query(`
       CREATE TABLE IF NOT EXISTS connectors (
         id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
         name TEXT NOT NULL, type TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'disconnected',
@@ -1407,22 +1423,22 @@ export async function openStore(filename, { poolMax } = {}) {
       );
       CREATE INDEX IF NOT EXISTS event_outbox_workspace ON event_outbox(workspace_id, seq);
     `);
-    // F-CORE-02 (spec-review audit): no per-user "last visited" record existed anywhere in this
-    // codebase (confirmed this session) — every domain's "attention" was computed fresh with no
-    // way to tell what's new since the user last looked. One row per (user, workspace, lane).
-    await client.query(`
+          // F-CORE-02 (spec-review audit): no per-user "last visited" record existed anywhere in this
+          // codebase (confirmed this session) — every domain's "attention" was computed fresh with no
+          // way to tell what's new since the user last looked. One row per (user, workspace, lane).
+          await client.query(`
       CREATE TABLE IF NOT EXISTS return_state_checkpoints (
         user_id TEXT NOT NULL REFERENCES users(id), workspace_id TEXT NOT NULL REFERENCES workspaces(id),
         lane TEXT NOT NULL, last_reviewed_at TEXT NOT NULL,
         PRIMARY KEY (user_id, workspace_id, lane)
       );
     `);
-    // F-WF-01 (spec-review audit): reusable, versioned workflow templates — a saved, named
-    // steps sequence a workspace can start many runs from, instead of resupplying the same JSON
-    // every time. definition_id groups every version of the same named template together (same
-    // MAX(version)+1 pattern as scope_versions/intelligence_result_versions); each row is one
-    // immutable version's snapshot.
-    await client.query(`
+          // F-WF-01 (spec-review audit): reusable, versioned workflow templates — a saved, named
+          // steps sequence a workspace can start many runs from, instead of resupplying the same JSON
+          // every time. definition_id groups every version of the same named template together (same
+          // MAX(version)+1 pattern as scope_versions/intelligence_result_versions); each row is one
+          // immutable version's snapshot.
+          await client.query(`
       CREATE TABLE IF NOT EXISTS workflow_definitions (
         id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES workspaces(id),
         name TEXT NOT NULL, version INTEGER NOT NULL, definition_id TEXT NOT NULL,
@@ -1430,20 +1446,20 @@ export async function openStore(filename, { poolMax } = {}) {
       );
       CREATE INDEX IF NOT EXISTS workflow_definitions_lookup ON workflow_definitions(workspace_id, definition_id, version);
     `);
-    // Deliverable Verification (spec-review audit): a submission asset was always an unfetched
-    // URL string — no way to reference an already-uploaded, already-validated file (files.mjs)
-    // whose real content could actually be inspected. content_hash is a durable integrity record
-    // computed once at submission time from the real bytes, not re-derived per verify call.
-    await client.query(`
+          // Deliverable Verification (spec-review audit): a submission asset was always an unfetched
+          // URL string — no way to reference an already-uploaded, already-validated file (files.mjs)
+          // whose real content could actually be inspected. content_hash is a durable integrity record
+          // computed once at submission time from the real bytes, not re-derived per verify call.
+          await client.query(`
       ALTER TABLE submission_assets ALTER COLUMN url DROP NOT NULL;
       ALTER TABLE submission_assets ADD COLUMN IF NOT EXISTS uploaded_file_id TEXT REFERENCES uploaded_files(id);
       ALTER TABLE submission_assets ADD COLUMN IF NOT EXISTS content_hash TEXT;
     `);
-    // F-AI-01 (spec-review audit): model_registry records what's *approved* for a use case, but
-    // nothing recorded what actually executed — env-selected providers/fallback determine real
-    // execution independently of approval. model_executions is real provenance: which provider/
-    // model actually served a call, under which approved registry row, for which workspace.
-    await client.query(`
+          // F-AI-01 (spec-review audit): model_registry records what's *approved* for a use case, but
+          // nothing recorded what actually executed — env-selected providers/fallback determine real
+          // execution independently of approval. model_executions is real provenance: which provider/
+          // model actually served a call, under which approved registry row, for which workspace.
+          await client.query(`
       CREATE TABLE IF NOT EXISTS model_executions (
         id TEXT PRIMARY KEY, model_registry_id TEXT NOT NULL REFERENCES model_registry(id),
         workspace_id TEXT NOT NULL REFERENCES workspaces(id), use_case TEXT NOT NULL,
@@ -1451,12 +1467,12 @@ export async function openStore(filename, { poolMax } = {}) {
       );
       CREATE INDEX IF NOT EXISTS model_executions_workspace ON model_executions(workspace_id, use_case, executed_at);
     `);
-    // F-SI-01 (spec-review audit): intelligence_results was overwrite-only — no history, no
-    // record of what data fed a conclusion, no model provenance. intelligence_results stays the
-    // fast "current" pointer (gains version/sources/model/confidence columns); the new
-    // intelligence_result_versions table is the append-only, immutable log of every computation
-    // ever made — same two-table shape as scoping_cases + scope_versions elsewhere in this file.
-    await client.query(`
+          // F-SI-01 (spec-review audit): intelligence_results was overwrite-only — no history, no
+          // record of what data fed a conclusion, no model provenance. intelligence_results stays the
+          // fast "current" pointer (gains version/sources/model/confidence columns); the new
+          // intelligence_result_versions table is the append-only, immutable log of every computation
+          // ever made — same two-table shape as scoping_cases + scope_versions elsewhere in this file.
+          await client.query(`
       ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;
       ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS sources TEXT NOT NULL DEFAULT '[]';
       ALTER TABLE intelligence_results ADD COLUMN IF NOT EXISTS model_registry_id TEXT REFERENCES model_registry(id);
@@ -1472,14 +1488,14 @@ export async function openStore(filename, { poolMax } = {}) {
       CREATE INDEX IF NOT EXISTS intelligence_result_versions_subject
         ON intelligence_result_versions(workspace_id, subject_kind, subject_id, agent_id, version);
     `);
-    // Engine audit 2026-10-05 (H1/A2): tool runs become typed, subject-bound intelligence with
-    // lineage. agent_runs gains the analytical status, the subject, the tool version, what was
-    // actually charged, and an idempotency key so a retried request cannot charge twice.
-    // intelligence results gain a `claim` (what is being concluded — results only conflict when
-    // they make the same claim), the analytical status, and why a result went stale.
-    // intelligence_dependencies records which source, at which version, each result version
-    // rests on, so a changed source can mark its dependents stale without rewriting history.
-    await client.query(`
+          // Engine audit 2026-10-05 (H1/A2): tool runs become typed, subject-bound intelligence with
+          // lineage. agent_runs gains the analytical status, the subject, the tool version, what was
+          // actually charged, and an idempotency key so a retried request cannot charge twice.
+          // intelligence results gain a `claim` (what is being concluded — results only conflict when
+          // they make the same claim), the analytical status, and why a result went stale.
+          // intelligence_dependencies records which source, at which version, each result version
+          // rests on, so a changed source can mark its dependents stale without rewriting history.
+          await client.query(`
       ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
       ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS subject_kind TEXT;
       ALTER TABLE agent_runs ADD COLUMN IF NOT EXISTS subject_id TEXT;
@@ -1505,10 +1521,10 @@ export async function openStore(filename, { poolMax } = {}) {
       CREATE INDEX IF NOT EXISTS intelligence_dependencies_result
         ON intelligence_dependencies(result_version_id);
     `);
-    // Engine audit 2026-10-05 (H6): a licence must say which jurisdiction (and optionally which
-    // category) it covers, and can be revoked. A review records the licence it was claimed
-    // under; revoking that licence reopens a claimed review and voids a completed one.
-    await client.query(`
+          // Engine audit 2026-10-05 (H6): a licence must say which jurisdiction (and optionally which
+          // category) it covers, and can be revoked. A review records the licence it was claimed
+          // under; revoking that licence reopens a claimed review and voids a completed one.
+          await client.query(`
       ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS jurisdiction TEXT;
       ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS scope TEXT;
       ALTER TABLE expert_credentials ADD COLUMN IF NOT EXISTS revoked_at TEXT;
@@ -1516,69 +1532,69 @@ export async function openStore(filename, { poolMax } = {}) {
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS qualifying_credential_id TEXT REFERENCES expert_credentials(id);
       ALTER TABLE review_queue_entries ADD COLUMN IF NOT EXISTS qualification_revoked_at TEXT;
     `);
-    // Delivery review (audit plan §9): when a task was finished, so cycle time and throughput
-    // come from the record instead of being typed in. Older finished tasks have none and are
-    // reported as unmeasured rather than guessed from updated_at.
-    await client.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at TEXT;`);
-    await client.query(
-      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+          // Delivery review (audit plan §9): when a task was finished, so cycle time and throughput
+          // come from the record instead of being typed in. Older finished tasks have none and are
+          // reported as unmeasured rather than guessed from updated_at.
+          await client.query(`ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completed_at TEXT;`);
+          await client.query(
+            `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('starter-planner', 'Starter Plan', 'Guidance', 'A1', 'none', '[]', $1, 0),
       ('onboarding', 'Onboarding Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('support', 'Support Guide', 'Shared', 'A1', 'none', '[]', $1, 0),
       ('pricing', 'Pricing Guide', 'Shared', 'A1', 'none', '[]', $1, 0)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    // Added after the v1 seed migration — same idempotent unconditional-insert pattern as the
-    // starter-planner block above, so these rows reach databases that already ran migration 1
-    // (this project's real dev/production schema included) without a new migration version.
-    await client.query(
-      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+            [new Date().toISOString()],
+          );
+          // Added after the v1 seed migration — same idempotent unconditional-insert pattern as the
+          // starter-planner block above, so these rows reach databases that already ran migration 1
+          // (this project's real dev/production schema included) without a new migration version.
+          await client.query(
+            `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('opportunity-signals', 'Opportunity Signals Engine', 'Growth', 'A1', 'none', '[]', $1, 65),
       ('experiment-builder', 'Experiment Builder', 'Growth', 'A1', 'none', '[]', $1, 65)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    await client.query(
-      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+            [new Date().toISOString()],
+          );
+          await client.query(
+            `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
       ('companion-opportunity-signals-v1', 'openai', 'companion.opportunity-signals', 'approved', $1),
       ('companion-experiment-builder-v1', 'openai', 'companion.experiment-builder', 'approved', $1)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    // Added after the v1 seed migration, same reason as the opportunity-signals/experiment-builder
-    // block above — a plain SEED_SQL edit never reaches a database that already ran migration 1.
-    await client.query(
-      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+            [new Date().toISOString()],
+          );
+          // Added after the v1 seed migration, same reason as the opportunity-signals/experiment-builder
+          // block above — a plain SEED_SQL edit never reaches a database that already ran migration 1.
+          await client.query(
+            `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('contract-builder', 'Contract Builder', 'Capability', 'A1', 'none', '[]', $1, 65)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    await client.query(
-      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+            [new Date().toISOString()],
+          );
+          await client.query(
+            `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
       ('companion-contract-v1', 'openai', 'companion.contract-builder', 'approved', $1)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    await client.query(
-      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+            [new Date().toISOString()],
+          );
+          await client.query(
+            `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('goal-advisor', 'Goal Advisor', 'Clarity', 'A1', 'none', '[]', $1, 65)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    await client.query(
-      `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
+            [new Date().toISOString()],
+          );
+          await client.query(
+            `INSERT INTO model_registry (id, provider, use_case, status, created_at) VALUES
       ('companion-goal-advisor-v1', 'openai', 'companion.goal-advisor', 'approved', $1)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    // Intelligence Engine layer -- ported from LamidOne's src/lib/intelligence + src/lib/engines.ts
-    // (see src/app/engineRegistry.mjs, src/app/engines.mjs). Same idempotent unconditional-insert
-    // pattern as the blocks above: 248 diagnostic-tool manifests, flat 35-point cost per run (see
-    // ENGINE_POINTS_COST in engines.mjs), no model_registry rows needed since these are
-    // deterministic compute with zero AI calls.
-    await client.query(
-      `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
+            [new Date().toISOString()],
+          );
+          // Intelligence Engine layer -- ported from LamidOne's src/lib/intelligence + src/lib/engines.ts
+          // (see src/app/engineRegistry.mjs, src/app/engines.mjs). Same idempotent unconditional-insert
+          // pattern as the blocks above: 248 diagnostic-tool manifests, flat 35-point cost per run (see
+          // ENGINE_POINTS_COST in engines.mjs), no model_registry rows needed since these are
+          // deterministic compute with zero AI calls.
+          await client.query(
+            `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('s01', 'Strategic Identity Statement', 'Clarity', 'A1', 'none', '[]', $1, 35),
       ('s02', 'Strategic Direction Setter', 'Clarity', 'A1', 'none', '[]', $1, 35),
       ('s03', 'Strategy Consistency Check', 'Clarity', 'A1', 'none', '[]', $1, 35),
@@ -1828,24 +1844,24 @@ export async function openStore(filename, { poolMax } = {}) {
       ('f06', 'Financial Governance', 'Finance', 'A1', 'none', '[]', $1, 35),
       ('f07', 'CFO Transformation', 'Finance', 'A1', 'none', '[]', $1, 35)
       ON CONFLICT (id) DO NOTHING`,
-      [new Date().toISOString()],
-    );
-    // Engine seats: a bundle scoped to one home_engine group, so a workspace can unlock a whole
-    // engine family without a full tier upgrade — reuses the existing bundle/entitlement/purchase
-    // machinery completely unchanged (grantBundleEntitlements, POST /api/points/purchase). Seeded
-    // after the engine manifests directly above so home_engine membership is real, not empty.
-    // created_by is nullable for these system-seeded rows only — it's never read anywhere, just
-    // written, so relaxing it is safe.
-    //
-    // Seat members are the catalog tools in that seat. Each tool's plan level is its seat's base
-    // rank (engineRegistry.mjs), so a seat never includes a tool above the group's own level.
-    // Plans (src/app/plans.mjs). A workspace's plan decides its tool seats, member limit and
-    // monthly points. Existing workspaces are carried over once so nobody loses access: the
-    // enterprise tier becomes the Enterprise plan, the team tier the Team plan (admin-granted, so
-    // no expiry), and every workspace that existed before plans keeps the seats its signup context
-    // used to open. plan_grandfathered_seats is added without a default so only rows that exist
-    // right now are NULL and get carried over; the default for new rows is then set to '[]'.
-    await client.query(`
+            [new Date().toISOString()],
+          );
+          // Engine seats: a bundle scoped to one home_engine group, so a workspace can unlock a whole
+          // engine family without a full tier upgrade — reuses the existing bundle/entitlement/purchase
+          // machinery completely unchanged (grantBundleEntitlements, POST /api/points/purchase). Seeded
+          // after the engine manifests directly above so home_engine membership is real, not empty.
+          // created_by is nullable for these system-seeded rows only — it's never read anywhere, just
+          // written, so relaxing it is safe.
+          //
+          // Seat members are the catalog tools in that seat. Each tool's plan level is its seat's base
+          // rank (engineRegistry.mjs), so a seat never includes a tool above the group's own level.
+          // Plans (src/app/plans.mjs). A workspace's plan decides its tool seats, member limit and
+          // monthly points. Existing workspaces are carried over once so nobody loses access: the
+          // enterprise tier becomes the Enterprise plan, the team tier the Team plan (admin-granted, so
+          // no expiry), and every workspace that existed before plans keeps the seats its signup context
+          // used to open. plan_grandfathered_seats is added without a default so only rows that exist
+          // right now are NULL and get carried over; the default for new rows is then set to '[]'.
+          await client.query(`
       ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan TEXT NOT NULL DEFAULT 'free';
       ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_interval TEXT;
       ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS plan_people INTEGER;
@@ -1881,6 +1897,42 @@ export async function openStore(filename, { poolMax } = {}) {
       );
       CREATE INDEX IF NOT EXISTS plan_payments_workspace ON plan_payments (workspace_id, created_at);
     `);
+        },
+      },
+      {
+        version: 3,
+        name: 'entitlements, invoices, and settlement amounts',
+        up: async (client) => {
+          await client.query('ALTER TABLE bundles ALTER COLUMN created_by DROP NOT NULL;');
+          await client.query(`CREATE TABLE IF NOT EXISTS workspace_agent_entitlements (
+            workspace_id TEXT NOT NULL REFERENCES workspaces(id),
+            agent_id TEXT NOT NULL REFERENCES agent_manifests(id),
+            source TEXT NOT NULL,
+            granted_at TEXT NOT NULL,
+            PRIMARY KEY (workspace_id, agent_id, source)
+          )`);
+          await client.query(`CREATE TABLE IF NOT EXISTS invoices (
+            id TEXT PRIMARY KEY,
+            milestone_id TEXT NOT NULL UNIQUE REFERENCES milestones(id),
+            issuer_user_id TEXT NOT NULL REFERENCES users(id),
+            year INTEGER NOT NULL,
+            sequence INTEGER NOT NULL,
+            number TEXT NOT NULL,
+            amount INTEGER NOT NULL,
+            currency TEXT NOT NULL,
+            issued_at TEXT NOT NULL,
+            UNIQUE (issuer_user_id, year, sequence)
+          )`);
+          await client.query(`
+            ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+            ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+            ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
+            ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_currency TEXT;
+          `);
+        },
+      },
+    ]);
+
     // Standards-based tool catalog (src/app/toolCatalog): keep each tool's primary-code manifest
     // in step with the catalog — its current name and its subject seat — every startup, so the
     // price list and the seat bundles below show the 63 current tools. Codes merged into a tool
@@ -1893,7 +1945,6 @@ export async function openStore(filename, { poolMax } = {}) {
       [JSON.stringify(MANIFEST_SYNC)],
     );
     const catalogIds = MANIFEST_SYNC.map((tool) => tool.id);
-    await client.query(`ALTER TABLE bundles ALTER COLUMN created_by DROP NOT NULL;`);
     {
       const pointsUnitPriceMinor = Math.max(
         1,
@@ -1962,43 +2013,6 @@ export async function openStore(filename, { poolMax } = {}) {
         );
       }
     }
-    // Real entitlement gating (see src/app/entitlements.mjs): a workspace's access to a paid
-    // tool comes from either enterprise tier or an actually-purchased bundle, not just points.
-    // `source` records which bundle purchase granted the row (composite PK lets more than one
-    // bundle grant the same tool, and makes re-granting the same bundle idempotent).
-    await client.query(`CREATE TABLE IF NOT EXISTS workspace_agent_entitlements (
-      workspace_id TEXT NOT NULL REFERENCES workspaces(id),
-      agent_id TEXT NOT NULL REFERENCES agent_manifests(id),
-      source TEXT NOT NULL,
-      granted_at TEXT NOT NULL,
-      PRIMARY KEY (workspace_id, agent_id, source)
-    )`);
-    // One invoice per milestone, numbered per issuer (the freelancer) and calendar year. The
-    // number used to be derived from a count of agent_runs, which included the in-flight run,
-    // failed runs and "not yet approved" replies — so the first invoice was 0002 and re-invoicing
-    // the same milestone minted a new number each time.
-    await client.query(`CREATE TABLE IF NOT EXISTS invoices (
-      id TEXT PRIMARY KEY,
-      milestone_id TEXT NOT NULL UNIQUE REFERENCES milestones(id),
-      issuer_user_id TEXT NOT NULL REFERENCES users(id),
-      year INTEGER NOT NULL,
-      sequence INTEGER NOT NULL,
-      number TEXT NOT NULL,
-      amount INTEGER NOT NULL,
-      currency TEXT NOT NULL,
-      issued_at TEXT NOT NULL,
-      UNIQUE (issuer_user_id, year, sequence)
-    )`);
-    // Escrow in the settlement currency: the Paystack account settles in NGN only, so a milestone
-    // priced in another currency is charged (and later paid out/refunded) in NGN. As with
-    // points_purchases, amount_minor/currency stay canonical and these record what was actually
-    // dispatched to the provider — the figures a webhook must match.
-    await client.query(`
-      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
-      ALTER TABLE milestone_fundings ADD COLUMN IF NOT EXISTS provider_currency TEXT;
-      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_amount_minor BIGINT;
-      ALTER TABLE payment_transfers ADD COLUMN IF NOT EXISTS provider_currency TEXT;
-    `);
     await client.query('COMMIT');
   } catch (error) {
     try {

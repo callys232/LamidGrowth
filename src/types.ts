@@ -45,7 +45,7 @@ export interface AuditEvent {
   id: string;
   actor: string;
   action: string;
-  objectId: string;
+  objectId: string | null;
   detail: string;
   createdAt: string;
 }
