@@ -99,6 +99,6 @@ For current implementation boundaries and deployment requirements, consult the i
 
 ## Validation
 
-The release pipeline requires a dedicated `TEST_DATABASE_URL` distinct from `DATABASE_URL`, checks formatting and the production build, runs the database-backed Node test suite, and executes the sequential browser and accessibility audits:
+The release pipeline requires a dedicated `TEST_DATABASE_URL` distinct from `DATABASE_URL`, builds the production assets, runs the database-backed Node test suite, and executes the sequential browser and accessibility audits. Run `npm run format:check` separately; the repository currently has pre-existing formatting failures outside the files touched here.
 
 Automated accessibility checks do not constitute complete accessibility conformance. Manual assistive-technology and broader device testing remain part of release acceptance.

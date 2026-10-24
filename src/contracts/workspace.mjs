@@ -60,6 +60,7 @@ const objectiveResultSchema = objectiveSchema
 const actionResultSchema = actionSchema
   .extend({
     id: z.string(),
+    objectiveId: z.string(),
     version: z.number().int().positive(),
     createdAt: z.string(),
     pathwayOrder: z.number().optional(),

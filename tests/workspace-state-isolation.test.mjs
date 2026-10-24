@@ -4,6 +4,21 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { createApp } from '../src/app/app.mjs';
 import { workspaceStateSchema } from '../src/contracts/workspace.mjs';
 
+async function openAppWithRetry(options, attempts = 3) {
+  let lastError;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await createApp(options);
+    } catch (error) {
+      lastError = error;
+      const transient = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED'].includes(error?.code);
+      if (!transient || i === attempts - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 250 * (i + 1)));
+    }
+  }
+  throw lastError;
+}
+
 test(
   'workspace state and writes remain scoped to the authenticated session workspace',
   { timeout: 240000 },
@@ -16,7 +31,7 @@ test(
         'A dedicated TEST_DATABASE_URL is required; production databases are never used.',
       );
 
-    const system = await createApp({
+    const system = await openAppWithRetry({
       filename: `test_tenant_state_${randomUUID().replaceAll('-', '')}`,
       errorLogger() {},
     });
