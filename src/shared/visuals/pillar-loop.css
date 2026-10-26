@@ -1,0 +1,189 @@
+.pl {
+  --pl-color: #0d1a2b;
+  margin: 0;
+  font-family: 'Inter Variable', system-ui, sans-serif;
+}
+.pl svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.pl-track,
+.pl-run {
+  fill: none;
+  stroke-width: 34;
+  stroke-linejoin: round;
+}
+.pl-track {
+  stroke: color-mix(in srgb, var(--pl-color) 12%, transparent);
+  transition: stroke 0.6s ease;
+}
+.pl-run {
+  stroke: var(--pl-color);
+  stroke-linecap: round;
+  transition:
+    stroke-dashoffset 0.9s cubic-bezier(0.5, 0, 0.2, 1),
+    stroke 0.6s ease;
+}
+.pl-dot {
+  fill: #0d1a2b;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.pl-sphere {
+  filter: drop-shadow(0 10px 18px rgba(13, 26, 43, 0.28));
+  animation: pl-breathe 5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pl-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.2;
+}
+.pl-one {
+  fill: #0d1a2b;
+}
+.pl-core text {
+  fill: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.pl-pulse circle {
+  fill: none;
+  stroke: var(--pl-color);
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pl-ping 3.6s ease-out infinite;
+}
+.pl-pulse circle:nth-child(2) {
+  animation-delay: 1.8s;
+}
+@keyframes pl-ping {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+@keyframes pl-breathe {
+  50% {
+    transform: scale(1.04);
+  }
+}
+.pl-node circle {
+  fill: #fff;
+  stroke: var(--pl-color);
+  stroke-width: 0;
+  transition:
+    fill 0.4s ease,
+    r 0.4s ease;
+}
+.pl-node text {
+  fill: #5b6573;
+  font-size: 11px;
+  font-weight: 700;
+  transition: fill 0.4s ease;
+}
+.pl-node.is-active circle {
+  fill: #0d1a2b;
+}
+.pl-node.is-active text {
+  fill: #fff;
+}
+.pl figcaption {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  text-align: center;
+}
+.pl-tabs {
+  display: flex;
+  gap: 8px;
+}
+.pl-tabs button {
+  padding: 10px 22px;
+  border: 1px solid #d5dce6;
+  border-radius: 999px;
+  background: transparent;
+  color: #0d1a2b;
+  font:
+    600 0.95rem/1 'Inter Variable',
+    system-ui,
+    sans-serif;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+.pl-tabs button:hover {
+  border-color: var(--pl-color);
+}
+.pl-tabs button.is-active {
+  background: var(--pl-color);
+  border-color: var(--pl-color);
+  color: #fff;
+}
+.pl-name {
+  display: grid;
+  gap: 2px;
+  min-height: 3.2em;
+  margin: 0;
+}
+.pl-name strong {
+  color: var(--pl-color);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  transition: color 0.6s ease;
+}
+.pl-name span {
+  color: #5b6573;
+}
+.pl-outcome {
+  margin: 0;
+  color: #5b6573;
+  font-size: 0.85rem;
+}
+.pl-outcome em {
+  color: #b8923a;
+  font-style: normal;
+  font-weight: 600;
+}
+
+:root[data-theme='dark'] .pl-node circle {
+  fill: #0b1320;
+}
+:root[data-theme='dark'] .pl-node text,
+:root[data-theme='dark'] .pl-name span,
+:root[data-theme='dark'] .pl-outcome {
+  color: #aab6c4;
+  fill: #aab6c4;
+}
+:root[data-theme='dark'] .pl-node.is-active circle {
+  fill: #c9dcf7;
+}
+:root[data-theme='dark'] .pl-node.is-active text {
+  fill: #0d1a2b;
+}
+:root[data-theme='dark'] .pl-tabs button {
+  border-color: #2d3a4c;
+  color: #eef3f9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-run,
+  .pl-sphere,
+  .pl-pulse circle {
+    transition: none;
+    animation: none;
+  }
+}

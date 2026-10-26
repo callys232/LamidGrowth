@@ -7,6 +7,7 @@ import '@fontsource/instrument-serif/400.css';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/fraunces';
 import '@fontsource-variable/fraunces/standard-italic.css';
+import '@fontsource-variable/newsreader';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,6 +15,7 @@ import { App } from './App';
 import { applyContrast, applyTheme, getStoredContrast, getStoredTheme } from './shared/lib/theme';
 import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
+import { ScrollPop } from './shared/visuals/ScrollPop';
 import { reportClientError } from './errorReporting';
 import { readDemoSession } from './products/workspace/sandbox/demoSession';
 import { endDemoSession } from './products/workspace/sandbox/demoSession';
@@ -70,6 +72,7 @@ function start() {
         <MotionProvider>
           <BrowserRouter>
             <InteractionFeedback />
+            <ScrollPop />
             <App />
           </BrowserRouter>
         </MotionProvider>

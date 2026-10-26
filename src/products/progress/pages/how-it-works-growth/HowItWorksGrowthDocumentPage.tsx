@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { HowItWorksPage, howItWorks } from '../../../website/pages/how-it-works/HowItWorksPage';
 import {
   HowItWorksGrowthHeroSlide,
   PersonalGrowthSlide1,
@@ -12,6 +13,7 @@ import {
 
 /** /how-it-works/growth — sections in reading order. */
 export function HowItWorksGrowthDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <HowItWorksPage content={howItWorks.growth} />;
   return (
     <DocumentPageLayout
       page={content}

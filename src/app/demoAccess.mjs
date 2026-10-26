@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID, createHash, createHmac } from 'node:crypto';
 import { isIP } from 'node:net';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 import { createMailOutbox, mailFrontendOrigin } from './mail.mjs';
 import { createRateLimiter } from './ratelimit.mjs';
 import { encryptSecret, decryptSecret } from './mfa.mjs';
@@ -503,7 +504,7 @@ export function mountDemoAccess(app, store, { provider, key, origin, production,
 // Must be mounted AFTER the real-account session middleware; demo credentials cannot read leads.
 export function mountDemoAdmin(app, store, ecosystemAdminEmails, { resendWelcome } = {}) {
   const admin = (req, res, next) => {
-    if (!ecosystemAdminEmails.includes(req.user?.email))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     res.setHeader('Cache-Control', 'no-store');
     next();

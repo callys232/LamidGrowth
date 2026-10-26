@@ -2,6 +2,7 @@ import { UpdatedDocumentPage } from '../../../../shared/content/UpdatedDocumentP
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import home from '../home/content.json';
 import content from './content.json';
+import { InfoPage, fromContent } from '../info/InfoPage';
 
 /** Original homepage slides whose ideas the newer homepage sections now carry ("How It Works",
  * "Human-directed intelligence." and the final call to action). They read here, before the
@@ -22,5 +23,15 @@ const page = {
 };
 
 export function AboutDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded)
+    return (
+      <InfoPage
+        content={fromContent(content, {
+          eyebrow: 'About',
+          primary: { label: 'Get started', to: '/signup' },
+          secondary: { label: 'Contact us', to: '/contact' },
+        })}
+      />
+    );
   return <UpdatedDocumentPage content={embedded ? content : page} embedded={embedded} />;
 }

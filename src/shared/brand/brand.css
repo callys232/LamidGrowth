@@ -1,0 +1,265 @@
+/* LAMID ONE brand kit: pillar colours, the Path motif, product mockups and placeholder slots. */
+:root {
+  --pillar-clarity: #c12129;
+  --pillar-clarity-tint: #fbecea;
+  --pillar-capability: #6b7a3a;
+  --pillar-capability-tint: #eff2e4;
+  --pillar-consistency: #2f6f73;
+  --pillar-consistency-tint: #e6f0f0;
+  --pillar-growth: #b8923a;
+  --pillar-growth-tint: #f8f1e0;
+  --brand-ink: #0d1a2b;
+  --brand-paper: #fbfaf7;
+  --brand-line: #e4dfd8;
+}
+
+[data-pillar='clarity'] {
+  --pillar: var(--pillar-clarity);
+  --pillar-tint: var(--pillar-clarity-tint);
+}
+[data-pillar='capability'] {
+  --pillar: var(--pillar-capability);
+  --pillar-tint: var(--pillar-capability-tint);
+}
+[data-pillar='consistency'] {
+  --pillar: var(--pillar-consistency);
+  --pillar-tint: var(--pillar-consistency-tint);
+}
+[data-pillar='growth'] {
+  --pillar: var(--pillar-growth);
+  --pillar-tint: var(--pillar-growth-tint);
+}
+
+/* Path motif */
+.brand-path {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.brand-path-line {
+  stroke: var(--brand-line);
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+}
+.brand-path-progress {
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: brand-path-draw 1.6s ease-out forwards;
+}
+.brand-path-node {
+  fill: var(--brand-paper);
+  stroke-width: 3;
+}
+.brand-path-label {
+  font:
+    600 15px 'DM Sans',
+    system-ui,
+    sans-serif;
+  fill: var(--brand-ink);
+}
+.brand-path-sub {
+  font:
+    400 12px 'DM Sans',
+    system-ui,
+    sans-serif;
+  fill: #5a5f66;
+}
+@keyframes brand-path-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-path-progress {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Pillar chip */
+.pillar-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: var(--pillar-tint);
+  color: var(--pillar);
+  font:
+    600 0.78rem 'DM Sans',
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Product mockup frame */
+.mock {
+  background: #fff;
+  border: 1px solid var(--brand-line);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px -20px #0d1a2b40;
+  overflow: hidden;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--brand-ink);
+}
+.mock-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--brand-line);
+  background: var(--brand-paper);
+  font-size: 0.78rem;
+}
+.mock-bar strong {
+  color: var(--pillar, var(--brand-ink));
+}
+.mock-sample {
+  color: #898d92;
+  font-size: 0.7rem;
+}
+.mock-body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+.mock-title {
+  margin: 0;
+  font:
+    400 1.35rem 'Instrument Serif',
+    Georgia,
+    serif;
+}
+.mock-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--brand-line);
+  border-radius: 10px;
+  font-size: 0.86rem;
+}
+.mock-row .dot {
+  flex: none;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--pillar);
+}
+.mock-row .grow {
+  flex: 1;
+}
+.mock-row small {
+  color: #5a5f66;
+}
+.mock-meter {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--pillar-tint);
+  overflow: hidden;
+}
+.mock-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--pillar);
+  border-radius: inherit;
+}
+.mock-expert {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.7rem;
+  border-radius: 10px;
+  background: var(--pillar-tint);
+  font-size: 0.82rem;
+}
+.mock-expert b {
+  color: var(--pillar);
+}
+.mock-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+.mock-stat {
+  padding: 0.7rem;
+  border: 1px solid var(--brand-line);
+  border-radius: 10px;
+}
+.mock-stat strong {
+  display: block;
+  font:
+    400 1.5rem 'Instrument Serif',
+    Georgia,
+    serif;
+  color: var(--pillar);
+}
+.mock-stat small {
+  color: #5a5f66;
+}
+
+/* Placeholder slots: clearly marked so nothing passes as real proof */
+.brand-slot {
+  display: grid;
+  place-items: center;
+  gap: 0.25rem;
+  padding: 1.25rem;
+  border: 2px dashed #c7c1b8;
+  border-radius: 12px;
+  background: repeating-linear-gradient(-45deg, #f5f3ef 0 10px, #fbfaf7 10px 20px);
+  color: #5a5f66;
+  text-align: center;
+  font:
+    500 0.85rem 'DM Sans',
+    system-ui,
+    sans-serif;
+}
+.brand-slot small {
+  color: #898d92;
+}
+.brand-logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  align-items: center;
+}
+.brand-logos .brand-slot {
+  padding: 0.7rem;
+  min-height: 56px;
+}
+.brand-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.brand-stat {
+  border-top: 3px solid var(--pillar, var(--brand-ink));
+  padding-top: 0.6rem;
+}
+.brand-stat strong {
+  display: block;
+  font:
+    400 2.4rem/1 'Instrument Serif',
+    Georgia,
+    serif;
+}
+.brand-stat span {
+  color: #5a5f66;
+  font-size: 0.85rem;
+}
+.brand-stat em {
+  display: block;
+  color: #898d92;
+  font-size: 0.7rem;
+  font-style: normal;
+}
+
+@media (max-width: 560px) {
+  .mock-grid {
+    grid-template-columns: 1fr;
+  }
+}

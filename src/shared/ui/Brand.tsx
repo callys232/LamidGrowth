@@ -37,7 +37,7 @@ export function Brand({
     <Link className={`brand ${light ? 'brand-light' : ''}`} to="/" aria-label="LAMID ONE home">
       <Mark className="brand-mark" size={32} />
       <span>
-        LAMID <b>ONE</b>
+        Lamid<b>One</b>
         {!compact && <small>HUMAN JUDGMENT. INFINITE POSSIBILITY.</small>}
       </span>
     </Link>

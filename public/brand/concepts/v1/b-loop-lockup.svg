@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 64" role="img" aria-label="LAMID ONE">
+  <g fill="none" stroke-width="7">
+    <path d="M32 10 A22 22 0 0 1 51.05 43" stroke="#c12129"/>
+    <path d="M51.05 43 A22 22 0 0 1 12.95 43" stroke="#6b7a3a"/>
+    <path d="M12.95 43 A22 22 0 0 1 32 10" stroke="#b8923a"/>
+    <path d="M26 24 L32 18 V46" stroke="#0d1a2b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="78" y="43" font-family="'DM Sans','Inter','Segoe UI',Arial,sans-serif" font-size="34" font-weight="700" letter-spacing="1.5" fill="#0d1a2b">LAMID<tspan dx="9" font-weight="300">ONE</tspan></text>
+</svg>

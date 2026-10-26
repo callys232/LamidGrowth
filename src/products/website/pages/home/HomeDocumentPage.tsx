@@ -2,16 +2,16 @@ import { UpdatedDocumentPage } from '../../../../shared/content/UpdatedDocumentP
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
 import { HomeFooter } from './components/HomeFooter';
-import { HomeVideoHero } from './components/HomeVideoHero';
-import { HomeHeroSlide } from './slides/HomeHeroSlide';
-import { HomeExperienceSlide } from './slides/HomeExperienceSlide';
-import { HomeOutcomesSlide } from './slides/HomeOutcomesSlide';
-import { HomeRhythmSlide } from './slides/HomeRhythmSlide';
-import { HomeExpansionSlide } from './slides/HomeExpansionSlide';
-import { HomePillarsSlide } from './slides/HomePillarsSlide';
-import { HomeHowItWorksSlide } from './slides/HomeHowItWorksSlide';
-import { HomeNarrativeSlide } from './slides/HomeNarrativeSlide';
-import { HomeLongFormSlide } from './slides/HomeLongFormSlide';
+import {
+  LandingAi,
+  LandingClose,
+  LandingHero,
+  LandingProducts,
+  LandingResults,
+  LandingTiles,
+  LandingTrust,
+  LandingWhatIs,
+} from './landing/Landing';
 import './home.css';
 
 /** Preserve the GitHub homepage's original section components and reading order.
@@ -22,16 +22,14 @@ export function HomeDocumentPage({ embedded = false }: DocumentPageProps) {
   if (embedded) return <UpdatedDocumentPage content={content} embedded />;
   return (
     <div className="lamid-home" data-source-page={content.page}>
-      <HomeVideoHero />
-      <HomeHeroSlide />
-      <HomeExperienceSlide />
-      <HomeOutcomesSlide />
-      <HomeRhythmSlide />
-      <HomeExpansionSlide />
-      <HomePillarsSlide />
-      <HomeHowItWorksSlide />
-      <HomeLongFormSlide />
-      <HomeNarrativeSlide />
+      <LandingHero />
+      <LandingTiles />
+      <LandingWhatIs />
+      <LandingTrust />
+      <LandingProducts />
+      <LandingAi />
+      <LandingResults />
+      <LandingClose />
       <HomeFooter />
     </div>
   );

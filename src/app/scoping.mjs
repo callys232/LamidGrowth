@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { JOB_CATEGORIES } from './jobTaxonomy.mjs';
 import { REGULATED_KEYWORDS } from './regulatedKeywords.mjs';
 import { reviewerEligibility } from './expertEligibility.mjs';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 
 const text = (max) => z.string().trim().max(max).default('');
 
@@ -179,8 +180,7 @@ const fail = (message, status) => {
 
 export function mountScoping(app, store, { ecosystemAdminEmails } = {}) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) =>
-    (ecosystemAdminEmails || []).includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails || []);
 
   async function jurisdictionRequiresLicense(jurisdiction, category) {
     if (!jurisdiction || !category) return false;

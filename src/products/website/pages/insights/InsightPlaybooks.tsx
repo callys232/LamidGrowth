@@ -79,7 +79,7 @@ function PlaybookVector({ category, compact = false }: { category: string; compa
   );
 }
 
-function downloadTemplate(playbook: Playbook) {
+export function downloadTemplate(playbook: Playbook) {
   const lines = [
     `# ${playbook.title}`,
     '',

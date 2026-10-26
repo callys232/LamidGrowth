@@ -4,6 +4,7 @@ import {
   REVIEW_FUNDING_STATES,
   REVIEW_TRANSFER_STATES,
 } from './paymentIntegrity.mjs';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 const tables = { funding: 'milestone_fundings', transfer: 'payment_transfers' };
 const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
@@ -27,8 +28,7 @@ const verify = z
 /** Dedicated ownership for payment support and reconciliation; never initiates a transfer. */
 export function mountPaymentOperations(app, store, { paymentProvider, ecosystemAdminEmails = [] }) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) =>
-    !req.user.demo && ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
   const admin = (req, _res, next) => {
     if (!isAdmin(req))
       return next(

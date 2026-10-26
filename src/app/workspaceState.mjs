@@ -1,4 +1,4 @@
-import { permissionsFor } from './policy.mjs';
+import { isVerifiedEcosystemAdmin, permissionsFor } from './policy.mjs';
 
 export function mountWorkspaceState(app, { db, records, ecosystemAdminEmails }) {
   app.get('/api/state', async (req, res) => {
@@ -24,7 +24,7 @@ export function mountWorkspaceState(app, { db, records, ecosystemAdminEmails }) 
         name: req.user.name,
         email: req.user.email,
         demo: Boolean(req.user.demo),
-        ecosystemAdmin: ecosystemAdminEmails.includes(req.user.email),
+        ecosystemAdmin: isVerifiedEcosystemAdmin(req, ecosystemAdminEmails),
       },
       workspace: req.workspace,
       permissions: permissionsFor(req.workspace.role),

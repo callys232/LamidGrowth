@@ -339,6 +339,10 @@ export async function mountAccounts(
       })
       .strict()
       .parse(req.body);
+    if (ecosystemAdminEmails.some((email) => email.toLowerCase() === input.email))
+      return res
+        .status(409)
+        .json({ error: 'Unable to create this account. Contact support for account access.' });
     const password = await hashPassword(input.password),
       user = randomUUID(),
       workspace = randomUUID();

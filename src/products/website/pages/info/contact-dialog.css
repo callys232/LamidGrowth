@@ -1,0 +1,140 @@
+.cd {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 32px;
+  border: 0;
+  border-radius: 24px;
+  background: #fff;
+  color: #0d1a2b;
+  box-shadow: 0 40px 80px -30px rgb(0 0 0 / 55%);
+}
+.cd::backdrop {
+  background: rgb(13 26 43 / 62%);
+  backdrop-filter: blur(4px);
+}
+.cd[open] {
+  animation: cd-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes cd-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+.cd h2 {
+  margin: 0;
+  font-family: 'Newsreader Variable', Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+}
+.cd-lede {
+  margin: 8px 0 20px;
+  color: #4a5560;
+  line-height: 1.5;
+}
+.cd form {
+  display: grid;
+  gap: 14px;
+}
+.cd label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.cd input,
+.cd select,
+.cd textarea {
+  padding: 11px 14px;
+  border: 1px solid #d3d6d2;
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+}
+.cd input:focus,
+.cd select:focus,
+.cd textarea:focus {
+  outline: 2px solid #0d1a2b;
+  outline-offset: 1px;
+}
+.cd-hp {
+  position: absolute;
+  left: -9999px;
+}
+.cd-error {
+  margin: 0;
+  color: #b3261e;
+  font-size: 14px;
+}
+.cd-send {
+  min-height: 48px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: #0d1a2b;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    translate 0.25s ease,
+    opacity 0.2s ease;
+}
+.cd-send:hover:not(:disabled) {
+  translate: 0 -2px;
+}
+.cd-send:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.cd-x {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f2ef;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.cd-done {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+.cd-done p {
+  margin: 0;
+  color: #4a5560;
+}
+:root[data-theme='dark'] .cd {
+  background: #132238;
+  color: #fff;
+}
+:root[data-theme='dark'] .cd input,
+:root[data-theme='dark'] .cd select,
+:root[data-theme='dark'] .cd textarea {
+  background: #0d1a2b;
+  border-color: rgb(255 255 255 / 25%);
+}
+:root[data-theme='dark'] .cd-lede,
+:root[data-theme='dark'] .cd-done p {
+  color: rgb(255 255 255 / 78%);
+}
+:root[data-theme='dark'] .cd-send {
+  background: #c9dcf7;
+  color: #0d1a2b;
+}
+:root[data-theme='dark'] .cd-x {
+  background: rgb(255 255 255 / 12%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cd[open] {
+    animation: none;
+  }
+}

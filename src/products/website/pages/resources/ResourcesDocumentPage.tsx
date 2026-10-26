@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, fromContent } from '../info/InfoPage';
 import {
   ResourcesHeroSlide,
   InsightsSlide1,
@@ -10,6 +11,16 @@ import {
 
 /** /resources — sections in reading order. */
 export function ResourcesDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded)
+    return (
+      <InfoPage
+        content={fromContent(content, {
+          eyebrow: 'Resources',
+          primary: { label: 'Get started', to: '/signup' },
+          secondary: { label: 'Contact us', to: '/contact' },
+        })}
+      />
+    );
   return (
     <DocumentPageLayout
       page={content}

@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { HowItWorksPage, howItWorks } from '../../../website/pages/how-it-works/HowItWorksPage';
 import './clarity-public.css';
 import { ToolReadMore } from '../../../../shared/content/ToolReadMore';
 import { ClarityEngineDiagram } from './ClarityEngineDiagram';
@@ -14,6 +15,11 @@ import {
 
 /** /how-it-works/clarity — sections in reading order. */
 export function HowItWorksClarityDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <HowItWorksPage content={howItWorks.clarity} />;
+  return <HowItWorksClarityEmbedded embedded />;
+}
+
+function HowItWorksClarityEmbedded({ embedded = false }: DocumentPageProps) {
   const [activeCard, setActiveCard] = useState<string | null>(null);
   const cardInteraction = (id: string) => ({
     tabIndex: 0,

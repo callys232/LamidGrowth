@@ -13,7 +13,6 @@ import { formatMinor, type Billables, type Bundle } from './usePublicBillables';
  * invented here — the tier cards point to the live prices instead. */
 
 const [, lede, heroActions] = content.hero.paragraphs;
-const tiers = content.sections.slice(0, 3);
 
 export const pricingAnchors = [
   { id: 'plans', label: 'Plans' },
@@ -70,39 +69,101 @@ export function PricingNav() {
   );
 }
 
-/** Tier cards side by side; dots grow with depth, as on HubSpot's Free → Enterprise cards. */
+/** The five plans, mirrored from the billing source of truth (src/app/plans.mjs). */
+const plans = [
+  {
+    name: 'Free',
+    forWho: 'To try LamidOne',
+    price: '$0',
+    note: '500-point welcome reward once verified',
+    includes: ['Strategy and decision engines', '1 person'],
+    cta: 'Get started',
+    to: '/signup',
+  },
+  {
+    name: 'Personal',
+    forWho: 'For individuals and creators',
+    price: '$25',
+    note: 'per month, or $250 a year',
+    includes: [
+      'Everything in Free, plus:',
+      'Operations, risk and governance engines',
+      '600 points a month',
+    ],
+    cta: 'Get started',
+    to: '/signup',
+  },
+  {
+    name: 'Professional',
+    forWho: 'For professionals and founders',
+    price: '$39',
+    note: 'per month, or $390 a year',
+    includes: [
+      'Everything in Personal, plus:',
+      'Growth, change and finance engines',
+      '1,500 points a month',
+    ],
+    cta: 'Get started',
+    to: '/signup',
+  },
+  {
+    name: 'Team',
+    forWho: 'For teams and small businesses',
+    price: '$29',
+    note: 'per person a month, for 3 to 10 people',
+    includes: ['Every engine, including people', '1,000 points per person a month'],
+    cta: 'Get started',
+    to: '/signup',
+  },
+  {
+    name: 'Enterprise',
+    forWho: 'For organisations and institutions',
+    price: 'Custom',
+    note: 'by agreement',
+    includes: ['Every engine', 'Up to 200 people or more', 'Expert advisers'],
+    cta: 'Talk to our team',
+    to: '/contact',
+  },
+] as const;
+
+/** Plan cards side by side, each stating who it is for and what it adds, as on HubSpot's tiers. */
 export function PricingTiers() {
   return (
     <section className="pricing-block" id="plans" aria-label="Plans">
       <div className="pricing-tiers">
-        {tiers.map((tier, index) => {
-          const [name, line] = tier.paragraphs;
-          const team = index === tiers.length - 1;
-          return (
-            <article
-              key={tier.label}
-              className="pricing-tier"
-              id={`section-${name.sourceParagraph}`}
+        {plans.map((plan, index) => (
+          <article key={plan.name} className="pricing-tier">
+            <span className="pricing-tier-dots" aria-hidden="true">
+              {Array.from({ length: index + 1 }, (_, i) => (
+                <span key={i} />
+              ))}
+            </span>
+            <h2>{plan.name}</h2>
+            <p className="pricing-tier-for">{plan.forWho}</p>
+            <p className="pricing-tier-price">
+              <strong>{plan.price}</strong>
+              <small>{plan.note}</small>
+            </p>
+            <ul className="pricing-tier-list">
+              {plan.includes.map((item) => {
+                const lead = item.startsWith('Everything in ');
+                const points = /points/i.test(item);
+                return (
+                  <li key={item} className={lead ? 'is-lead' : points ? 'is-points' : undefined}>
+                    {item.replace(/, plus:$/, '')}
+                    {lead && <span aria-hidden="true"> +</span>}
+                  </li>
+                );
+              })}
+            </ul>
+            <Link
+              className={`button ${index === plans.length - 1 ? 'button-primary' : 'button-secondary'}`}
+              to={plan.to}
             >
-              <span className="pricing-tier-dots" aria-hidden="true">
-                {Array.from({ length: index + 1 }, (_, i) => (
-                  <span key={i} />
-                ))}
-              </span>
-              <h2 data-source-paragraph={name.sourceParagraph}>{tier.title}</h2>
-              <p data-source-paragraph={line.sourceParagraph}>{line.text}</p>
-              {team ? (
-                <Link className="button button-primary" to="/enterprise/contact">
-                  Talk to Our Team
-                </Link>
-              ) : (
-                <a className="button button-secondary" href="#billables">
-                  View Pricing
-                </a>
-              )}
-            </article>
-          );
-        })}
+              {plan.cta}
+            </Link>
+          </article>
+        ))}
       </div>
     </section>
   );

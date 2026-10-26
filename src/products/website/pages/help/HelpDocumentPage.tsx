@@ -2,10 +2,21 @@ import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayou
 import { Link } from 'react-router-dom';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, fromContent } from '../info/InfoPage';
 import { HelpHeroSlide, BrowseByNeedSlide1, GetUnblockedQuicklySlide2 } from './slides';
 
 /** /help — sections in reading order. */
 export function HelpDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded)
+    return (
+      <InfoPage
+        content={fromContent(content, {
+          eyebrow: 'Help',
+          primary: { label: 'Get started', to: '/signup' },
+          secondary: { label: 'Contact us', to: '/contact' },
+        })}
+      />
+    );
   return (
     <DocumentPageLayout
       page={content}

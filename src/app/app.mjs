@@ -14,11 +14,12 @@ import {
 } from '../contracts/workspace.mjs';
 import { openStore, verifyPassword } from '../../server/store.mjs';
 import { databaseFailureResponse } from '../../server/databaseErrors.mjs';
-import { permissionsFor, requirePermission } from './policy.mjs';
+import { isVerifiedEcosystemAdmin, permissionsFor, requirePermission } from './policy.mjs';
 import { mountDemoAdmin } from './demoAccess.mjs';
 import { mountResendWebhook } from './mailDelivery.mjs';
 import { mountMailOperations } from './mailOperations.mjs';
 import { defaultMailer } from './mail.mjs';
+import { mountContact } from './contact.mjs';
 import { mountUserGuideOnboarding } from './onboarding.mjs';
 import { createWorkflowRuntime, mountWorkflows } from './workflows.mjs';
 import { mountKnowledge } from './knowledge.mjs';
@@ -407,7 +408,7 @@ export async function createApp({
     if (!token) return res.status(401).json({ error: 'Sign in to continue.' });
     const user = await db
       .prepare(
-        'SELECT users.id, users.name, users.email, users.demo, users.disabled_at, sessions.workspace_id AS "sessionWorkspaceId" FROM sessions JOIN users ON users.id = sessions.user_id WHERE token = ? AND expires_at > ?',
+        'SELECT users.id, users.name, users.email, users.demo, users.verified_at, users.disabled_at, sessions.workspace_id AS "sessionWorkspaceId" FROM sessions JOIN users ON users.id = sessions.user_id WHERE token = ? AND expires_at > ?',
       )
       .get(digest(token), Date.now());
     if (!user)
@@ -507,13 +508,14 @@ export async function createApp({
     res.json({ ok: true });
   });
   mountDemoAdmin(app, store, ecosystemAdminEmails, { resendWelcome: accounts.resendDemoWelcome });
+  mountContact(app, store, { provider: mailProvider || defaultMailer() });
   mountUserGuideOnboarding(app, store);
   mountMailOperations(app, store, {
     adminEmails: ecosystemAdminEmails,
     provider: mailProvider || defaultMailer(),
   });
   app.get('/api/admin/welcome-rewards', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     res.json(
       await db
@@ -524,7 +526,7 @@ export async function createApp({
     );
   });
   app.post('/api/admin/welcome-rewards/:id', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     const input = z
       .object({ decision: z.enum(['approve', 'deny']), reason: text.max(500) })
@@ -580,7 +582,7 @@ export async function createApp({
   // other route — so an enterprise entitlement always traces back to an explicit ecosystem-admin
   // decision (or, once wired, a real billing/subscription event that would call this same path).
   app.post('/api/admin/workspaces/:id/tier', async (req, res) => {
-    if (!ecosystemAdminEmails.includes((req.user.email || '').toLowerCase()))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res
         .status(403)
         .json({ error: 'Only an ecosystem administrator can change a workspace tier.' });
@@ -617,7 +619,7 @@ export async function createApp({
     res.json({ id: workspaceRow.id, tier: input.tier, memberLimit });
   });
   app.get('/api/admin/operations', async (req, res) => {
-    if (!ecosystemAdminEmails.includes(req.user.email))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     const [mail, scheduler, agents, duplicateRefunds, balanceMismatches, stuckRuns] =
       await Promise.all([
@@ -1145,7 +1147,7 @@ export async function createApp({
       })
       .strict()
       .parse(req.body);
-    if (!ecosystemAdminEmails.includes((req.user.email || '').toLowerCase()))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res
         .status(403)
         .json({ error: 'Only an ecosystem administrator can permanently delete accounts.' });

@@ -1,0 +1,324 @@
+.prod-page {
+  --prod-navy: #0d1a2b;
+  --prod-muted: #5b6573;
+  color: var(--prod-navy);
+  font-family: 'DM Sans', sans-serif;
+}
+.prod-hero,
+.prod-steps,
+.prod-tour,
+.prod-human,
+.prod-faq,
+.prod-close {
+  width: min(1200px, 100% - 48px);
+  margin-inline: auto;
+}
+.prod-hero {
+  text-align: center;
+  padding: 96px 0 56px;
+}
+.prod-eyebrow,
+.prod-kicker {
+  font:
+    600 13px/1 'DM Sans',
+    sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--prod-muted);
+  margin: 0 0 20px;
+}
+.prod-hero h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5.6vw, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  max-width: 20ch;
+  margin: 0 auto;
+}
+.prod-lede {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--prod-muted);
+  max-width: 40rem;
+  margin: 24px auto 32px;
+}
+.prod-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.prod-btn {
+  display: inline-block;
+  padding: 16px 30px;
+  border-radius: 999px;
+  border: 2px solid var(--prod-navy);
+  font:
+    600 1rem/1 'DM Sans',
+    sans-serif;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+.prod-btn:hover {
+  transform: translateY(-2px);
+}
+.prod-btn-solid {
+  background: var(--prod-navy);
+  color: #fff;
+}
+.prod-btn-solid:hover {
+  background: #1d3350;
+  border-color: #1d3350;
+}
+.prod-btn-outline {
+  color: var(--prod-navy);
+}
+.prod-btn-outline:hover {
+  background: var(--prod-navy);
+  color: #fff;
+}
+.prod-btn-light {
+  background: #fff;
+  border-color: #fff;
+  color: var(--prod-navy);
+}
+.prod-btn-light:hover {
+  background: #efeeeb;
+  border-color: #efeeeb;
+}
+.prod-btn-ghost {
+  color: #fff;
+  border-color: #fff;
+}
+.prod-btn-ghost:hover {
+  background: #fff;
+  color: var(--prod-navy);
+}
+
+.prod-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding: 24px 0 56px;
+}
+.prod-step {
+  border-top: 4px solid var(--prod-navy);
+  padding-top: 20px;
+}
+.prod-step .prod-kicker {
+  display: block;
+  margin-bottom: 10px;
+}
+.prod-step h2 {
+  font:
+    400 2rem/1.1 'Instrument Serif',
+    Georgia,
+    serif;
+  margin: 0 0 8px;
+}
+.prod-step p {
+  margin: 0;
+  color: var(--prod-muted);
+}
+
+.prod-tour {
+  background: #f6f1e7;
+  border-radius: 16px;
+  padding: 64px 48px;
+}
+.prod-tour > h2 {
+  font:
+    400 clamp(1.8rem, 3.4vw, 2.8rem) / 1.1 'Instrument Serif',
+    Georgia,
+    serif;
+  text-align: center;
+  max-width: 24ch;
+  margin: 0 auto 40px;
+}
+.prod-tour-body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.prod-jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.prod-jobs button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 0;
+  border-left: 4px solid transparent;
+  background: transparent;
+  color: var(--prod-muted);
+  font:
+    600 1rem/1.2 'DM Sans',
+    sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.prod-jobs button small {
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+.prod-jobs button:hover {
+  color: var(--prod-navy);
+  background: rgba(255, 255, 255, 0.6);
+}
+.prod-jobs button.is-active {
+  background: #fff;
+  color: var(--prod-navy);
+  border-left-color: var(--prod-navy);
+  font-weight: 700;
+}
+.prod-panel {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e2ddd0;
+  border-radius: 12px;
+  padding: 24px;
+}
+.prod-media {
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0d1a2b;
+}
+.prod-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.prod-copy h3 {
+  font:
+    400 1.7rem/1.2 'Instrument Serif',
+    Georgia,
+    serif;
+  margin: 0 0 16px;
+}
+.prod-copy ul {
+  margin: 0 0 20px;
+  padding-left: 18px;
+  color: var(--prod-muted);
+  line-height: 1.7;
+}
+.prod-copy a {
+  color: var(--prod-navy);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.prod-human {
+  text-align: center;
+  padding: 80px 0 40px;
+}
+.prod-human h2 {
+  font:
+    400 clamp(1.8rem, 3.4vw, 2.8rem) / 1.1 'Instrument Serif',
+    Georgia,
+    serif;
+  margin: 0 0 16px;
+}
+.prod-human p {
+  max-width: 40rem;
+  margin: 0 auto;
+  line-height: 1.55;
+  color: var(--prod-muted);
+}
+
+.prod-faq {
+  max-width: 760px;
+  padding: 24px 0 56px;
+}
+.prod-faq h2 {
+  font:
+    600 13px/1 'DM Sans',
+    sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--prod-muted);
+  margin: 0 0 16px;
+}
+.prod-faq details {
+  border-top: 1px solid #dcd8cd;
+  padding: 18px 0;
+}
+.prod-faq summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+.prod-faq p {
+  margin: 12px 0 0;
+  line-height: 1.55;
+  color: var(--prod-muted);
+}
+
+.prod-close {
+  background: var(--prod-navy);
+  color: #fff;
+  border-radius: 16px;
+  text-align: center;
+  padding: 64px 24px;
+  margin-bottom: 88px;
+}
+.prod-close h2 {
+  font:
+    400 clamp(1.9rem, 3.6vw, 3rem) / 1.1 'Instrument Serif',
+    Georgia,
+    serif;
+  margin: 0 0 28px;
+}
+
+@media (max-width: 900px) {
+  .prod-hero {
+    padding: 56px 0 32px;
+  }
+  .prod-steps,
+  .prod-tour-body,
+  .prod-panel {
+    grid-template-columns: 1fr;
+  }
+  .prod-tour {
+    padding: 40px 20px;
+  }
+  .prod-jobs {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 0;
+  }
+  .prod-jobs li {
+    flex: 0 0 auto;
+  }
+  .prod-jobs button {
+    border-left: 0;
+    border-bottom: 4px solid transparent;
+    white-space: nowrap;
+  }
+  .prod-jobs button small {
+    display: none;
+  }
+  .prod-jobs button.is-active {
+    border-bottom-color: var(--prod-navy);
+  }
+}

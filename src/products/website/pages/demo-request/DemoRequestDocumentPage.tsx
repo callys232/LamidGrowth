@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, info } from '../info/InfoPage';
 import {
   DemoRequestHeroSlide,
   WhatAreYouWorkingTowardSlide1,
@@ -10,6 +11,7 @@ import {
 
 /** /demo/request — sections in reading order. */
 export function DemoRequestDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <InfoPage content={info['demo-request']} />;
   return (
     <DocumentPageLayout
       page={content}

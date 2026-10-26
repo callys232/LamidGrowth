@@ -48,6 +48,7 @@ test(
       contexts: z.enum(['Founder', 'SME']),
       session: async () => {},
       enterpriseMemberLimit: 200,
+      ecosystemAdminEmails: ['Admin@example.test'],
       errorLogger() {},
     });
     app.use((error, _req, res, _next) =>
@@ -64,6 +65,18 @@ test(
       });
       return { status: response.status, data: await response.json() };
     }
+    const reservedAdmin = await post('/auth/signup', {
+      name: 'Admin',
+      email: 'admin@example.test',
+      password: 'admin-test-password',
+      context: 'SME',
+    });
+    assert.equal(reservedAdmin.status, 409);
+    assert.equal(
+      await store.db.prepare('SELECT id FROM users WHERE email = ?').get('admin@example.test'),
+      undefined,
+      'public signup cannot claim a configured administrator identity',
+    );
     const signup = await post('/auth/signup', {
       name: 'Demo Visitor',
       email: 'conversion@example.test',

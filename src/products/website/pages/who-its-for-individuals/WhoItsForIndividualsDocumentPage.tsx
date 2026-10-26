@@ -1,5 +1,6 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
+import { AudiencePage } from '../audience/AudiencePage';
 import content from './content.json';
 import { IndividualsContent } from './IndividualsContent';
 import {
@@ -12,6 +13,7 @@ import {
 
 /** /who-its-for/individuals — sections in reading order. */
 export function WhoItsForIndividualsDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <AudiencePage content={content} audienceId="individuals" />;
   return (
     <DocumentPageLayout
       page={content}

@@ -15,6 +15,7 @@ import {
 import { usePublicBillables } from './usePublicBillables';
 import './bundle-builder.css';
 import './pricing-flow.css';
+import '../motion.css';
 import { PricingExplainer } from '../../../pricing/components/PricingExplainer';
 
 /** /pricing follows a HubSpot-style pricing flow (see PricingFlow.tsx): hero, sticky plan bar,

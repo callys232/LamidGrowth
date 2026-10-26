@@ -19,6 +19,16 @@ export function permissionsFor(role) {
   return rolePermissions[role] || [];
 }
 
+export function isVerifiedEcosystemAdmin(req, emails = []) {
+  const email = req.user?.email?.toLowerCase();
+  return (
+    Boolean(email) &&
+    req.user?.verified_at != null &&
+    !req.user?.demo &&
+    emails.some((candidate) => candidate.toLowerCase() === email)
+  );
+}
+
 export function requirePermission(permission) {
   return (req, res, next) => {
     if (!permissionsFor(req.workspace.role).includes(permission))

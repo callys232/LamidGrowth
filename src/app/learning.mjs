@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 import { DOMAINS, FUNCTIONS, INDUSTRIES } from './expertiseTaxonomy.mjs';
 import { gradeQuiz } from './talent.mjs';
 
@@ -75,7 +76,7 @@ export async function getLearningAttention(store, userId) {
 
 export function mountLearning(app, store, { ecosystemAdminEmails = [] } = {}) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   async function pathFor(id) {
     const path = await db.prepare('SELECT * FROM learning_paths WHERE id = ?').get(id);

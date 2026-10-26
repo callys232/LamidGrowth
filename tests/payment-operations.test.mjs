@@ -105,10 +105,11 @@ test(
     app.use((req, _res, next) => {
       const role = req.headers['x-audit-role'] || 'owner';
       req.user = {
-        id: role === 'operator' ? operator : role === 'other' ? other : owner,
-        email: role === 'operator' ? 'operator@example.test' : 'owner@example.test',
+        id: role.includes('operator') ? operator : role === 'other' ? other : owner,
+        email: role.includes('operator') ? 'operator@example.test' : 'owner@example.test',
         name: 'Operations test',
         demo: false,
+        verified_at: role === 'operator' ? Date.now() : null,
       };
       req.workspace = { id: role === 'other' ? outside : workspace, role: 'owner' };
       next();
@@ -144,6 +145,16 @@ test(
     assert.equal(
       (await request(`/funding/${funding}/verify`, { version: 1, operation: 'charge', note }))
         .status,
+      403,
+    );
+    assert.equal(
+      (
+        await request(
+          `/funding/${funding}/verify`,
+          { version: 1, operation: 'charge', note },
+          'unverified-operator',
+        )
+      ).status,
       403,
     );
     assert.equal(providerCalls, 0);

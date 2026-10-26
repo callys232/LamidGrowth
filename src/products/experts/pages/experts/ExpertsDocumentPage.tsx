@@ -3,6 +3,7 @@ import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayou
 import { DocumentSectionSlide } from '../../../../shared/content/slides/DocumentSectionSlide';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, info } from '../../../website/pages/info/InfoPage';
 import { ExpertNetworkHeroSlide } from './slides';
 import { ExpertHero } from './components/ExpertHero';
 import { ExpertPhaseBand, groupExpertSections } from './components/ExpertPhaseBand';
@@ -16,6 +17,7 @@ const TONES = ['plain', 'tint', 'plain', 'tint', 'dark'] as const;
  * rendering (the collapsed "Full page copy" reference) falls back to the generic document
  * template, same as every other document page. */
 export function ExpertsDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <InfoPage content={info.experts} />;
   if (embedded)
     return (
       <DocumentPageLayout page={content} embedded hero={<ExpertNetworkHeroSlide embedded />}>

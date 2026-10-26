@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, info } from '../info/InfoPage';
 import {
   SecurityHeroSlide,
   IdentityAccountProtectionSlide1,
@@ -11,6 +12,7 @@ import {
 
 /** /security — sections in reading order. */
 export function SecurityDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <InfoPage content={info.security} />;
   return (
     <DocumentPageLayout
       page={content}

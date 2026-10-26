@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InsightsPage } from './InsightsPage';
 import { InsightPlaybooks } from './InsightPlaybooks';
 import {
   InsightsHeroSlide,
@@ -11,6 +12,7 @@ import {
 
 /** /insights — sections in reading order. */
 export function InsightsDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <InsightsPage />;
   return (
     <DocumentPageLayout
       page={content}

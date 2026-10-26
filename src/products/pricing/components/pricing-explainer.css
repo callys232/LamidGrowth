@@ -1,0 +1,225 @@
+.px {
+  --px-ink: #0d1a2b;
+  margin-block: 48px;
+  padding: clamp(28px, 5vw, 64px);
+  border-radius: 28px;
+  background: radial-gradient(120% 140% at 0% 0%, #1b2f4d 0%, var(--px-ink) 60%);
+  color: #fff;
+}
+.px-eyebrow {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 14%);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.px h2 {
+  margin: 18px 0 0;
+  max-width: 18ch;
+  font-family: 'Newsreader Variable', Georgia, serif;
+  font-size: clamp(30px, 4.2vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #fff;
+}
+.px h2 em {
+  font-style: normal;
+  color: #c9dcf7;
+}
+.px-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: stretch;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid rgb(255 255 255 / 22%);
+}
+.px-list {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.px-list li {
+  border-bottom: 1px solid rgb(255 255 255 / 22%);
+}
+.px-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 20px 8px;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 650;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    padding 0.3s ease,
+    color 0.2s ease;
+}
+.px-list button svg {
+  flex: none;
+  transition: rotate 0.3s ease;
+}
+.px-list button[aria-expanded='true'] svg {
+  rotate: 90deg;
+}
+.px-list button:hover {
+  padding-left: 16px;
+}
+.px-list button:focus-visible {
+  outline: 2px solid #c9dcf7;
+  outline-offset: 2px;
+}
+.px-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+.px-more > div {
+  overflow: hidden;
+}
+.px-more p {
+  margin: 0;
+  padding: 0 8px 22px 40px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.px-list button[aria-expanded='true'] + .px-more {
+  grid-template-rows: 1fr;
+}
+
+.px-stage {
+  display: grid;
+  min-height: 300px;
+}
+.px-panel {
+  grid-area: 1 / 1;
+  position: relative;
+  opacity: 0;
+  translate: 0 10px;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    translate 0.4s ease;
+}
+.px-panel.is-on {
+  opacity: 1;
+  translate: 0;
+  pointer-events: auto;
+}
+.px-card {
+  position: absolute;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 60%);
+  color: var(--px-ink);
+}
+.px-card small {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.px-card p {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: inherit;
+}
+.px-card-a {
+  inset: 0 18% 34% 0;
+  padding: 24px;
+  background: #f4f1ea;
+}
+.px-card-a strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.px-card-b {
+  inset: 38% 0 0 22%;
+  padding: 22px 24px;
+  background: #dce8fb;
+}
+.px-card-b svg {
+  float: right;
+  margin: 0 0 8px 12px;
+}
+
+.px-price {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  margin-top: 40px;
+  padding: 24px;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 8%);
+}
+.px-price h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.px-price-calc {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 6px;
+}
+.px-price-calc output {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+}
+.px-price-calc span {
+  color: rgb(255 255 255 / 75%);
+}
+.px-price input[type='range'] {
+  width: 100%;
+  accent-color: #c9dcf7;
+}
+.px-price small {
+  display: block;
+  margin-top: 6px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.px-foot {
+  margin: 28px 0 0;
+  max-width: 70ch;
+  color: rgb(255 255 255 / 80%);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 860px) {
+  .px-body,
+  .px-price {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .px-stage {
+    min-height: 340px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .px *,
+  .px-panel {
+    transition: none !important;
+  }
+}

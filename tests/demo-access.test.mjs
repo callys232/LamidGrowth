@@ -60,7 +60,11 @@ test(
     // This test-only middleware simulates the account middleware which precedes admin routes.
     app.use((req, _res, next) => {
       req.user = req.headers['x-test-admin']
-        ? { id: 'test-admin', email: 'admin@example.test' }
+        ? {
+            id: 'test-admin',
+            email: 'admin@example.test',
+            verified_at: req.headers['x-test-admin'] === 'yes' ? Date.now() : null,
+          }
         : { email: 'visitor@example.test' };
       next();
     });
@@ -74,13 +78,21 @@ test(
       server = app.listen(0, '127.0.0.1', resolve);
     });
     const base = `http://127.0.0.1:${server.address().port}/api`;
-    async function request(path, body, { admin = false, method, ip = '192.0.2.10' } = {}) {
+    async function request(
+      path,
+      body,
+      { admin = false, unverifiedAdmin = false, method, ip = '192.0.2.10' } = {},
+    ) {
       const response = await fetch(`${base}${path}`, {
         method: method || (body === undefined ? 'GET' : 'POST'),
         headers: {
           'Content-Type': 'application/json',
           'X-Forwarded-For': ip,
-          ...(admin ? { 'x-test-admin': 'yes' } : {}),
+          ...(admin
+            ? { 'x-test-admin': 'yes' }
+            : unverifiedAdmin
+              ? { 'x-test-admin': 'unverified' }
+              : {}),
         },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       });
@@ -181,6 +193,11 @@ test(
       200,
     );
     assert.equal((await request('/admin/demo-leads')).status, 403);
+    assert.equal(
+      (await request('/admin/demo-leads', undefined, { unverifiedAdmin: true })).status,
+      403,
+      'an unverified account cannot use administrator endpoints, even when its email is allowlisted',
+    );
     const adminList = await request('/admin/demo-leads', undefined, { admin: true });
     assert.equal(adminList.data.leads[0].events, 1);
     assert.equal(

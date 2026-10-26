@@ -1,0 +1,288 @@
+.more-detail {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(72px, 9vw, 120px) 24px;
+  font-family: 'Inter Variable', system-ui, sans-serif;
+  color: #0d1a2b;
+}
+
+.more-detail > h2 {
+  margin: 0 0 40px;
+  color: #5b6573;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.md-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+}
+
+.md-shell.is-single {
+  grid-template-columns: 1fr;
+}
+
+.md-tabs {
+  top: 96px;
+  display: grid;
+  gap: 4px;
+}
+
+.md-tabs button {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font:
+    500 1rem/1.3 'Inter Variable',
+    system-ui,
+    sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.25s ease;
+}
+.md-tabs button span {
+  color: #5b6573;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.md-tabs button:hover {
+  background: #f3f6fa;
+}
+.md-tabs button.is-active {
+  background: #0d1a2b;
+  color: #fff;
+  transform: translateX(8px);
+}
+.md-tabs button.is-active span {
+  color: #aab9cd;
+}
+
+.md-panels {
+  display: grid;
+}
+.md-panel {
+  grid-area: 1 / 1;
+  align-self: start;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    visibility 0s linear 0.35s;
+}
+.md-panel.is-active {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.md-panel-title {
+  margin: 0 0 20px;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.md-intro {
+  max-width: 40rem;
+  margin-bottom: 32px;
+  color: #5b6573;
+  font-size: 1.1rem;
+  line-height: 1.65;
+}
+.md-intro p,
+.md-cards p {
+  margin: 0 0 12px;
+}
+
+.md-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.md-cards li {
+  --a: #0d1a2b;
+  position: relative;
+  overflow: hidden;
+  padding: 26px 24px 22px;
+  border-radius: 18px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23000' stroke-opacity='.07' stroke-width='1.5'%3E%3Ccircle cx='96' cy='24' r='46'/%3E%3Ccircle cx='96' cy='24' r='26'/%3E%3Ccircle cx='96' cy='24' r='8'/%3E%3C/svg%3E")
+      right top / 120px no-repeat,
+    color-mix(in srgb, var(--a) 7%, #f3f6fa);
+  color: #4a5666;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  outline: none;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.25s ease;
+}
+.md-cards li::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--a);
+}
+.md-cards li:nth-child(4n + 1) {
+  --a: #c12129;
+}
+.md-cards li:nth-child(4n + 2) {
+  --a: #6b7a3a;
+}
+.md-cards li:nth-child(4n + 3) {
+  --a: #2f6f73;
+}
+.md-cards li:nth-child(4n) {
+  --a: #99771f;
+}
+.md-cards h4 {
+  margin: 0 0 8px;
+  color: #0d1a2b;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: color 0.3s ease;
+}
+.md-cards li:hover,
+.md-cards li:focus-visible {
+  background: var(--a);
+  color: #fff;
+  transform: translateY(-3px);
+}
+.md-cards li:hover h4,
+.md-cards li:focus-visible h4 {
+  color: #fff;
+}
+.md-cards p {
+  color: inherit;
+  transition: color 0.3s ease;
+}
+.md-cards li:hover p,
+.md-cards li:focus-visible p,
+.md-cards li:hover li,
+.md-cards li:focus-visible li,
+:root[data-theme='dark'] .md-cards li:hover p,
+:root[data-theme='dark'] .md-cards li:focus-visible p,
+:root[data-theme='dark'] .md-cards li:hover li,
+:root[data-theme='dark'] .md-cards li:focus-visible li {
+  color: #fff;
+}
+.md-cards ul {
+  margin: 0 0 12px;
+  padding-left: 18px;
+}
+.md-cards li li {
+  padding: 0;
+  margin-bottom: 4px;
+  background: none;
+  border-radius: 0;
+  transform: none;
+}
+.md-cards li li:hover {
+  background: none;
+  transform: none;
+}
+
+.more-detail-flag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border: 1px dashed currentColor;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.65;
+  vertical-align: middle;
+}
+
+.more-detail-flag-row {
+  list-style: none;
+  margin-left: -18px;
+}
+
+:root[data-theme='dark'] .more-detail {
+  color: #eef3f9;
+}
+:root[data-theme='dark'] .md-tabs button:hover {
+  background: #172131;
+}
+:root[data-theme='dark'] .md-cards li {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.5'%3E%3Ccircle cx='96' cy='24' r='46'/%3E%3Ccircle cx='96' cy='24' r='26'/%3E%3Ccircle cx='96' cy='24' r='8'/%3E%3C/svg%3E")
+      right top / 120px no-repeat,
+    color-mix(in srgb, var(--a) 16%, #172131);
+  color: #c3cdd9;
+}
+:root[data-theme='dark'] .md-tabs button.is-active {
+  background: #c9dcf7;
+  color: #0d1a2b;
+}
+:root[data-theme='dark'] .md-cards li:hover,
+:root[data-theme='dark'] .md-cards li:focus-visible {
+  background: var(--a);
+  color: #fff;
+}
+:root[data-theme='dark'] .md-tabs button.is-active span {
+  color: #3a4a60;
+}
+:root[data-theme='dark'] .md-cards h4 {
+  color: #fff;
+}
+:root[data-theme='dark'] .md-cards li:hover h4,
+:root[data-theme='dark'] .md-cards li:focus-visible h4 {
+  color: #fff;
+}
+:root[data-theme='dark'] .md-intro,
+:root[data-theme='dark'] .more-detail > h2 {
+  color: #aab6c4;
+}
+
+@media (max-width: 860px) {
+  .md-shell {
+    grid-template-columns: 1fr;
+  }
+  .md-tabs {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 6px;
+  }
+  .md-tabs button {
+    flex: none;
+    border: 1px solid #d5dce6;
+    border-radius: 999px;
+    padding: 10px 16px;
+    white-space: nowrap;
+  }
+  .md-tabs button span {
+    display: none;
+  }
+  .md-tabs button.is-active {
+    transform: none;
+  }
+  .md-cards {
+    grid-template-columns: 1fr;
+  }
+}

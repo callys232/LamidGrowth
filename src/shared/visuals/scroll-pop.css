@@ -1,0 +1,13 @@
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  [data-scroll-pop='out'] {
+    opacity: 0;
+    transform: translateY(36px) scale(0.95);
+  }
+  [data-scroll-pop='in'] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.45s ease var(--pop-delay, 0ms),
+      transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0ms);
+  }
+}

@@ -1,5 +1,6 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
+import { AudiencePage } from '../audience/AudiencePage';
 import content from './content.json';
 import {
   WhoItsForProfessionalsHeroSlide,
@@ -13,6 +14,7 @@ import {
 
 /** /who-its-for/professionals — sections in reading order. */
 export function WhoItsForProfessionalsDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <AudiencePage content={content} audienceId="professionals" />;
   return (
     <DocumentPageLayout
       page={content}

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { requirePermission } from './policy.mjs';
+import { isVerifiedEcosystemAdmin, requirePermission } from './policy.mjs';
 import { logHandledError } from './errorLog.mjs';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -75,7 +75,7 @@ export async function recordOneTimeEcosystemFee(store, workspaceId) {
 
 export function mountBilling(app, store, { paymentProvider, ecosystemAdminEmails = [] } = {}) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   app.get('/api/admin/escrow-overview', async (req, res) => {
     if (!isAdmin(req))

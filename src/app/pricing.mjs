@@ -3,6 +3,7 @@ import { MANIFEST_SYNC } from './toolCatalog/catalog.mjs';
 import { z } from 'zod';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
 import { engineReviewCost } from './ai.mjs';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 
 const bundleSchema = z
   .object({
@@ -88,7 +89,7 @@ export function mountPublicPricing(app, store) {
 
 export function mountPricing(app, store, { ecosystemAdminEmails = [] } = {}) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   app.get('/api/admin/bundles', async (req, res) => {
     if (!isAdmin(req))

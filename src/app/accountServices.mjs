@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { requirePermission } from './policy.mjs';
+import { isVerifiedEcosystemAdmin, requirePermission } from './policy.mjs';
 
 const profileSchema = z
   .object({
@@ -172,7 +172,7 @@ export function mountAccountServices(app, store, { verifyCurrentPassword, ecosys
     res.json(await records(req.workspace.id, 'internal_project')),
   );
   app.get('/api/admin/deletion-requests', async (req, res) => {
-    if (!ecosystemAdminEmails.includes((req.user.email || '').toLowerCase()))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     const rows = await db
       .prepare(
@@ -182,7 +182,7 @@ export function mountAccountServices(app, store, { verifyCurrentPassword, ecosys
     res.json(rows.map(({ data, ...row }) => ({ ...row, ...JSON.parse(data) })));
   });
   app.post('/api/admin/deletion-requests/:id', async (req, res) => {
-    if (!ecosystemAdminEmails.includes((req.user.email || '').toLowerCase()))
+    if (!isVerifiedEcosystemAdmin(req, ecosystemAdminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     const input = z
       .object({

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { reconcileDelivery, outcome } from './mailDelivery.mjs';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 
 export async function mailHealth(store) {
   const queues = [];
@@ -67,7 +68,7 @@ export async function mailHealth(store) {
 
 export function mountMailOperations(app, store, { adminEmails, provider }) {
   const admin = (req, res, next) => {
-    if (!adminEmails.includes(req.user?.email))
+    if (!isVerifiedEcosystemAdmin(req, adminEmails))
       return res.status(403).json({ error: 'Ecosystem administrator access required.' });
     res.setHeader('Cache-Control', 'no-store');
     next();

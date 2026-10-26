@@ -267,7 +267,7 @@ export function PublicHeader() {
         }}
       >
         <div className="header-container">
-          <Brand logo />
+          <Brand compact />
           <button
             className="mobile-menu icon-button"
             aria-label={mobile ? 'Close navigation' : 'Open navigation'}

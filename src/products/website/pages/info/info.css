@@ -1,0 +1,39 @@
+.info-grid {
+  width: min(1200px, 100% - 48px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px 32px;
+  padding: 24px 0 56px;
+}
+.info-hero {
+  position: relative;
+  width: 100%;
+  padding-inline: 24px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.96)),
+    var(--info-scene, none) center / cover no-repeat;
+}
+.info-media {
+  width: min(960px, 100% - 48px);
+  margin: 8px auto 40px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f6f1e7;
+  aspect-ratio: 16 / 9;
+}
+.info-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.info-note {
+  width: min(1200px, 100% - 48px);
+  margin: 0 auto 24px;
+  font-size: 13px;
+  color: #5b6573;
+}
+.info-page .prod-human {
+  padding-top: 24px;
+}

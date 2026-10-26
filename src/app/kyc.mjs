@@ -1,5 +1,6 @@
 import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 
 const EVIDENCE_KINDS = ['government_id', 'proof_of_address', 'business_registration', 'other'];
 
@@ -53,7 +54,7 @@ const fail = (message, status) => {
 
 export function mountKyc(app, store, { ecosystemAdminEmails = [] } = {}) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   async function withEvidence(row) {
     const evidence = await db

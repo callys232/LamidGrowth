@@ -35,6 +35,7 @@ test(
       req.user = {
         id: 'test-admin',
         email: req.get('x-admin') ? 'admin@example.test' : 'visitor@example.test',
+        verified_at: req.get('x-admin') === 'yes' ? Date.now() : null,
       };
       next();
     });
@@ -198,6 +199,14 @@ test(
       'delivery_unknown',
     );
     assert.equal((await fetch(`${origin}/api/admin/mail/health`)).status, 403);
+    assert.equal(
+      (
+        await fetch(`${origin}/api/admin/mail/health`, {
+          headers: { 'x-admin': 'unverified' },
+        })
+      ).status,
+      403,
+    );
     const health = await (
       await fetch(`${origin}/api/admin/mail/health`, { headers: { 'x-admin': 'yes' } })
     ).json();

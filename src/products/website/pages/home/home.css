@@ -1,4 +1,4 @@
-ï»¿/* Homepage-owned presentation. Restored from the last verified build. */
+/* Homepage-owned presentation. Restored from the last verified build. */
 .lamid-home {
   --home-ink: light-dark(#132534, #eef1f5);
   --home-muted: light-dark(#53616a, #bac8d2);
@@ -192,12 +192,12 @@
   letter-spacing: 0.1em;
   margin-bottom: 20px;
 }
-.lamid-home [role='tablist'] {
+.lamid-home .home-preview-sidebar [role='tablist'] {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.lamid-home [role='tab'] {
+.lamid-home .home-preview-sidebar [role='tab'] {
   display: flex;
   gap: 10px;
   align-items: center;
@@ -210,20 +210,20 @@
   font: 500 13px var(--font-ui);
   cursor: pointer;
 }
-.lamid-home [role='tab'] svg:last-child {
+.lamid-home .home-preview-sidebar [role='tab'] svg:last-child {
   margin-left: auto;
   opacity: 0;
 }
-.lamid-home [role='tab'][aria-selected='true'] {
+.lamid-home .home-preview-sidebar [role='tab'][aria-selected='true'] {
   color: #fff;
   background: #183140;
   border-color: #183140;
   box-shadow: 0 2px 4px #122a3610;
 }
-.lamid-home [role='tab'][aria-selected='true'] svg:last-child {
+.lamid-home .home-preview-sidebar [role='tab'][aria-selected='true'] svg:last-child {
   opacity: 1;
 }
-.lamid-home [role='tab']:hover:not([aria-selected='true']) {
+.lamid-home .home-preview-sidebar [role='tab']:hover:not([aria-selected='true']) {
   background: light-dark(#e9eeea, #27333e);
   color: light-dark(#183140, #eef1f5);
 }
@@ -1053,21 +1053,21 @@
   .lamid-home .home-preview-sidebar-note {
     display: none;
   }
-  .lamid-home [role='tablist'] {
+  .lamid-home .home-preview-sidebar [role='tablist'] {
     flex-direction: row;
     gap: 5px;
   }
-  .lamid-home [role='tab'] {
+  .lamid-home .home-preview-sidebar [role='tab'] {
     flex: 1;
     justify-content: center;
     padding: 11px 5px;
     font-size: 10px;
     gap: 5px;
   }
-  .lamid-home [role='tab'] svg {
+  .lamid-home .home-preview-sidebar [role='tab'] svg {
     width: 14px;
   }
-  .lamid-home [role='tab'] svg:last-child {
+  .lamid-home .home-preview-sidebar [role='tab'] svg:last-child {
     display: none;
   }
   .lamid-home .home-preview-panel {
@@ -1822,7 +1822,7 @@
 .lamid-home .home-cycle a {
   border-radius: 4px;
 }
-/* The selected context is a solid, inverted fill in both themes â€” on the dark theme the old
+/* The selected context is a solid, inverted fill in both themes — on the dark theme the old
    #27333e fill matched the section background and the hover state, so nothing looked selected. */
 .lamid-home .home-context-selector button[aria-pressed='true'] {
   color: light-dark(#ffffff, #10202c);
@@ -2536,7 +2536,7 @@
   line-height: 1;
 }
 .lamid-home .home-disclosure[open] > summary::after {
-  content: 'âˆ’';
+  content: '-';
 }
 .lamid-home .home-disclosure[open] > summary {
   margin-bottom: 16px;
@@ -3054,7 +3054,7 @@
     border-color: rgb(255 255 255 / 30%);
   }
 }
-/* Opened long-form layouts (LongFormContent): the same copy, given a varied reading rhythm â€”
+/* Opened long-form layouts (LongFormContent): the same copy, given a varied reading rhythm —
    lead, beats, tags, term cards, a product window and a pull-quote. Left-aligned at every width
    for readability. Selectors carry the band prefix so they outrank page-flow's paragraph rules
    (.content-page .canonical-copy .page-flow .flow-section p). */
@@ -3111,7 +3111,7 @@
   font-weight: 600;
   color: #ffffff;
 }
-/* "Not a â€¦" as tags. */
+/* "Not a …" as tags. */
 .content-page .lamid-home .home-longform .canonical-copy .lfc-nots {
   display: flex;
   flex-wrap: wrap;
@@ -3128,7 +3128,7 @@
   color: #e1e7ee;
 }
 .content-page .lamid-home .home-longform .canonical-copy .lfc-nots li::before {
-  content: 'Ã—';
+  content: '×';
   font-weight: 700;
   color: var(--lf-accent);
 }
@@ -3263,7 +3263,7 @@
   font-weight: 500;
 }
 .content-page .lamid-home .home-longform .canonical-copy .lfc-checks li::before {
-  content: 'âœ“';
+  content: '?';
   position: absolute;
   left: 12px;
   top: 50%;
@@ -3464,7 +3464,7 @@
   }
 }
 
-/* The expansion path (Personal â†’ Institution) stays a horizontal row on small screens: the
+/* The expansion path (Personal ? Institution) stays a horizontal row on small screens: the
    stages scroll sideways in one line, with the path tracing across as on desktop. */
 @media (max-width: 800px) {
   .lamid-home .home-expansion-path {
@@ -3592,7 +3592,7 @@
     transition: none;
   }
 }
-/* The cycle cards switch the example above, so they stay put on hover â€” only colour changes. */
+/* The cycle cards switch the example above, so they stay put on hover — only colour changes. */
 .lamid-home .home-cycle a:hover,
 .lamid-home .home-cycle a:active {
   transform: none;

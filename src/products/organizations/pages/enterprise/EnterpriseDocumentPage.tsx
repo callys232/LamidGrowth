@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { InfoPage, info } from '../../../website/pages/info/InfoPage';
 import {
   EnterpriseHeroSlide,
   EnterpriseArchitectureSlide1,
@@ -11,6 +12,7 @@ import {
 
 /** /enterprise — sections in reading order. */
 export function EnterpriseDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <InfoPage content={info.enterprise} />;
   return (
     <DocumentPageLayout
       page={content}

@@ -1,0 +1,98 @@
+.gp-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
+  width: min(1120px, 100% - 48px);
+  margin: 0 auto;
+  padding: clamp(56px, 9vw, 120px) 0 clamp(24px, 4vw, 56px);
+  font-family: 'Inter Variable', system-ui, sans-serif;
+}
+.gp-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.gp-eyebrow::before {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+.gp-hero h1 {
+  margin: 0 0 20px;
+  font-family: 'Newsreader Variable', Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.gp-lede {
+  margin: 0 0 32px;
+  max-width: 32rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+.gp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.gp-visual {
+  min-width: 0;
+}
+
+.guide-extras {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  width: min(1120px, 100% - 48px);
+  margin: 0 auto;
+  border-top: 1px solid rgba(13, 26, 43, 0.14);
+  font-family: 'Inter Variable', system-ui, sans-serif;
+}
+.guide-extras article {
+  padding: 32px 28px 40px 0;
+}
+.guide-extras article + article {
+  padding-left: 28px;
+  border-left: 1px solid rgba(13, 26, 43, 0.14);
+}
+.guide-extras h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.guide-extras p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+:root[data-theme='dark'] .guide-extras,
+:root[data-theme='dark'] .guide-extras article + article {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 860px) {
+  .gp-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .guide-extras {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .guide-extras article,
+  .guide-extras article + article {
+    padding: 24px 0;
+    border-left: 0;
+  }
+  .guide-extras article + article {
+    border-top: 1px solid rgba(13, 26, 43, 0.14);
+  }
+}

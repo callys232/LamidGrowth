@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="LAMID ONE logo, concept A: Summit">
+  <path d="M32 5 L59 57 H5 Z" fill="#c12129" stroke="#c12129" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M19 44 H45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="24" cy="44" r="4" fill="#fff"/>
+  <circle cx="32" cy="44" r="4" fill="#d8cfc4"/>
+  <circle cx="40" cy="44" r="4" fill="#e2b24a"/>
+</svg>

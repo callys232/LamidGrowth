@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { HowItWorksPage, howItWorks } from '../../../website/pages/how-it-works/HowItWorksPage';
 import { RhythmContent } from './RhythmContent';
 import {
   HowItWorksRhythmHeroSlide,
@@ -12,6 +13,7 @@ import {
 
 /** /how-it-works/rhythm — sections in reading order. */
 export function HowItWorksRhythmDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <HowItWorksPage content={howItWorks.rhythm} />;
   return (
     <DocumentPageLayout
       page={content}

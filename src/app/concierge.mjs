@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { requirePermission } from './policy.mjs';
+import { isVerifiedEcosystemAdmin, requirePermission } from './policy.mjs';
 import { recordOneTimeEcosystemFee } from './billing.mjs';
 
 const applicationSchema = z
@@ -19,7 +19,7 @@ const fail = (message, status) => {
 
 export function mountConcierge(app, store, { ecosystemAdminEmails }) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   app.post('/api/concierge/applications', async (req, res) => {
     const input = applicationSchema.parse(req.body);

@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 import { wordSet, scoreBid } from './text.mjs';
 import { skillFit as scoreSkillFit } from './matchScore.mjs';
 import {
@@ -173,7 +174,7 @@ const fail = (message, status) => {
 
 export function mountTalent(app, store, { ecosystemAdminEmails }) {
   const { db, transaction, log } = store;
-  const isAdmin = (req) => ecosystemAdminEmails.includes((req.user.email || '').toLowerCase());
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   async function profileFor(userId) {
     const row = await db.prepare('SELECT * FROM talent_profiles WHERE user_id = ?').get(userId);

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 64" role="img" aria-label="LAMID ONE">
+  <g stroke-linejoin="round" stroke-width="2">
+    <polygon points="32,6 41.7,24 22.3,24" fill="#c12129" stroke="#c12129"/>
+    <polygon points="43.3,27 51.4,42 12.6,42 20.7,27" fill="#6b7a3a" stroke="#6b7a3a"/>
+    <polygon points="53,45 60,58 4,58 11,45" fill="#b8923a" stroke="#b8923a"/>
+  </g>
+  <text x="78" y="43" font-family="'DM Sans','Inter','Segoe UI',Arial,sans-serif" font-size="34" font-weight="700" letter-spacing="1.5" fill="#0d1a2b">LAMID<tspan dx="9" font-weight="400" fill="#c12129">ONE</tspan></text>
+</svg>

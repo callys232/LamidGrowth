@@ -1,0 +1,334 @@
+/* Soft, gentle micro-interactions shared by the public pages. */
+:root {
+  --mo-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mo-grad: linear-gradient(100deg, #0d1a2b 0%, #1f4e8c 55%, #3b7dd8 100%);
+}
+:root[data-theme='dark'] {
+  --mo-grad: linear-gradient(100deg, #ffffff 0%, #c9dcf7 55%, #8fb8f0 100%);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --mo-grad: linear-gradient(100deg, #ffffff 0%, #c9dcf7 55%, #8fb8f0 100%);
+  }
+}
+
+.lg-hero h1,
+.lg-split h2,
+.lg-products h2,
+.lg-ai h2,
+.lg-results h2,
+.lg-close h2,
+.prod-hero h1,
+.prod-tour > h2,
+.prod-human h2,
+.prod-faq h2 {
+  background: var(--mo-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-family: 'Inter Variable', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Clean body face on the rebuilt pages */
+.lg-hero,
+.lg-split,
+.lg-products,
+.lg-ai,
+.lg-results,
+.lg-close,
+.prod-page {
+  font-family: 'Inter Variable', 'DM Sans', system-ui, sans-serif;
+}
+
+/* Supporting text a touch heavier for legibility */
+.lg-sub,
+.prod-lede,
+.lg-split p,
+.lg-products-intro p,
+.lg-ai-head p,
+.lg-ai-card p,
+.prod-step p,
+.prod-copy li,
+.info-grid p {
+  font-weight: 500;
+}
+.lg-ai-card h3,
+.prod-step h2,
+.prod-copy h3 {
+  font-weight: 700;
+}
+/* Hero: light, elegant serif like HubSpot's; section headings smaller */
+.lg-hero h1,
+.prod-hero h1 {
+  font-family: 'Newsreader Variable', Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  line-height: 1.08;
+}
+.lg-split h2,
+.lg-products h2,
+.lg-ai h2,
+.lg-results h2,
+.lg-close h2,
+.prod-tour > h2,
+.prod-human h2,
+.prod-faq h2,
+.prod-close h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.2;
+}
+
+/* One simple sans everywhere on the rebuilt pages; only the hero is serif */
+.lg-hero,
+.lg-tiles,
+.lg-split,
+.lg-trust,
+.lg-products,
+.lg-ai,
+.lg-results,
+.lg-close,
+.prod-page,
+.prod-page *,
+.lg-hero *,
+.lg-tiles *,
+.lg-split *,
+.lg-trust *,
+.lg-products *,
+.lg-ai *,
+.lg-results *,
+.lg-close * {
+  font-family:
+    'Inter Variable',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+.lg-split h2,
+.lg-products h2,
+.lg-ai h2,
+.lg-results h2,
+.lg-close h2,
+.prod-tour > h2,
+.prod-human h2,
+.prod-faq h2,
+.prod-close h2 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.lg-hero h1,
+.prod-hero h1 {
+  font-family: 'Newsreader Variable', Georgia, serif;
+  font-weight: 500;
+}
+
+/* Hero: two lines on desktop, centred subtagline */
+.lg-hero h1 {
+  max-width: none;
+  text-wrap: balance;
+}
+.lg-hero .lg-sub {
+  text-align: center;
+  margin-inline: auto;
+}
+@media (max-width: 900px) {
+  .lg-br {
+    display: none;
+  }
+}
+
+/* Breathing room between text blocks */
+.lg-hero h1,
+.prod-hero h1 {
+  line-height: 1.18;
+  margin-bottom: 24px;
+}
+.lg-sub,
+.prod-lede {
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+.lg-eyebrow,
+.prod-kicker {
+  margin-bottom: 20px;
+}
+.lg-split h2,
+.lg-products h2,
+.lg-ai h2,
+.lg-results h2,
+.lg-close h2,
+.prod-tour > h2,
+.prod-human h2,
+.prod-faq h2,
+.prod-close h2 {
+  line-height: 1.3;
+  margin-bottom: 20px;
+}
+.lg-split p,
+.lg-products-intro p,
+.lg-ai-head p,
+.prod-human p,
+.prod-copy li,
+.prod-step p,
+.lg-ai-card p,
+.info-grid p {
+  line-height: 1.75;
+}
+.lg-ai-card h3,
+.prod-step h2,
+.prod-copy h3 {
+  margin-bottom: 10px;
+}
+.lg-ai-card,
+.prod-step {
+  padding: 24px;
+}
+.lg-ai-cards,
+.prod-steps,
+.info-grid {
+  gap: 20px;
+}
+.lg-split,
+.lg-products,
+.lg-ai,
+.lg-results,
+.prod-tour,
+.prod-human,
+.prod-faq {
+  padding-block: 72px;
+}
+.lg-ai-head {
+  margin-bottom: 48px;
+}
+
+/* AI cards act as selectors: the highlighted card drives the clip */
+button.lg-ai-card {
+  display: block;
+  width: 100%;
+  border: 1px solid transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+.lg-ai-card.is-active {
+  background: #0d1a2b;
+  color: #fff;
+  border-color: #0d1a2b;
+  box-shadow: 0 14px 32px rgba(13, 26, 43, 0.18);
+}
+.lg-ai-card.is-active p {
+  color: rgba(255, 255, 255, 0.85);
+}
+.lg-ai-card.is-active:hover {
+  background: #0d1a2b;
+}
+
+/* Gentle pops on cards */
+.lg-ai-card,
+.prod-step,
+.lg-result,
+.lg-tile,
+.prod-media {
+  transition:
+    transform 0.35s var(--mo-ease),
+    box-shadow 0.35s var(--mo-ease),
+    background-color 0.3s ease;
+}
+.lg-ai-card:hover,
+.prod-step:hover,
+.lg-result:hover {
+  transform: translateY(-4px) scale(1.012);
+  box-shadow: 0 14px 32px rgba(13, 26, 43, 0.1);
+  background-color: #fff;
+}
+.prod-media:hover,
+.prod-media:focus-visible {
+  transform: scale(1.012);
+  box-shadow: 0 16px 36px rgba(13, 26, 43, 0.14);
+}
+
+/* Buttons */
+.lg-btn,
+.prod-btn {
+  transition:
+    transform 0.25s var(--mo-ease),
+    box-shadow 0.25s var(--mo-ease),
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.lg-btn:hover,
+.prod-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13, 26, 43, 0.16);
+}
+.lg-btn:active,
+.prod-btn:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
+/* Tabs: soft background change marks the active one */
+.lg-tabs button,
+.prod-jobs button,
+.hiw-nav a {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.25s var(--mo-ease);
+}
+.lg-tabs button:hover,
+.prod-jobs button:hover,
+.hiw-nav a:hover {
+  transform: translateY(-1px);
+}
+.lg-tabs button.is-active,
+.prod-jobs button.is-active {
+  animation: mo-pop 0.4s var(--mo-ease);
+}
+@keyframes mo-pop {
+  0% {
+    transform: scale(0.96);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Sections ease in once */
+.lg-split,
+.lg-products,
+.lg-ai,
+.lg-results,
+.prod-step,
+.prod-tour,
+.info-grid {
+  animation: mo-rise 0.7s var(--mo-ease) both;
+}
+@keyframes mo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

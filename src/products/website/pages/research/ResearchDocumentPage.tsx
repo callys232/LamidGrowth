@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { ResearchPage } from './ResearchPage';
 import {
   ResearchHeroSlide,
   ResearchAreasSlide1,
@@ -10,6 +11,7 @@ import {
 
 /** /research — sections in reading order. */
 export function ResearchDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <ResearchPage />;
   return (
     <DocumentPageLayout
       page={content}

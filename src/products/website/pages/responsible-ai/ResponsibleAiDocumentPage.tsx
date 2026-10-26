@@ -1,6 +1,7 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
+import { ResponsibleAiPage } from './ResponsibleAiPage';
 import {
   ResponsibleAiHeroSlide,
   ContextPrivacySlide1,
@@ -11,6 +12,7 @@ import {
 
 /** /responsible-ai — sections in reading order. */
 export function ResponsibleAiDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <ResponsibleAiPage />;
   return (
     <DocumentPageLayout
       page={content}

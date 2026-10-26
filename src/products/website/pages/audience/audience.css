@@ -1,0 +1,237 @@
+.aud-page {
+  --aud-navy: #0d1a2b;
+  --aud-muted: #5b6573;
+  color: var(--aud-navy);
+  font-family: 'DM Sans', sans-serif;
+}
+.aud-hero,
+.aud-start,
+.aud-cards,
+.aud-band,
+.aud-others {
+  width: min(1200px, 100% - 48px);
+  margin-inline: auto;
+}
+.aud-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+  padding: 88px 0 56px;
+}
+.aud-eyebrow,
+.aud-kicker {
+  font:
+    600 13px/1 'DM Sans',
+    sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aud-muted);
+  margin: 0 0 20px;
+}
+.aud-hero h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.aud-lede {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--aud-muted);
+  margin: 24px 0 32px;
+  max-width: 34rem;
+}
+.aud-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.aud-btn {
+  display: inline-block;
+  padding: 16px 30px;
+  border-radius: 999px;
+  border: 2px solid var(--aud-navy);
+  font:
+    600 1rem/1 'DM Sans',
+    sans-serif;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+.aud-btn:hover {
+  transform: translateY(-2px);
+}
+.aud-btn-solid {
+  background: var(--aud-navy);
+  color: #fff;
+}
+.aud-btn-solid:hover {
+  background: #1d3350;
+  border-color: #1d3350;
+}
+.aud-btn-outline {
+  background: transparent;
+  color: var(--aud-navy);
+}
+.aud-btn-outline:hover {
+  background: var(--aud-navy);
+  color: #fff;
+}
+
+.aud-start {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  padding: 24px 0 8px;
+}
+.aud-start-item {
+  border-top: 4px solid var(--pillar, var(--aud-navy));
+  padding-top: 20px;
+}
+.aud-start-item .aud-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--pillar, var(--aud-muted));
+}
+.aud-kicker em {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 0.7;
+}
+.aud-start-item.is-lead p {
+  font-size: 1.9rem;
+}
+.aud-start-item p {
+  font:
+    400 1.5rem/1.3 'Instrument Serif',
+    Georgia,
+    serif;
+  margin: 0;
+}
+
+.aud-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 48px 0;
+}
+.aud-card {
+  background: #efeeeb;
+  border-radius: 12px;
+  padding: 32px 28px;
+}
+.aud-card h2 {
+  font:
+    700 1.25rem/1.25 'DM Sans',
+    sans-serif;
+  margin: 0 0 12px;
+}
+.aud-card p {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--aud-muted);
+}
+
+.aud-band {
+  background: var(--aud-navy);
+  color: #fff;
+  border-radius: 16px;
+  padding: 64px 48px;
+  text-align: center;
+}
+.aud-band h2 {
+  font:
+    400 clamp(1.9rem, 3.6vw, 3rem) / 1.1 'Instrument Serif',
+    Georgia,
+    serif;
+  max-width: 22ch;
+  margin: 0 auto 16px;
+}
+.aud-band p {
+  max-width: 40rem;
+  margin: 0 auto 32px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+.aud-band .aud-actions {
+  justify-content: center;
+}
+.aud-btn-light {
+  background: #fff;
+  border-color: #fff;
+  color: var(--aud-navy);
+}
+.aud-btn-light:hover {
+  background: #efeeeb;
+  border-color: #efeeeb;
+}
+.aud-btn-ghost {
+  background: transparent;
+  border-color: #fff;
+  color: #fff;
+}
+.aud-btn-ghost:hover {
+  background: #fff;
+  color: var(--aud-navy);
+}
+
+.aud-others {
+  padding: 56px 0 88px;
+  text-align: center;
+}
+.aud-others h2 {
+  font:
+    600 13px/1 'DM Sans',
+    sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--aud-muted);
+  margin: 0 0 20px;
+}
+.aud-others ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.aud-others a {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #cfd3d9;
+  color: var(--aud-navy);
+  text-decoration: none;
+  font-weight: 600;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.aud-others a:hover {
+  background: var(--aud-navy);
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .aud-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 56px 0 32px;
+  }
+  .aud-start,
+  .aud-cards {
+    grid-template-columns: 1fr;
+  }
+  .aud-band {
+    padding: 48px 24px;
+  }
+}

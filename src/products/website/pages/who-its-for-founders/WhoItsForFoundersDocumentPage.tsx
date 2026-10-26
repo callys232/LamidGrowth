@@ -1,5 +1,6 @@
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
 import type { DocumentPageProps } from '../../../../shared/content/types';
+import { AudiencePage } from '../audience/AudiencePage';
 import content from './content.json';
 import {
   WhoItsForFoundersHeroSlide,
@@ -11,6 +12,7 @@ import {
 
 /** /who-its-for/founders — sections in reading order. */
 export function WhoItsForFoundersDocumentPage({ embedded = false }: DocumentPageProps) {
+  if (!embedded) return <AudiencePage content={content} audienceId="founders" />;
   return (
     <DocumentPageLayout
       page={content}
