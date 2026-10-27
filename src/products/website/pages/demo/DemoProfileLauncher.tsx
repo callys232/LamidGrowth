@@ -106,11 +106,15 @@ export function DemoProfileLauncher() {
     <section className="marketing-demo demo-launcher" aria-labelledby="demo-launcher-title">
       <header className="marketing-demo-hero">
         <span>EXPLORE A DEMO ACCOUNT</span>
-        <h1 id="demo-launcher-title">Choose a profile. Step into its dashboard.</h1>
+        <h2 id="demo-launcher-title">Choose a profile. Step into its dashboard.</h2>
         <p>
           Every sample workspace has its own goals, projects with escrow, a dispute, job matches and
           activity — fictional data, no password needed. Your demo progress is saved so you can
           continue from your personal email link on another device.
+        </p>
+        <p>
+          Email verification is required to open and resume a saved workspace. The live engine trials
+          above are available immediately without registration.
         </p>
       </header>
 

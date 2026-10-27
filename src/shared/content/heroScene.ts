@@ -1,20 +1,19 @@
-/** Background stills for public page heroes, taken from the homepage hero video so every
- * page shares its look without repeating the same image. Each area of the site gets a pair of
- * scenes; pages within an area alternate between them so neighbouring pages differ. */
+/** Quiet, code-drawn brand scenes for public page heroes. Their simple paths and rings echo the
+ * product's growth model without implying a specific customer, location, or product outcome. */
 
-const scene = (name: string) => `/media/scenes/${name}.jpg`;
+const scene = (name: string) => `/media/scenes/${name}.svg`;
 
 const families: [RegExp, string[]][] = [
-  [/^\/product/, ['office-view', 'glass-city']],
-  [/^\/how-it-works/, ['street-canyon', 'towers-up']],
-  [/^\/who-its-for/, ['towers-up', 'art-deco']],
-  [/^\/(enterprise|security|responsible-ai|trust)/, ['glass-city', 'spire-close']],
-  [/^\/(pricing|demo|start)/, ['spire-clouds', 'office-view']],
-  [/^\/experts/, ['office-view', 'glass-city']],
-  [/^\/(resources|insights|guides|case-studies|research)/, ['art-deco', 'spire-clouds']],
-  [/^\/(help|support|developers|integrations)/, ['spire-close', 'street-canyon']],
-  [/^\/(about|careers|press|contact)/, ['office-view', 'art-deco']],
-  [/^\/(legal|accessibility)/, ['glass-city', 'street-canyon']],
+  [/^\/product/, ['orbit-guidance', 'orbit-cycle']],
+  [/^\/how-it-works/, ['orbit-cycle', 'orbit-guidance']],
+  [/^\/who-its-for/, ['orbit-network', 'orbit-guidance']],
+  [/^\/(enterprise|security|responsible-ai|trust)/, ['orbit-network', 'orbit-cycle']],
+  [/^\/(pricing|demo|start)/, ['orbit-guidance', 'orbit-network']],
+  [/^\/experts/, ['orbit-network', 'orbit-guidance']],
+  [/^\/(resources|insights|guides|case-studies|research)/, ['orbit-cycle', 'orbit-network']],
+  [/^\/(help|support|developers|integrations)/, ['orbit-network', 'orbit-cycle']],
+  [/^\/(about|careers|press|contact)/, ['orbit-guidance', 'orbit-cycle']],
+  [/^\/(legal|accessibility)/, ['orbit-network', 'orbit-cycle']],
 ];
 
 /** Pages that keep their own hero: the homepage (video), workspace and sign-in flows. */
@@ -29,8 +28,8 @@ function hash(text: string) {
 export function heroScene(path: string): string | undefined {
   if (excluded.test(path)) return undefined;
   const pair = families.find(([pattern]) => pattern.test(path))?.[1] ?? [
-    'spire-clouds',
-    'glass-city',
+    'orbit-guidance',
+    'orbit-network',
   ];
   return scene(pair[hash(path) % pair.length]);
 }

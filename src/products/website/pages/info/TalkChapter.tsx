@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './talk-chapter.css';
 
 interface Item {
   title: string;
   line: string;
+  to?: string;
 }
 
 /** Line icons, cycled by position, on a 24 grid. */
@@ -82,28 +84,49 @@ export function TalkChapter({
       <div className="tc-body">
         <ul className="tc-list">
           {items.map((item, i) => (
-            <li key={item.title}>
-              <button
-                type="button"
-                aria-expanded={open === i}
-                onClick={() => setOpen(i)}
-                onMouseEnter={() => setOpen(i)}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                  <path
-                    d="M6 3l5 5-5 5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className={`tc-ico c${i % 4}`}>
-                  <Icon i={i} size={18} />
-                </span>
-                <h2>{item.title}</h2>
-              </button>
+            <li className={item.to ? 'has-destination' : undefined} key={item.title}>
+              {item.to ? (
+                <Link className="tc-topic-link" to={item.to} onMouseEnter={() => setOpen(i)}>
+                  <>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                      <path
+                        d="M6 3l5 5-5 5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className={`tc-ico c${i % 4}`}>
+                      <Icon i={i} size={18} />
+                    </span>
+                    <h2>{item.title}</h2>
+                  </>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  aria-expanded={open === i}
+                  onClick={() => setOpen(i)}
+                  onMouseEnter={() => setOpen(i)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      d="M6 3l5 5-5 5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className={`tc-ico c${i % 4}`}>
+                    <Icon i={i} size={18} />
+                  </span>
+                  <h2>{item.title}</h2>
+                </button>
+              )}
               <div className="tc-more">
                 <div>
                   <p>{item.line}</p>

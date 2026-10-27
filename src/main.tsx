@@ -9,10 +9,11 @@ import '@fontsource-variable/fraunces';
 import '@fontsource-variable/fraunces/standard-italic.css';
 import '@fontsource-variable/newsreader';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM, { hydrateRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { applyContrast, applyTheme, getStoredContrast, getStoredTheme } from './shared/lib/theme';
+import { installSessionLinkFeedback } from './shared/lib/sessionLinkFeedback';
 import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import { ScrollPop } from './shared/visuals/ScrollPop';
@@ -59,6 +60,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { fai
 }
 applyTheme(getStoredTheme());
 applyContrast(getStoredContrast());
+installSessionLinkFeedback();
 window.addEventListener('error', (event) =>
   reportClientError('error', event.error || event.message),
 );
@@ -66,7 +68,8 @@ window.addEventListener('unhandledrejection', (event) =>
   reportClientError('rejection', event.reason),
 );
 function start() {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
+  const root = document.getElementById('root')!;
+  const app = (
     <React.StrictMode>
       <ErrorBoundary>
         <MotionProvider>
@@ -77,8 +80,10 @@ function start() {
           </BrowserRouter>
         </MotionProvider>
       </ErrorBoundary>
-    </React.StrictMode>,
+    </React.StrictMode>
   );
+  if (root.hasChildNodes()) hydrateRoot(root, app);
+  else ReactDOM.createRoot(root).render(app);
 }
 // Demo visitors: load the in-browser sandbox and route every api() call to it before anything
 // renders. Everyone else never downloads the sandbox code.

@@ -27,18 +27,22 @@
 }
 
 .md-tabs {
-  top: 96px;
+  position: sticky;
+  top: 104px;
   display: grid;
-  gap: 4px;
+  gap: 6px;
+  align-self: start;
 }
 
 .md-tabs button {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: transparent;
   color: inherit;
   font:
@@ -48,25 +52,40 @@
   text-align: left;
   cursor: pointer;
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    transform 0.25s ease;
+    background-color 180ms ease,
+    color 180ms ease,
+    translate 180ms ease;
 }
-.md-tabs button span {
+.md-tabs button .md-tab-number {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 1.7rem;
+  border: 1px solid #d9dde3;
+  border-radius: 999px;
   color: #5b6573;
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.md-tabs button .md-tab-label {
+  min-width: 0;
+  padding-top: 2px;
+  font-size: 0.94rem;
+  line-height: 1.35;
 }
 .md-tabs button:hover {
   background: #f3f6fa;
+  translate: 2px 0;
 }
 .md-tabs button.is-active {
   background: #0d1a2b;
   color: #fff;
-  transform: translateX(8px);
+  translate: 4px 0;
 }
-.md-tabs button.is-active span {
+.md-tabs button.is-active .md-tab-number {
+  border-color: rgba(255, 255, 255, 0.28);
   color: #aab9cd;
 }
 
@@ -227,6 +246,10 @@
 :root[data-theme='dark'] .md-tabs button:hover {
   background: #172131;
 }
+:root[data-theme='dark'] .md-tabs button .md-tab-number {
+  border-color: #46566b;
+  color: #aab6c4;
+}
 :root[data-theme='dark'] .md-cards li {
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' fill='none' stroke='%23fff' stroke-opacity='.08' stroke-width='1.5'%3E%3Ccircle cx='96' cy='24' r='46'/%3E%3Ccircle cx='96' cy='24' r='26'/%3E%3Ccircle cx='96' cy='24' r='8'/%3E%3C/svg%3E")
@@ -243,7 +266,8 @@
   background: var(--a);
   color: #fff;
 }
-:root[data-theme='dark'] .md-tabs button.is-active span {
+:root[data-theme='dark'] .md-tabs button.is-active .md-tab-number {
+  border-color: #71839a;
   color: #3a4a60;
 }
 :root[data-theme='dark'] .md-cards h4 {
@@ -266,21 +290,25 @@
     position: static;
     display: flex;
     overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 6px;
+    gap: 10px;
+    padding: 4px 2px 12px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
   }
   .md-tabs button {
-    flex: none;
+    flex: 0 0 min(76vw, 250px);
+    min-height: 72px;
     border: 1px solid #d5dce6;
-    border-radius: 999px;
-    padding: 10px 16px;
-    white-space: nowrap;
-  }
-  .md-tabs button span {
-    display: none;
+    border-radius: 12px;
+    padding: 12px;
+    scroll-snap-align: start;
+    text-align: left;
   }
   .md-tabs button.is-active {
-    transform: none;
+    translate: 0 -2px;
+  }
+  :root[data-theme='dark'] .md-tabs button {
+    border-color: #33414f;
   }
   .md-cards {
     grid-template-columns: 1fr;

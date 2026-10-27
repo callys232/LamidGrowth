@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { PhotoSlot, audiences, pillars } from '../../../../shared/brand';
+import { audiences, pillars } from '../../../../shared/brand';
+import { AudienceContextIllustration } from '../../../../shared/brand/AudienceContextIllustration';
 import type { DocumentPage } from '../../../../shared/content/types';
 import './audience.css';
 import '../motion.css';
@@ -47,10 +48,7 @@ export function AudiencePage({
             </Link>
           </div>
         </div>
-        <PhotoSlot
-          ratio="4 / 3"
-          brief={`A real ${audience.name.toLowerCase()} client at work (photo to be supplied)`}
-        />
+        <AudienceContextIllustration audienceId={audience.id} audienceName={audience.name} />
       </section>
 
       <section className="aud-start" aria-label={`Where LamidOne starts for ${audience.name}`}>

@@ -1,4 +1,4 @@
-/** Public contact details shown on the support page and in the footer. */
+/** Public contact details shared by the site footer and support form. */
 export const SUPPORT_EMAIL = 'hp@lamidconsulting.com';
 
 // TODO: replace with LAMID's real profile URLs and WhatsApp number (wa.me/<countrycode><number>).

@@ -1,5 +1,6 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { setApiTransport } from './api';
 import pages from './content/pageIndex';
 import { DemoAccessGate } from './products/website/pages/demo/DemoAccessGate';
 const DemoLeadsPage = lazy(() =>
@@ -351,6 +352,20 @@ function RouteEffects() {
   }, [pathname, hash]);
   return null;
 }
+
+function DemoLandingPage() {
+  const { hash } = useLocation();
+  const hasAccessToken = /(?:return|unsubscribe)=/.test(hash);
+  useLayoutEffect(() => setApiTransport(null), []);
+  return hasAccessToken ? (
+    <DemoAccessGate>
+      <DemoToolsPage />
+    </DemoAccessGate>
+  ) : (
+    <DemoToolsPage />
+  );
+}
+
 export function App() {
   return (
     <>
@@ -393,9 +408,7 @@ export function App() {
             path="/demo"
             element={
               <ContentPage>
-                <DemoAccessGate>
-                  <DemoToolsPage />
-                </DemoAccessGate>
+                <DemoLandingPage />
               </ContentPage>
             }
           />
@@ -440,7 +453,7 @@ export function App() {
             }
           />
           <Route path="/demo/classic" element={<Navigate to="/demo/workspace" replace />} />
-          <Route path="/os/demo" element={<Navigate to="/demo#profile-demos" replace />} />
+          <Route path="/os/demo" element={<Navigate to="/demo#demo-player" replace />} />
           <Route path="/os" element={<WorkspaceShell />}>
             <Route path="settings/demo-leads" element={<DemoLeadsPage />} />
             <Route index element={<Dashboard />} />

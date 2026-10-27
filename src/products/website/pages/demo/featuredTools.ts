@@ -35,7 +35,7 @@ export const HERO_TOOL: FeaturedTool = {
       body: 'Say what’s riding on it and how hard it is to undo. A costly, one-way call has to clear a higher bar before it counts as ready.',
     },
     {
-      title: 'Leave with a to-do list, not a grade',
+      title: 'Leave with clear next steps',
       body: 'Every gap comes with a specific fix, fundamentals first, so you know what to do before the meeting.',
     },
   ],
@@ -54,7 +54,7 @@ export const START_HERE: FeaturedTool[] = [
     benefits: [
       {
         title: 'See whether purpose reaches decisions',
-        body: 'Checks that purpose, values and priorities are not just written down but used when choices are made.',
+        body: 'Checks how purpose, values and priorities guide real choices.',
       },
       {
         title: 'Evidence counts',
@@ -67,7 +67,7 @@ export const START_HERE: FeaturedTool[] = [
     ],
     basedOn: 'Mission, vision and values; ISO 9001',
     limit:
-      'It reflects the answers you give — it’s a guided self-check, not an audit or certification.',
+      'Use it as a guided self-check based on your answers; audits and certifications follow separate processes.',
   },
   {
     code: 'F01',
@@ -86,7 +86,7 @@ export const START_HERE: FeaturedTool[] = [
       },
       {
         title: 'Spot the trend',
-        body: 'Growth and margins are read across every period you enter, not a single snapshot.',
+        body: 'Growth and margins are compared across every period you enter, making the trend easier to see.',
       },
     ],
     basedOn: 'Management accounts ratios',

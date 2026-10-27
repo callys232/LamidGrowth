@@ -73,9 +73,9 @@ export function CatalogEngineDemo({
               <p>Instructional walkthrough of this engine’s declared inputs and outputs.</p>
               <Link
                 className="button button-primary"
-                to={`/os/engines?engine=${encodeURIComponent(engine.code)}`}
+                to="/demo#start-here"
               >
-                Get your diagnosis
+                Try a live engine
               </Link>
             </footer>
           </div>

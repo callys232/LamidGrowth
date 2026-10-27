@@ -1,20 +1,5 @@
 import './brand.css';
 
-/** Marks where a real photo belongs. Replace with an image once approved assets exist. */
-export function PhotoSlot({ brief, ratio = '16 / 10' }: { brief: string; ratio?: string }) {
-  return (
-    <div
-      className="brand-slot"
-      style={{ aspectRatio: ratio }}
-      role="img"
-      aria-label={`Photo placeholder: ${brief}`}
-    >
-      <span>Photo placeholder</span>
-      <small>{brief}</small>
-    </div>
-  );
-}
-
 /** Client logos need permission before use; slots stay labelled until then. */
 export function LogoStrip({ names }: { names: readonly string[] }) {
   return (

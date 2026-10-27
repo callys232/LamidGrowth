@@ -4,35 +4,31 @@ import { Link, useLocation } from 'react-router-dom';
 import { userGuideTopics } from './userGuideContent';
 import './user-guide.css';
 
-type Asset = { clip: string } | { still: string };
+type Asset = { clip: string; poster: string };
 
 const assets: Record<string, Asset> = {
-  'first-outcome': { clip: '/videos/clarity-demo' },
-  'try-demo': { clip: '/videos/growth-demo' },
-  'create-account': { clip: '/videos/integrations-demo' },
-  'find-your-work': { clip: '/videos/rhythm-demo' },
-  'objectives-actions': { clip: '/videos/consistency-demo' },
-  'run-tools': { clip: '/videos/capability-demo' },
-  learning: { clip: '/videos/capability-demo' },
-  'work-with-others': { clip: '/videos/integrations-demo' },
-  'review-progress': { clip: '/videos/rhythm-demo' },
-  'plans-points': { clip: '/videos/growth-demo' },
-  'account-security': { still: '/media/scenes/spire-close.jpg' },
-  troubleshooting: { still: '/media/scenes/office-view.jpg' },
+  'first-outcome': { clip: '/videos/clarity-demo', poster: '/media/posters/Q02.svg' },
+  'objectives-actions': { clip: '/videos/consistency-demo', poster: '/media/posters/R05.svg' },
+  'work-with-others': { clip: '/videos/integrations-demo', poster: '/media/posters/A02.svg' },
+  'review-progress': { clip: '/videos/rhythm-demo', poster: '/media/posters/R05.svg' },
 };
 
 function Stage({ asset, label }: { asset?: Asset; label: string }) {
   if (!asset) return null;
   return (
     <div className="ug-stage">
-      {'clip' in asset ? (
-        <video autoPlay muted loop playsInline preload="metadata" aria-label={label}>
-          <source src={`${asset.clip}.webm`} type="video/webm" />
-          <source src={`${asset.clip}.mp4`} type="video/mp4" />
-        </video>
-      ) : (
-        <img src={asset.still} alt="" loading="lazy" />
-      )}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        poster={asset.poster}
+        aria-label={label}
+      >
+        <source src={`${asset.clip}.webm`} type="video/webm" />
+        <source src={`${asset.clip}.mp4`} type="video/mp4" />
+      </video>
     </div>
   );
 }

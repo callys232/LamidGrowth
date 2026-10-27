@@ -5,7 +5,9 @@ export function loadPageManifest() {
 }
 
 export function readProductPages() {
-  return loadPageManifest().map((entry) => JSON.parse(readFileSync(entry.content, 'utf8')));
+  return loadPageManifest().map((entry) =>
+    JSON.parse(readFileSync(entry.content, 'utf8').replace(/^\uFEFF/, '')),
+  );
 }
 
 // Used only by the explicit document-import command. Never rewrites page components.

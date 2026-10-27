@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import { api } from '../../../../api';
-import { SUPPORT_EMAIL } from '../../../../shared/content/contact';
+import { SUPPORT_EMAIL } from '../../../../shared/config/contact';
 import './support-form.css';
 
 const topics = [

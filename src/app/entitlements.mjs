@@ -2,8 +2,9 @@ import { MODULE_REGISTRY } from './engineRegistry.mjs';
 import { seatsFor, effectivePlan } from './plans.mjs';
 
 /**
- * Real entitlement gating for billable tools (the 30 chat agents in agents.mjs, plus the 248
- * ported diagnostic engines in engines.mjs — both live in the shared `agent_manifests` table).
+ * Real entitlement gating for billable tools (the 30 chat agents in agents.mjs, plus the legacy
+ * engine-code manifests in engines.mjs, which map to the current 63-tool catalog; both live in
+ * the shared `agent_manifests` table).
  *
  * Before this, every tool was gated purely by points balance; buying a bundle only topped up
  * points, even though `bundle_items` (and the bundle-builder UI's own copy) already implied

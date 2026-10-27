@@ -168,7 +168,7 @@ const searchIndex: SearchEntry[] = [
     ),
   ),
   { label: 'Pricing', description: 'Plans and pricing.', to: '/pricing' },
-  { label: 'Demo', description: 'See LAMID ONE in action.', to: '/demo#profile-demos' },
+  { label: 'Demo', description: 'See LAMID ONE in action.', to: '/demo#demo-player' },
   { label: 'Customer support', description: 'Get help from the team.', to: '/support' },
   {
     label: 'Contact sales',
@@ -396,7 +396,7 @@ export function PublicHeader() {
             <Link to="/pricing" onPointerEnter={close} onClick={navigate}>
               Pricing
             </Link>
-            <Link to="/demo#profile-demos" onPointerEnter={close} onClick={navigate}>
+            <Link to="/demo#demo-player" onPointerEnter={close} onClick={navigate}>
               Demo
             </Link>
           </nav>

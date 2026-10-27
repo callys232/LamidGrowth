@@ -6,19 +6,38 @@
   "route": "/",
   "indexing": "index, follow",
   "canonical": "/",
-  "seo_title": "LAMID ONE | One Seamless Intelligent Portal for Growth",
-  "meta_description": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal, powered by intelligence designed to stay under human direction.",
-  "title": "One seamless intelligent portal for personal and organizational growth.",
-  "description": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal.",
+  "seo_title": "LAMID ONE | Decide. Build. Deliver.",
+  "meta_description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+  "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+  "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+  "landingHero": {
+    "eyebrow": "The LAMID ONE platform",
+    "titleLines": [
+      "Decide what matters,",
+      "build what's needed,",
+      "and deliver the results — all in one place."
+    ],
+    "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "actions": [
+      {
+        "label": "Get a demo",
+        "to": "/contact"
+      },
+      {
+        "label": "Get started",
+        "to": "/signup"
+      }
+    ]
+  },
   "hero": {
-    "title": "One seamless intelligent portal for personal and organizational growth.",
+    "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
     "paragraphs": [
       {
-        "text": "One seamless intelligent portal for personal and organizational growth.",
+        "text": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
         "sourceParagraph": 6283
       },
       {
-        "text": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal.",
+        "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
         "sourceParagraph": 6287
       },
       {
@@ -383,11 +402,11 @@
           "sourceParagraph": 13923
         },
         {
-          "text": "No noise. No overwhelm. No fragmented apps.",
+          "text": "A calm, focused space keeps attention on the work that matters.",
           "sourceParagraph": 13925
         },
         {
-          "text": "Just a calm, intelligent space that helps you grow with intention.",
+          "text": "Move forward with intention, one clear step at a time.",
           "sourceParagraph": 13927
         }
       ],
@@ -402,11 +421,11 @@
           "sourceParagraph": 13947
         },
         {
-          "text": "LAMID ONE is not a dashboard. Not a workspace. Not a learning platform.",
+          "text": "LAMID ONE brings guidance, practical tools, and adviser support into one connected platform.",
           "sourceParagraph": 13949
         },
         {
-          "text": "It is a guided environment — a calm, structured space that adapts to your goals and helps you move forward with clarity.",
+          "text": "One calm, structured place helps you see what matters and move forward with clarity.",
           "sourceParagraph": 13951
         },
         {

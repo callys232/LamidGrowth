@@ -15,7 +15,7 @@ import { HelpSearchSlide } from '../slides/HelpSearchSlide';
 export function ContentPage({ children }: { children?: ReactNode }) {
   const { pathname } = useLocation();
   const page = sourcePage(pathname);
-  // A still from the homepage video behind this page's hero (see hero-scene.css).
+  // A quiet, abstract brand scene behind the page hero (see hero-scene.css).
   const scene = !children ? heroScene(pathname) : undefined;
   useImageReveal(pathname);
   return (

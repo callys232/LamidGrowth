@@ -43,7 +43,7 @@ export function TeamSlide3({ embedded = false }: DocumentPageProps) {
   );
 }
 
-/** Expand the OS - Not a Collection of Separate Products. */
+/** One platform that grows with your needs. */
 export function ExpandTheOsNotACollectionOfSeparateProductsSlide4({
   embedded = false,
 }: DocumentPageProps) {

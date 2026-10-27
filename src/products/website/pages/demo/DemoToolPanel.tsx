@@ -152,7 +152,7 @@ function LiveTool({ code }: { code: string }) {
         >
           <EngineResultView result={result.result} inputSnapshot={result.inputSnapshot} />
           <div className="demo-panel-signup">
-            <p>That’s a real, computed result — not a screenshot.</p>
+            <p>This result is calculated from your answers.</p>
             <p>Create an account to save it and unlock everything.</p>
             <Link className="button button-primary" to="/signup">
               Create your account

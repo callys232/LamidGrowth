@@ -1590,9 +1590,9 @@ export async function openStore(filename, { poolMax } = {}) {
           );
           // Intelligence Engine layer -- ported from LamidOne's src/lib/intelligence + src/lib/engines.ts
           // (see src/app/engineRegistry.mjs, src/app/engines.mjs). Same idempotent unconditional-insert
-          // pattern as the blocks above: 248 diagnostic-tool manifests, flat 35-point cost per run (see
-          // ENGINE_POINTS_COST in engines.mjs), no model_registry rows needed since these are
-          // deterministic compute with zero AI calls.
+          // pattern as the blocks above: 248 legacy engine-code manifests at a flat 35-point cost
+          // per run (see ENGINE_POINTS_COST in engines.mjs), no model_registry rows needed since
+          // these are deterministic compute with zero AI calls.
           await client.query(
             `INSERT INTO agent_manifests (id, name, home_engine, max_authority, human_gate, allowed_tool_ids, created_at, points_cost) VALUES
       ('s01', 'Strategic Identity Statement', 'Clarity', 'A1', 'none', '[]', $1, 35),

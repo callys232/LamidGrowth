@@ -8,7 +8,7 @@ const PILLARS = [
   { Icon: Layers3, to: '/how-it-works/capability' },
   // Execution — "Turn Good Decisions Into Reliable Progress": moving the next action.
   { Icon: Gauge, to: '/how-it-works/consistency' },
-  // Consistency — "Make Progress a Rhythm, Not an Event": dependable, repeated performance.
+  // Consistency: dependable, repeated performance.
   { Icon: Repeat, to: '/how-it-works/rhythm' },
   // Sustainability — "Growth Is the Outcome": growth that lasts.
   { Icon: Sprout, to: '/how-it-works/growth' },

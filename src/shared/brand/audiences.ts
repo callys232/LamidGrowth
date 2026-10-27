@@ -46,7 +46,7 @@ export const audiences: readonly Audience[] = [
       pillar: 'capability',
       words: 'Build the business behind the work: pricing, planning and finance.',
     },
-    ownsIdea: 'Structure supports the work. It does not replace it.',
+    ownsIdea: 'Build the structure that gives your creative work room to grow.',
   },
   {
     id: 'founders',

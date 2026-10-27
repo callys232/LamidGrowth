@@ -229,7 +229,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
   rhythm: {
     id: 'rhythm',
     eyebrow: 'Rhythm',
-    title: 'Make progress a rhythm, not an event.',
+    title: 'Make steady progress part of your rhythm.',
     lede: 'Daily action, weekly review and organisation-wide learning, kept in one place.',
     steps: [
       { title: 'Today', line: 'What matters now, and what does the next action need?' },
@@ -318,7 +318,6 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
                   aria-pressed={index === active}
                   onClick={() => setActive(index)}
                 >
-                  <span>0{index + 1}</span>
                   {item.name}
                 </button>
               </li>

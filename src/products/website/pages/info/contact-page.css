@@ -1,0 +1,270 @@
+/* A dedicated contact treatment, scoped so the shared talk layout stays unchanged elsewhere. */
+.info-page--contact {
+  --contact-ink: #101922;
+  --contact-coral: #f18268;
+  --contact-mint: #c4e9d9;
+  position: relative;
+  overflow: hidden;
+  padding: 30px clamp(18px, 4vw, 64px) 56px;
+  background:
+    radial-gradient(ellipse at 87% 12%, rgb(241 130 104 / 13%), transparent 32rem),
+    radial-gradient(ellipse at 8% 68%, rgb(105 177 157 / 12%), transparent 28rem),
+    #f1f0ea;
+  color: var(--contact-ink);
+}
+
+.info-page--contact .hiw-nav {
+  width: min(1200px, 100%);
+  margin-inline: auto;
+}
+
+.info-page--contact .info-hero {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  width: min(1200px, 100%);
+  min-height: 390px;
+  align-content: center;
+  margin-top: 26px;
+  padding: clamp(44px, 8vw, 100px) clamp(26px, 7vw, 92px);
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 84% 45%, transparent 0 82px, rgb(196 233 217 / 24%) 83px 84px, transparent 85px 126px, rgb(196 233 217 / 18%) 127px 128px, transparent 129px 175px, rgb(196 233 217 / 13%) 176px 177px, transparent 178px),
+    linear-gradient(118deg, #132b32 0%, #183c3d 56%, #254c46 100%);
+  color: #fff;
+  text-align: left;
+  box-shadow: 0 28px 70px -42px rgb(16 25 34 / 65%);
+}
+
+.info-page--contact .info-hero::after {
+  position: absolute;
+  right: 17%;
+  bottom: 12%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--contact-coral);
+  box-shadow: 0 0 0 9px rgb(241 130 104 / 15%), 0 0 38px 12px rgb(241 130 104 / 30%);
+  content: '';
+}
+
+.info-page--contact .prod-eyebrow {
+  color: #fff;
+}
+
+.info-page--contact .info-hero h1 {
+  max-width: 10ch;
+  margin-inline: 0;
+  background: none;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  font-size: clamp(3.4rem, 8vw, 7rem);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+}
+
+:root[data-theme='dark'] .info-page--contact .info-hero :is(.prod-eyebrow, h1) {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+
+.info-page--contact .prod-lede {
+  max-width: 34rem;
+  margin: 22px 0 30px;
+  color: rgb(255 255 255 / 78%);
+  font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+}
+
+.info-page--contact .prod-btn-solid {
+  border-color: var(--contact-coral);
+  background: var(--contact-coral);
+  color: #1b2529;
+}
+
+.info-page--contact .prod-btn-solid:hover {
+  border-color: #ff9b82;
+  background: #ff9b82;
+}
+
+.info-page--contact .prod-btn-outline {
+  border-color: rgb(255 255 255 / 55%);
+  color: #fff;
+}
+
+.info-page--contact .prod-btn-outline:hover {
+  border-color: #fff;
+  background: rgb(255 255 255 / 12%);
+}
+
+.info-page--contact .tc {
+  position: relative;
+  width: min(1200px, 100%);
+  margin: 32px auto 44px;
+  padding: clamp(28px, 5vw, 64px);
+  border: 1px solid rgb(16 25 34 / 8%);
+  border-radius: 28px;
+  background: rgb(255 255 255 / 76%);
+  color: var(--contact-ink);
+  box-shadow: 0 24px 64px -48px rgb(16 25 34 / 35%);
+}
+
+.info-page--contact .tc-tag span {
+  background: #dcece4;
+  color: #31584d;
+}
+
+.info-page--contact .tc-tag::after {
+  border-color: rgb(16 25 34 / 18%);
+}
+
+.info-page--contact .tc .tc-head {
+  color: var(--contact-ink);
+  font-size: clamp(2.6rem, 5vw, 4.5rem);
+  letter-spacing: -0.035em;
+}
+
+.info-page--contact .tc-head em {
+  color: #bf624f;
+}
+
+.info-page--contact .tc .tc-intro {
+  color: #566369;
+}
+
+.info-page--contact .tc .tc-compose {
+  margin-top: 22px;
+}
+
+.info-page--contact .tc-body {
+  align-items: center;
+  margin-top: 42px;
+  border-color: rgb(16 25 34 / 12%);
+}
+
+.info-page--contact .tc-list li {
+  border-color: rgb(16 25 34 / 12%);
+}
+
+.info-page--contact .tc-list :is(button, .tc-topic-link) {
+  padding-block: 22px;
+  color: #687579;
+}
+
+.info-page--contact .tc-list :is(button, .tc-topic-link):hover,
+.info-page--contact .tc-list button[aria-expanded='true'] {
+  color: var(--contact-ink);
+}
+
+.info-page--contact .tc-list :is(button, .tc-topic-link):focus-visible {
+  outline-color: #31584d;
+}
+
+.info-page--contact .tc .tc-more p {
+  color: #566369;
+}
+
+.info-page--contact .tc-stage {
+  min-height: 380px;
+  border: 1px solid rgb(16 25 34 / 8%);
+  background:
+    radial-gradient(circle at 70% 22%, rgb(241 130 104 / 58%) 0 2px, transparent 3px),
+    radial-gradient(circle at 30% 72%, rgb(196 233 217 / 95%) 0 3px, transparent 4px),
+    radial-gradient(ellipse at 65% 30%, #365e55, #1c3d3d 58%, #162d34);
+}
+
+.info-page--contact .tc-art {
+  stroke: rgb(229 245 235 / 35%);
+}
+
+.info-page--contact .tc-art circle:nth-last-child(-n + 3) {
+  fill: var(--contact-coral);
+}
+
+.info-page--contact .tc-card {
+  right: 8%;
+  bottom: 8%;
+  left: 12%;
+  min-height: 176px;
+  padding: 28px;
+  border: 1px solid rgb(255 255 255 / 58%);
+  border-radius: 22px;
+  background: rgb(248 248 241 / 94%);
+  color: var(--contact-ink);
+  box-shadow: 0 28px 60px -30px rgb(0 0 0 / 55%);
+  backdrop-filter: blur(12px);
+}
+
+.info-page--contact .tc-card.c0,
+.info-page--contact .tc-card.c1,
+.info-page--contact .tc-card.c2,
+.info-page--contact .tc-card.c3 {
+  --c: #31584d;
+}
+
+.info-page--contact .tc-card-ico {
+  background: #dcece4;
+  color: #31584d;
+}
+
+.info-page--contact .tc .tc-card p {
+  color: #566369;
+}
+
+.info-page--contact .prod-close {
+  width: min(1200px, 100%);
+  padding: 34px clamp(24px, 5vw, 56px);
+  border-radius: 24px;
+  background: #183c3d;
+}
+
+.info-page--contact .prod-close h2 {
+  color: #fff;
+}
+
+.info-page--contact .prod-close .prod-btn-light {
+  border-color: var(--contact-coral);
+  background: var(--contact-coral);
+  color: #1b2529;
+}
+
+.info-page--contact .prod-close .prod-btn-ghost {
+  border-color: rgb(255 255 255 / 65%);
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .info-page--contact {
+    padding-inline: 16px;
+  }
+
+  .info-page--contact .info-hero {
+    min-height: 420px;
+    padding: 42px 28px;
+    background-position: 72% center;
+  }
+
+  .info-page--contact .info-hero h1 {
+    font-size: clamp(3.1rem, 13vw, 5.4rem);
+  }
+
+  .info-page--contact .tc {
+    padding: 28px 22px;
+  }
+
+  .info-page--contact .tc-body {
+    gap: 26px;
+    margin-top: 28px;
+    padding-top: 20px;
+  }
+
+  .info-page--contact .tc-stage {
+    min-height: 280px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-page--contact .tc-card {
+    transition: none;
+  }
+}

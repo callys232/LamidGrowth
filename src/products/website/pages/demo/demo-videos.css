@@ -625,11 +625,6 @@
   background: color-mix(in srgb, #fff 10%, transparent);
   color: #fff;
 }
-.dv-chapter-num {
-  font-weight: 700;
-  font-size: 11px;
-  color: #f08a8f;
-}
 .dv-chapter-label {
   font-weight: 600;
 }

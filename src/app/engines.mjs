@@ -778,7 +778,7 @@ function toolAccessible(accessibleCodes, purchased, toolId) {
 
 /** Catalog reads only — id/purpose/dimensions/points-cost, no workspace or user data anywhere in
  * this response. Mounted before the session gate (like mountPublicPricing) so the public
- * marketing pages (e.g. /product/intelligence) can show the real, full 248-tool catalog to a
+ * marketing pages (e.g. /product/intelligence) can show the real, full 63-tool catalog to a
  * logged-out visitor — "a user only learns of all the tools from the public-facing pages." The
  * in-app /os/engines catalog is a separate, authenticated, per-workspace-filtered route — see
  * mountEngines below — so a signed-in workspace only ever sees what its context/tier/bundles
@@ -849,7 +849,7 @@ export function demoEngineDetail(code) {
 export function mountEngines(app, store) {
   // Authenticated and per-workspace filtered — see accessibleEngineCodes in entitlements.mjs.
   // Distinct from the public /api/engines/catalog route (mountPublicEngines above), which always
-  // returns the full 248-tool list for marketing/education purposes.
+  // returns the full 63-tool list for marketing/education purposes.
   app.get('/api/engines', async (req, res) => {
     const filter = typeof req.query.engine === 'string' ? req.query.engine : null;
     const accessible = await accessibleEngineCodes(store, req.workspace);

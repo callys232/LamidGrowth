@@ -126,7 +126,7 @@ export const userGuideTopics = [
     summary: 'Use a short review to keep priorities and follow-through connected.',
     steps: [
       'Open Today and review overdue work and items needing attention.',
-      'Check Progress against your objectives. Look at what changed, not only the number of completed actions.',
+      'Check Progress against your objectives. Review what changed alongside the actions completed.',
       'Use Rhythm to review your routine and decide what should continue, change or stop.',
       'Choose the next useful action and confirm its owner and timing. Use the Companion for help thinking through the situation when available.',
     ],

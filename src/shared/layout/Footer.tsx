@@ -1,6 +1,6 @@
 import { Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { SOCIAL_LINKS, SUPPORT_EMAIL } from '../content/contact';
+import { SOCIAL_LINKS, SUPPORT_EMAIL } from '../config/contact';
 import { Brand } from '../ui/Brand';
 import './footer-contact.css';
 

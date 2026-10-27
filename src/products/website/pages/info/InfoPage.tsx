@@ -4,10 +4,12 @@ import { heroScene } from '../../../../shared/content/heroScene';
 import '../product/product.css';
 import '../how-it-works/how-it-works.css';
 import './info.css';
+import './contact-page.css';
 import '../motion.css';
 import { MoreDetail } from '../../../../shared/content/MoreDetail';
 import { TalkChapter } from './TalkChapter';
 import { ContactDialog } from './ContactDialog';
+import contactSource from '../contact/content.json';
 
 /** Real product clips that fit each area. Pages without a good match stay still. */
 const clipFor = (path: string): string | undefined => {
@@ -34,6 +36,7 @@ const pauseOn = (e: { currentTarget: HTMLVideoElement }) => e.currentTarget.paus
 interface Card {
   title: string;
   line: string;
+  to?: string;
 }
 interface Action {
   label: string;
@@ -72,6 +75,7 @@ const groups = {
 } as const;
 
 const mail = 'mailto:hp@lamidconsulting.com';
+const contactCopy = contactSource.infoPage;
 
 export const info: Record<string, InfoContent> = {
   security: {
@@ -244,27 +248,19 @@ export const info: Record<string, InfoContent> = {
   contact: {
     group: 'talk',
     id: 'contact',
-    eyebrow: 'Contact',
-    title: 'Start the right conversation.',
-    lede: 'Choose what you need and we’ll get you to the right person.',
+    eyebrow: contactCopy.eyebrow,
+    title: contactSource.title,
+    lede: contactCopy.lede,
     chapter: {
-      tag: 'Choose a topic',
-      headline: 'Tell us the outcome',
-      intro: 'Describe what you are trying to achieve and the context that matters.',
+      tag: contactCopy.chapter.tag,
+      headline: contactCopy.chapter.headline,
+      intro: contactCopy.chapter.intro,
     },
-    primary: { label: 'Email us', to: mail },
-    secondary: { label: 'Request a demo', to: '/demo/request' },
-    cards: [
-      { title: 'Product question', line: 'Ask how LamidOne works for your situation.' },
-      { title: 'Pricing', line: 'Find the plan that fits, or ask about a custom one.' },
-      { title: 'Expert help', line: 'Bring an adviser in on a decision or project.' },
-      { title: 'Enterprise', line: 'Security, governance and deployment questions.' },
-    ],
-    closing: 'Know what you want to do?',
-    closingActions: [
-      { label: 'Get started', to: '/signup' },
-      { label: 'See pricing', to: '/pricing' },
-    ],
+    primary: { label: contactCopy.primaryLabel, to: mail },
+    secondary: contactCopy.secondary,
+    cards: contactCopy.cards,
+    closing: contactCopy.closing,
+    closingActions: contactCopy.closingActions as [Action, Action],
   },
   'demo-request': {
     group: 'talk',
@@ -339,7 +335,9 @@ export function InfoPage({ content }: { content: InfoContent }) {
   const clip = clipFor(pathname);
   const [formOpen, setFormOpen] = useState(false);
   return (
-    <div className="prod-page hiw-page info-page">
+    <div
+      className={`prod-page hiw-page info-page${content.id === 'contact' ? ' info-page--contact' : ''}`}
+    >
       {content.id === 'contact' && (
         <ContactDialog open={formOpen} onClose={() => setFormOpen(false)} />
       )}

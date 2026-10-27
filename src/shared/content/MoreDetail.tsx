@@ -55,62 +55,20 @@ function repair(text: string) {
   }
 }
 
-const HY = '[\\u2011-]';
-
-// Messaging rules, applied in order: specific rewrites first, then generic ones.
-const rewrites: [RegExp, string][] = [
-  [
-    /Execution is the differentiator\s*[—-]\s*the space where transformation becomes real\./g,
-    'Consistency is what makes results dependable.',
-  ],
-  [
-    /Execution is where clarity and capability turn into action\./g,
-    'Consistency is where clarity and capability turn into reliable delivery.',
-  ],
-  [
-    /The Execution Space gives you guided steps, intelligent cues, and structured flows that help you follow through consistently and calmly\./g,
-    'Consistency gives you guided steps, clear prompts and structured flows that help you follow through.',
-  ],
-  [/Where work moves forward\./g, 'Where work gets delivered reliably.'],
-  [/\bThese are not [^.]*\./g, ''],
-  [/(^|\s)Not (a|an|dashboards|modules|apps)\b[^.]*\./g, '$1'],
-  [new RegExp(`A human${HY}centered architecture designed to`, 'g'), 'Designed to'],
-  [new RegExp(`human${HY}centered`, 'gi'), 'people-first'],
-  [/Clarity, Capability,? and (Execution|Consistency)/g, 'Clarity, Capability and Consistency'],
-  [/\b(?:The )?(Clarity|Capability) Space\b/g, '$1'],
-  [/\b(?:The )?(?:Execution|Consistency) Space\b/g, 'Consistency'],
-  [/\b(\d+\.\s*)?(Clarity|Capability|Consistency) Space\b/g, '$1$2'],
-  [/\bthree interconnected spaces\b/gi, 'three connected pillars'],
-  [/\bThree spaces\b/g, 'Three pillars'],
-  [/\bthis space\b/g, 'this pillar'],
-  [/\bspaces\b/g, 'pillars'],
-  [/One Continuous Operating System\./g, 'One connected platform.'],
-  [/\bOperating System\b/g, 'platform'],
-  [/\bintelligent cues\b/gi, 'clear prompts'],
-  [new RegExp(`quiet,? human${HY}directed intelligence`, 'gi'), 'quiet, human-directed guidance'],
-  [/quiet intelligence/gi, 'quiet guidance'],
-  [/\bquietly, intelligently,? and\b/g, 'quietly and'],
-  [/,\s+(I|i)ntelligent\s+/g, ' '],
-  [/\b(I|i)ntelligent\s+/g, ''],
-  [/\bEach space\b/g, 'Each pillar'],
-  [/\bThis is the space where\b/g, 'This is the pillar where'],
-  [/\btransformations\b/g, 'changes'],
-  [/\btransformation\b/g, 'change'],
-  [/\bTransformation\b/g, 'Change'],
-  [/\bguided execution\b/gi, 'reliable delivery'],
-  [/\bExecution\b/g, 'Consistency'],
-  [/\bexecution\b/g, 'delivery'],
-  [/\btransformation becomes real\b/gi, 'results become dependable'],
-  [/\btransforms\b/g, 'turns'],
-  [/\s{2,}/g, ' '],
-];
-
 function clean(text: string) {
-  let out = repair(text);
-  for (const [re, to] of rewrites) out = out.replace(re, to);
-  return out.trim();
+  return repair(text).trim();
 }
 
+function buildBlocks(json: PageJson) {
+  const hasHero = Boolean(json.hero);
+  const all: Block[] = [...(json.hero ? [json.hero] : []), ...(json.sections ?? [])];
+  return all
+    .map((block, index) => ({
+      title: hasHero && index === 0 ? 'Overview' : clean(block.title ?? block.label ?? ''),
+      items: toItems(block),
+    }))
+    .filter((block) => block.items.length > 0);
+}
 // Behaviour we have not confirmed in the product is shown with a "To confirm" tag.
 const unverified = /your pace|adapts? to (you|your)|adjusts? to your|guarantee|\d+%|proven/i;
 
@@ -177,12 +135,24 @@ function Body({ items }: { items: Item[] }) {
   );
 }
 
-export function MoreDetail() {
+export function MoreDetail({
+  page,
+  heading = 'The detail',
+}: {
+  page?: PageJson;
+  heading?: string;
+}) {
   const { pathname } = useLocation();
-  const [blocks, setBlocks] = useState<{ title: string; items: Item[] }[]>([]);
+  const [blocks, setBlocks] = useState<{ title: string; items: Item[] }[]>(() =>
+    page ? buildBlocks(page) : [],
+  );
   const [active, setActive] = useState(0);
 
   useEffect(() => {
+    if (page) {
+      setBlocks(buildBlocks(page));
+      return;
+    }
     setActive(0);
     const slug =
       pathname === '/' ? 'home' : pathname.slice(1).replace(/\/+$/, '').replace(/\//g, '-');
@@ -195,20 +165,12 @@ export function MoreDetail() {
     void loaders[key]().then((mod) => {
       if (!live) return;
       const json = mod.default;
-      const all: Block[] = [json.hero ?? {}, ...(json.sections ?? [])];
-      setBlocks(
-        all
-          .map((block, index) => ({
-            title: index === 0 ? 'Overview' : clean(block.title ?? block.label ?? ''),
-            items: toItems(block),
-          }))
-          .filter((block) => block.items.length > 0),
-      );
+      setBlocks(buildBlocks(json));
     });
     return () => {
       live = false;
     };
-  }, [pathname]);
+  }, [pathname, page]);
 
   if (blocks.length === 0) return null;
 
@@ -232,7 +194,7 @@ export function MoreDetail() {
 
   return (
     <section className="more-detail" aria-labelledby="more-detail-title">
-      <h2 id="more-detail-title">The detail</h2>
+      <h2 id="more-detail-title">{heading}</h2>
       <div className={single ? 'md-shell is-single' : 'md-shell'}>
         {!single && (
           <div className="md-tabs" role="tablist" aria-label="Topics">
@@ -247,8 +209,10 @@ export function MoreDetail() {
                 className={index === activeIndex ? 'is-active' : undefined}
                 onClick={() => setActive(index)}
               >
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                {block.title}
+                <span className="md-tab-number" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span className="md-tab-label">{block.title}</span>
               </button>
             ))}
           </div>

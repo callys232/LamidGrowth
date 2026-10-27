@@ -9,19 +9,19 @@ const areas = [
     title: 'Human-AI decision support',
     pillar: pillars[0],
     clip: '/videos/clarity-demo',
-    poster: '/media/scenes/glass-city.jpg',
+    poster: '/media/posters/Q02.svg',
   },
   {
     title: 'Capability development',
     pillar: pillars[1],
     clip: '/videos/capability-demo',
-    poster: '/media/scenes/office-view.jpg',
+    poster: '/media/posters/A02.svg',
   },
   {
     title: 'Operating rhythms',
     pillar: pillars[2],
     clip: '/videos/rhythm-demo',
-    poster: '/media/scenes/street-canyon.jpg',
+    poster: '/media/posters/R05.svg',
   },
 ];
 

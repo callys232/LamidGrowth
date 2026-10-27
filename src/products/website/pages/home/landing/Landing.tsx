@@ -1,37 +1,100 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ChartNoAxesCombined,
+  ClipboardCheck,
+  Compass,
+  MessagesSquare,
+  ShieldCheck,
+  Sprout,
+  UsersRound,
+  Workflow,
+  type LucideIcon,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PhotoSlot, audiences, brochureClients, pillars } from '../../../../../shared/brand';
+import { audiences, brochureClients, pillars } from '../../../../../shared/brand';
+import { platformMessaging } from '../../../../../shared/brand/platformMessaging';
+import { AudienceContextIllustration } from '../../../../../shared/brand/AudienceContextIllustration';
+import content from '../content.json';
 import './landing.css';
 import '../../motion.css';
 
 function Actions() {
   return (
     <div className="lg-actions">
-      <Link className="lg-btn lg-btn-solid" to="/contact">
-        Get a demo
-      </Link>
-      <Link className="lg-btn lg-btn-outline" to="/signup">
-        Get started
-      </Link>
+      {content.landingHero.actions.map((action, index) => (
+        <Link
+          className={`lg-btn ${index === 0 ? 'lg-btn-solid' : 'lg-btn-outline'}`}
+          key={action.label}
+          to={action.to}
+        >
+          {action.label}
+        </Link>
+      ))}
     </div>
   );
 }
 
 export function LandingHero() {
+  const hero = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = hero.current;
+    if (!section) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const { top, height } = section.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -top / Math.max(height, 1)));
+      section.style.setProperty('--lg-hero-art-drift', `${(-progress * 72).toFixed(1)}px`);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      section.style.removeProperty('--lg-hero-art-drift');
+    };
+  }, []);
+
   return (
-    <section className="lg-hero" aria-labelledby="lg-hero-title">
-      <p className="lg-eyebrow">The Human&ndash;AI Growth Operating System</p>
-      <h1 id="lg-hero-title">
-        Decide what matters,
-        <br className="lg-br" /> build what&rsquo;s needed,
-        <br className="lg-br" /> and deliver the results &mdash; all in one place
-        <span className="lg-dot">.</span>
-      </h1>
-      <p className="lg-sub">
-        LamidOne puts experienced advisers and AI tools around your goals, so you always know the
-        next step and you stay in control.
-      </p>
-      <Actions />
+    <section ref={hero} className="lg-hero" aria-labelledby="lg-hero-title">
+      <div className="lg-hero-target" aria-hidden="true">
+        <svg className="lg-hero-target-art" viewBox="0 0 800 800" fill="none">
+          <g className="lg-target-orbit lg-target-orbit--outer">
+            <circle cx="400" cy="400" r="330" />
+            <circle cx="400" cy="400" r="272" />
+            <circle cx="400" cy="70" r="6" className="lg-target-marker" />
+          </g>
+          <g className="lg-target-orbit lg-target-orbit--inner">
+            <circle cx="400" cy="400" r="210" />
+            <circle cx="400" cy="400" r="146" />
+            <circle cx="400" cy="190" r="5" className="lg-target-marker lg-target-marker--teal" />
+          </g>
+          <path className="lg-target-crosshair" d="M400 22v174M400 604v174M22 400h174M604 400h174" />
+          <path className="lg-target-route" d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148" />
+          <circle className="lg-target-point" cx="492" cy="552" r="13" />
+          <circle className="lg-target-center" cx="400" cy="400" r="14" />
+        </svg>
+      </div>
+      <div className="lg-hero-content">
+        <p className="lg-eyebrow">{content.landingHero.eyebrow}</p>
+        <h1 id="lg-hero-title">
+          <span>
+            {content.landingHero.titleLines[0]}
+            <br className="lg-mobile-break" />{' '}
+            {content.landingHero.titleLines[1]}
+          </span>
+          <br />
+          <span>{content.landingHero.titleLines[2]}</span>
+        </h1>
+        <p className="lg-sub">{platformMessaging.description}</p>
+        <Actions />
+      </div>
     </section>
   );
 }
@@ -74,7 +137,14 @@ export function LandingTiles() {
           onMouseEnter={playVideo}
           onFocus={playVideo}
         >
-          <video autoPlay muted loop playsInline preload="metadata" aria-label={brief}>
+          <video
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster={`/media/posters/${pillar}-demo.svg`}
+            aria-label={brief}
+          >
             <source src={`/videos/${pillar}-demo.webm`} type="video/webm" />
             <source src={`/videos/${pillar}-demo.mp4`} type="video/mp4" />
           </video>
@@ -165,39 +235,15 @@ const products = [
     ],
   },
 ] as const;
-const areaStyle: Record<string, { pillar: string; icon: string[] }> = {
-  Strategy: { pillar: 'clarity', icon: ['M12 3v18', 'M12 4l7 3-7 3', 'M7 21h10'] },
-  Decisions: { pillar: 'clarity', icon: ['M6 4v6a6 6 0 006 6h6', 'M14 12l4 4-4 4', 'M6 4h.01'] },
-  'People & skills': {
-    pillar: 'capability',
-    icon: [
-      'M9 11a3 3 0 100-6 3 3 0 000 6z',
-      'M3 20a6 6 0 0112 0',
-      'M16 5a3 3 0 010 6',
-      'M18 14a5 5 0 013 5',
-    ],
-  },
-  Operations: {
-    pillar: 'capability',
-    icon: [
-      'M12 15a3 3 0 100-6 3 3 0 000 6z',
-      'M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1',
-    ],
-  },
-  Finance: { pillar: 'growth', icon: ['M4 20V10', 'M10 20V4', 'M16 20v-8', 'M22 20H2'] },
-  'Risk & governance': {
-    pillar: 'consistency',
-    icon: ['M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z', 'M9 12l2 2 4-4'],
-  },
-  'Growth & change': { pillar: 'growth', icon: ['M3 17l6-6 4 4 8-8', 'M15 7h6v6'] },
-  'Expert advisory': {
-    pillar: 'consistency',
-    icon: [
-      'M12 12a4 4 0 100-8 4 4 0 000 8z',
-      'M4 21a8 8 0 0116 0',
-      'M17 4l1 2 2 .3-1.5 1.5.4 2.2L17 9l-2 1 .4-2.2L14 6.3 16 6z',
-    ],
-  },
+const areaStyle: Record<string, { pillar: string; icon: LucideIcon }> = {
+  Strategy: { pillar: 'clarity', icon: Compass },
+  Decisions: { pillar: 'clarity', icon: ClipboardCheck },
+  'People & skills': { pillar: 'capability', icon: UsersRound },
+  Operations: { pillar: 'capability', icon: Workflow },
+  Finance: { pillar: 'growth', icon: ChartNoAxesCombined },
+  'Risk & governance': { pillar: 'consistency', icon: ShieldCheck },
+  'Growth & change': { pillar: 'growth', icon: Sprout },
+  'Expert advisory': { pillar: 'consistency', icon: MessagesSquare },
 };
 
 export function LandingProducts() {
@@ -212,35 +258,25 @@ export function LandingProducts() {
         <div className="lg-card-grid" tabIndex={0} aria-label="LamidOne tool areas">
           {products.map((product) => {
             const style = areaStyle[product.name];
+            const Icon = style.icon;
             return (
               <Link key={product.name} className="lg-card" to="/product" data-pillar={style.pillar}>
                 <span className="lg-card-icon" aria-hidden="true">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {style.icon.map((d) => (
-                      <path key={d} d={d} />
-                    ))}
-                  </svg>
+                  <Icon />
                 </span>
                 <h3>{product.name}</h3>
                 <ul className="lg-line">
                   {product.points.map((point) => (
                     <li key={point}>
-                      <svg viewBox="0 0 16 16" aria-hidden="true">
-                        <path d="M3 8.5l3.2 3L13 4.5" />
-                      </svg>
+                      <span className="lg-line-bullet" aria-hidden="true" />
                       {point}
                     </li>
                   ))}
                 </ul>
                 <span className="lg-foot">
-                  <span className="lg-more">Learn more &rarr;</span>
+                  <span className="lg-more">
+                    Learn more <span className="lg-more-arrow" aria-hidden="true">&rarr;</span>
+                  </span>
                 </span>
               </Link>
             );
@@ -286,10 +322,36 @@ function AiClip({ code, label }: { code: string; label: string }) {
 
 export function LandingAi() {
   const [active, setActive] = useState(0);
+  const [headingVisible, setHeadingVisible] = useState(false);
+  const section = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const element = section.current;
+    if (!element || !('IntersectionObserver' in window)) {
+      setHeadingVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setHeadingVisible(true);
+        observer.disconnect();
+      },
+      { threshold: 0.3 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="lg-ai" aria-labelledby="lg-ai-title">
+    <section ref={section} className="lg-ai" aria-labelledby="lg-ai-title">
       <div className="lg-ai-head">
-        <h2 id="lg-ai-title">AI you direct. Advisers you trust.</h2>
+        <h2 id="lg-ai-title" className={headingVisible ? 'is-visible' : undefined}>
+          <span>AI you direct.</span>
+          <span>Advisers you trust.</span>
+        </h2>
         <p>
           The Growth Companion suggests, explains and prepares. People decide. Continuous
           intelligence, human control.
@@ -323,10 +385,10 @@ const playbookByPillar: Record<string, string> = {
 };
 
 const results = audiences.map((a) => ({
+  audienceId: a.id,
   tab: a.name,
   route: a.route,
   playbook: playbookByPillar[a.lead.pillar] ?? 'Choose opportunities and review value',
-  brief: `A real ${a.name.toLowerCase()} client at work (photo to be supplied)`,
   headline: a.ownsIdea,
   points: [a.lead.words, a.second.words],
   pillar: pillars.find((p) => p.id === a.lead.pillar),
@@ -338,7 +400,11 @@ export function LandingResults() {
   const current = results[active];
   return (
     <section className="lg-results" aria-labelledby="lg-results-title">
-      <h2 id="lg-results-title">Built for every kind of organisation.</h2>
+      <h2 id="lg-results-title">Made for the work in front of you.</h2>
+      <p className="lg-results-note">
+        Explore how LAMID ONE brings clearer decisions, stronger capability and steadier delivery
+        into different working contexts.
+      </p>
       <div className="lg-tabs" role="tablist">
         {results.map((result, index) => (
           <button
@@ -355,7 +421,11 @@ export function LandingResults() {
       </div>
       <div className="lg-result" role="tabpanel">
         <div className="lg-result-media">
-          <PhotoSlot brief={current.brief} ratio="16 / 10" />
+          <AudienceContextIllustration
+            audienceId={current.audienceId}
+            audienceName={current.tab}
+            ratio="16 / 10"
+          />
         </div>
         <div
           className="lg-result-copy"

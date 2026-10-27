@@ -62,7 +62,7 @@
 .tc-list li {
   border-bottom: 1px solid rgb(255 255 255 / 22%);
 }
-.tc-list button {
+.tc-list :is(button, .tc-topic-link) {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -74,22 +74,26 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
   transition:
     padding 0.3s ease,
     color 0.25s ease;
 }
-.tc-list button:hover,
+.tc-list .tc-topic-link {
+  box-sizing: border-box;
+}
+.tc-list :is(button, .tc-topic-link):hover,
 .tc-list button[aria-expanded='true'] {
   color: #fff;
 }
-.tc-list button:hover {
+.tc-list :is(button, .tc-topic-link):hover {
   padding-left: 16px;
 }
-.tc-list button:focus-visible {
+.tc-list :is(button, .tc-topic-link):focus-visible {
   outline: 2px solid #c9dcf7;
   outline-offset: 2px;
 }
-.tc-list button svg {
+.tc-list :is(button, .tc-topic-link) svg {
   flex: none;
   transition: rotate 0.3s ease;
 }
@@ -216,9 +220,12 @@
 .tc-ico.c3 {
   --c: #b8923a;
 }
-.tc-list button:hover .tc-ico,
+.tc-list :is(button, .tc-topic-link):hover .tc-ico,
 .tc-list button[aria-expanded='true'] .tc-ico {
   scale: 1.12;
+}
+.tc-list li.has-destination .tc-more {
+  grid-template-rows: 1fr;
 }
 .tc-card.is-on {
   opacity: 1;

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender-public.mjs && node scripts/compress-assets.mjs",
     "start": "node server/index.mjs --production",
     "errors:daily": "node scripts/error-report.mjs",
     "test": "node --test --test-concurrency=3 tests/*.test.mjs",

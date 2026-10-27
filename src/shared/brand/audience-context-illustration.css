@@ -1,0 +1,144 @@
+.aud-context-visual {
+  --aud-accent: var(--pillar-clarity, #c12129);
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 280px;
+  aspect-ratio: 4 / 3;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--brand-line, #e4dfd8);
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(255 255 255 / 88%) 0 25%, transparent 67%),
+    linear-gradient(145deg, #f5f3ef, #eef1f6);
+  color: var(--brand-ink, #0d1a2b);
+}
+
+.aud-context-visual[data-audience='professionals'],
+.aud-context-visual[data-audience='smes'],
+.aud-context-visual[data-audience='organisations'] {
+  --aud-accent: var(--pillar-capability, #6b7a3a);
+}
+
+.aud-context-visual[data-audience='teams'],
+.aud-context-visual[data-audience='social'] {
+  --aud-accent: var(--pillar-consistency, #2f6f73);
+}
+
+.aud-context-orbit {
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border: 1px solid rgb(13 26 43 / 8%);
+  border-radius: 50%;
+  transform: rotate(-22deg) scaleY(0.62);
+}
+
+.aud-context-orbit--inner {
+  width: 58%;
+  border-color: color-mix(in srgb, var(--aud-accent) 22%, transparent);
+  transform: rotate(28deg) scaleY(0.62);
+}
+
+.aud-context-node {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #fbfaf7;
+  border-radius: 50%;
+  background: var(--aud-accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--aud-accent) 12%, transparent);
+}
+
+.aud-context-node--one {
+  top: 24%;
+  left: 27%;
+}
+
+.aud-context-node--two {
+  top: 35%;
+  right: 21%;
+  background: #2f6f73;
+}
+
+.aud-context-node--three {
+  right: 31%;
+  bottom: 20%;
+  background: #b8923a;
+}
+
+.aud-context-panel {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: min(68%, 340px);
+  padding: clamp(22px, 4vw, 38px);
+  border: 1px solid rgb(13 26 43 / 9%);
+  border-radius: 20px;
+  background: rgb(251 250 247 / 88%);
+  box-shadow: 0 18px 50px rgb(13 26 43 / 8%);
+  backdrop-filter: blur(8px);
+}
+
+.aud-context-icon {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--aud-accent) 25%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--aud-accent) 8%, #fbfaf7);
+  color: var(--aud-accent);
+}
+
+.aud-context-panel svg {
+  width: min(100%, 224px);
+  margin-top: 24px;
+  overflow: visible;
+}
+
+.aud-context-path {
+  fill: none;
+  stroke: #c7c1b8;
+  stroke-width: 2;
+}
+
+.aud-context-dot {
+  stroke: #fbfaf7;
+  stroke-width: 4;
+}
+
+.aud-context-dot--one {
+  fill: #c12129;
+}
+
+.aud-context-dot--two {
+  fill: #6b7a3a;
+}
+
+.aud-context-dot--three {
+  fill: #2f6f73;
+}
+
+:root[data-theme='dark'] .aud-context-visual {
+  border-color: #33414f;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(40 51 66 / 90%) 0 25%, transparent 67%),
+    linear-gradient(145deg, #1a2029, #202b38);
+  color: #f1f5fa;
+}
+
+:root[data-theme='dark'] .aud-context-orbit {
+  border-color: rgb(201 220 247 / 12%);
+}
+
+:root[data-theme='dark'] .aud-context-panel {
+  border-color: rgb(201 220 247 / 14%);
+  background: rgb(26 32 41 / 86%);
+}
+
+:root[data-theme='dark'] .aud-context-icon {
+  background: color-mix(in srgb, var(--aud-accent) 16%, #1a2029);
+}
+

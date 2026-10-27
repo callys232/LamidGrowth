@@ -56,7 +56,11 @@ export function DemoVideoLibrary({ primary = false }: { primary?: boolean }) {
   const [failed, setFailed] = useState(false);
   const selected = tours.find((t) => t.id === params.get('tour')) || tours[0];
   return (
-    <section className="demo-video-library" id="demo-player" aria-labelledby="demo-library-title">
+    <section
+      className="demo-video-library"
+      id="video-walkthroughs"
+      aria-labelledby="demo-library-title"
+    >
       <header>
         <span className="demo-video-kicker">WATCH IT IN ACTION</span>
         <Heading id="demo-library-title">Choose a video walkthrough</Heading>
@@ -120,10 +124,10 @@ export function DemoVideoLibrary({ primary = false }: { primary?: boolean }) {
             to={
               selected.id === 'integrations'
                 ? '/os/integrations'
-                : `/os/engines${selected.code ? `?engine=${selected.code}` : ''}`
+                : '/demo#start-here'
             }
           >
-            {selected.id === 'integrations' ? 'Connect your services' : 'Try the engines'}
+            {selected.id === 'integrations' ? 'Connect your services' : 'Try a live engine'}
             <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
           <Link className="demo-guided-link" to={`/demo/request?tour=${selected.id}`}>

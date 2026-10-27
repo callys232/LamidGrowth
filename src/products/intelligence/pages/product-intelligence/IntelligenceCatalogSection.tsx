@@ -26,15 +26,15 @@ export function IntelligenceCatalogSection() {
     if (!catalog) return [];
     return AREAS.map((area) => {
       const inGroup: EngineSummary[] = catalog.engines.filter((e) => e.area === area);
-      return { area, count: inGroup.length, engines: inGroup };
-    }).filter((g) => g.count > 0);
+      return { area, engines: inGroup };
+    }).filter((group) => group.engines.length > 0);
   }, [catalog]);
 
   return (
     <section className="engine-catalog">
       <div className="engine-container">
         <div className="engine-catalog-head">
-          <h2>63 Engines, Each Built on a Recognised Method.</h2>
+          <h2>Engines Built on Recognised Methods.</h2>
           <p>
             Every engine follows an established method — ISO 31000 for risk, NIST CSF for security,
             OKRs, Theory of Constraints — and calculates from what you enter. No number is invented.
@@ -45,11 +45,10 @@ export function IntelligenceCatalogSection() {
         {error && <p className="engine-catalog-error">{error}</p>}
         {!catalog && <SkeletonCards count={6} />}
 
-        {grouped.map(({ area, count, engines }) => (
+        {grouped.map(({ area, engines }) => (
           <div key={area} className="engine-catalog-group">
             <div className="engine-catalog-group-head">
               <h3>{area}</h3>
-              <span>{count} engines</span>
             </div>
             <div className="engine-catalog-series">
               <ul>

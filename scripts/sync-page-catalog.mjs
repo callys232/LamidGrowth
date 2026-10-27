@@ -50,7 +50,7 @@ writeFileSync(
 );
 // Navigation, SEO and workspace headings need metadata, not every public page's body copy.
 const pageIndex = manifest.map((entry) => {
-  const page = JSON.parse(readFileSync(entry.content, 'utf8'));
+  const page = JSON.parse(readFileSync(entry.content, 'utf8').replace(/^\uFEFF/, ''));
   return Object.fromEntries([
     ...[
       'name',

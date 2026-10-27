@@ -1,6 +1,32 @@
 import { Link } from 'react-router-dom';
-import { Compass, Scale, Users, Workflow, Wallet, ShieldCheck, TrendingUp } from 'lucide-react';
-import { brandTaglines, pillars } from '../../../../shared/brand';
+import {
+  Activity,
+  BadgeCheck,
+  ChartNoAxesColumnIncreasing,
+  ChartNoAxesCombined,
+  CircleHelp,
+  ClipboardCheck,
+  ClipboardList,
+  Compass,
+  GitBranch,
+  GitCompareArrows,
+  Gauge,
+  ArrowUpNarrowWide,
+  Scale,
+  ScanSearch,
+  SearchCheck,
+  ShieldAlert,
+  Siren,
+  TrendingUp,
+  UserRoundSearch,
+  UsersRound,
+  WalletCards,
+  Waypoints,
+  type LucideIcon,
+} from 'lucide-react';
+import { pillars } from '../../../../shared/brand';
+import { platformMessaging } from '../../../../shared/brand/platformMessaging';
+import content from './content.json';
 import './product.css';
 import './product-showcase.css';
 import '../motion.css';
@@ -10,7 +36,6 @@ import { MoreDetail } from '../../../../shared/content/MoreDetail';
 const jobs = [
   {
     name: 'Strategy',
-    count: 6,
     clip: 'S01',
     line: 'Set a clear direction and check the work follows it.',
     examples: [
@@ -21,56 +46,64 @@ const jobs = [
   },
   {
     name: 'Decisions',
-    count: 12,
     clip: 'Q02',
     line: 'Compare options and record why you chose.',
     examples: ['Decision Register', 'Option Comparison', 'Scenarios & Expected Value'],
   },
   {
     name: 'People',
-    count: 10,
     clip: 'A02',
     line: 'See skills, gaps and the next step for each person.',
     examples: ['Skills Gap Analysis', 'Workforce Plan', 'Succession & Bench Strength'],
   },
   {
     name: 'Operations',
-    count: 12,
     clip: 'R05',
     line: 'Find bottlenecks and keep delivery steady.',
     examples: ['Workload & Capacity Balance', 'Delivery Flow Metrics', 'Root Cause Analysis'],
   },
   {
     name: 'Finance',
-    count: 6,
     clip: 'F03',
     line: 'Understand cash, cost and what drives results.',
     examples: ['Rolling Forecast & 13-Week Cash', 'KPI Driver Tree', 'Cost & Spend Analysis'],
   },
   {
     name: 'Risk & Governance',
-    count: 10,
     clip: 'Q43',
     line: 'Spot problems early and keep accountability clear.',
     examples: ['Risk Register', 'Early Warning Indicators', 'Governance Assessment'],
   },
   {
     name: 'Growth & Change',
-    count: 7,
     clip: 'G03',
     line: 'Score opportunities and plan the change.',
     examples: ['Growth Pathways', 'Growth Opportunity Scoring', 'Change Readiness'],
   },
 ] as const;
 
-const icons = {
-  Strategy: Compass,
-  Decisions: Scale,
-  People: Users,
-  Operations: Workflow,
-  Finance: Wallet,
-  'Risk & Governance': ShieldCheck,
-  'Growth & Change': TrendingUp,
+const exampleIcons: Record<string, LucideIcon> = {
+  'Purpose & Strategic Direction': Compass,
+  'Strategy Alignment Matrix': GitCompareArrows,
+  'Strategic Priority Ranking': ArrowUpNarrowWide,
+  'Decision Register': ClipboardList,
+  'Option Comparison': Scale,
+  'Scenarios & Expected Value': ChartNoAxesCombined,
+  'Skills Gap Analysis': UserRoundSearch,
+  'Workforce Plan': UsersRound,
+  'Succession & Bench Strength': BadgeCheck,
+  'Workload & Capacity Balance': Gauge,
+  'Delivery Flow Metrics': Activity,
+  'Root Cause Analysis': ScanSearch,
+  'Rolling Forecast & 13-Week Cash': WalletCards,
+  'KPI Driver Tree': ChartNoAxesColumnIncreasing,
+  'Cost & Spend Analysis': SearchCheck,
+  'Risk Register': ShieldAlert,
+  'Early Warning Indicators': Siren,
+  'Governance Assessment': ClipboardCheck,
+  'Growth Pathways': Waypoints,
+  'Growth Opportunity Scoring': TrendingUp,
+  'Change Readiness': GitBranch,
 };
 
 const toolNotes: Record<string, string> = {
@@ -134,11 +167,11 @@ const faqs = [
   },
   {
     q: 'Does the AI make decisions for me?',
-    a: 'No. It suggests, explains and prepares. People decide, and nothing consequential happens until you approve it.',
+    a: 'AI gathers relevant context, surfaces patterns and options, and explains how recommendations were prepared. You review before acting.',
   },
   {
-    q: 'Where should I start?',
-    a: 'Pick the job that matters most today. Each engine works on its own, and your context carries across them.',
+    q: 'Can I bring an adviser into the work?',
+    a: 'Yes. Advisers can join with the relevant context so you can discuss the objective, evidence, and next step together.',
   },
 ];
 
@@ -156,40 +189,33 @@ export function ProductPage() {
         </nav>
         <p className="prod-eyebrow">The LamidOne platform</p>
         <h1>Decide what matters. Build what’s needed. Deliver the work.</h1>
-        <p className="prod-lede">
-          Guided tools for strategy, decisions, people, operations, finance, risk and growth, with
-          expert advisers beside you.
-        </p>
+        <p className="prod-lede">{platformMessaging.description}</p>
         <div className="prod-actions">
-          <Link className="prod-btn prod-btn-solid" to="/contact">
-            Get a demo
+          <Link className="prod-btn prod-btn-solid" to={platformMessaging.visitorPaths[0].href}>
+            {platformMessaging.visitorPaths[0].label}
           </Link>
-          <Link className="prod-btn prod-btn-outline" to="/signup">
-            Get started
+          <Link className="prod-btn prod-btn-outline" to={platformMessaging.visitorPaths[1].href}>
+            {platformMessaging.visitorPaths[1].label}
           </Link>
         </div>
+        <p className="prod-human-control">{platformMessaging.humanControl}</p>
       </section>
 
       <section className="ps-intro" aria-labelledby="ps-intro-title">
-        <span className="ps-tag">The platform</span>
-        <div className="ps-intro-row">
-          <h2 id="ps-intro-title">
-            Everything you need to decide, build and deliver, in one place.
-          </h2>
-          <p>
-            Everything begins in one place: a calm environment where you think clearly, strengthen
-            capability and move work forward with confidence. Everything is connected, and
-            everything reinforces your growth.
-          </p>
+        <div className="ps-intro-heading">
+          <span className="ps-tag">{content.platformIntro.label}</span>
+          <div className="ps-intro-row">
+            <h2 id="ps-intro-title">{content.platformIntro.title}</h2>
+            <p>{content.platformIntro.description}</p>
+          </div>
         </div>
         <ul className="ps-pillars">
-          {pillars.map((pillar, index) => (
-            <li key={pillar.id}>
-              <span className="ps-pillar-top">
-                <span className="ps-pillar-num">0{index + 1}</span>
+          {pillars.map((pillar) => (
+            <li key={pillar.id} data-pillar={pillar.id}>
+              <div className="ps-pillar-copy">
                 <span className="ps-pillar-verb">{pillar.verb}</span>
-              </span>
-              <h3>{pillar.name}</h3>
+                <h3>{pillar.name}</h3>
+              </div>
               <p>{pillar.tagline}</p>
             </li>
           ))}
@@ -197,7 +223,6 @@ export function ProductPage() {
       </section>
 
       {jobs.map((job, index) => {
-        const Icon = icons[job.name];
         return (
           <section
             className={`ps-block${index % 2 ? ' ps-block-flip' : ''}`}
@@ -210,8 +235,8 @@ export function ProductPage() {
                   muted
                   loop
                   playsInline
-                  preload="metadata"
-                  poster={`/videos/engines/${job.clip}.jpg`}
+                  preload="none"
+                  poster={`/media/posters/${job.clip}.svg`}
                   aria-label={`${job.name} tool in use`}
                 >
                   <source src={`/videos/engines/${job.clip}.webm`} type="video/webm" />
@@ -226,34 +251,24 @@ export function ProductPage() {
               </div>
             </div>
             <ul className="ps-features">
-              {job.examples.map((example) => (
-                <li key={example} tabIndex={0}>
-                  <Icon size={26} strokeWidth={1.5} aria-hidden="true" />
-                  <div>
-                    <h3>{example}</h3>
-                    <p>{toolNotes[example]}</p>
-                  </div>
-                </li>
-              ))}
-              <li tabIndex={0}>
-                <Icon size={26} strokeWidth={1.5} aria-hidden="true" />
-                <div>
-                  <h3>And more in this area</h3>
-                  <p>Each one works on its own, using your data.</p>
-                </div>
-              </li>
+              {job.examples.map((example) => {
+                const Icon = exampleIcons[example] ?? CircleHelp;
+                return (
+                  <li key={example}>
+                    <span className="ps-feature-icon" aria-hidden="true">
+                      <Icon size={23} strokeWidth={1.6} />
+                    </span>
+                    <div>
+                      <h3>{example}</h3>
+                      <p>{toolNotes[example]}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         );
       })}
-
-      <section className="prod-human">
-        <h2>{brandTaglines.authority}</h2>
-        <p>
-          The Growth Companion suggests, explains and prepares. You approve. Advisers from
-          LamidConsulting, advising businesses since 1988, are there when you want a person.
-        </p>
-      </section>
 
       <section className="prod-faq" aria-labelledby="prod-faq-title">
         <h2 id="prod-faq-title">Questions</h2>
@@ -265,7 +280,7 @@ export function ProductPage() {
         ))}
       </section>
 
-      <MoreDetail />
+      <MoreDetail page={{ sections: content.sections }} heading="How the platform works" />
 
       <section className="prod-close">
         <h2>See it on your own work.</h2>

@@ -195,7 +195,7 @@ export function InsightPlaybooks() {
             </div>
             <div className="playbook-card-copy">
               <span className="playbook-kicker">
-                {p.category} · {p.tools.length} engines
+                {p.category}
               </span>
               <h3>{p.title}</h3>
               <p>{p.description}</p>

@@ -164,7 +164,6 @@ export function DemoVideoPlayer({
                   aria-current={i === index ? 'step' : undefined}
                   onClick={() => go(i)}
                 >
-                  <span className="dv-chapter-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="dv-chapter-label">{c.label}</span>
                   <span className="dv-chapter-track" aria-hidden="true">
                     <i style={{ transform: `scaleX(${fill})` }} />

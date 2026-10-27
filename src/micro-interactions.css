@@ -50,16 +50,27 @@ details[open] > summary {
     color-mix(in srgb, currentColor 8%, transparent)
   ) !important;
 }
+/* Clicked content links stay underlined for this browser tab's session. */
+:where(main, .modal) a:not([class])[data-session-visited='true'] {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 @media (hover: hover) and (pointer: fine) {
   :where(button, summary):not(:disabled):not([aria-disabled='true']):hover {
     box-shadow: inset 0 0 0 999px color-mix(in srgb, currentColor 5%, transparent);
   }
-  /* Only plain links in running text underline on hover. Component links — buttons, cards,
-     navigation, chips, menu and footer lists — carry a class or sit in a list and own their
-     indicators. */
-  :where(main, .modal) :is(p, dd, figcaption) a:not([class]):hover {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  /* Plain content links borrow the site's dark button treatment on hover. Navigation and
+     component links keep their own visual treatment. */
+  :where(main, .modal) a:not([class]):hover {
+    display: inline-block;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    background-color: var(--navy, var(--midnight, #0d1a2b));
+    color: var(--warm-white, #fbfaf7);
+    text-decoration: none;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
   [data-scroll-feedback='true']:hover,
   [data-scroll-feedback='true']:focus-within {
@@ -71,6 +82,19 @@ details[open] > summary {
   .icon-button:not(:disabled):hover {
     color: var(--ink);
     background-color: var(--surface-alt);
+  }
+
+  /* Informational cards across public pages get the same restrained lift. */
+  :is(.aud-card, .ins-card, .ps-features > li) {
+    transition:
+      translate 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+
+  :is(.aud-card, .ins-card, .ps-features > li):is(:hover, :focus-within) {
+    translate: 0 -2px;
+    box-shadow: 0 8px 22px color-mix(in srgb, currentColor 10%, transparent);
   }
 }
 @media (prefers-reduced-motion: reduce) {

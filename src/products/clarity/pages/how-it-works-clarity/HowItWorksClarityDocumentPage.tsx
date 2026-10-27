@@ -87,7 +87,7 @@ function HowItWorksClarityEmbedded({ embedded = false }: DocumentPageProps) {
           </div>
           <div className="clarity-suite-grid">
             <article className="clarity-suite-card" {...cardInteraction('engine')}>
-              <span className="clarity-suite-label">01 / THE ENGINE</span>
+              <span className="clarity-suite-label">THE ENGINE</span>
               <h3>From a question to a clearer picture</h3>
               <ol className="clarity-engine-steps">
                 <li>
@@ -109,7 +109,7 @@ function HowItWorksClarityEmbedded({ embedded = false }: DocumentPageProps) {
               </ol>
             </article>
             <article className="clarity-suite-card" {...cardInteraction('strategy')}>
-              <span className="clarity-suite-label">02 / STRATEGY ENGINES</span>
+              <span className="clarity-suite-label">STRATEGY ENGINES</span>
               <h3>Find what matters most</h3>
               <ToolReadMore label="strategy engines">
                 <ul>
@@ -135,7 +135,7 @@ function HowItWorksClarityEmbedded({ embedded = false }: DocumentPageProps) {
               </ToolReadMore>
             </article>
             <article className="clarity-suite-card" {...cardInteraction('decisions')}>
-              <span className="clarity-suite-label">03 / DECISION ENGINES</span>
+              <span className="clarity-suite-label">DECISION ENGINES</span>
               <h3>Compare before you commit</h3>
               <ToolReadMore label="decision engines">
                 <ul>
@@ -159,7 +159,7 @@ function HowItWorksClarityEmbedded({ embedded = false }: DocumentPageProps) {
               </ToolReadMore>
             </article>
             <article className="clarity-suite-card" {...cardInteraction('next-step')}>
-              <span className="clarity-suite-label">04 / YOUR NEXT STEP</span>
+              <span className="clarity-suite-label">YOUR NEXT STEP</span>
               <h3 data-source-paragraph={251}>{content.sections[3].title}</h3>
               <p data-source-paragraph={252}>{content.sections[3].paragraphs[1].text}</p>
               <Link className="clarity-suite-link" to="/os/engines">

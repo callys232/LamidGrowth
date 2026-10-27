@@ -3,28 +3,28 @@
   "name": "CASE STUDIES",
   "source_paragraph": 768,
   "gates": [
-    "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+    "EVIDENCE GATE - Every published story is supported by clear sources, approved context, and evidence within its stated scope."
   ],
   "route": "/case-studies",
   "indexing": "index, follow",
   "canonical": "/case-studies",
-  "seo_title": "Case Studies | LAMID ONE",
-  "meta_description": "Explore published case studies with verified context, outcomes, and lessons.",
-  "title": "Evidence, Not Claims.",
-  "description": "Explore published case studies with verified context, outcomes, and lessons.",
+  "seo_title": "Customer Stories | LAMID ONE",
+  "meta_description": "Customer stories share the context, evidence, and lessons behind work with LAMID ONE.",
+  "title": "Customer stories, grounded in evidence.",
+  "description": "A useful customer story makes the context, work, evidence, and lessons clear.",
   "hero": {
-    "title": "Evidence, Not Claims.",
+    "title": "Customer stories, grounded in evidence.",
     "paragraphs": [
       {
-        "text": "Evidence, Not Claims.",
+        "text": "Customer stories, grounded in evidence.",
         "sourceParagraph": 774
       },
       {
-        "text": "Explore published case studies with verified context, outcomes, and lessons.",
+        "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
         "sourceParagraph": 775
       },
       {
-        "text": "CTA: Browse Case Studies",
+        "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
         "sourceParagraph": 776
       }
     ]
@@ -61,7 +61,7 @@
           "sourceParagraph": 781
         },
         {
-          "text": "Explore case studies by outcome - for example, stronger delivery, clearer financial decisions, better team alignment, or faster decision cycles.",
+          "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
           "sourceParagraph": 782
         }
       ]
@@ -75,7 +75,7 @@
           "sourceParagraph": 783
         },
         {
-          "text": "See what worked, what did not, and what other teams can learn.",
+          "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
           "sourceParagraph": 784
         },
         {

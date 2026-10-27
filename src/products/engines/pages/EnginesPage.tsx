@@ -30,7 +30,7 @@ import { EngineResultView } from '../components/EngineResultView';
 import { EngineScope } from '../components/EngineScope';
 import './engines-page.css';
 
-/** /os/engines — the standards-based tool catalog: 63 tools, each built on a recognised method
+/** /os/engines — the standards-based tool catalog, with tools built on recognised methods
  * (see server: src/app/toolCatalog/*, src/app/engines.mjs). Every run charges points and returns
  * deterministic arithmetic — no tool on this page produces a number a model invented. */
 type Coverage = {
@@ -154,7 +154,12 @@ export function EnginesPage() {
         </p>
       )}
 
-      <ToolCatalog engines={catalog?.engines ?? null} onOpen={open} idPrefix="engines" />
+      <ToolCatalog
+        engines={catalog?.engines ?? null}
+        onOpen={open}
+        idPrefix="engines"
+        showCounts
+      />
 
       {catalog && locked.length > 0 && (
         <section className="ws-tool-group ws-tool-locked" aria-label="Locked for your plan">

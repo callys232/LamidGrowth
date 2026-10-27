@@ -14,9 +14,9 @@ The VPS deploy script removes generated reports after successful release checks.
 
 **Backend routes:** The Express composition root is `src/app/app.mjs`; cohesive route groups live in `src/app/*.mjs`. Shared request/response schemas live in `src/contracts/`. PostgreSQL connection, schema, and versioned migrations live in `server/`; see [migration guidance](../server/migrations.md).
 
-**Frontend editing:** Pages now live in named [product folders](src/products/README.md), with reusable slides, local components and state hooks. Start with the [page/component editing guide](docs/PAGE_COMPONENT_GUIDE.md). The homepage has its own [composition and styles](src/products/website/pages/home/README.md).
+**Frontend editing:** Start with the repository [contributor guide](../README.md), then edit pages in their product folders under `src/products/`. The shared public-page renderer is in `src/shared/content/`; the homepage has its own composition and styles in `src/products/website/pages/home/`.
 
-**Implementation update:** The working application now includes persistent approved workflows, member administration, commercial screens, knowledge records, progress history, review reminders, and an optional consent-based AI review adapter. See [current implementation status](docs/IMPLEMENTATION_STATUS.md) for verified behavior, configuration, and the remaining enterprise workstreams. The original foundation notes below are historical where they differ from that ledger.
+**Implementation update:** The working application includes persistent approved workflows, member administration, commercial screens, knowledge records, progress history, review reminders, and an optional consent-based AI review adapter. Treat the release checks and current application behavior as authoritative; the original foundation notes below are historical where they differ.
 
 A working first implementation of the Continuous Human–AI Growth Operating System, based on the three supplied specifications and the 98-page visual reference set.
 

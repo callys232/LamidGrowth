@@ -7,10 +7,29 @@
     "route": "/",
     "indexing": "index, follow",
     "canonical": "/",
-    "seo_title": "LAMID ONE | One Seamless Intelligent Portal for Growth",
-    "meta_description": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal, powered by intelligence designed to stay under human direction.",
-    "title": "One seamless intelligent portal for personal and organizational growth.",
-    "description": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal.",
+    "seo_title": "LAMID ONE | Decide. Build. Deliver.",
+    "meta_description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+    "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "landingHero": {
+      "eyebrow": "The LAMID ONE platform",
+      "titleLines": [
+        "Decide what matters,",
+        "build what's needed,",
+        "and deliver the results — all in one place."
+      ],
+      "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+      "actions": [
+        {
+          "label": "Get a demo",
+          "to": "/contact"
+        },
+        {
+          "label": "Get started",
+          "to": "/signup"
+        }
+      ]
+    },
     "continuity": {
       "paragraphs": [
         {
@@ -24,14 +43,14 @@
       ]
     },
     "hero": {
-      "title": "One seamless intelligent portal for personal and organizational growth.",
+      "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
       "paragraphs": [
         {
-          "text": "One seamless intelligent portal for personal and organizational growth.",
+          "text": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
           "sourceParagraph": 6283
         },
         {
-          "text": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal.",
+          "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
           "sourceParagraph": 6287
         },
         {
@@ -384,11 +403,11 @@
             "sourceParagraph": 13923
           },
           {
-            "text": "No noise. No overwhelm. No fragmented apps.",
+            "text": "A calm, focused space keeps attention on the work that matters.",
             "sourceParagraph": 13925
           },
           {
-            "text": "Just a calm, intelligent space that helps you grow with intention.",
+            "text": "Move forward with intention, one clear step at a time.",
             "sourceParagraph": 13927
           }
         ],
@@ -403,11 +422,11 @@
             "sourceParagraph": 13947
           },
           {
-            "text": "LAMID ONE is not a dashboard. Not a workspace. Not a learning platform.",
+            "text": "LAMID ONE brings guidance, practical tools, and adviser support into one connected platform.",
             "sourceParagraph": 13949
           },
           {
-            "text": "It is a guided environment — a calm, structured space that adapts to your goals and helps you move forward with clarity.",
+            "text": "One calm, structured place helps you see what matters and move forward with clarity.",
             "sourceParagraph": 13951
           },
           {
@@ -505,14 +524,14 @@
     ],
     "blocks": [
       {
-        "title": "One seamless intelligent portal for personal and organizational growth.",
+        "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
         "paragraphs": [
           {
-            "text": "One seamless intelligent portal for personal and organizational growth.",
+            "text": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
             "sourceParagraph": 6283
           },
           {
-            "text": "Clarify needs, strengthen capability, execute work, and achieve consistent results — all in one intelligent portal.",
+            "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
             "sourceParagraph": 6287
           },
           {
@@ -864,11 +883,11 @@
             "sourceParagraph": 13923
           },
           {
-            "text": "No noise. No overwhelm. No fragmented apps.",
+            "text": "A calm, focused space keeps attention on the work that matters.",
             "sourceParagraph": 13925
           },
           {
-            "text": "Just a calm, intelligent space that helps you grow with intention.",
+            "text": "Move forward with intention, one clear step at a time.",
             "sourceParagraph": 13927
           }
         ],
@@ -883,11 +902,11 @@
             "sourceParagraph": 13947
           },
           {
-            "text": "LAMID ONE is not a dashboard. Not a workspace. Not a learning platform.",
+            "text": "LAMID ONE brings guidance, practical tools, and adviser support into one connected platform.",
             "sourceParagraph": 13949
           },
           {
-            "text": "It is a guided environment — a calm, structured space that adapts to your goals and helps you move forward with clarity.",
+            "text": "One calm, structured place helps you see what matters and move forward with clarity.",
             "sourceParagraph": 13951
           },
           {
@@ -992,866 +1011,311 @@
     "route": "/product",
     "indexing": "index, follow",
     "canonical": "/product",
-    "seo_title": "Product Overview | LAMID ONE",
-    "meta_description": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context.",
-    "title": "One intelligent portal. Three spaces. A unified architecture for growth.",
-    "description": "LAMID ONE is organized as a single guided environment where clarity, capability, and execution come together in a calm, structured flow. Not a dashboard. Not a workspace. A human‑centered architecture designed to make growth feel simple, coherent, and achievable.",
+    "seo_title": "LAMID ONE Platform | Decide, Build, Deliver",
+    "meta_description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "title": "Decide what matters. Build what’s needed. Deliver the work.",
+    "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "platformIntro": {
+      "label": "The platform",
+      "title": "Everything you need to decide, build and deliver, in one place.",
+      "description": "Everything begins in one place: a calm environment where you think clearly, strengthen capability and move work forward with confidence. Everything is connected, and everything reinforces your growth."
+    },
     "hero": {
-      "title": "One intelligent portal. Three spaces. A unified architecture for growth.",
+      "title": "Decide what matters. Build what’s needed. Deliver the work.",
       "paragraphs": [
         {
-          "text": "One intelligent portal. Three spaces. A unified architecture for growth.",
-          "sourceParagraph": 14369
+          "text": "Decide what matters. Build what’s needed. Deliver the work.",
+          "sourceParagraph": 15000
         },
         {
-          "text": "LAMID ONE is organized as a single guided environment where clarity, capability, and execution come together in a calm, structured flow. Not a dashboard. Not a workspace. A human‑centered architecture designed to make growth feel simple, coherent, and achievable.",
-          "sourceParagraph": 14371
+          "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+          "sourceParagraph": 15001
         },
         {
-          "text": "Every meaningful journey needs a structure — a way to move forward without confusion, fragmentation, or overwhelm. LAMID ONE provides that structure through a unified portal architecture built around three interconnected spaces: Clarity, Capability, and Execution.",
-          "sourceParagraph": 14373
+          "text": "AI suggests, explains, and prepares. You decide what happens next.",
+          "sourceParagraph": 15002
         },
         {
-          "text": "These spaces work together in a natural, guided sequence. You see clearly. You strengthen what matters. You follow through with confidence.",
-          "sourceParagraph": 14375
-        },
-        {
-          "text": "The architecture adapts to individuals, teams, and organizations, creating a consistent experience no matter the scale or complexity of your goals.",
-          "sourceParagraph": 14377
-        },
-        {
-          "text": "This is the foundation of the intelligent portal: a calm, human‑directed environment where growth becomes a guided progression instead of a struggle.",
-          "sourceParagraph": 14379
-        },
-        {
-          "text": "CTA: Start Free | Limited Access | Book a Demo",
-          "sourceParagraph": 14381
+          "text": "Explore the live demo or talk with an adviser.",
+          "sourceParagraph": 15003
         }
       ]
     },
     "sections": [
       {
-        "label": "UNIFIED ENVIRONMENT",
-        "title": "Everything begins in one place.",
+        "label": "THE THREE PILLARS",
+        "title": "Three pillars. One connected progression.",
         "paragraphs": [
           {
-            "text": "Everything begins in one place.",
-            "sourceParagraph": 14397
+            "text": "Clarity",
+            "sourceParagraph": 15004
           },
           {
-            "text": "LAMID ONE is built as a unified environment — a single, intelligent space where direction, development, and execution come together without fragmentation or complexity. No scattered apps. No competing systems. No separate spaces you must learn or manage.",
-            "sourceParagraph": 14399
+            "text": "Bring priorities, constraints, and opportunities into view. Understand where you are, what matters, and which decision or next step deserves attention.",
+            "sourceParagraph": 15005
           },
           {
-            "text": "The portal creates one calm environment where you can think clearly, strengthen capability, and move work forward with confidence. It removes the friction that comes from switching between platforms, frameworks, or disconnected processes. Instead, it gives you a coherent flow that feels natural, structured, and human.",
-            "sourceParagraph": 14401
+            "text": "Capability",
+            "sourceParagraph": 15006
           },
           {
-            "text": "Inside the unified environment:",
-            "sourceParagraph": 14403
+            "text": "Build the skills, habits, plans, and structures that make progress possible, for yourself or across a team.",
+            "sourceParagraph": 15007
           },
           {
-            "text": "- clarity becomes visible",
-            "sourceParagraph": 14405
+            "text": "Consistency",
+            "sourceParagraph": 15008
           },
           {
-            "text": "- capability becomes achievable",
-            "sourceParagraph": 14407
+            "text": "Connect decisions and capability to action, ownership, review, and steady delivery.",
+            "sourceParagraph": 15009
           },
           {
-            "text": "- execution becomes dependable",
-            "sourceParagraph": 14409
-          },
-          {
-            "text": "Everything is connected. Everything reinforces your growth. Everything works together as one guided experience.",
-            "sourceParagraph": 14411
-          },
-          {
-            "text": "This is the foundation of the intelligent portal — a unified environment designed to make growth feel simple, structured, and possible.",
-            "sourceParagraph": 14413
-          }
-        ],
-        "longForm": true
-      },
-      {
-        "label": "THREE SPACES",
-        "title": "Three spaces. One guided progression.",
-        "paragraphs": [
-          {
-            "text": "Three spaces. One guided progression.",
-            "sourceParagraph": 14429
-          },
-          {
-            "text": "The LAMID ONE portal is organized into three interconnected spaces that reflect the natural movements of human growth. Each space supports a different part of your progression, yet all three work together in a calm, coherent flow.",
-            "sourceParagraph": 14431
-          },
-          {
-            "text": "These are not modules. Not dashboards. Not apps.",
-            "sourceParagraph": 14433
-          },
-          {
-            "text": "They are spaces — designed to help you think clearly, strengthen capability, and move forward with confidence.",
-            "sourceParagraph": 14435
-          },
-          {
-            "text": "1. Clarity Space",
-            "sourceParagraph": 14437
-          },
-          {
-            "text": "Where direction becomes visible.",
-            "sourceParagraph": 14439
-          },
-          {
-            "text": "This is the space where you understand what matters. Noise fades. Priorities sharpen. You see where you are, where you want to go, and what stands in the way.",
-            "sourceParagraph": 14441
-          },
-          {
-            "text": "The Clarity Space helps you:",
-            "sourceParagraph": 14443
-          },
-          {
-            "text": "- identify meaningful goals",
-            "sourceParagraph": 14445
-          },
-          {
-            "text": "- understand your current reality",
-            "sourceParagraph": 14447
-          },
-          {
-            "text": "- recognize obstacles and opportunities",
-            "sourceParagraph": 14449
-          },
-          {
-            "text": "- choose the next right step",
-            "sourceParagraph": 14451
-          },
-          {
-            "text": "Clarity is the foundation of the entire portal.",
-            "sourceParagraph": 14453
-          },
-          {
-            "text": "2. Capability Space",
-            "sourceParagraph": 14455
-          },
-          {
-            "text": "Where development takes shape.",
-            "sourceParagraph": 14457
-          },
-          {
-            "text": "Growth requires strength — the skills, habits, and structures that make progress possible. The Capability Space helps you build that strength through guided development that adapts to your goals and your pace.",
-            "sourceParagraph": 14459
-          },
-          {
-            "text": "Here, you:",
-            "sourceParagraph": 14461
-          },
-          {
-            "text": "- strengthen essential skills",
-            "sourceParagraph": 14463
-          },
-          {
-            "text": "- build supportive habits",
-            "sourceParagraph": 14465
-          },
-          {
-            "text": "- develop internal and external capacity",
-            "sourceParagraph": 14467
-          },
-          {
-            "text": "- create structures that sustain progress",
-            "sourceParagraph": 14469
-          },
-          {
-            "text": "Capability is the engine of the portal.",
-            "sourceParagraph": 14471
-          },
-          {
-            "text": "3. Execution Space",
-            "sourceParagraph": 14473
-          },
-          {
-            "text": "Where work moves forward.",
-            "sourceParagraph": 14475
-          },
-          {
-            "text": "Execution is where clarity and capability turn into action. The Execution Space gives you guided steps, intelligent cues, and structured flows that help you follow through consistently and calmly.",
-            "sourceParagraph": 14477
-          },
-          {
-            "text": "Inside this space, you:",
-            "sourceParagraph": 14479
-          },
-          {
-            "text": "- organize tasks and actions",
-            "sourceParagraph": 14481
-          },
-          {
-            "text": "- move through guided flows",
-            "sourceParagraph": 14483
-          },
-          {
-            "text": "- maintain momentum",
-            "sourceParagraph": 14485
-          },
-          {
-            "text": "- complete meaningful work",
-            "sourceParagraph": 14487
-          },
-          {
-            "text": "Execution is the differentiator — the space where transformation becomes real.",
-            "sourceParagraph": 14489
-          },
-          {
-            "text": "Closing Paragraph Together, these three spaces form the architecture of the intelligent portal. A unified environment where clarity informs capability, capability strengthens execution, and execution reinforces growth. This is how LAMID ONE turns complexity into coherence — and growth into a guided, human‑directed experience.",
-            "sourceParagraph": 14491
-          }
-        ],
-        "longForm": true
-      },
-      {
-        "label": "GUIDED FLOW",
-        "title": "A calm, structured flow that adapts to you.",
-        "paragraphs": [
-          {
-            "text": "A calm, structured flow that adapts to you.",
-            "sourceParagraph": 14507
-          },
-          {
-            "text": "The architecture of LAMID ONE is not static. It is a guided flow — a living progression that moves with you, adjusts to your pace, and supports your goals with quiet, human‑directed intelligence.",
-            "sourceParagraph": 14509
-          },
-          {
-            "text": "The portal doesn’t ask you to figure out where to begin. It doesn’t leave you to guess what comes next. It doesn’t overwhelm you with options or complexity.",
-            "sourceParagraph": 14511
-          },
-          {
-            "text": "Instead, it guides you through a simple, powerful sequence:",
-            "sourceParagraph": 14513
-          },
-          {
-            "text": "You see clearly. You strengthen what matters. You follow through with confidence.",
-            "sourceParagraph": 14515
-          },
-          {
-            "text": "This flow is not rigid. It adapts to individuals, founders, teams, and organizations. It expands when your goals grow and simplifies when you need focus. It creates a rhythm of progress that feels calm, structured, and achievable.",
-            "sourceParagraph": 14517
-          },
-          {
-            "text": "Inside the guided flow:",
-            "sourceParagraph": 14519
-          },
-          {
-            "text": "- Clarity informs Capability",
-            "sourceParagraph": 14521
-          },
-          {
-            "text": "- Capability supports Execution",
-            "sourceParagraph": 14523
-          },
-          {
-            "text": "- Execution reinforces Clarity",
-            "sourceParagraph": 14525
-          },
-          {
-            "text": "Each movement strengthens the next. Each step builds momentum. Each action becomes part of a coherent, human‑centered progression.",
-            "sourceParagraph": 14527
-          },
-          {
-            "text": "This is how the intelligent portal works — not as an app, but as a guided environment that helps you move forward with intention.",
-            "sourceParagraph": 14529
-          }
-        ],
-        "longForm": true
-      },
-      {
-        "label": "ADAPTIVE DESIGN",
-        "title": "Designed to adapt — quietly, intelligently, and without complexity.",
-        "paragraphs": [
-          {
-            "text": "Designed to adapt — quietly, intelligently, and without complexity.",
-            "sourceParagraph": 14545
-          },
-          {
-            "text": "Growth is never one‑size‑fits‑all. Individuals move differently than founders. Teams move differently than organizations. Social missions move differently than commercial goals.",
-            "sourceParagraph": 14547
-          },
-          {
-            "text": "LAMID ONE was built to honor these differences through adaptive design — a calm, intelligent architecture that adjusts to your reality without adding complexity or noise.",
-            "sourceParagraph": 14549
-          },
-          {
-            "text": "The portal expands when your goals grow. It simplifies when you need focus. It adapts to your pace, your context, and your capacity.",
-            "sourceParagraph": 14551
-          },
-          {
-            "text": "Adaptive design means:",
-            "sourceParagraph": 14553
-          },
-          {
-            "text": "- the Clarity Space adjusts to the scale of your goals",
-            "sourceParagraph": 14555
-          },
-          {
-            "text": "- the Capability Space personalizes development to your needs",
-            "sourceParagraph": 14557
-          },
-          {
-            "text": "- the Execution Space shapes itself around your rhythm of work",
-            "sourceParagraph": 14559
-          },
-          {
-            "text": "Nothing feels rigid. Nothing feels forced. Nothing feels overwhelming.",
-            "sourceParagraph": 14561
-          },
-          {
-            "text": "The architecture remains coherent and human, no matter how simple or complex your journey becomes. This is how LAMID ONE supports individuals, founders, teams, and organizations with the same calm, structured experience — always adapting, never distracting.",
-            "sourceParagraph": 14563
-          }
-        ],
-        "longForm": true
-      },
-      {
-        "label": "CTA",
-        "title": "Step into the unified environment.",
-        "paragraphs": [
-          {
-            "text": "Step into the unified environment.",
-            "sourceParagraph": 14579
-          },
-          {
-            "text": "Growth becomes simpler when the environment is coherent — when clarity, capability, and execution live in one guided space instead of scattered apps and competing systems.",
-            "sourceParagraph": 14581
-          },
-          {
-            "text": "LAMID ONE gives you that environment. A calm, structured, human‑directed portal where direction becomes visible, development becomes achievable, and execution becomes dependable.",
-            "sourceParagraph": 14583
-          },
-          {
-            "text": "Whether you’re moving forward alone, building something new, strengthening a team, or guiding an entire organization, you can begin inside the intelligent portal today.",
-            "sourceParagraph": 14585
-          },
-          {
-            "text": "CTA: Start Free | Limited Access | Book a Demo",
-            "sourceParagraph": 14587
-          }
-        ],
-        "longForm": true
-      },
-      {
-        "label": "One Continuous Operating System. Built Around Your Context.",
-        "title": "One Continuous Operating System. Built Around Your Context.",
-        "paragraphs": [
-          {
-            "text": "One Continuous Operating System. Built Around Your Context.",
-            "sourceParagraph": 103
-          },
-          {
-            "text": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context forward, and go deeper as your needs grow.",
-            "sourceParagraph": 104
-          },
-          {
-            "text": "CTA: Experience LAMID ONE | See How It Works",
-            "sourceParagraph": 105
-          }
-        ],
-        "addedFrom": "Pithy"
-      },
-      {
-        "label": "Start With Your Objective",
-        "title": "Start With Your Objective",
-        "paragraphs": [
-          {
-            "text": "Start With Your Objective",
-            "sourceParagraph": 106
-          },
-          {
-            "text": "The LAMID ONE Companion works from the situation in front of you and the relevant context carried forward over time, surfaces what matters now, and guides the next step without making you navigate the architecture underneath.",
-            "sourceParagraph": 107
-          },
-          {
-            "text": "CTA: Explore the Companion",
-            "sourceParagraph": 108
-          }
-        ],
-        "addedFrom": "Pithy"
-      },
-      {
-        "label": "Continuous Intelligence Keeps the Operating Context Current",
-        "title": "Continuous Intelligence Keeps the Operating Context Current",
-        "paragraphs": [
-          {
-            "text": "Continuous Intelligence Keeps the Operating Context Current",
-            "sourceParagraph": 109
-          },
-          {
-            "text": "Permitted signals can be sensed, understood, compared, and carried into recommendations as conditions change. Action remains bounded by authorization, and consequential commitment pauses for human judgment unless that exact authority was explicitly delegated in advance under policy.",
-            "sourceParagraph": 110
-          }
-        ],
-        "addedFrom": "Pithy"
-      },
-      {
-        "label": "Persistent Progression",
-        "title": "Persistent Progression",
-        "paragraphs": [
-          {
-            "text": "Persistent Progression",
-            "sourceParagraph": 111
-          },
-          {
-            "text": "Permitted context, intelligence, and already-authorized work can continue progressing across time. Every progression stays inside defined permissions, can be inspected, and can be redirected, paused, revoked, or overridden by an authorized human.",
-            "sourceParagraph": 112
-          }
-        ],
-        "addedFrom": "Pithy"
-      },
-      {
-        "label": "One OS. Different Relevant Depth.",
-        "title": "One OS. Different Relevant Depth.",
-        "paragraphs": [
-          {
-            "text": "One OS. Different Relevant Depth.",
-            "sourceParagraph": 113
-          },
-          {
-            "text": "Persistent progression underneath. Relevant depth above.",
-            "sourceParagraph": 114
-          },
-          {
-            "text": "CTA: Experience LAMID ONE",
-            "sourceParagraph": 115
-          }
-        ],
-        "addedFrom": "Pithy"
-      }
-    ],
-    "blocks": [
-      {
-        "title": "One intelligent portal. Three spaces. A unified architecture for growth.",
-        "paragraphs": [
-          {
-            "text": "One intelligent portal. Three spaces. A unified architecture for growth.",
-            "sourceParagraph": 14369
-          },
-          {
-            "text": "LAMID ONE is organized as a single guided environment where clarity, capability, and execution come together in a calm, structured flow. Not a dashboard. Not a workspace. A human‑centered architecture designed to make growth feel simple, coherent, and achievable.",
-            "sourceParagraph": 14371
-          },
-          {
-            "text": "Every meaningful journey needs a structure — a way to move forward without confusion, fragmentation, or overwhelm. LAMID ONE provides that structure through a unified portal architecture built around three interconnected spaces: Clarity, Capability, and Execution.",
-            "sourceParagraph": 14373
-          },
-          {
-            "text": "These spaces work together in a natural, guided sequence. You see clearly. You strengthen what matters. You follow through with confidence.",
-            "sourceParagraph": 14375
-          },
-          {
-            "text": "The architecture adapts to individuals, teams, and organizations, creating a consistent experience no matter the scale or complexity of your goals.",
-            "sourceParagraph": 14377
-          },
-          {
-            "text": "This is the foundation of the intelligent portal: a calm, human‑directed environment where growth becomes a guided progression instead of a struggle.",
-            "sourceParagraph": 14379
-          },
-          {
-            "text": "CTA: Start Free | Limited Access | Book a Demo",
-            "sourceParagraph": 14381
+            "text": "Each movement informs the next: a clearer direction reveals what capability is needed, and stronger capability makes delivery more reliable.",
+            "sourceParagraph": 15010
           }
         ]
       },
       {
-        "label": "UNIFIED ENVIRONMENT",
-        "title": "Everything begins in one place.",
+        "label": "FROM INTENT TO ACTION",
+        "title": "Start with the situation in front of you.",
         "paragraphs": [
           {
-            "text": "Everything begins in one place.",
-            "sourceParagraph": 14397
+            "text": "Bring an objective, decision, opportunity, or challenge into focus.",
+            "sourceParagraph": 15011
           },
           {
-            "text": "LAMID ONE is built as a unified environment — a single, intelligent space where direction, development, and execution come together without fragmentation or complexity. No scattered apps. No competing systems. No separate spaces you must learn or manage.",
-            "sourceParagraph": 14399
+            "text": "The Companion uses relevant context to surface the questions, options, and next steps connected to that work.",
+            "sourceParagraph": 15012
           },
           {
-            "text": "The portal creates one calm environment where you can think clearly, strengthen capability, and move work forward with confidence. It removes the friction that comes from switching between platforms, frameworks, or disconnected processes. Instead, it gives you a coherent flow that feels natural, structured, and human.",
-            "sourceParagraph": 14401
+            "text": "Choose a task-specific tool when you need structured analysis, then carry the useful finding into a plan or action.",
+            "sourceParagraph": 15013
           },
           {
-            "text": "Inside the unified environment:",
-            "sourceParagraph": 14403
-          },
-          {
-            "text": "- clarity becomes visible",
-            "sourceParagraph": 14405
-          },
-          {
-            "text": "- capability becomes achievable",
-            "sourceParagraph": 14407
-          },
-          {
-            "text": "- execution becomes dependable",
-            "sourceParagraph": 14409
-          },
-          {
-            "text": "Everything is connected. Everything reinforces your growth. Everything works together as one guided experience.",
-            "sourceParagraph": 14411
-          },
-          {
-            "text": "This is the foundation of the intelligent portal — a unified environment designed to make growth feel simple, structured, and possible.",
-            "sourceParagraph": 14413
+            "text": "Review what changed and decide what to do next.",
+            "sourceParagraph": 15014
           }
-        ],
-        "longForm": true
+        ]
       },
       {
-        "label": "THREE SPACES",
-        "title": "Three spaces. One guided progression.",
+        "label": "HUMAN DIRECTION",
+        "title": "Intelligence works within human direction.",
         "paragraphs": [
           {
-            "text": "Three spaces. One guided progression.",
-            "sourceParagraph": 14429
+            "text": "AI support",
+            "sourceParagraph": 15015
           },
           {
-            "text": "The LAMID ONE portal is organized into three interconnected spaces that reflect the natural movements of human growth. Each space supports a different part of your progression, yet all three work together in a calm, coherent flow.",
-            "sourceParagraph": 14431
+            "text": "AI can organize relevant context, compare information, explain its reasoning, and prepare recommendations.",
+            "sourceParagraph": 15016
           },
           {
-            "text": "These are not modules. Not dashboards. Not apps.",
-            "sourceParagraph": 14433
+            "text": "Human judgment",
+            "sourceParagraph": 15017
           },
           {
-            "text": "They are spaces — designed to help you think clearly, strengthen capability, and move forward with confidence.",
-            "sourceParagraph": 14435
+            "text": "You set the objective, review the reasoning, and decide what happens. Consequential work pauses for your approval.",
+            "sourceParagraph": 15018
           },
           {
-            "text": "1. Clarity Space",
-            "sourceParagraph": 14437
+            "text": "Adviser support",
+            "sourceParagraph": 15019
           },
           {
-            "text": "Where direction becomes visible.",
-            "sourceParagraph": 14439
-          },
-          {
-            "text": "This is the space where you understand what matters. Noise fades. Priorities sharpen. You see where you are, where you want to go, and what stands in the way.",
-            "sourceParagraph": 14441
-          },
-          {
-            "text": "The Clarity Space helps you:",
-            "sourceParagraph": 14443
-          },
-          {
-            "text": "- identify meaningful goals",
-            "sourceParagraph": 14445
-          },
-          {
-            "text": "- understand your current reality",
-            "sourceParagraph": 14447
-          },
-          {
-            "text": "- recognize obstacles and opportunities",
-            "sourceParagraph": 14449
-          },
-          {
-            "text": "- choose the next right step",
-            "sourceParagraph": 14451
-          },
-          {
-            "text": "Clarity is the foundation of the entire portal.",
-            "sourceParagraph": 14453
-          },
-          {
-            "text": "2. Capability Space",
-            "sourceParagraph": 14455
-          },
-          {
-            "text": "Where development takes shape.",
-            "sourceParagraph": 14457
-          },
-          {
-            "text": "Growth requires strength — the skills, habits, and structures that make progress possible. The Capability Space helps you build that strength through guided development that adapts to your goals and your pace.",
-            "sourceParagraph": 14459
-          },
-          {
-            "text": "Here, you:",
-            "sourceParagraph": 14461
-          },
-          {
-            "text": "- strengthen essential skills",
-            "sourceParagraph": 14463
-          },
-          {
-            "text": "- build supportive habits",
-            "sourceParagraph": 14465
-          },
-          {
-            "text": "- develop internal and external capacity",
-            "sourceParagraph": 14467
-          },
-          {
-            "text": "- create structures that sustain progress",
-            "sourceParagraph": 14469
-          },
-          {
-            "text": "Capability is the engine of the portal.",
-            "sourceParagraph": 14471
-          },
-          {
-            "text": "3. Execution Space",
-            "sourceParagraph": 14473
-          },
-          {
-            "text": "Where work moves forward.",
-            "sourceParagraph": 14475
-          },
-          {
-            "text": "Execution is where clarity and capability turn into action. The Execution Space gives you guided steps, intelligent cues, and structured flows that help you follow through consistently and calmly.",
-            "sourceParagraph": 14477
-          },
-          {
-            "text": "Inside this space, you:",
-            "sourceParagraph": 14479
-          },
-          {
-            "text": "- organize tasks and actions",
-            "sourceParagraph": 14481
-          },
-          {
-            "text": "- move through guided flows",
-            "sourceParagraph": 14483
-          },
-          {
-            "text": "- maintain momentum",
-            "sourceParagraph": 14485
-          },
-          {
-            "text": "- complete meaningful work",
-            "sourceParagraph": 14487
-          },
-          {
-            "text": "Execution is the differentiator — the space where transformation becomes real.",
-            "sourceParagraph": 14489
-          },
-          {
-            "text": "Closing Paragraph Together, these three spaces form the architecture of the intelligent portal. A unified environment where clarity informs capability, capability strengthens execution, and execution reinforces growth. This is how LAMID ONE turns complexity into coherence — and growth into a guided, human‑directed experience.",
-            "sourceParagraph": 14491
+            "text": "When the work needs experience or a second perspective, an adviser can join the conversation.",
+            "sourceParagraph": 15020
           }
-        ],
-        "longForm": true
+        ]
       },
       {
-        "label": "GUIDED FLOW",
-        "title": "A calm, structured flow that adapts to you.",
+        "label": "CONTINUITY AND CONTROL",
+        "title": "Carry useful context forward.",
         "paragraphs": [
           {
-            "text": "A calm, structured flow that adapts to you.",
-            "sourceParagraph": 14507
+            "text": "With permission, relevant context and progress can remain available across sessions so you can continue from the work already done.",
+            "sourceParagraph": 15021
           },
           {
-            "text": "The architecture of LAMID ONE is not static. It is a guided flow — a living progression that moves with you, adjusts to your pace, and supports your goals with quiet, human‑directed intelligence.",
-            "sourceParagraph": 14509
+            "text": "Review what is remembered, which sources or workflows may continue, and what each permission allows.",
+            "sourceParagraph": 15022
           },
           {
-            "text": "The portal doesn’t ask you to figure out where to begin. It doesn’t leave you to guess what comes next. It doesn’t overwhelm you with options or complexity.",
-            "sourceParagraph": 14511
+            "text": "You can inspect progress, change direction, pause, or revoke permission through the available controls.",
+            "sourceParagraph": 15023
           },
           {
-            "text": "Instead, it guides you through a simple, powerful sequence:",
-            "sourceParagraph": 14513
-          },
-          {
-            "text": "You see clearly. You strengthen what matters. You follow through with confidence.",
-            "sourceParagraph": 14515
-          },
-          {
-            "text": "This flow is not rigid. It adapts to individuals, founders, teams, and organizations. It expands when your goals grow and simplifies when you need focus. It creates a rhythm of progress that feels calm, structured, and achievable.",
-            "sourceParagraph": 14517
-          },
-          {
-            "text": "Inside the guided flow:",
-            "sourceParagraph": 14519
-          },
-          {
-            "text": "- Clarity informs Capability",
-            "sourceParagraph": 14521
-          },
-          {
-            "text": "- Capability supports Execution",
-            "sourceParagraph": 14523
-          },
-          {
-            "text": "- Execution reinforces Clarity",
-            "sourceParagraph": 14525
-          },
-          {
-            "text": "Each movement strengthens the next. Each step builds momentum. Each action becomes part of a coherent, human‑centered progression.",
-            "sourceParagraph": 14527
-          },
-          {
-            "text": "This is how the intelligent portal works — not as an app, but as a guided environment that helps you move forward with intention.",
-            "sourceParagraph": 14529
+            "text": "Any ongoing work remains within its defined authorization. New consequential decisions stay with people.",
+            "sourceParagraph": 15024
           }
-        ],
-        "longForm": true
+        ]
       },
       {
-        "label": "ADAPTIVE DESIGN",
-        "title": "Designed to adapt — quietly, intelligently, and without complexity.",
+        "label": "RELEVANT DEPTH",
+        "title": "The same method supports different kinds of work.",
         "paragraphs": [
           {
-            "text": "Designed to adapt — quietly, intelligently, and without complexity.",
-            "sourceParagraph": 14545
+            "text": "An individual can begin with a personal decision. A founder can bring a business question. A team can coordinate shared work, and an organization can apply governance across responsibilities.",
+            "sourceParagraph": 15025
           },
           {
-            "text": "Growth is never one‑size‑fits‑all. Individuals move differently than founders. Teams move differently than organizations. Social missions move differently than commercial goals.",
-            "sourceParagraph": 14547
+            "text": "The context changes the tools, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
+            "sourceParagraph": 15026
           },
           {
-            "text": "LAMID ONE was built to honor these differences through adaptive design — a calm, intelligent architecture that adjusts to your reality without adding complexity or noise.",
-            "sourceParagraph": 14549
-          },
-          {
-            "text": "The portal expands when your goals grow. It simplifies when you need focus. It adapts to your pace, your context, and your capacity.",
-            "sourceParagraph": 14551
-          },
-          {
-            "text": "Adaptive design means:",
-            "sourceParagraph": 14553
-          },
-          {
-            "text": "- the Clarity Space adjusts to the scale of your goals",
-            "sourceParagraph": 14555
-          },
-          {
-            "text": "- the Capability Space personalizes development to your needs",
-            "sourceParagraph": 14557
-          },
-          {
-            "text": "- the Execution Space shapes itself around your rhythm of work",
-            "sourceParagraph": 14559
-          },
-          {
-            "text": "Nothing feels rigid. Nothing feels forced. Nothing feels overwhelming.",
-            "sourceParagraph": 14561
-          },
-          {
-            "text": "The architecture remains coherent and human, no matter how simple or complex your journey becomes. This is how LAMID ONE supports individuals, founders, teams, and organizations with the same calm, structured experience — always adapting, never distracting.",
-            "sourceParagraph": 14563
+            "text": "Start with the depth that helps now, then move into related tools and workflows as the work calls for them.",
+            "sourceParagraph": 15027
           }
-        ],
-        "longForm": true
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "title": "Decide what matters. Build what’s needed. Deliver the work.",
+        "paragraphs": [
+          {
+            "text": "Decide what matters. Build what’s needed. Deliver the work.",
+            "sourceParagraph": 15000
+          },
+          {
+            "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+            "sourceParagraph": 15001
+          },
+          {
+            "text": "AI suggests, explains, and prepares. You decide what happens next.",
+            "sourceParagraph": 15002
+          },
+          {
+            "text": "Explore the live demo or talk with an adviser.",
+            "sourceParagraph": 15003
+          }
+        ]
       },
       {
-        "label": "CTA",
-        "title": "Step into the unified environment.",
+        "label": "THE THREE PILLARS",
+        "title": "Three pillars. One connected progression.",
         "paragraphs": [
           {
-            "text": "Step into the unified environment.",
-            "sourceParagraph": 14579
+            "text": "Clarity",
+            "sourceParagraph": 15004
           },
           {
-            "text": "Growth becomes simpler when the environment is coherent — when clarity, capability, and execution live in one guided space instead of scattered apps and competing systems.",
-            "sourceParagraph": 14581
+            "text": "Bring priorities, constraints, and opportunities into view. Understand where you are, what matters, and which decision or next step deserves attention.",
+            "sourceParagraph": 15005
           },
           {
-            "text": "LAMID ONE gives you that environment. A calm, structured, human‑directed portal where direction becomes visible, development becomes achievable, and execution becomes dependable.",
-            "sourceParagraph": 14583
+            "text": "Capability",
+            "sourceParagraph": 15006
           },
           {
-            "text": "Whether you’re moving forward alone, building something new, strengthening a team, or guiding an entire organization, you can begin inside the intelligent portal today.",
-            "sourceParagraph": 14585
+            "text": "Build the skills, habits, plans, and structures that make progress possible, for yourself or across a team.",
+            "sourceParagraph": 15007
           },
           {
-            "text": "CTA: Start Free | Limited Access | Book a Demo",
-            "sourceParagraph": 14587
+            "text": "Consistency",
+            "sourceParagraph": 15008
+          },
+          {
+            "text": "Connect decisions and capability to action, ownership, review, and steady delivery.",
+            "sourceParagraph": 15009
+          },
+          {
+            "text": "Each movement informs the next: a clearer direction reveals what capability is needed, and stronger capability makes delivery more reliable.",
+            "sourceParagraph": 15010
           }
-        ],
-        "longForm": true
+        ]
       },
       {
-        "label": "One Continuous Operating System. Built Around Your Context.",
-        "title": "One Continuous Operating System. Built Around Your Context.",
+        "label": "FROM INTENT TO ACTION",
+        "title": "Start with the situation in front of you.",
         "paragraphs": [
           {
-            "text": "One Continuous Operating System. Built Around Your Context.",
-            "sourceParagraph": 103
+            "text": "Bring an objective, decision, opportunity, or challenge into focus.",
+            "sourceParagraph": 15011
           },
           {
-            "text": "Bring human judgment, AI capability, guidance, execution, and progress into one evolving operating experience. Start with what matters now, carry context forward, and go deeper as your needs grow.",
-            "sourceParagraph": 104
+            "text": "The Companion uses relevant context to surface the questions, options, and next steps connected to that work.",
+            "sourceParagraph": 15012
           },
           {
-            "text": "CTA: Experience LAMID ONE | See How It Works",
-            "sourceParagraph": 105
+            "text": "Choose a task-specific tool when you need structured analysis, then carry the useful finding into a plan or action.",
+            "sourceParagraph": 15013
+          },
+          {
+            "text": "Review what changed and decide what to do next.",
+            "sourceParagraph": 15014
           }
-        ],
-        "addedFrom": "Pithy"
+        ]
       },
       {
-        "label": "Start With Your Objective",
-        "title": "Start With Your Objective",
+        "label": "HUMAN DIRECTION",
+        "title": "Intelligence works within human direction.",
         "paragraphs": [
           {
-            "text": "Start With Your Objective",
-            "sourceParagraph": 106
+            "text": "AI support",
+            "sourceParagraph": 15015
           },
           {
-            "text": "The LAMID ONE Companion works from the situation in front of you and the relevant context carried forward over time, surfaces what matters now, and guides the next step without making you navigate the architecture underneath.",
-            "sourceParagraph": 107
+            "text": "AI can organize relevant context, compare information, explain its reasoning, and prepare recommendations.",
+            "sourceParagraph": 15016
           },
           {
-            "text": "CTA: Explore the Companion",
-            "sourceParagraph": 108
+            "text": "Human judgment",
+            "sourceParagraph": 15017
+          },
+          {
+            "text": "You set the objective, review the reasoning, and decide what happens. Consequential work pauses for your approval.",
+            "sourceParagraph": 15018
+          },
+          {
+            "text": "Adviser support",
+            "sourceParagraph": 15019
+          },
+          {
+            "text": "When the work needs experience or a second perspective, an adviser can join the conversation.",
+            "sourceParagraph": 15020
           }
-        ],
-        "addedFrom": "Pithy"
+        ]
       },
       {
-        "label": "Continuous Intelligence Keeps the Operating Context Current",
-        "title": "Continuous Intelligence Keeps the Operating Context Current",
+        "label": "CONTINUITY AND CONTROL",
+        "title": "Carry useful context forward.",
         "paragraphs": [
           {
-            "text": "Continuous Intelligence Keeps the Operating Context Current",
-            "sourceParagraph": 109
+            "text": "With permission, relevant context and progress can remain available across sessions so you can continue from the work already done.",
+            "sourceParagraph": 15021
           },
           {
-            "text": "Permitted signals can be sensed, understood, compared, and carried into recommendations as conditions change. Action remains bounded by authorization, and consequential commitment pauses for human judgment unless that exact authority was explicitly delegated in advance under policy.",
-            "sourceParagraph": 110
+            "text": "Review what is remembered, which sources or workflows may continue, and what each permission allows.",
+            "sourceParagraph": 15022
+          },
+          {
+            "text": "You can inspect progress, change direction, pause, or revoke permission through the available controls.",
+            "sourceParagraph": 15023
+          },
+          {
+            "text": "Any ongoing work remains within its defined authorization. New consequential decisions stay with people.",
+            "sourceParagraph": 15024
           }
-        ],
-        "addedFrom": "Pithy"
+        ]
       },
       {
-        "label": "Persistent Progression",
-        "title": "Persistent Progression",
+        "label": "RELEVANT DEPTH",
+        "title": "The same method supports different kinds of work.",
         "paragraphs": [
           {
-            "text": "Persistent Progression",
-            "sourceParagraph": 111
+            "text": "An individual can begin with a personal decision. A founder can bring a business question. A team can coordinate shared work, and an organization can apply governance across responsibilities.",
+            "sourceParagraph": 15025
           },
           {
-            "text": "Permitted context, intelligence, and already-authorized work can continue progressing across time. Every progression stays inside defined permissions, can be inspected, and can be redirected, paused, revoked, or overridden by an authorized human.",
-            "sourceParagraph": 112
+            "text": "The context changes the tools, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
+            "sourceParagraph": 15026
+          },
+          {
+            "text": "Start with the depth that helps now, then move into related tools and workflows as the work calls for them.",
+            "sourceParagraph": 15027
           }
-        ],
-        "addedFrom": "Pithy"
-      },
-      {
-        "label": "One OS. Different Relevant Depth.",
-        "title": "One OS. Different Relevant Depth.",
-        "paragraphs": [
-          {
-            "text": "One OS. Different Relevant Depth.",
-            "sourceParagraph": 113
-          },
-          {
-            "text": "Persistent progression underneath. Relevant depth above.",
-            "sourceParagraph": 114
-          },
-          {
-            "text": "CTA: Experience LAMID ONE",
-            "sourceParagraph": 115
-          }
-        ],
-        "addedFrom": "Pithy"
+        ]
       }
     ]
   },
@@ -2064,26 +1528,6 @@
         {
           "text": "LAMID ONE is a web platform that guides people and organizations through growth, from deciding what matters to finishing the work.",
           "sourceParagraph": 14607
-        },
-        {
-          "text": "The experience inside the portal is intentional. Every interaction is shaped to reduce noise, remove friction, and create a sense of clarity from the moment you begin.",
-          "sourceParagraph": 14609
-        },
-        {
-          "text": "You enter one guided environment. You know where you are. You understand what matters. You feel supported as you move forward.",
-          "sourceParagraph": 14611
-        },
-        {
-          "text": "Nothing is rushed. Nothing is chaotic. Nothing demands more than you can give.",
-          "sourceParagraph": 14613
-        },
-        {
-          "text": "The portal meets you with structure, direction, and quiet intelligence — helping you progress at a pace that feels human, steady, and achievable.",
-          "sourceParagraph": 14615
-        },
-        {
-          "text": "This is the experience behind LAMID ONE: a calm, coherent space where growth becomes something you can actually do.",
-          "sourceParagraph": 14617
         },
         {
           "text": "CTA: Start Free | Limited Access | Book a Demo",
@@ -2442,26 +1886,6 @@
           {
             "text": "LAMID ONE is a web platform that guides people and organizations through growth, from deciding what matters to finishing the work.",
             "sourceParagraph": 14607
-          },
-          {
-            "text": "The experience inside the portal is intentional. Every interaction is shaped to reduce noise, remove friction, and create a sense of clarity from the moment you begin.",
-            "sourceParagraph": 14609
-          },
-          {
-            "text": "You enter one guided environment. You know where you are. You understand what matters. You feel supported as you move forward.",
-            "sourceParagraph": 14611
-          },
-          {
-            "text": "Nothing is rushed. Nothing is chaotic. Nothing demands more than you can give.",
-            "sourceParagraph": 14613
-          },
-          {
-            "text": "The portal meets you with structure, direction, and quiet intelligence — helping you progress at a pace that feels human, steady, and achievable.",
-            "sourceParagraph": 14615
-          },
-          {
-            "text": "This is the experience behind LAMID ONE: a calm, coherent space where growth becomes something you can actually do.",
-            "sourceParagraph": 14617
           },
           {
             "text": "CTA: Start Free | Limited Access | Book a Demo",
@@ -2831,26 +2255,6 @@
         {
           "text": "LAMID ONE uses adaptive, human‑centered intelligence to guide your progression — not by taking over, but by supporting your clarity, capability, and execution with calm, intentional precision.",
           "sourceParagraph": 14817
-        },
-        {
-          "text": "The intelligence inside the portal is designed to feel subtle, steady, and deeply human. It doesn’t overwhelm you with automation. It doesn’t push you into rigid systems. It doesn’t replace your judgment.",
-          "sourceParagraph": 14819
-        },
-        {
-          "text": "Instead, it listens. It adapts. It responds to your goals, your pace, and your reality.",
-          "sourceParagraph": 14821
-        },
-        {
-          "text": "From the moment you enter the portal, the intelligence works quietly in the background — shaping your experience, simplifying your decisions, and helping you move forward with confidence.",
-          "sourceParagraph": 14823
-        },
-        {
-          "text": "It highlights what matters. It reduces noise. It creates structure. It supports your next step.",
-          "sourceParagraph": 14825
-        },
-        {
-          "text": "This is intelligence designed for humans — calm, adaptive, and aligned with the way real growth actually happens.",
-          "sourceParagraph": 14827
         },
         {
           "text": "CTA: Start Free | Limited Access | Book a Demo",
@@ -3245,26 +2649,6 @@
           {
             "text": "LAMID ONE uses adaptive, human‑centered intelligence to guide your progression — not by taking over, but by supporting your clarity, capability, and execution with calm, intentional precision.",
             "sourceParagraph": 14817
-          },
-          {
-            "text": "The intelligence inside the portal is designed to feel subtle, steady, and deeply human. It doesn’t overwhelm you with automation. It doesn’t push you into rigid systems. It doesn’t replace your judgment.",
-            "sourceParagraph": 14819
-          },
-          {
-            "text": "Instead, it listens. It adapts. It responds to your goals, your pace, and your reality.",
-            "sourceParagraph": 14821
-          },
-          {
-            "text": "From the moment you enter the portal, the intelligence works quietly in the background — shaping your experience, simplifying your decisions, and helping you move forward with confidence.",
-            "sourceParagraph": 14823
-          },
-          {
-            "text": "It highlights what matters. It reduces noise. It creates structure. It supports your next step.",
-            "sourceParagraph": 14825
-          },
-          {
-            "text": "This is intelligence designed for humans — calm, adaptive, and aligned with the way real growth actually happens.",
-            "sourceParagraph": 14827
           },
           {
             "text": "CTA: Start Free | Limited Access | Book a Demo",
@@ -4001,27 +3385,23 @@
     "indexing": "index, follow",
     "canonical": "/how-it-works",
     "seo_title": "How It Works | LAMID ONE",
-    "meta_description": "Move from understanding to capability, from capability to consistent action, and let permitted progress carry forward between interactions so growth can.",
-    "title": "A guided method for clarity, capability, and execution.",
-    "description": "LAMID ONE uses a structured, human‑directed method that turns growth into a clear, achievable progression. Not a framework. Not a course. Not a set of apps. A calm, intelligent environment that guides you through the three essential movements of real growth.",
+    "meta_description": "See how LAMID ONE brings clarity, capability, and consistent delivery into a guided, human-directed flow.",
+    "title": "A guided way to decide, build and deliver.",
+    "description": "LAMID ONE brings a structured, human-directed approach to growth. A calm, connected platform guides you through three essential movements: see clearly, strengthen what matters, and follow through.",
     "hero": {
-      "title": "A guided method for clarity, capability, and execution.",
+      "title": "A guided way to decide, build and deliver.",
       "paragraphs": [
         {
-          "text": "A guided method for clarity, capability, and execution.",
+          "text": "A guided way to decide, build and deliver.",
           "sourceParagraph": 14207
         },
         {
-          "text": "LAMID ONE uses a structured, human‑directed method that turns growth into a clear, achievable progression. Not a framework. Not a course. Not a set of apps. A calm, intelligent environment that guides you through the three essential movements of real growth.",
+          "text": "LAMID ONE brings a structured, human-directed approach to growth. A calm, connected platform guides you through three essential movements: see clearly, strengthen what matters, and follow through.",
           "sourceParagraph": 14209
         },
         {
           "text": "Every meaningful transformation follows a pattern. First, you see clearly. Then, you strengthen what matters. Finally, you follow through with confidence.",
           "sourceParagraph": 14211
-        },
-        {
-          "text": "LAMID ONE brings these movements together into one unified method — a guided flow that adapts to your goals, your pace, and your reality. It removes noise, reduces friction, and creates a steady rhythm of progress.",
-          "sourceParagraph": 14213
         },
         {
           "text": "This is the method behind the intelligent portal: a simple, powerful sequence that helps individuals, teams, and organizations grow with clarity, capability, and consistent execution.",
@@ -4329,23 +3709,19 @@
     ],
     "blocks": [
       {
-        "title": "A guided method for clarity, capability, and execution.",
+        "title": "A guided way to decide, build and deliver.",
         "paragraphs": [
           {
-            "text": "A guided method for clarity, capability, and execution.",
+            "text": "A guided way to decide, build and deliver.",
             "sourceParagraph": 14207
           },
           {
-            "text": "LAMID ONE uses a structured, human‑directed method that turns growth into a clear, achievable progression. Not a framework. Not a course. Not a set of apps. A calm, intelligent environment that guides you through the three essential movements of real growth.",
+            "text": "LAMID ONE brings a structured, human-directed approach to growth. A calm, connected platform guides you through three essential movements: see clearly, strengthen what matters, and follow through.",
             "sourceParagraph": 14209
           },
           {
             "text": "Every meaningful transformation follows a pattern. First, you see clearly. Then, you strengthen what matters. Finally, you follow through with confidence.",
             "sourceParagraph": 14211
-          },
-          {
-            "text": "LAMID ONE brings these movements together into one unified method — a guided flow that adapts to your goals, your pace, and your reality. It removes noise, reduces friction, and creates a steady rhythm of progress.",
-            "sourceParagraph": 14213
           },
           {
             "text": "This is the method behind the intelligent portal: a simple, powerful sequence that helps individuals, teams, and organizations grow with clarity, capability, and consistent execution.",
@@ -6454,11 +5830,11 @@
         ]
       },
       {
-        "label": "Structure Supports the Work. It Does Not Replace It.",
-        "title": "Structure Supports the Work. It Does Not Replace It.",
+        "label": "Give your creative work room to grow.",
+        "title": "Give your creative work room to grow.",
         "paragraphs": [
           {
-            "text": "Structure Supports the Work. It Does Not Replace It.",
+            "text": "Give your creative work room to grow.",
             "sourceParagraph": 405
           },
           {
@@ -6533,11 +5909,11 @@
         ]
       },
       {
-        "label": "Structure Supports the Work. It Does Not Replace It.",
-        "title": "Structure Supports the Work. It Does Not Replace It.",
+        "label": "Give your creative work room to grow.",
+        "title": "Give your creative work room to grow.",
         "paragraphs": [
           {
-            "text": "Structure Supports the Work. It Does Not Replace It.",
+            "text": "Give your creative work room to grow.",
             "sourceParagraph": 405
           },
           {
@@ -8963,11 +8339,11 @@
         ]
       },
       {
-        "label": "Expand the OS - Not a Collection of Separate Products.",
-        "title": "Expand the OS - Not a Collection of Separate Products.",
+        "label": "One platform that grows with your needs.",
+        "title": "One platform that grows with your needs.",
         "paragraphs": [
           {
-            "text": "Expand the OS - Not a Collection of Separate Products.",
+            "text": "One platform that grows with your needs.",
             "sourceParagraph": 619
           },
           {
@@ -9042,11 +8418,11 @@
         ]
       },
       {
-        "label": "Expand the OS - Not a Collection of Separate Products.",
-        "title": "Expand the OS - Not a Collection of Separate Products.",
+        "label": "One platform that grows with your needs.",
+        "title": "One platform that grows with your needs.",
         "paragraphs": [
           {
-            "text": "Expand the OS - Not a Collection of Separate Products.",
+            "text": "One platform that grows with your needs.",
             "sourceParagraph": 619
           },
           {
@@ -11290,28 +10666,28 @@
     "name": "CASE STUDIES",
     "source_paragraph": 768,
     "gates": [
-      "EVIDENCE GATE - Publish only case studies, research findings, metrics, quotes, and methods that are documented, attributable, approved, and within scope."
+      "EVIDENCE GATE - Every published story is supported by clear sources, approved context, and evidence within its stated scope."
     ],
     "route": "/case-studies",
     "indexing": "index, follow",
     "canonical": "/case-studies",
-    "seo_title": "Case Studies | LAMID ONE",
-    "meta_description": "Explore published case studies with verified context, outcomes, and lessons.",
-    "title": "Evidence, Not Claims.",
-    "description": "Explore published case studies with verified context, outcomes, and lessons.",
+    "seo_title": "Customer Stories | LAMID ONE",
+    "meta_description": "Customer stories share the context, evidence, and lessons behind work with LAMID ONE.",
+    "title": "Customer stories, grounded in evidence.",
+    "description": "A useful customer story makes the context, work, evidence, and lessons clear.",
     "hero": {
-      "title": "Evidence, Not Claims.",
+      "title": "Customer stories, grounded in evidence.",
       "paragraphs": [
         {
-          "text": "Evidence, Not Claims.",
+          "text": "Customer stories, grounded in evidence.",
           "sourceParagraph": 774
         },
         {
-          "text": "Explore published case studies with verified context, outcomes, and lessons.",
+          "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
           "sourceParagraph": 775
         },
         {
-          "text": "CTA: Browse Case Studies",
+          "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
           "sourceParagraph": 776
         }
       ]
@@ -11348,7 +10724,7 @@
             "sourceParagraph": 781
           },
           {
-            "text": "Explore case studies by outcome - for example, stronger delivery, clearer financial decisions, better team alignment, or faster decision cycles.",
+            "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
             "sourceParagraph": 782
           }
         ]
@@ -11362,7 +10738,7 @@
             "sourceParagraph": 783
           },
           {
-            "text": "See what worked, what did not, and what other teams can learn.",
+            "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
             "sourceParagraph": 784
           },
           {
@@ -11374,18 +10750,18 @@
     ],
     "blocks": [
       {
-        "title": "Evidence, Not Claims.",
+        "title": "Customer stories, grounded in evidence.",
         "paragraphs": [
           {
-            "text": "Evidence, Not Claims.",
+            "text": "Customer stories, grounded in evidence.",
             "sourceParagraph": 774
           },
           {
-            "text": "Explore published case studies with verified context, outcomes, and lessons.",
+            "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
             "sourceParagraph": 775
           },
           {
-            "text": "CTA: Browse Case Studies",
+            "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
             "sourceParagraph": 776
           }
         ]
@@ -11421,7 +10797,7 @@
             "sourceParagraph": 781
           },
           {
-            "text": "Explore case studies by outcome - for example, stronger delivery, clearer financial decisions, better team alignment, or faster decision cycles.",
+            "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
             "sourceParagraph": 782
           }
         ]
@@ -11435,7 +10811,7 @@
             "sourceParagraph": 783
           },
           {
-            "text": "See what worked, what did not, and what other teams can learn.",
+            "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
             "sourceParagraph": 784
           },
           {
@@ -13458,7 +12834,7 @@
             "sourceParagraph": 14093
           },
           {
-            "text": "We believe growth is not a race. It is a guided progression — one that becomes possible when the environment supports it.",
+            "text": "Growth takes shape through a guided progression, supported by an environment that helps people move forward.",
             "sourceParagraph": 14095
           },
           {
@@ -13536,7 +12912,7 @@
             "sourceParagraph": 14153
           },
           {
-            "text": "Progress is not a sudden leap. It is a guided movement — one clear step at a time.",
+            "text": "Progress builds through guided movement, one clear step at a time.",
             "sourceParagraph": 14155
           },
           {
@@ -13866,7 +13242,7 @@
             "sourceParagraph": 14093
           },
           {
-            "text": "We believe growth is not a race. It is a guided progression — one that becomes possible when the environment supports it.",
+            "text": "Growth takes shape through a guided progression, supported by an environment that helps people move forward.",
             "sourceParagraph": 14095
           },
           {
@@ -13944,7 +13320,7 @@
             "sourceParagraph": 14153
           },
           {
-            "text": "Progress is not a sudden leap. It is a guided movement — one clear step at a time.",
+            "text": "Progress builds through guided movement, one clear step at a time.",
             "sourceParagraph": 14155
           },
           {
@@ -14410,19 +13786,19 @@
             "sourceParagraph": 7977
           },
           {
-            "text": "The portal brings everything together in one guided environment — not by adding complexity, but by removing it. It helps people see what matters, strengthen the skills and systems that support progress, and move forward with dependable execution.",
+            "text": "LAMID ONE brings the work together in one guided platform. People see what matters, strengthen the skills and systems that support progress, and move forward with dependable delivery.",
             "sourceParagraph": 7979
           },
           {
-            "text": "LAMID ONE is built on the belief that intelligence should enhance human judgment, not replace it. And that structure should make life easier, not heavier.",
+            "text": "Intelligence helps people think through choices while judgment and decisions remain human. Thoughtful structure makes daily work easier to navigate and progress easier to sustain.",
             "sourceParagraph": 7981
           },
           {
-            "text": "This is not a platform. Not a dashboard. Not another system to manage.",
+            "text": "LAMID ONE brings the work into one connected, guided platform.",
             "sourceParagraph": 7983
           },
           {
-            "text": "It is a unified environment for growth.",
+            "text": "Clarity, capability, and consistent delivery come together in that environment.",
             "sourceParagraph": 7985
           }
         ],
@@ -14478,7 +13854,7 @@
             "sourceParagraph": 8007
           },
           {
-            "text": "Technology should elevate human judgment, not replace it.",
+            "text": "Technology should strengthen human judgment while people stay in control.",
             "sourceParagraph": 8009
           },
           {
@@ -14841,19 +14217,19 @@
             "sourceParagraph": 7977
           },
           {
-            "text": "The portal brings everything together in one guided environment — not by adding complexity, but by removing it. It helps people see what matters, strengthen the skills and systems that support progress, and move forward with dependable execution.",
+            "text": "LAMID ONE brings the work together in one guided platform. People see what matters, strengthen the skills and systems that support progress, and move forward with dependable delivery.",
             "sourceParagraph": 7979
           },
           {
-            "text": "LAMID ONE is built on the belief that intelligence should enhance human judgment, not replace it. And that structure should make life easier, not heavier.",
+            "text": "Intelligence helps people think through choices while judgment and decisions remain human. Thoughtful structure makes daily work easier to navigate and progress easier to sustain.",
             "sourceParagraph": 7981
           },
           {
-            "text": "This is not a platform. Not a dashboard. Not another system to manage.",
+            "text": "LAMID ONE brings the work into one connected, guided platform.",
             "sourceParagraph": 7983
           },
           {
-            "text": "It is a unified environment for growth.",
+            "text": "Clarity, capability, and consistent delivery come together in that environment.",
             "sourceParagraph": 7985
           }
         ],
@@ -14909,7 +14285,7 @@
             "sourceParagraph": 8007
           },
           {
-            "text": "Technology should elevate human judgment, not replace it.",
+            "text": "Technology should strengthen human judgment while people stay in control.",
             "sourceParagraph": 8009
           },
           {
@@ -15129,15 +14505,15 @@
             "sourceParagraph": 7311
           },
           {
-            "text": "The portal brings everything into one environment — not by adding complexity, but by removing it. It helps people see what matters, strengthen the skills and systems that support progress, and move forward with dependable follow‑through. It is built on the belief that intelligence should enhance human judgment, not replace it. And that structure should make life easier, not heavier.",
+            "text": "The platform brings advisers, AI, and practical tools together around the work. It helps people understand priorities, build capability, and deliver consistently. AI supports human judgment, and people remain in control of decisions.",
             "sourceParagraph": 7313
           },
           {
-            "text": "LAMID ONE is not an app. It is not a platform. It is not another system to manage.",
+            "text": "It brings clarity, capability, and consistent delivery together in one guided environment.",
             "sourceParagraph": 7315
           },
           {
-            "text": "It is a guided environment for growth — one place where clarity, capability, and execution work together.",
+            "text": "This makes growth easier to navigate and progress easier to sustain.",
             "sourceParagraph": 7317
           },
           {
@@ -15250,15 +14626,15 @@
             "sourceParagraph": 7311
           },
           {
-            "text": "The portal brings everything into one environment — not by adding complexity, but by removing it. It helps people see what matters, strengthen the skills and systems that support progress, and move forward with dependable follow‑through. It is built on the belief that intelligence should enhance human judgment, not replace it. And that structure should make life easier, not heavier.",
+            "text": "The platform brings advisers, AI, and practical tools together around the work. It helps people understand priorities, build capability, and deliver consistently. AI supports human judgment, and people remain in control of decisions.",
             "sourceParagraph": 7313
           },
           {
-            "text": "LAMID ONE is not an app. It is not a platform. It is not another system to manage.",
+            "text": "It brings clarity, capability, and consistent delivery together in one guided environment.",
             "sourceParagraph": 7315
           },
           {
-            "text": "It is a guided environment for growth — one place where clarity, capability, and execution work together.",
+            "text": "This makes growth easier to navigate and progress easier to sustain.",
             "sourceParagraph": 7317
           },
           {
@@ -15606,59 +14982,100 @@
     "indexing": "index, follow",
     "canonical": "/contact",
     "seo_title": "Contact | LAMID ONE",
-    "meta_description": "Choose what you need and reach the right team faster.",
-    "title": "Start the Right Conversation.",
-    "description": "Choose what you need and reach the right team faster.",
+    "meta_description": "Choose what you need and we’ll get you to the right person.",
+    "title": "Start the right conversation.",
+    "description": "Choose what you need and we’ll get you to the right person.",
+    "infoPage": {
+      "eyebrow": "Contact",
+      "lede": "Choose what you need and we’ll get you to the right person.",
+      "chapter": {
+        "tag": "Choose a topic",
+        "headline": "Tell us the outcome",
+        "intro": "Describe what you are trying to achieve and the context that matters."
+      },
+      "primaryLabel": "Email us",
+      "secondary": {
+        "label": "Request a demo",
+        "to": "/demo/request"
+      },
+      "cards": [
+        {
+          "title": "Product question",
+          "line": "Ask how LamidOne works for your situation.",
+          "to": "/product"
+        },
+        {
+          "title": "Pricing",
+          "line": "Find the plan that fits, or ask about a custom one.",
+          "to": "/pricing"
+        },
+        {
+          "title": "Expert help",
+          "line": "Bring an adviser in on a decision or project.",
+          "to": "/experts"
+        },
+        {
+          "title": "Enterprise",
+          "line": "Security, governance and deployment questions.",
+          "to": "/enterprise"
+        }
+      ],
+      "closing": "Know what you want to do?",
+      "closingActions": [
+        {
+          "label": "Get started",
+          "to": "/signup"
+        },
+        {
+          "label": "See pricing",
+          "to": "/pricing"
+        }
+      ]
+    },
     "hero": {
-      "title": "Start the Right Conversation.",
+      "title": "Start the right conversation.",
       "paragraphs": [
         {
-          "text": "Start the Right Conversation.",
+          "text": "Start the right conversation.",
           "sourceParagraph": 1139
         },
         {
-          "text": "Choose what you need and reach the right team faster.",
+          "text": "Choose what you need and we’ll get you to the right person.",
           "sourceParagraph": 1140
         },
         {
-          "text": "CTA: Send Inquiry",
+          "text": "CTA: Email us",
           "sourceParagraph": 1141
         }
       ]
     },
     "sections": [
       {
-        "label": "Choose a Topic",
-        "title": "Choose a Topic",
+        "label": "Choose a topic",
+        "title": "Tell us the outcome",
         "paragraphs": [
           {
-            "text": "Choose a Topic",
+            "text": "Tell us the outcome",
             "sourceParagraph": 1142
           },
           {
-            "text": "• Product question",
+            "text": "Describe what you are trying to achieve and the context that matters.",
             "sourceParagraph": 1143
           },
           {
-            "text": "• Business inquiry",
+            "text": "Product question — Ask how LamidOne works for your situation.",
             "sourceParagraph": 1144
           },
           {
-            "text": "• Enterprise",
+            "text": "Pricing — Find the plan that fits, or ask about a custom one.",
             "sourceParagraph": 1145
-          }
-        ]
-      },
-      {
-        "label": "Tell Us the Outcome",
-        "title": "Tell Us the Outcome",
-        "paragraphs": [
+          },
           {
-            "text": "Tell Us the Outcome",
+            "text": "Expert help — Bring an adviser in on a decision or project.",
             "sourceParagraph": 1146
           },
           {
-            "text": "Describe what you are trying to achieve and the context that matters.",
+            "text": "Enterprise — Security, governance and deployment questions.",
             "sourceParagraph": 1147
           }
         ]
@@ -15666,54 +15083,48 @@
     ],
     "blocks": [
       {
-        "title": "Start the Right Conversation.",
+        "title": "Start the right conversation.",
         "paragraphs": [
           {
-            "text": "Start the Right Conversation.",
+            "text": "Start the right conversation.",
             "sourceParagraph": 1139
           },
           {
-            "text": "Choose what you need and reach the right team faster.",
+            "text": "Choose what you need and we’ll get you to the right person.",
             "sourceParagraph": 1140
           },
           {
-            "text": "CTA: Send Inquiry",
+            "text": "CTA: Email us",
             "sourceParagraph": 1141
           }
         ]
       },
       {
-        "label": "Choose a Topic",
-        "title": "Choose a Topic",
+        "label": "Choose a topic",
+        "title": "Tell us the outcome",
         "paragraphs": [
           {
-            "text": "Choose a Topic",
+            "text": "Tell us the outcome",
             "sourceParagraph": 1142
           },
           {
-            "text": "• Product question",
+            "text": "Describe what you are trying to achieve and the context that matters.",
             "sourceParagraph": 1143
           },
           {
-            "text": "• Business inquiry",
+            "text": "Product question — Ask how LamidOne works for your situation.",
             "sourceParagraph": 1144
           },
           {
-            "text": "• Enterprise",
+            "text": "Pricing — Find the plan that fits, or ask about a custom one.",
             "sourceParagraph": 1145
-          }
-        ]
-      },
-      {
-        "label": "Tell Us the Outcome",
-        "title": "Tell Us the Outcome",
-        "paragraphs": [
+          },
           {
-            "text": "Tell Us the Outcome",
+            "text": "Expert help — Bring an adviser in on a decision or project.",
             "sourceParagraph": 1146
           },
           {
-            "text": "Describe what you are trying to achieve and the context that matters.",
+            "text": "Enterprise — Security, governance and deployment questions.",
             "sourceParagraph": 1147
           }
         ]

@@ -13,8 +13,8 @@ import { HERO_TOOL, START_HERE, type FeaturedTool } from './featuredTools';
 import '../../../engines/pages/engines-page.css';
 import './demo-tools.css';
 
-/** Demo catalogue, shown after email verification. Profile workspaces save sample progress;
- * standalone engine previews still run without creating a paid account. */
+/** Public demo: live, uncharged engine trials come first. The optional saved sample workspace
+ * below has its own email-verification step; it does not gate these standalone engine runs. */
 export function DemoToolsPage() {
   const heroToolRef = useRef<HTMLElement>(null);
   const pickedRef = useRef<HTMLDivElement>(null);
@@ -26,21 +26,11 @@ export function DemoToolsPage() {
 
   return (
     <div className="demo-tools-page" data-scroll-feedback="off">
-      <section id="profile-demos" className="demo-slide">
-        <div className="demo-tools-container">
-          <DemoProfileLauncher />
-        </div>
-      </section>
-      <section className="demo-slide">
-        <div className="demo-tools-container">
-          <DemoVideoLibrary />
-        </div>
-      </section>
-      <section className="demo-slide demo-hero">
+      <section id="demo-player" className="demo-slide demo-hero">
         <div className="demo-tools-container demo-hero-grid">
           <div className="demo-hero-copy">
             <span className="demo-tools-eyebrow">Try it — no account needed</span>
-            <h2>Is your next decision ready to make?</h2>
+            <h1>Is your next decision ready to make?</h1>
             <p>
               Run a real diagnostic in about {HERO_TOOL.minutes} minutes. Same engine as the
               product. Nothing saved, nothing charged.
@@ -74,7 +64,7 @@ export function DemoToolsPage() {
         <div className="demo-tools-container">
           <div className="demo-section-head">
             <span className="demo-tools-eyebrow">Start here</span>
-            <h2>Four more worth a first try</h2>
+            <h2>Choose another engine to try</h2>
             <p>
               Each one is quick, runs for real, and answers a question you probably already have.
             </p>
@@ -120,6 +110,16 @@ export function DemoToolsPage() {
       </section>
 
       <AllEngineDemos />
+      <section className="demo-slide">
+        <div className="demo-tools-container">
+          <DemoVideoLibrary />
+        </div>
+      </section>
+      <section id="profile-demos" className="demo-slide demo-slide-alt">
+        <div className="demo-tools-container">
+          <DemoProfileLauncher />
+        </div>
+      </section>
       <section className="demo-slide demo-closing">
         <div className="demo-tools-container">
           <h2>Save your results and unlock everything.</h2>

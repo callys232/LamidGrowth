@@ -84,7 +84,7 @@ const enginePlaybooks: Card[] = playbooks.map((p) => ({
   pillar: p.category,
   title: p.title,
   summary: p.description,
-  time: `${p.tools.length} tools`,
+  time: 'Engine playbook',
   source: 'engines',
   steps: p.tools.map((t) => ({ title: t.name, text: t.purpose })),
 }));

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { networkApi, setApiTransport, ApiError } from '../../../../api';
 import {
   demoIdentity,
@@ -8,10 +8,19 @@ import {
   rememberDemo,
   type DemoIdentity,
 } from '../../../workspace/sandbox/demoAccess';
+import {
+  PROFILES,
+  TIERS,
+  type DemoProfile,
+  type DemoTier,
+} from '../../../workspace/demo/personaList';
 import './demo-access.css';
 
 export function DemoAccessGate({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const profileParam = searchParams.get('profile') as DemoProfile | null;
+  const tierParam = searchParams.get('tier') as DemoTier | null;
   const [action] = useState(() => {
     const params = new URLSearchParams(window.location.hash.slice(1));
     return {
@@ -89,6 +98,8 @@ export function DemoAccessGate({ children }: { children: ReactNode }) {
       await networkApi('/demo/register', {
         name: data.get('name'),
         email: data.get('email'),
+        profile: profileParam && PROFILES.includes(profileParam) ? profileParam : undefined,
+        tier: tierParam && TIERS.includes(tierParam) ? tierParam : undefined,
         followup: data.get('followup') === 'on',
       });
       setSent(true);

@@ -1569,7 +1569,7 @@ export function mountAgents(
       })),
     );
   });
-  // Filtered the same way GET /api/engines already filters the 248 diagnostic engines — a
+  // Filtered the same way GET /api/engines already filters the 63 current catalog engines — a
   // workspace should only ever be offered agents it can actually invoke (send() enforces the same
   // hasToolAccess check at message time), not the full catalog with silent 403s discovered later.
   app.get('/api/companion/agents', async (req, res) => {

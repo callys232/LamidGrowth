@@ -9,7 +9,7 @@ const excluded =
 
 function usePhone() {
   const query = '(max-width: 768px) and (prefers-reduced-motion: no-preference)';
-  const [on, setOn] = useState(() => window.matchMedia(query).matches);
+  const [on, setOn] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
   useEffect(() => {
     const media = window.matchMedia(query);
     const update = () => setOn(media.matches);

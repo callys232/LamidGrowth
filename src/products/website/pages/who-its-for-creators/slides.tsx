@@ -43,7 +43,7 @@ export function BuildTheBusinessBehindTheWorkSlide3({ embedded = false }: Docume
   );
 }
 
-/** Structure Supports the Work. It Does Not Replace It. */
+/** Give your creative work room to grow. */
 export function StructureSupportsTheWorkItDoesNotReplaceItSlide4({
   embedded = false,
 }: DocumentPageProps) {

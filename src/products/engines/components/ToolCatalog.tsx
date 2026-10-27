@@ -95,12 +95,15 @@ export function ToolCatalog({
   onOpen,
   action,
   idPrefix = 'tools',
+  showCounts = false,
 }: {
   /** null while loading. */
   engines: EngineSummary[] | null;
   onOpen?: (engine: EngineSummary) => void;
   action?: (engine: EngineSummary) => ReactNode;
   idPrefix?: string;
+  /** Show inventory counts in an authenticated workspace catalog, not in public catalogs. */
+  showCounts?: boolean;
 }) {
   const [area, setArea] = useState('All');
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -131,10 +134,6 @@ export function ToolCatalog({
         {['All', ...AREAS.map((a) => a.name)].map((name) => {
           const meta = areaOf(name);
           const Icon = meta?.icon;
-          const count =
-            name === 'All'
-              ? (engines?.length ?? 0)
-              : (engines?.filter((e) => e.area === name).length ?? 0);
           return (
             <button
               key={name}
@@ -148,7 +147,13 @@ export function ToolCatalog({
             >
               {Icon && <Icon size={14} aria-hidden="true" />}
               {name}
-              <span>{count}</span>
+              {showCounts && (
+                <span>
+                  {name === 'All'
+                    ? (engines?.length ?? 0)
+                    : (engines?.filter((e) => e.area === name).length ?? 0)}
+                </span>
+              )}
             </button>
           );
         })}
@@ -222,9 +227,11 @@ export function ToolCatalog({
                         <strong>{a.name}</strong>
                         <small>{a.helps}</small>
                       </span>
-                      <span className="ws-section-count">
-                        {tools.length} {tools.length === 1 ? 'engine' : 'engines'}
-                      </span>
+                      {showCounts && (
+                        <span className="ws-section-count">
+                          {tools.length} {tools.length === 1 ? 'engine' : 'engines'}
+                        </span>
+                      )}
                       <ChevronDown className="ws-section-chevron" size={18} aria-hidden="true" />
                     </button>
                   </h2>

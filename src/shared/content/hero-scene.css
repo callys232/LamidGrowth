@@ -1,6 +1,5 @@
-/* Public page heroes over a still from the homepage video (--hero-scene, set by ContentPage
-   from heroScene.ts). Same treatment as the homepage: muted footage under a dark layer that is
-   heaviest behind the text, so the image sets the mood without distracting from the copy. */
+/* Public page heroes use quiet, abstract brand scenes (--hero-scene, set by ContentPage from
+   heroScene.ts). The line art adds depth while keeping the page copy as the main visual focus. */
 
 .content-page[data-hero-scene] {
   overflow-x: clip;

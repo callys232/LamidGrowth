@@ -1,4 +1,4 @@
-{
+﻿{
   "page": 54,
   "name": "CONTACT",
   "source_paragraph": 1133,
@@ -7,62 +7,51 @@
   "indexing": "index, follow",
   "canonical": "/contact",
   "seo_title": "Contact | LAMID ONE",
-  "meta_description": "Choose what you need and reach the right team faster.",
-  "title": "Start the Right Conversation.",
-  "description": "Choose what you need and reach the right team faster.",
+  "meta_description": "Choose what you need and we’ll get you to the right person.",
+  "title": "Start the right conversation.",
+  "description": "Choose what you need and we’ll get you to the right person.",
   "hero": {
-    "title": "Start the Right Conversation.",
+    "title": "Start the right conversation.",
     "paragraphs": [
-      {
-        "text": "Start the Right Conversation.",
-        "sourceParagraph": 1139
-      },
-      {
-        "text": "Choose what you need and reach the right team faster.",
-        "sourceParagraph": 1140
-      },
-      {
-        "text": "CTA: Send Inquiry",
-        "sourceParagraph": 1141
-      }
+      { "text": "Start the right conversation.", "sourceParagraph": 1139 },
+      { "text": "Choose what you need and we’ll get you to the right person.", "sourceParagraph": 1140 },
+      { "text": "CTA: Email us", "sourceParagraph": 1141 }
     ]
   },
   "sections": [
     {
-      "label": "Choose a Topic",
-      "title": "Choose a Topic",
+      "label": "Choose a topic",
+      "title": "Tell us the outcome",
       "paragraphs": [
-        {
-          "text": "Choose a Topic",
-          "sourceParagraph": 1142
-        },
-        {
-          "text": "• Product question",
-          "sourceParagraph": 1143
-        },
-        {
-          "text": "• Business inquiry",
-          "sourceParagraph": 1144
-        },
-        {
-          "text": "• Enterprise",
-          "sourceParagraph": 1145
-        }
-      ]
-    },
-    {
-      "label": "Tell Us the Outcome",
-      "title": "Tell Us the Outcome",
-      "paragraphs": [
-        {
-          "text": "Tell Us the Outcome",
-          "sourceParagraph": 1146
-        },
-        {
-          "text": "Describe what you are trying to achieve and the context that matters.",
-          "sourceParagraph": 1147
-        }
+        { "text": "Tell us the outcome", "sourceParagraph": 1142 },
+        { "text": "Describe what you are trying to achieve and the context that matters.", "sourceParagraph": 1143 },
+        { "text": "Product question — Ask how LamidOne works for your situation.", "sourceParagraph": 1144 },
+        { "text": "Pricing — Find the plan that fits, or ask about a custom one.", "sourceParagraph": 1145 },
+        { "text": "Expert help — Bring an adviser in on a decision or project.", "sourceParagraph": 1146 },
+        { "text": "Enterprise — Security, governance and deployment questions.", "sourceParagraph": 1147 }
       ]
     }
-  ]
+  ],
+  "infoPage": {
+    "eyebrow": "Contact",
+    "lede": "Choose what you need and we’ll get you to the right person.",
+    "chapter": {
+      "tag": "Choose a topic",
+      "headline": "Tell us the outcome",
+      "intro": "Describe what you are trying to achieve and the context that matters."
+    },
+    "primaryLabel": "Email us",
+    "secondary": { "label": "Request a demo", "to": "/demo/request" },
+    "cards": [
+      { "title": "Product question", "line": "Ask how LamidOne works for your situation.", "to": "/product" },
+      { "title": "Pricing", "line": "Find the plan that fits, or ask about a custom one.", "to": "/pricing" },
+      { "title": "Expert help", "line": "Bring an adviser in on a decision or project.", "to": "/experts" },
+      { "title": "Enterprise", "line": "Security, governance and deployment questions.", "to": "/enterprise" }
+    ],
+    "closing": "Know what you want to do?",
+    "closingActions": [
+      { "label": "Get started", "to": "/signup" },
+      { "label": "See pricing", "to": "/pricing" }
+    ]
+  }
 }
