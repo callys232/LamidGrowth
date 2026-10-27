@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { brandTaglines } from '../../../../shared/brand';
 import '../motion.css';
 import { MoreDetail } from '../../../../shared/content/MoreDetail';
 import './how-it-works.css';
+import { WorkflowArt } from './WorkflowArt';
 
 type Step = { title: string; line: string };
 type Engine = { name: string; clip: string };
@@ -257,6 +257,7 @@ function playVideo(event: { currentTarget: HTMLElement }) {
 export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
   const [active, setActive] = useState(0);
   const engine = content.engines[active];
+  const second = content.engines[(active + 1) % content.engines.length];
   const nav = content.group === 'product' ? productNav : cycle;
   const position = nav.findIndex((item) => item.id === content.id);
   const next = nav[position + 1];
@@ -275,7 +276,8 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
         ))}
       </nav>
 
-      <header className="hx-hero">
+      <header className={content.id === 'workflows' ? 'hx-hero has-art' : 'hx-hero'}>
+        {content.id === 'workflows' && <WorkflowArt />}
         <p className="hx-eyebrow">{content.eyebrow}</p>
         <h1>{content.title}</h1>
         <div className="hx-hero-foot">
@@ -323,7 +325,7 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
             ))}
           </ul>
         </div>
-        <div className="hx-stage-view">
+        <div className="hx-stage-view" data-pose={active % 3}>
           <div className="hx-frame" onMouseEnter={playVideo} onFocus={playVideo} tabIndex={0}>
             <video
               key={engine.clip}
@@ -338,12 +340,24 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
               <source src={`/videos/engines/${engine.clip}.mp4`} type="video/mp4" />
             </video>
           </div>
+          {content.engines.length > 1 && (
+            <div className="hx-frame hx-frame-second" aria-hidden="true">
+              <video
+                key={second.clip}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                tabIndex={-1}
+              >
+                <source src={`/videos/engines/${second.clip}.webm`} type="video/webm" />
+                <source src={`/videos/engines/${second.clip}.mp4`} type="video/mp4" />
+              </video>
+              <span>{second.name}</span>
+            </div>
+          )}
         </div>
-      </section>
-
-      <section className="hx-human">
-        <p>{brandTaglines.authority}</p>
-        <span>The Growth Companion suggests and prepares. You decide.</span>
       </section>
 
       <MoreDetail />

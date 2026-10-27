@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { brandTaglines } from '../../../../shared/brand';
 import { heroScene } from '../../../../shared/content/heroScene';
 import '../product/product.css';
 import '../how-it-works/how-it-works.css';
@@ -424,10 +423,6 @@ export function InfoPage({ content }: { content: InfoContent }) {
       )}
 
       {content.note && <p className="info-note">{content.note}</p>}
-
-      <section className="prod-human">
-        <h2>{brandTaglines.authority}</h2>
-      </section>
 
       <MoreDetail />
 

@@ -1,0 +1,249 @@
+.wf-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  --wf-card: var(--hx-page-bg, #fff);
+  --wf-line: var(--hx-line, #d5dde8);
+  --wf-ghost: var(--hx-ghost, #dde4ee);
+  --wf-ink: var(--hx-ink, #0d1a2b);
+}
+.wf-panel {
+  fill: var(--hx-tint, #f3f6fa);
+  stroke: var(--wf-line);
+  stroke-width: 1;
+}
+.wf-grid-dot {
+  fill: var(--wf-line);
+}
+.wf-rule {
+  stroke: var(--wf-line);
+  stroke-width: 1;
+}
+.wf-card {
+  fill: var(--wf-card);
+  stroke: var(--wf-line);
+  stroke-width: 1;
+}
+.wf-node {
+  filter: drop-shadow(0 6px 12px rgba(13, 26, 43, 0.08));
+  animation: wf-active 7.2s ease-in-out infinite;
+}
+.wf-lines path {
+  stroke-dasharray: 4 6;
+  animation: wf-flow 1.2s linear infinite;
+}
+.wf-token {
+  fill: var(--wf-ink);
+  stroke: var(--wf-card);
+  stroke-width: 1.5;
+}
+.wf-gate-ring {
+  fill: none;
+  stroke: #b8923a;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wf-pulse 7.2s ease-out infinite;
+  animation-delay: 2.4s;
+}
+.wf-bar-up {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: wf-rise 7.2s ease-in-out infinite;
+}
+.wf-tick,
+.wf-done-check {
+  stroke-dasharray: 1;
+}
+.wf-tick {
+  animation: wf-draw-mid 7.2s ease-in-out infinite;
+}
+.wf-done-check {
+  animation: wf-draw-end 7.2s ease-in-out infinite;
+}
+@keyframes wf-active {
+  0%,
+  16%,
+  100% {
+    transform: translateY(0);
+  }
+  6%,
+  12% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes wf-flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+@keyframes wf-pulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  10%,
+  100% {
+    opacity: 0;
+    transform: scale(1.14, 1.22);
+  }
+}
+@keyframes wf-rise {
+  0% {
+    transform: scaleY(0.35);
+  }
+  10%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+@keyframes wf-draw-mid {
+  0%,
+  50% {
+    stroke-dashoffset: 1;
+  }
+  58%,
+  96% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes wf-draw-end {
+  0%,
+  82% {
+    stroke-dashoffset: 1;
+  }
+  90%,
+  97% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+.wf-accent {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.wf-ghost {
+  fill: var(--wf-ghost);
+}
+.wf-ink {
+  fill: var(--wf-ink);
+}
+.wf-box {
+  fill: none;
+  stroke: var(--wf-ink);
+  stroke-opacity: 0.55;
+  stroke-width: 1.5;
+}
+.wf-icon {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf-lines path {
+  fill: none;
+  stroke: var(--wf-ink);
+  stroke-opacity: 0.4;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf-arrow {
+  fill: none;
+  stroke: var(--wf-ink);
+  stroke-opacity: 0.55;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf-track {
+  fill: none;
+  stroke: var(--wf-ghost);
+  stroke-width: 5;
+}
+.wf-ring {
+  fill: none;
+  stroke: #2f6f73;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 150 202;
+  transform: rotate(-90deg);
+  transform-origin: 260px 292px;
+  animation: wf-fill 7.2s ease-in-out infinite;
+}
+.wf-hand {
+  fill: none;
+  stroke: var(--wf-ink);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf-done {
+  fill: var(--wf-ink);
+}
+.wf-done-ring {
+  fill: none;
+  stroke: #b8923a;
+  stroke-width: 1.8;
+}
+.wf-done-check {
+  fill: none;
+  stroke: #b8923a;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.wf-done-bar {
+  fill: var(--wf-card);
+}
+.wf-progress {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: wf-grow 7.2s ease-in-out infinite;
+}
+
+@keyframes wf-fill {
+  0%,
+  100% {
+    stroke-dasharray: 90 202;
+  }
+  60% {
+    stroke-dasharray: 160 202;
+  }
+}
+@keyframes wf-grow {
+  0%,
+  100% {
+    transform: scaleX(0.6);
+  }
+  60% {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-ring,
+  .wf-progress,
+  .wf-node,
+  .wf-lines path,
+  .wf-gate-ring,
+  .wf-bar-up,
+  .wf-tick,
+  .wf-done-check {
+    animation: none;
+  }
+  .wf-tick,
+  .wf-done-check {
+    stroke-dashoffset: 0;
+  }
+  .wf-tokens {
+    display: none;
+  }
+}
