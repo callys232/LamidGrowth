@@ -310,7 +310,23 @@
   :root[data-theme='dark'] .md-tabs button {
     border-color: #33414f;
   }
+  .more-detail > h2,
+  .md-intro,
+  .md-lead,
+  .md-panel {
+    text-align: center;
+  }
   .md-cards {
     grid-template-columns: 1fr;
+  }
+  .md-cards li,
+  .md-cards h4,
+  .md-cards p {
+    text-align: center;
+  }
+  .md-cards ul {
+    text-align: center;
+    list-style-position: inside;
+    padding-left: 0;
   }
 }

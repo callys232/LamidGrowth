@@ -188,7 +188,13 @@ export function ProductPage() {
           <Link to="/">Home</Link> <span aria-hidden="true">›</span> <span>Product</span>
         </nav>
         <p className="prod-eyebrow">The LamidOne platform</p>
-        <h1>Decide what matters. Build what’s needed. Deliver the work.</h1>
+        <h1>
+          <span>Decide what matters.</span>
+          <br />
+          <span>Build what’s needed.</span>
+          <br />
+          <span>Deliver the work.</span>
+        </h1>
         <p className="prod-lede">{platformMessaging.description}</p>
         <div className="prod-actions">
           <Link className="prod-btn prod-btn-solid" to={platformMessaging.visitorPaths[0].href}>

@@ -1066,4 +1066,15 @@
   .lamid-home .home-outcome-summary-grid {
     grid-template-columns: 1fr;
   }
+  .lamid-home .home-outcome-summary article,
+  .lamid-home .home-outcome-summary h3,
+  .lamid-home .home-outcome-summary p {
+    text-align: center;
+  }
+}
+
+@media (max-width: 680px) {
+  .lg-mobile-cap::first-letter {
+    text-transform: uppercase;
+  }
 }

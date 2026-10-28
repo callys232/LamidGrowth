@@ -87,10 +87,10 @@ export function LandingHero() {
           <span>
             {content.landingHero.titleLines[0]}
             <br className="lg-mobile-break" />{' '}
-            {content.landingHero.titleLines[1]}
+            <span className="lg-mobile-cap">{content.landingHero.titleLines[1]}</span>
           </span>
           <br />
-          <span>{content.landingHero.titleLines[2]}</span>
+          <span>{'and '}<span className="lg-mobile-cap">{content.landingHero.titleLines[2].replace(/^and\s+/, '')}</span></span>
         </h1>
         <p className="lg-sub">{platformMessaging.description}</p>
         <Actions />
@@ -462,7 +462,7 @@ export function LandingResults() {
 export function LandingClose() {
   return (
     <section className="lg-close" aria-labelledby="lg-close-title">
-      <h2 id="lg-close-title">Make growth feel clear, not complicated.</h2>
+      <h2 id="lg-close-title">Make growth feel clear, not complicated with LamidOne.</h2>
       <Actions />
     </section>
   );

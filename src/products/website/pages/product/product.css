@@ -29,11 +29,17 @@
 .prod-hero h1 {
   font-family: 'Instrument Serif', Georgia, serif;
   font-weight: 400;
-  font-size: clamp(2.4rem, 5.6vw, 4.6rem);
-  line-height: 1.05;
+  font-size: clamp(2rem, 5.2vw, 4.6rem);
+  line-height: 1.1;
   letter-spacing: -0.015em;
-  max-width: 20ch;
+  max-width: 32ch;
   margin: 0 auto;
+}
+.prod-hero h1 span {
+  display: block;
+}
+.prod-hero h1 br {
+  display: none;
 }
 .prod-lede {
   font-size: 1.2rem;
@@ -281,14 +287,48 @@
 @media (max-width: 900px) {
   .prod-hero {
     padding: 56px 0 32px;
+    text-align: center;
+  }
+  .prod-hero h1 {
+    font-size: clamp(1.65rem, 6.2vw, 2.4rem);
+    line-height: 1.15;
+    text-align: center;
+  }
+  .prod-lede,
+  .prod-human-control {
+    text-align: center;
   }
   .prod-steps,
   .prod-tour-body,
   .prod-panel {
     grid-template-columns: 1fr;
   }
+  .prod-steps {
+    text-align: center;
+  }
+  .prod-step {
+    text-align: center;
+  }
+  .prod-step h2,
+  .prod-step p,
+  .prod-step .prod-kicker {
+    text-align: center;
+  }
   .prod-tour {
     padding: 40px 20px;
+  }
+  .prod-tour > h2 {
+    text-align: center;
+  }
+  .prod-copy {
+    text-align: center;
+  }
+  .prod-copy h3 {
+    text-align: center;
+  }
+  .prod-copy ul {
+    text-align: left;
+    display: inline-block;
   }
   .prod-jobs {
     flex-direction: row;
@@ -308,5 +348,17 @@
   }
   .prod-jobs button.is-active {
     border-bottom-color: var(--prod-navy);
+  }
+  .prod-faq {
+    text-align: center;
+  }
+  .prod-faq h2,
+  .prod-faq details,
+  .prod-faq p {
+    text-align: center;
+  }
+  .prod-faq summary {
+    text-align: center;
+    list-style-position: inside;
   }
 }

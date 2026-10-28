@@ -186,7 +186,7 @@ const searchIndex: SearchEntry[] = [
   { label: 'Privacy policy', description: 'How we handle your data.', to: '/legal/privacy' },
   { label: 'Terms of service', description: 'The terms that govern use.', to: '/legal/terms' },
   { label: 'Log in', description: 'Sign in to your workspace.', to: '/login' },
-  { label: 'Start', description: 'Experience LAMID ONE.', to: '/start' },
+  { label: 'Start', description: 'Get Started.', to: '/start' },
 ];
 
 export function PublicHeader() {
@@ -409,7 +409,7 @@ export function PublicHeader() {
                 <Cta to="/os">Open workspace</Cta>
               </>
             ) : (
-              <Cta to="/start">Experience LAMID ONE</Cta>
+              <Cta to="/start">Get Started</Cta>
             )}
           </div>
         </div>
