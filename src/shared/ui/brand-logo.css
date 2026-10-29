@@ -94,9 +94,37 @@
   transform: scale(1.04);
 }
 
-:root[data-theme='dark'] .brand-full-logo-img,
-:root[data-theme='dark'] .brand-icon-alone-img {
-  filter: brightness(1.08) contrast(1.05);
+/* Theme switching for LAMID ONE custom logo assets */
+.brand-full-logo-dark,
+.brand-icon-alone-dark {
+  display: none !important;
+}
+
+.brand-full-logo-light,
+.brand-icon-alone-light {
+  display: block !important;
+}
+
+:root[data-theme='dark'] .brand-full-logo-light,
+:root[data-theme='dark'] .brand-icon-alone-light {
+  display: none !important;
+}
+
+:root[data-theme='dark'] .brand-full-logo-dark,
+:root[data-theme='dark'] .brand-icon-alone-dark {
+  display: block !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .brand-full-logo-light,
+  :root:not([data-theme='light']) .brand-icon-alone-light {
+    display: none !important;
+  }
+
+  :root:not([data-theme='light']) .brand-full-logo-dark,
+  :root:not([data-theme='light']) .brand-icon-alone-dark {
+    display: block !important;
+  }
 }
 
 @media (max-width: 640px) {

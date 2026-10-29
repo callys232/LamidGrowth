@@ -40,8 +40,15 @@ export function Brand({
     return (
       <Link className="brand brand-lamidone-full" to="/" aria-label="LAMID ONE home">
         <img
-          className="brand-full-logo-img"
+          className="brand-full-logo-img brand-full-logo-light"
           src="/brand/lamidone-full-logo.png"
+          alt="LAMID ONE"
+          width={958}
+          height={182}
+        />
+        <img
+          className="brand-full-logo-img brand-full-logo-dark"
+          src="/brand/lamidone-full-logo-dark.png"
           alt="LAMID ONE"
           width={958}
           height={182}
@@ -53,8 +60,15 @@ export function Brand({
   return (
     <Link className={`brand brand-icon-alone ${light ? 'brand-light' : ''}`} to="/" aria-label="LAMID ONE home">
       <img
-        className="brand-icon-alone-img"
+        className="brand-icon-alone-img brand-icon-alone-light"
         src="/brand/lamidone-icon.png"
+        alt="LAMID ONE"
+        width={40}
+        height={40}
+      />
+      <img
+        className="brand-icon-alone-img brand-icon-alone-dark"
+        src="/brand/lamidone-icon-dark.png"
         alt="LAMID ONE"
         width={40}
         height={40}
