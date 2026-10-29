@@ -17,7 +17,7 @@ import './home.css';
 const outcomeSteps = [
   {
     title: 'Start with what matters',
-    text: 'Bring a decision, opportunity, challenge or plan. The Companion helps you find the next step.',
+    text: 'Bring a decision, opportunity, challenge or plan. Your Companion helps you find the next step.',
   },
   {
     title: 'Work toward the outcome',

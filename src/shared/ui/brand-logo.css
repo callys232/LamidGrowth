@@ -55,3 +55,57 @@
     width: 200px;
   }
 }
+
+/* LAMID ONE Full Logo & Icon alone */
+.brand.brand-lamidone-full {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.brand-full-logo-img {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.brand.brand-icon-alone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.brand-icon-alone-img {
+  display: block;
+  height: 38px;
+  width: 38px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.brand.brand-icon-alone:hover .brand-icon-alone-img,
+.brand.brand-lamidone-full:hover .brand-full-logo-img {
+  transform: scale(1.04);
+}
+
+:root[data-theme='dark'] .brand-full-logo-img,
+:root[data-theme='dark'] .brand-icon-alone-img {
+  filter: brightness(1.08) contrast(1.05);
+}
+
+@media (max-width: 640px) {
+  .brand-full-logo-img {
+    height: 32px;
+    max-width: 170px;
+  }
+  .brand-icon-alone-img {
+    height: 34px;
+    width: 34px;
+  }
+}

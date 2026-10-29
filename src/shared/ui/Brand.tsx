@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
-import { Mark } from './Mark';
 import './brand-logo.css';
+
 export function Brand({
   light = false,
-  compact = false,
+  compact: _compact = false,
   logo = false,
+  full = false,
 }: {
   light?: boolean;
   compact?: boolean;
   logo?: boolean;
+  full?: boolean;
 }) {
   if (logo) {
     // Ink lettering on light backgrounds, white lettering on dark ones; brand-logo.css picks
@@ -33,13 +35,30 @@ export function Brand({
       </Link>
     );
   }
+
+  if (full) {
+    return (
+      <Link className="brand brand-lamidone-full" to="/" aria-label="LAMID ONE home">
+        <img
+          className="brand-full-logo-img"
+          src="/brand/lamidone-full-logo.png"
+          alt="LAMID ONE"
+          width={958}
+          height={182}
+        />
+      </Link>
+    );
+  }
+
   return (
-    <Link className={`brand ${light ? 'brand-light' : ''}`} to="/" aria-label="LAMID ONE home">
-      <Mark className="brand-mark" size={32} />
-      <span>
-        Lamid<b>One</b>
-        {!compact && <small>HUMAN JUDGMENT. INFINITE POSSIBILITY.</small>}
-      </span>
+    <Link className={`brand brand-icon-alone ${light ? 'brand-light' : ''}`} to="/" aria-label="LAMID ONE home">
+      <img
+        className="brand-icon-alone-img"
+        src="/brand/lamidone-icon.png"
+        alt="LAMID ONE"
+        width={40}
+        height={40}
+      />
     </Link>
   );
 }

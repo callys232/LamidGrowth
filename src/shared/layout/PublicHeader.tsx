@@ -1,6 +1,6 @@
 import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Brand } from '../ui/Brand';
 import { Cta } from '../ui/Cta';
 import { MotionSurface } from '../visuals/Motion';
@@ -190,6 +190,8 @@ const searchIndex: SearchEntry[] = [
 ];
 
 export function PublicHeader() {
+  const location = useLocation();
+  const isHome = location.pathname === '/';
   // Signed-in state: unknown (null) until the session check resolves, so the header keeps showing
   // the signed-out actions rather than flashing between the two. Any failure reads as signed out.
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
@@ -267,7 +269,7 @@ export function PublicHeader() {
         }}
       >
         <div className="header-container">
-          <Brand compact />
+          <Brand full={isHome} compact />
           <button
             className="mobile-menu icon-button"
             aria-label={mobile ? 'Close navigation' : 'Open navigation'}
