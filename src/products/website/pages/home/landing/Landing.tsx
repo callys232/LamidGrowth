@@ -161,11 +161,12 @@ export function LandingTiles() {
 export function LandingWhatIs() {
   return (
     <section className="lg-split" aria-labelledby="lg-what">
-      <h2 id="lg-what">What is LamidOne?</h2>
+      <h2 id="lg-what">What is LAMID ONE?</h2>
       <div className="lg-what-copy">
         <p className="lg-what-lead">
-          LamidOne brings your goals, tools, expert advisers and AI together in one place, so every
-          decision leads to finished work.
+          LAMID ONE is a Continuous Human–AI Growth Operating System that turns intelligence into
+          sustained progress — helping you understand what matters, build what you need and keep
+          moving forward, with you in control.
         </p>
       </div>
     </section>
@@ -230,7 +231,7 @@ const products = [
   {
     name: 'Expert advisory',
     points: [
-      'Work with LamidConsulting advisers on hard calls.',
+      'Match with Leading Experts.',
       'Get human review before big decisions.',
     ],
   },
