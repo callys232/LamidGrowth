@@ -192,6 +192,7 @@
   display: inline-block;
   opacity: 0;
   transform: translateY(0.35em);
+  will-change: transform, opacity;
 }
 
 .lg-split-title.is-visible .lg-split-word {
@@ -217,6 +218,8 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: #0d1a2b;
+  padding-bottom: 0.08em;
+  padding-inline: 0.02em;
 }
 
 .lg-split-title.is-visible .lg-split-word--brand {
