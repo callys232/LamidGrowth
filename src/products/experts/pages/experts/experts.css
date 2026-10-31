@@ -81,11 +81,11 @@
   background: var(--surface-alt, #f5f3ef);
 }
 #expert-matching {
-  color: #0d1a2b;
+  color: light-dark(#0d1a2b, var(--ink));
 }
 #expert-matching .expert-phase-intro p,
 #expert-matching .expert-card p {
-  color: #374151;
+  color: light-dark(#374151, var(--text-secondary));
 }
 .expert-phase-dark {
   background: var(--midnight);
@@ -181,7 +181,7 @@
   transform-origin: top;
 }
 .expert-phase-tint .expert-card {
-  background: #fff;
+  background: light-dark(#fff, var(--surface));
 }
 .expert-phase-dark .expert-card {
   background: #ffffff0f;
