@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { UpdatedDocumentPage } from '../../../../shared/content/UpdatedDocumentPage';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
@@ -30,13 +31,53 @@ const outcomeSteps = [
 ] as const;
 
 function HomeOutcomeSummary() {
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setInView(true);
+        observer.disconnect();
+      },
+      { threshold: 0.15, rootMargin: '0px 0px 40px 0px' },
+    );
+    observer.observe(el);
+    const timer = setTimeout(() => setInView(true), 1200);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
-    <section className="home-outcome-summary" aria-labelledby="home-outcome-title">
+    <section
+      ref={sectionRef}
+      className={`home-outcome-summary ${inView ? 'is-in-view' : ''}`}
+      aria-labelledby="home-outcome-title"
+    >
       <div className="home-outcome-summary-inner">
         <h2 id="home-outcome-title">From your objective to steady progress.</h2>
+        <div className="home-outcome-progress-track" aria-hidden="true">
+          <div className="home-outcome-progress-bar" />
+        </div>
         <div className="home-outcome-summary-grid">
-          {outcomeSteps.map((step) => (
-            <article key={step.title}>
+          {outcomeSteps.map((step, index) => (
+            <article
+              key={step.title}
+              style={{ '--step-i': index } as CSSProperties}
+              className="home-outcome-step-card"
+            >
+              <div className="home-outcome-step-badge">
+                <span className="home-outcome-step-num">0{index + 1}</span>
+                <span className="home-outcome-step-dot" />
+              </div>
               <h3>{step.title}</h3>
               <p>{step.text}</p>
             </article>

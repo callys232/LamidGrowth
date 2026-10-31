@@ -75,8 +75,14 @@ export function LandingHero() {
             <circle cx="400" cy="400" r="146" />
             <circle cx="400" cy="190" r="5" className="lg-target-marker lg-target-marker--teal" />
           </g>
-          <path className="lg-target-crosshair" d="M400 22v174M400 604v174M22 400h174M604 400h174" />
-          <path className="lg-target-route" d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148" />
+          <path
+            className="lg-target-crosshair"
+            d="M400 22v174M400 604v174M22 400h174M604 400h174"
+          />
+          <path
+            className="lg-target-route"
+            d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148"
+          />
           <circle className="lg-target-point" cx="492" cy="552" r="13" />
           <circle className="lg-target-center" cx="400" cy="400" r="14" />
         </svg>
@@ -90,7 +96,12 @@ export function LandingHero() {
             <span className="lg-mobile-cap">{content.landingHero.titleLines[1]}</span>
           </span>
           <br />
-          <span>{'and '}<span className="lg-mobile-cap">{content.landingHero.titleLines[2].replace(/^and\s+/, '')}</span></span>
+          <span>
+            {'and '}
+            <span className="lg-mobile-cap">
+              {content.landingHero.titleLines[2].replace(/^and\s+/, '')}
+            </span>
+          </span>
         </h1>
         <p className="lg-sub">{platformMessaging.description}</p>
         <Actions />
@@ -190,8 +201,12 @@ export function LandingWhatIs() {
   return (
     <section ref={section} className="lg-split" aria-labelledby="lg-what">
       <h2 id="lg-what" className={`lg-split-title ${headingVisible ? 'is-visible' : ''}`}>
-        <span className="lg-split-word" style={{ '--word-i': 0 } as CSSProperties}>What</span>{' '}
-        <span className="lg-split-word" style={{ '--word-i': 1 } as CSSProperties}>is</span>{' '}
+        <span className="lg-split-word" style={{ '--word-i': 0 } as CSSProperties}>
+          What
+        </span>{' '}
+        <span className="lg-split-word" style={{ '--word-i': 1 } as CSSProperties}>
+          is
+        </span>{' '}
         <span
           className="lg-split-word lg-split-word--brand"
           style={{ '--word-i': 2 } as CSSProperties}
@@ -201,7 +216,7 @@ export function LandingWhatIs() {
       </h2>
       <div className="lg-what-copy">
         <p className="lg-what-lead">
-          LAMID ONE is a Continuous Human–AI Growth Operating System that turns intelligence into
+          LAMID ONE is your Continuous Human–AI Growth Operating System that turns intelligence into
           sustained progress — helping you understand what matters, build what you need and keep
           moving forward, with you in control.
         </p>
@@ -267,10 +282,7 @@ const products = [
   },
   {
     name: 'Expert advisory',
-    points: [
-      'Match with Leading Experts.',
-      'Get human review before big decisions.',
-    ],
+    points: ['Match with Leading Experts.', 'Get human review before big decisions.'],
   },
 ] as const;
 const areaStyle: Record<string, { pillar: string; icon: LucideIcon }> = {
@@ -285,6 +297,31 @@ const areaStyle: Record<string, { pillar: string; icon: LucideIcon }> = {
 };
 
 export function LandingProducts() {
+  const [cardsVisible, setCardsVisible] = useState(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setCardsVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setCardsVisible(true);
+        observer.disconnect();
+      },
+      { threshold: 0.1, rootMargin: '0px 0px 50px 0px' },
+    );
+    observer.observe(el);
+    const timer = setTimeout(() => setCardsVisible(true), 1200);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <section className="lg-products" aria-labelledby="lg-products-title">
       <div className="lg-products-intro">
@@ -293,12 +330,23 @@ export function LandingProducts() {
         <Actions />
       </div>
       <div className="lg-card-wrap">
-        <div className="lg-card-grid" tabIndex={0} aria-label="LamidOne tool areas">
-          {products.map((product) => {
+        <div
+          ref={gridRef}
+          className={`lg-card-grid ${cardsVisible ? 'is-visible' : ''}`}
+          tabIndex={0}
+          aria-label="LamidOne tool areas"
+        >
+          {products.map((product, index) => {
             const style = areaStyle[product.name];
             const Icon = style.icon;
             return (
-              <Link key={product.name} className="lg-card" to="/product" data-pillar={style.pillar}>
+              <Link
+                key={product.name}
+                className="lg-card"
+                to="/product"
+                data-pillar={style.pillar}
+                style={{ '--card-i': index } as CSSProperties}
+              >
                 <span className="lg-card-icon" aria-hidden="true">
                   <Icon />
                 </span>
@@ -313,7 +361,10 @@ export function LandingProducts() {
                 </ul>
                 <span className="lg-foot">
                   <span className="lg-more">
-                    Learn more <span className="lg-more-arrow" aria-hidden="true">&rarr;</span>
+                    Learn more{' '}
+                    <span className="lg-more-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
                   </span>
                 </span>
               </Link>
@@ -457,7 +508,7 @@ export function LandingResults() {
           </button>
         ))}
       </div>
-      <div className="lg-result" role="tabpanel">
+      <div className="lg-result" role="tabpanel" key={current.audienceId}>
         <div className="lg-result-media">
           <AudienceContextIllustration
             audienceId={current.audienceId}
@@ -465,10 +516,7 @@ export function LandingResults() {
             ratio="16 / 10"
           />
         </div>
-        <div
-          className="lg-result-copy"
-          style={{ '--aud': current.pillar?.color } as React.CSSProperties}
-        >
+        <div className="lg-result-copy" style={{ '--aud': current.pillar?.color } as CSSProperties}>
           <span className="lg-result-pillar">
             {current.pillar?.name} · {current.pillar?.verb}
           </span>
@@ -480,7 +528,7 @@ export function LandingResults() {
           </div>
           <p
             className="lg-result-second"
-            style={{ '--aud': current.secondPillar?.color } as React.CSSProperties}
+            style={{ '--aud': current.secondPillar?.color } as CSSProperties}
           >
             <span>{current.secondPillar?.name}</span> {current.points[1]}
           </p>
