@@ -23,7 +23,6 @@ export function HomeFooter() {
       <div className="footer-top">
         <div>
           <Brand light logo />
-          <span data-source-paragraph={copy[0].sourceParagraph}>{copy[0].text}</span>
           <p>Think clearly. Build capability. Make consistent progress.</p>
         </div>
         {groups.map((group) => (

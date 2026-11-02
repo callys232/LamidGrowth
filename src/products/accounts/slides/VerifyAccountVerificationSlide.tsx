@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import type { useVerifyAccountPage } from '../hooks/useVerifyAccountPage';
@@ -7,7 +6,6 @@ import type { useVerifyAccountPage } from '../hooks/useVerifyAccountPage';
 export function VerifyAccountVerificationSlide(page: ReturnType<typeof useVerifyAccountPage>) {
   return (
     <div className="auth-main">
-      <Brand />
       <Link
         to={`/login?returnTo=${encodeURIComponent(returnDestination(page.params))}`}
         className="back-link"

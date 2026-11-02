@@ -18,7 +18,7 @@ import content from '../content.json';
 import './landing.css';
 import '../../motion.css';
 
-export function LamidOneBrand({ withIcon = true }: { withIcon?: boolean }) {
+export function LamidOneBrand({ withIcon = false }: { withIcon?: boolean }) {
   return (
     <span className="lg-brand-mark">
       {withIcon && (
@@ -190,45 +190,10 @@ export function LandingTiles() {
 }
 
 export function LandingWhatIs() {
-  const [headingVisible, setHeadingVisible] = useState(false);
-  const section = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const element = section.current;
-    if (!element || !('IntersectionObserver' in window)) {
-      setHeadingVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        setHeadingVisible(true);
-        observer.disconnect();
-      },
-      { threshold: 0.1, rootMargin: '0px 0px 40px 0px' },
-    );
-
-    observer.observe(element);
-    const fallbackTimer = setTimeout(() => setHeadingVisible(true), 1200);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallbackTimer);
-    };
-  }, []);
-
   return (
-    <section ref={section} className="lg-split" aria-labelledby="lg-what">
-      <h2 id="lg-what" className={`lg-split-title ${headingVisible ? 'is-visible' : ''}`}>
-        <span className="lg-split-word" style={{ '--word-i': 0 } as CSSProperties}>What</span>{' '}
-        <span className="lg-split-word" style={{ '--word-i': 1 } as CSSProperties}>is</span>{' '}
-        <span
-          className="lg-split-word lg-split-word--brand"
-          style={{ '--word-i': 2 } as CSSProperties}
-        >
-          <LamidOneBrand />?
-        </span>
+    <section className="lg-split" aria-labelledby="lg-what">
+      <h2 id="lg-what" className="lg-split-title">
+        <span>What</span> <span>is</span> <LamidOneBrand withIcon={false} /><span className="lg-split-q">?</span>
       </h2>
       <div className="lg-what-copy">
         <p className="lg-what-lead">

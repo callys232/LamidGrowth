@@ -1,6 +1,5 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
 import { Eyebrow } from '../../../shared/ui/Eyebrow';
 import { Field } from '../../../shared/ui/Field';
@@ -31,7 +30,6 @@ export function ResetPasswordFormSlide({
   return (
     <>
       <div className="auth-main">
-        <Brand />
         <Link to="/login" className="back-link">
           <ArrowLeft size={14} /> Back to sign in
         </Link>

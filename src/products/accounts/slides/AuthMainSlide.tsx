@@ -1,7 +1,6 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { returnDestination } from '../returnDestination';
-import { Brand } from '../../../shared/ui/Brand';
 import { Button } from '../../../shared/ui/Button';
 import { Eyebrow } from '../../../shared/ui/Eyebrow';
 import { AccountContextChoices } from '../components/AccountContextChoices';
@@ -39,7 +38,6 @@ export function AuthMainSlide({
   return (
     <>
       <div className="auth-main">
-        <Brand />
         <Link to="/" className="back-link">
           <ArrowLeft size={14} /> Back to LAMID ONE
         </Link>
