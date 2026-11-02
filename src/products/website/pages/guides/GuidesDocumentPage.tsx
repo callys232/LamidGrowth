@@ -33,7 +33,7 @@ function GuidePage() {
       <section className="gp-hero">
         <div>
           <p className="gp-eyebrow">Guides</p>
-          <h1>Your LamidOne user guide.</h1>
+          <h1>Your LAMID ONE user guide.</h1>
           <p className="gp-lede">
             Step-by-step help with the demo, signup, workspace tools, learning, points and
             troubleshooting.

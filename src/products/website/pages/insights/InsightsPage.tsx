@@ -21,7 +21,7 @@ const guidePlaybooks: Card[] = [
   {
     id: 'first-30-days',
     pillar: 'Start here',
-    title: 'Your first 30 days with LamidOne',
+    title: 'Your first 30 days with LAMID ONE',
     summary: 'Go from one goal to one approved next step, then repeat.',
     time: '30 minutes to start',
     source: 'guide',

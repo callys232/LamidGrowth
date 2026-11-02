@@ -25,7 +25,7 @@
       "paragraphs": [
         { "text": "Tell us the outcome", "sourceParagraph": 1142 },
         { "text": "Describe what you are trying to achieve and the context that matters.", "sourceParagraph": 1143 },
-        { "text": "Product question — Ask how LamidOne works for your situation.", "sourceParagraph": 1144 },
+        { "text": "Product question — Ask how LAMID ONE works for your situation.", "sourceParagraph": 1144 },
         { "text": "Pricing — Find the plan that fits, or ask about a custom one.", "sourceParagraph": 1145 },
         { "text": "Expert help — Bring an adviser in on a decision or project.", "sourceParagraph": 1146 },
         { "text": "Enterprise — Security, governance and deployment questions.", "sourceParagraph": 1147 }
@@ -43,7 +43,7 @@
     "primaryLabel": "Email us",
     "secondary": { "label": "Request a demo", "to": "/demo/request" },
     "cards": [
-      { "title": "Product question", "line": "Ask how LamidOne works for your situation.", "to": "/product" },
+      { "title": "Product question", "line": "Ask how LAMID ONE works for your situation.", "to": "/product" },
       { "title": "Pricing", "line": "Find the plan that fits, or ask about a custom one.", "to": "/pricing" },
       { "title": "Expert help", "line": "Bring an adviser in on a decision or project.", "to": "/experts" },
       { "title": "Enterprise", "line": "Security, governance and deployment questions.", "to": "/enterprise" }

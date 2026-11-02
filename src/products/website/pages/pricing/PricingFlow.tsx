@@ -73,7 +73,7 @@ export function PricingNav() {
 const plans = [
   {
     name: 'Free',
-    forWho: 'To try LamidOne',
+    forWho: 'To try LAMID ONE',
     price: '$0',
     note: '500-point welcome reward once verified',
     includes: ['Strategy and decision engines', '1 person'],

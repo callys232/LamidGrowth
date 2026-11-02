@@ -187,7 +187,7 @@ export function ProductPage() {
         <nav className="ps-crumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link> <span aria-hidden="true">›</span> <span>Product</span>
         </nav>
-        <p className="prod-eyebrow">The LamidOne platform</p>
+        <p className="prod-eyebrow">The LAMID ONE platform</p>
         <h1>
           <span>Decide what matters.</span>
           <br />

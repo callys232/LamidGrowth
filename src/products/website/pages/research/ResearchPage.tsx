@@ -45,7 +45,7 @@ export function ResearchPage() {
         <h1>Understanding how humans and AI work better together.</h1>
         <div className="rs-hero-foot">
           <p>
-            Published research and evidence informing LamidOne&rsquo;s approach to decision support,
+            Published research and evidence informing LAMID ONE&rsquo;s approach to decision support,
             capability, organizations and responsible AI.
           </p>
           <a className="rs-btn rs-btn-solid" href="#rs-areas">

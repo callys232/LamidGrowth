@@ -346,7 +346,7 @@ export function ResponsibleAiPage() {
           <p className="rai-eyebrow">Responsible AI</p>
           <h1>AI should strengthen human judgment.</h1>
           <p className="rai-lede">
-            LamidOne keeps intent, accountability and consequential control with people, while
+            LAMID ONE keeps intent, accountability and consequential control with people, while
             continuous intelligence and already-authorized work progress over time within defined
             boundaries.
           </p>

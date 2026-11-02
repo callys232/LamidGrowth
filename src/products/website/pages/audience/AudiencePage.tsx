@@ -51,7 +51,7 @@ export function AudiencePage({
         <AudienceContextIllustration audienceId={audience.id} audienceName={audience.name} />
       </section>
 
-      <section className="aud-start" aria-label={`Where LamidOne starts for ${audience.name}`}>
+      <section className="aud-start" aria-label={`Where LAMID ONE starts for ${audience.name}`}>
         {[audience.lead, audience.second].map((item, index) => (
           <div
             className={`aud-start-item${index === 0 ? ' is-lead' : ''}`}
@@ -67,7 +67,7 @@ export function AudiencePage({
         ))}
       </section>
 
-      <section className="aud-cards" aria-label="How LamidOne helps">
+      <section className="aud-cards" aria-label="How LAMID ONE helps">
         {cards.map((section) => (
           <article className="aud-card" key={section.title}>
             <h2>{section.title}</h2>
@@ -92,7 +92,7 @@ export function AudiencePage({
       <MoreDetail />
 
       <nav className="aud-others" aria-label="Other audiences">
-        <h2>LamidOne is also built for</h2>
+        <h2>LAMID ONE is also built for</h2>
         <ul>
           {others.map((item) => (
             <li key={item.id}>

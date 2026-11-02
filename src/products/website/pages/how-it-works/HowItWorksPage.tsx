@@ -137,7 +137,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
     id: 'overview',
     eyebrow: 'How it works',
     title: 'See clearly. Build what’s needed. Deliver steadily.',
-    lede: 'Every kind of growth follows the same three moves. LamidOne guides you through them, one step at a time.',
+    lede: 'Every kind of growth follows the same three moves. LAMID ONE guides you through them, one step at a time.',
     steps: [
       { title: 'Decide', line: 'Understand the situation and choose what matters.' },
       { title: 'Build', line: 'Strengthen the people, skills and plans the next step needs.' },
