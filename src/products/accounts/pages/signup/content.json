@@ -8,15 +8,15 @@
   "route": "/signup",
   "indexing": "noindex, nofollow",
   "canonical": "/signup",
-  "seo_title": "Create Account | LAMID ONE",
-  "meta_description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
-  "title": "Start With Your Context.",
-  "description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
+  "seo_title": "Create Your Workspace | LAMID ONE",
+  "meta_description": "Create your LAMID ONE workspace. Add personal, team, or organizational contexts when you need them.",
+  "title": "Create Your Workspace.",
+  "description": "Create your LAMID ONE workspace. Add personal, team, or organizational contexts when you need them.",
   "hero": {
-    "title": "Start With Your Context.",
+    "title": "Create Your Workspace.",
     "paragraphs": [
       {
-        "text": "Start With Your Context.",
+        "text": "Create Your Workspace.",
         "sourceParagraph": 1272
       },
       {

@@ -6,15 +6,15 @@
   "route": "/start",
   "indexing": "index, follow",
   "canonical": "/start",
-  "seo_title": "Start | LAMID ONE",
+  "seo_title": "Choose Your Context | LAMID ONE",
   "meta_description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
-  "title": "Start With Your Context.",
+  "title": "Choose Your Context.",
   "description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
   "hero": {
-    "title": "Start With Your Context.",
+    "title": "Choose Your Context.",
     "paragraphs": [
       {
-        "text": "Start With Your Context.",
+        "text": "Choose Your Context.",
         "sourceParagraph": 698
       },
       {

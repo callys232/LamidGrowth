@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '../../../shared/ui/Button';
 import { Field } from '../../../shared/ui/Field';
 import type { useAuthPage } from '../hooks/useAuthPage';
@@ -61,6 +62,13 @@ export function AccountCredentialsForm({
             </button>
           </div>
         </Field>
+        {login && (
+          <div className="auth-forgot-row">
+            <Link to="/forgot-password" className="forgot-password-link">
+              Forgot password?
+            </Link>
+          </div>
+        )}
         {error && (
           <p className="form-error" role="alert">
             {error}

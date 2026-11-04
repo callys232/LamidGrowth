@@ -1,9 +1,62 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
+import { recordSecurityAlert } from './securityAlerts.mjs';
 
 // 10 MB decoded — generous enough for a KYC document photo/scan, small enough to keep in a
 // Postgres BYTEA column without needing streaming.
 const MAX_BYTES = 10 * 1024 * 1024;
+
+const DANGEROUS_EXTENSIONS = new Set([
+  'exe', 'dll', 'bat', 'cmd', 'sh', 'bash', 'bin', 'com', 'msi', 'scr',
+  'php', 'phtml', 'py', 'pl', 'jsp', 'asp', 'aspx', 'cgi', 'js', 'vbs', 'wsf'
+]);
+
+/**
+ * Validates that the filename has no path traversal, null bytes, or dangerous double extensions.
+ */
+function sanitizeAndValidateFilename(filename) {
+  if (filename.includes('\0') || filename.includes('/') || filename.includes('\\') || filename.includes('..')) {
+    throw Object.assign(new Error('Invalid filename characters.'), { status: 400 });
+  }
+
+  // Check double extensions: e.g., "report.pdf.exe" or "invoice.exe.pdf"
+  const parts = filename.toLowerCase().split('.');
+  if (parts.length > 2) {
+    for (let i = 1; i < parts.length - 1; i++) {
+      if (DANGEROUS_EXTENSIONS.has(parts[i])) {
+        throw Object.assign(new Error('Executable or script extensions within filename are strictly forbidden.'), { status: 400 });
+      }
+    }
+  }
+
+  const finalExt = parts[parts.length - 1];
+  if (DANGEROUS_EXTENSIONS.has(finalExt)) {
+    throw Object.assign(new Error('Executable file uploads are strictly forbidden.'), { status: 400 });
+  }
+
+  return filename.replace(/["\r\n\t]/g, '');
+}
+
+/**
+ * Heuristic inspection for disguised executables, polyglots, and embedded shells.
+ */
+function inspectBufferForMaliciousPayloads(buffer, mimeType) {
+  // Disallow Windows PE / DOS headers (MZ) or Unix ELF binaries disguised as media
+  if (buffer.length >= 2 && buffer[0] === 0x4d && buffer[1] === 0x5a) {
+    throw Object.assign(new Error('Executable binary header detected in file payload.'), { status: 415 });
+  }
+  if (buffer.length >= 4 && buffer[0] === 0x7f && buffer[1] === 0x45 && buffer[2] === 0x4c && buffer[3] === 0x46) {
+    throw Object.assign(new Error('Executable ELF binary detected in file payload.'), { status: 415 });
+  }
+
+  // Inspect first 8KB of any file for obvious shell/script preambles
+  const sample = buffer.subarray(0, Math.min(buffer.length, 8192)).toString('latin1');
+  if (/<\?php|#!(\/usr)?\/bin\/(bash|sh|perl|python|env)|\bWScript\.Shell\b/i.test(sample)) {
+    throw Object.assign(new Error('Embedded script or shell payload detected.'), { status: 415 });
+  }
+
+  return true;
+}
 
 const uploadSchema = z
   .object({
@@ -33,7 +86,7 @@ const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
 
-export function mountFiles(app, store) {
+export function mountFiles(app, store, { virusScanner = null } = {}) {
   const { db, transaction, log } = store;
 
   async function fileFor(id, workspaceId) {
@@ -48,6 +101,7 @@ export function mountFiles(app, store) {
 
   app.post('/api/files', async (req, res) => {
     const input = uploadSchema.parse(req.body);
+    const sanitizedFilename = sanitizeAndValidateFilename(input.filename);
     let buffer;
     try {
       buffer = Buffer.from(input.base64Content, 'base64');
@@ -56,22 +110,55 @@ export function mountFiles(app, store) {
     }
     if (buffer.length === 0) fail('The uploaded file is empty.', 400);
     if (buffer.length > MAX_BYTES) fail(`Files over ${MAX_BYTES / (1024 * 1024)}MB are not accepted.`, 413);
+
     const signatureCheck = SIGNATURE_CHECKS[input.mimeType];
     if (!signatureCheck)
       fail(`File type "${input.mimeType}" is not accepted. Allowed types: ${Object.keys(SIGNATURE_CHECKS).join(', ')}.`, 415);
     if (!signatureCheck(buffer))
       fail('The file content does not match its declared type.', 415);
+
+    // Deep heuristic check against disguised executables and shell scripts
+    try {
+      inspectBufferForMaliciousPayloads(buffer, input.mimeType);
+    } catch (scanErr) {
+      await recordSecurityAlert(store, {
+        userId: req.user?.id,
+        workspaceId: req.workspace?.id,
+        alertType: 'malicious_file_blocked',
+        severity: 'warning',
+        details: `Blocked file "${input.filename}" (${input.mimeType}): ${scanErr.message}`,
+        ipAddress: req.ip,
+      });
+      throw scanErr;
+    }
+
+    // Optional external antivirus scanner invocation (e.g. ClamAV daemon)
+    if (typeof virusScanner === 'function') {
+      const scanResult = await virusScanner(buffer, { filename: sanitizedFilename, mimeType: input.mimeType });
+      if (scanResult && scanResult.infected) {
+        await recordSecurityAlert(store, {
+          userId: req.user?.id,
+          workspaceId: req.workspace?.id,
+          alertType: 'malware_detected',
+          severity: 'critical',
+          details: `Antivirus scanner detected malware "${scanResult.virusName || 'malware'}" in file "${sanitizedFilename}"`,
+          ipAddress: req.ip,
+        });
+        fail('The file failed antivirus inspection and has been quarantined.', 422);
+      }
+    }
+
     const id = randomUUID();
     const createdAt = new Date().toISOString();
     await transaction(async () => {
       await db
         .prepare('INSERT INTO uploaded_files VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-        .run(id, req.workspace.id, req.user.id, input.filename, input.mimeType, buffer.length, buffer, createdAt);
-      await log(req.workspace.id, req.user.name, 'File uploaded', id, input.filename);
+        .run(id, req.workspace.id, req.user.id, sanitizedFilename, input.mimeType, buffer.length, buffer, createdAt);
+      await log(req.workspace.id, req.user.name, 'File uploaded', id, sanitizedFilename);
     });
     res.status(201).json({
       id,
-      filename: input.filename,
+      filename: sanitizedFilename,
       mimeType: input.mimeType,
       sizeBytes: buffer.length,
       createdAt,

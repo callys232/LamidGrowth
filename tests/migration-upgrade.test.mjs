@@ -44,15 +44,15 @@ test('an existing version 1 database upgrades through the current schema', async
 
   assert.deepEqual(
     applied.map(({ version }) => version),
-    [1, 2, 3],
+    [1, 2, 3, 4, 5],
   );
   assert.equal(
     await store.db
       .prepare(
-        "SELECT count(*)::int AS count FROM information_schema.tables WHERE table_schema = current_schema() AND table_name IN ('workspace_agent_entitlements', 'invoices')",
+        "SELECT count(*)::int AS count FROM information_schema.tables WHERE table_schema = current_schema() AND table_name IN ('workspace_agent_entitlements', 'invoices', 'global_user_identities', 'groupware_entity_mappings', 'groupware_sync_events', 'security_alerts')",
       )
       .get()
       .then(({ count }) => count),
-    2,
+    6,
   );
 });

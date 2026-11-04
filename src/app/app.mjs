@@ -32,6 +32,7 @@ import { mountTasks } from './tasks.mjs';
 import { mountGoals } from './goals.mjs';
 import { mountGrowth } from './growth.mjs';
 import { mountConnectors, mountConnectorWebhook } from './connectors.mjs';
+import { mountGroupwareIntegration, mountGroupwareWebhook } from './groupware/index.mjs';
 import { mountNativeConnectors } from './nativeConnectors.mjs';
 import { mountReturnState } from './returnState.mjs';
 import { mountSignals } from './signals.mjs';
@@ -307,6 +308,7 @@ export async function createApp({
   mountPaystackWebhook(app, store, { paymentProvider });
   mountKycWebhook(app, store, { kycProvider });
   mountConnectorWebhook(app, store);
+  mountGroupwareWebhook(app, store);
   mountResendWebhook(app, store, {
     key:
       securityKey || process.env.ACCOUNT_SECURITY_KEY
@@ -329,12 +331,13 @@ export async function createApp({
   });
   const session = async (res, userId, workspaceId = null) => {
     const token = randomBytes(32).toString('hex');
-    await db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
+    const now = Date.now();
+    await db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(now);
     await db
       .prepare(
-        'INSERT INTO sessions (token, user_id, expires_at, workspace_id) VALUES (?, ?, ?, ?)',
+        'INSERT INTO sessions (token, user_id, expires_at, workspace_id, last_active_at) VALUES (?, ?, ?, ?, ?)',
       )
-      .run(digest(token), userId, Date.now() + 86400000 * 7, workspaceId);
+      .run(digest(token), userId, now + 86400000 * 7, workspaceId, now);
     res.cookie('lamid_session', token, {
       httpOnly: true,
       // 'None' is required for the cookie to be sent on cross-site requests (a split
@@ -408,11 +411,26 @@ export async function createApp({
     if (!token) return res.status(401).json({ error: 'Sign in to continue.' });
     const user = await db
       .prepare(
-        'SELECT users.id, users.name, users.email, users.demo, users.verified_at, users.disabled_at, sessions.workspace_id AS "sessionWorkspaceId" FROM sessions JOIN users ON users.id = sessions.user_id WHERE token = ? AND expires_at > ?',
+        'SELECT users.id, users.name, users.email, users.demo, users.verified_at, users.disabled_at, sessions.workspace_id AS "sessionWorkspaceId", sessions.last_active_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE token = ? AND expires_at > ?',
       )
       .get(digest(token), Date.now());
     if (!user)
       return res.status(401).json({ error: 'Your session has expired. Please sign in again.' });
+
+    // Sliding inactivity timeout (60 minutes)
+    const INACTIVITY_TIMEOUT_MS = 60 * 60_000;
+    const now = Date.now();
+    if (user.last_active_at && (now - Number(user.last_active_at) > INACTIVITY_TIMEOUT_MS)) {
+      await db.prepare('DELETE FROM sessions WHERE token = ?').run(digest(token));
+      res.clearCookie('lamid_session', { path: '/' });
+      return res.status(401).json({ error: 'Session expired due to inactivity. Please sign in again.' });
+    }
+
+    // Throttle last_active_at database writes to once per 60 seconds
+    if (!user.last_active_at || (now - Number(user.last_active_at) > 60_000)) {
+      await db.prepare('UPDATE sessions SET last_active_at = ? WHERE token = ?').run(now, digest(token));
+    }
+
     if (user.disabled_at)
       return res.status(403).json({ error: 'This account has been disabled by an administrator.' });
     req.user = user;
@@ -1867,6 +1885,7 @@ export async function createApp({
   mountGrowth(app, store);
   mountNativeConnectors(app, store, connectorOAuth);
   mountConnectors(app, store);
+  mountGroupwareIntegration(app, store, { ecosystemAdminEmails });
   mountReturnState(app, store);
   mountSignals(app, store);
   mountFiles(app, store);

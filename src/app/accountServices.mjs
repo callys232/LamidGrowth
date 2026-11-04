@@ -1,5 +1,11 @@
+import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { isVerifiedEcosystemAdmin, requirePermission } from './policy.mjs';
+import { hashPassword } from '../../server/store.mjs';
+import { validatePasswordSecurity } from './passwordSecurity.mjs';
+import { recordSecurityAlert } from './securityAlerts.mjs';
+
+const digest = (s) => createHash('sha256').update(s).digest('hex');
 
 const profileSchema = z
   .object({
@@ -167,6 +173,93 @@ export function mountAccountServices(app, store, { verifyCurrentPassword, ecosys
       return request;
     });
     res.status(201).json(result);
+  });
+  app.post('/api/account/change-password', async (req, res) => {
+    if (req.user.demo) {
+      return res.status(403).json({ error: 'Sample accounts cannot change password.' });
+    }
+    const input = z
+      .object({
+        currentPassword: z.string().min(1).max(128),
+        newPassword: z.string().min(8).max(128),
+      })
+      .strict()
+      .parse(req.body);
+
+    if (input.currentPassword === input.newPassword) {
+      return res.status(400).json({ error: 'New password must be different from your current password.' });
+    }
+
+    if (!(await verifyCurrentPassword(req, input.currentPassword))) {
+      return res.status(403).json({ error: 'Your current password is incorrect.' });
+    }
+
+    await validatePasswordSecurity(input.newPassword);
+    const passwordHash = await hashPassword(input.newPassword);
+
+    await transaction(async () => {
+      await db
+        .prepare('UPDATE users SET password = ?, failed_login_attempts = 0, locked_until = NULL WHERE id = ?')
+        .run(passwordHash, req.user.id);
+
+      // Invalidate all other sessions for this user while preserving the current active session
+      if (req.token) {
+        await db
+          .prepare('DELETE FROM sessions WHERE user_id = ? AND token != ?')
+          .run(req.user.id, digest(req.token));
+      }
+
+      await log(
+        req.workspace.id,
+        req.user.name,
+        'Password changed',
+        req.user.id,
+        'User successfully changed password',
+      );
+    });
+
+    await recordSecurityAlert(store, {
+      userId: req.user.id,
+      workspaceId: req.workspace?.id,
+      alertType: 'password_changed',
+      severity: 'info',
+      details: 'User successfully updated their account password',
+      ipAddress: req.ip,
+    });
+
+    res.json({ ok: true, message: 'Password updated successfully.' });
+  });
+  app.post('/api/account/revoke-other-sessions', async (req, res) => {
+    if (!req.token) {
+      return res.status(401).json({ error: 'Sign in to continue.' });
+    }
+    const currentTokenHash = digest(req.token);
+    const result = await db
+      .prepare('DELETE FROM sessions WHERE user_id = ? AND token != ?')
+      .run(req.user.id, currentTokenHash);
+
+    await log(
+      req.workspace.id,
+      req.user.name,
+      'Other sessions revoked',
+      req.user.id,
+      'Signed out of all other devices',
+    );
+
+    await recordSecurityAlert(store, {
+      userId: req.user.id,
+      workspaceId: req.workspace?.id,
+      alertType: 'other_sessions_revoked',
+      severity: 'info',
+      details: 'User revoked all other active sessions while preserving current session',
+      ipAddress: req.ip,
+    });
+
+    res.json({
+      ok: true,
+      revokedCount: result.changes || 0,
+      message: 'All other sessions have been signed out successfully.',
+    });
   });
   app.get('/api/internal-projects', async (req, res) =>
     res.json(await records(req.workspace.id, 'internal_project')),

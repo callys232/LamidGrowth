@@ -1931,6 +1931,84 @@ export async function openStore(filename, { poolMax } = {}) {
           `);
         },
       },
+      {
+        version: 4,
+        name: 'groupware integration, shared identity mapping, and sync events',
+        up: async (client) => {
+          await client.query(`
+            CREATE TABLE IF NOT EXISTS global_user_identities (
+              global_user_id TEXT PRIMARY KEY,
+              lamid_one_user_id TEXT UNIQUE REFERENCES users(id) ON DELETE SET NULL,
+              groupware_user_id TEXT UNIQUE,
+              primary_email TEXT NOT NULL,
+              normalized_email TEXT NOT NULL UNIQUE,
+              phone_number TEXT,
+              registration_source TEXT NOT NULL,
+              account_status TEXT NOT NULL DEFAULT 'active',
+              is_client INTEGER NOT NULL DEFAULT 0,
+              client_converted_at TEXT,
+              metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+              created_at TEXT NOT NULL,
+              updated_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_global_identities_email ON global_user_identities (normalized_email);
+            CREATE INDEX IF NOT EXISTS idx_global_identities_gw ON global_user_identities (groupware_user_id);
+
+            CREATE TABLE IF NOT EXISTS groupware_entity_mappings (
+              id TEXT PRIMARY KEY,
+              entity_type TEXT NOT NULL,
+              lamid_one_id TEXT NOT NULL,
+              groupware_id TEXT NOT NULL,
+              sync_direction TEXT NOT NULL DEFAULT 'bidirectional',
+              last_synced_at TEXT NOT NULL,
+              metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+              UNIQUE (entity_type, lamid_one_id),
+              UNIQUE (entity_type, groupware_id)
+            );
+            CREATE INDEX IF NOT EXISTS idx_gw_mappings_entity ON groupware_entity_mappings (entity_type);
+
+            CREATE TABLE IF NOT EXISTS groupware_sync_events (
+              id TEXT PRIMARY KEY,
+              event_id TEXT NOT NULL UNIQUE,
+              direction TEXT NOT NULL,
+              entity_type TEXT NOT NULL,
+              entity_id TEXT NOT NULL,
+              action TEXT NOT NULL,
+              payload JSONB NOT NULL,
+              status TEXT NOT NULL DEFAULT 'pending',
+              attempt_count INTEGER NOT NULL DEFAULT 0,
+              max_attempts INTEGER NOT NULL DEFAULT 5,
+              last_error TEXT,
+              next_retry_at TEXT,
+              created_at TEXT NOT NULL,
+              completed_at TEXT
+            );
+            CREATE INDEX IF NOT EXISTS idx_gw_sync_status ON groupware_sync_events (status, next_retry_at);
+          `);
+        },
+      },
+      {
+        version: 5,
+        name: 'account lockout, session inactivity timeout, and security alerts',
+        up: async (client) => {
+          await client.query(`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_attempts INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until BIGINT;
+            ALTER TABLE sessions ADD COLUMN IF NOT EXISTS last_active_at BIGINT;
+            CREATE TABLE IF NOT EXISTS security_alerts (
+              id TEXT PRIMARY KEY,
+              user_id TEXT,
+              workspace_id TEXT,
+              alert_type TEXT NOT NULL,
+              severity TEXT NOT NULL DEFAULT 'info',
+              details TEXT NOT NULL,
+              ip_address TEXT,
+              created_at BIGINT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_security_alerts_type ON security_alerts (alert_type, created_at);
+          `);
+        },
+      },
     ]);
 
     // Standards-based tool catalog (src/app/toolCatalog): keep each tool's primary-code manifest

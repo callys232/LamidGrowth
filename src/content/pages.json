@@ -1012,9 +1012,9 @@
     "indexing": "index, follow",
     "canonical": "/product",
     "seo_title": "LAMID ONE Platform | Decide, Build, Deliver",
-    "meta_description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "meta_description": "Explore the LAMID ONE operating system: Clarity, Consistency, Capability, and autonomous engines built around human direction and structured progress.",
     "title": "Decide what matters. Build what’s needed. Deliver the work.",
-    "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "description": "Explore the LAMID ONE operating system: Clarity, Consistency, Capability, and autonomous engines built around human direction and structured progress.",
     "platformIntro": {
       "label": "The platform",
       "title": "Everything you need to decide, build and deliver, in one place.",
@@ -10033,15 +10033,15 @@
     "route": "/start",
     "indexing": "index, follow",
     "canonical": "/start",
-    "seo_title": "Start | LAMID ONE",
+    "seo_title": "Choose Your Context | LAMID ONE",
     "meta_description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
-    "title": "Start With Your Context.",
+    "title": "Choose Your Context.",
     "description": "Choose where you are starting. You can expand into additional contexts later without restarting the operating history you have already built.",
     "hero": {
-      "title": "Start With Your Context.",
+      "title": "Choose Your Context.",
       "paragraphs": [
         {
-          "text": "Start With Your Context.",
+          "text": "Choose Your Context.",
           "sourceParagraph": 698
         },
         {
@@ -10120,10 +10120,10 @@
     ],
     "blocks": [
       {
-        "title": "Start With Your Context.",
+        "title": "Choose Your Context.",
         "paragraphs": [
           {
-            "text": "Start With Your Context.",
+            "text": "Choose Your Context.",
             "sourceParagraph": 698
           },
           {
@@ -16098,15 +16098,15 @@
     "route": "/signup",
     "indexing": "noindex, nofollow",
     "canonical": "/signup",
-    "seo_title": "Create Account | LAMID ONE",
-    "meta_description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
-    "title": "Start With Your Context.",
-    "description": "Create one LAMID ONE identity. Add personal, team, or organizational contexts when you need them.",
+    "seo_title": "Create Your Workspace | LAMID ONE",
+    "meta_description": "Create your LAMID ONE workspace. Add personal, team, or organizational contexts when you need them.",
+    "title": "Create Your Workspace.",
+    "description": "Create your LAMID ONE workspace. Add personal, team, or organizational contexts when you need them.",
     "hero": {
-      "title": "Start With Your Context.",
+      "title": "Create Your Workspace.",
       "paragraphs": [
         {
-          "text": "Start With Your Context.",
+          "text": "Create Your Workspace.",
           "sourceParagraph": 1272
         },
         {
@@ -16177,10 +16177,10 @@
     ],
     "blocks": [
       {
-        "title": "Start With Your Context.",
+        "title": "Create Your Workspace.",
         "paragraphs": [
           {
-            "text": "Start With Your Context.",
+            "text": "Create Your Workspace.",
             "sourceParagraph": 1272
           },
           {
@@ -16676,13 +16676,13 @@
     "canonical": "/onboarding",
     "seo_title": "Onboarding | LAMID ONE",
     "meta_description": "Tell LAMID ONE where you are starting and what you want to move forward.",
-    "title": "Start With Your Context.",
+    "title": "Welcome to LAMID ONE.",
     "description": "Tell LAMID ONE where you are starting and what you want to move forward.",
     "hero": {
-      "title": "Start With Your Context.",
+      "title": "Welcome to LAMID ONE.",
       "paragraphs": [
         {
-          "text": "Start With Your Context.",
+          "text": "Welcome to LAMID ONE.",
           "sourceParagraph": 1341
         },
         {
@@ -16761,10 +16761,10 @@
     ],
     "blocks": [
       {
-        "title": "Start With Your Context.",
+        "title": "Welcome to LAMID ONE.",
         "paragraphs": [
           {
-            "text": "Start With Your Context.",
+            "text": "Welcome to LAMID ONE.",
             "sourceParagraph": 1341
           },
           {

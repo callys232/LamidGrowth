@@ -22,6 +22,9 @@ import {
   encryptSecret,
   decryptSecret,
 } from './mfa.mjs';
+import { findOrCreateGlobalIdentity, queueOutboundSync } from './groupware/index.mjs';
+import { validatePasswordSecurity } from './passwordSecurity.mjs';
+import { recordSecurityAlert } from './securityAlerts.mjs';
 
 const emailSchema = z
   .string()
@@ -339,6 +342,7 @@ export async function mountAccounts(
       })
       .strict()
       .parse(req.body);
+    await validatePasswordSecurity(input.password);
     if (ecosystemAdminEmails.some((email) => email.toLowerCase() === input.email))
       return res
         .status(409)
@@ -385,6 +389,32 @@ export async function mountAccounts(
             sign(`ip:${req.ip}`),
             Date.now(),
           );
+        // Shared user identity mapping for Groupware integration (Rule 03 & Rule 07)
+        try {
+          await findOrCreateGlobalIdentity(store, {
+            email: input.email,
+            lamidOneUserId: user,
+            registrationSource: 'lamid_one',
+            isClient: false,
+            metadata: { name: input.name, context: input.context, workspaceId: workspace },
+          });
+          await queueOutboundSync(store, {
+            eventId: `evt_reg_${randomUUID().replaceAll('-', '')}`,
+            entityType: 'user',
+            entityId: user,
+            action: 'create',
+            payload: {
+              lamidOneUserId: user,
+              email: input.email,
+              name: input.name,
+              context: input.context,
+              isClient: false,
+              registrationSource: 'lamid_one',
+            },
+          });
+        } catch (gwErr) {
+          errorLogger('groupware_identity_init_error', { error: errorDetails(gwErr) });
+        }
         await log(
           workspace,
           input.name,
@@ -511,13 +541,14 @@ export async function mountAccounts(
       .object({ token: z.string().regex(/^[a-f0-9]{64}$/), password: passwordSchema })
       .strict()
       .parse(req.body);
+    await validatePasswordSecurity(input.password);
     const password = await hashPassword(input.password);
     const success = await transaction(async () => {
       const row = await finish(input.token, 'recovery');
       if (!row) return false;
       await db
         .prepare(
-          'UPDATE users SET password = ?, verified_at = COALESCE(verified_at, ?) WHERE id = ?',
+          'UPDATE users SET password = ?, verified_at = COALESCE(verified_at, ?), failed_login_attempts = 0, locked_until = NULL WHERE id = ?',
         )
         .run(password, Date.now(), row.user_id);
       await db.prepare('DELETE FROM sessions WHERE user_id = ?').run(row.user_id);
@@ -536,12 +567,46 @@ export async function mountAccounts(
     const user = await db
       .prepare('SELECT * FROM users WHERE email = ? AND demo = 0')
       .get(input.email);
+
+    // Progressive lockout check: reject if locked
+    if (user?.locked_until && Number(user.locked_until) > Date.now()) {
+      const minutesLeft = Math.ceil((Number(user.locked_until) - Date.now()) / 60_000);
+      return res.status(423).json({
+        error: `Account is temporarily locked due to repeated failed login attempts. Please try again in ${minutesLeft} minute(s) or reset your password.`,
+      });
+    }
+
     const valid = await verifyPassword(
       input.password,
       user?.password || `${'00'.repeat(16)}:${'00'.repeat(64)}`,
     );
-    if (!user || !valid || user.disabled_at)
+    if (!user || !valid || user.disabled_at) {
+      if (user && !user.disabled_at) {
+        const attempts = (Number(user.failed_login_attempts) || 0) + 1;
+        const lockedUntil = attempts >= 5 ? Date.now() + 15 * 60_000 : null;
+        await db
+          .prepare('UPDATE users SET failed_login_attempts = ?, locked_until = ? WHERE id = ?')
+          .run(attempts, lockedUntil, user.id);
+        if (lockedUntil) {
+          await recordSecurityAlert(store, {
+            userId: user.id,
+            alertType: 'account_locked',
+            severity: 'warning',
+            details: 'Account temporarily locked for 15 minutes after 5 consecutive failed login attempts.',
+            ipAddress: req.ip,
+            errorLogger,
+          });
+        }
+      }
       return res.status(401).json({ error: 'Email or password is incorrect.' });
+    }
+
+    // Reset failed login count and lockout on successful authentication
+    if (user.failed_login_attempts > 0 || user.locked_until) {
+      await db
+        .prepare('UPDATE users SET failed_login_attempts = 0, locked_until = NULL WHERE id = ?')
+        .run(user.id);
+    }
     // SEC-01: a confirmed MFA enrollment gates session issuance behind a second factor — the
     // password alone only unlocks a short-lived step-up challenge, not the session itself.
     const mfa = await db

@@ -5,9 +5,10 @@ and a database transaction. The `migrations` table records each completed versio
 fails, the transaction rolls back and startup fails; a database with a version newer than the
 application supports is rejected explicitly.
 
-Versions 1–3 establish the initial schema and record the additive changes previously applied on
-every startup. Existing databases that recorded version 1 are upgraded by versions 2 and 3;
-fresh databases run all three in order. The tool-catalog and seat-bundle reconciliation remains a
+Versions 1–5 establish the initial schema and record the additive changes previously applied on
+every startup. Existing databases that recorded versions 1–4 are upgraded by version 5
+(account lockout, session inactivity tracking, and security alerts ledger); fresh databases
+run all five in order. The tool-catalog and seat-bundle reconciliation remains a
 startup task because it reflects the current application catalog and pricing configuration, not
 a one-time schema change.
 

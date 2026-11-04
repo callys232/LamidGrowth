@@ -353,9 +353,140 @@ export function PrivacyPage() {
             </form>
           )}
         </section>
+        <ChangePasswordSection />
         <AccountSecurity />
       </section>
     </>
+  );
+}
+
+function ChangePasswordSection() {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [visible, setVisible] = useState(false);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (newPassword !== confirmPassword) {
+      return setError('New passwords do not match.');
+    }
+    if (newPassword === currentPassword) {
+      return setError('New password must be different from your current password.');
+    }
+
+    setBusy(true);
+    try {
+      await api('/account/change-password', {
+        currentPassword,
+        newPassword,
+      });
+      setSuccess('Your password has been updated successfully. Other active sessions were signed out.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="settings-card">
+      <h3>Change password</h3>
+      <p>Choose a strong password with at least 8 characters. For your security, other devices will be signed out.</p>
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
+      {success && (
+        <p className="form-success" role="status" style={{ color: '#2e7d32', margin: '12px 0' }}>
+          {success}
+        </p>
+      )}
+      <form className="form-grid" onSubmit={submit}>
+        <Field label="Current password">
+          <input
+            type={visible ? 'text' : 'password'}
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+            placeholder="Enter current password"
+          />
+        </Field>
+        <Field label="New password" hint="Minimum 8 characters">
+          <input
+            type={visible ? 'text' : 'password'}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
+            required
+            placeholder="Enter new password"
+          />
+        </Field>
+        <Field label="Confirm new password">
+          <input
+            type={visible ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
+            required
+            placeholder="Confirm new password"
+          />
+        </Field>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Button type="submit" disabled={busy}>
+            {busy ? 'Updating…' : 'Update password'}
+          </Button>
+          <button
+            type="button"
+            className="text-button"
+            onClick={() => setVisible(!visible)}
+            style={{ fontSize: '13px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+          >
+            {visible ? 'Hide passwords' : 'Show passwords'}
+          </button>
+        </div>
+      </form>
+      <div style={{ marginTop: '24px', paddingTop: '18px', borderTop: '1px solid #e4dfd8' }}>
+        <h4 style={{ margin: '0 0 6px 0', fontSize: '15px' }}>Active sessions</h4>
+        <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#5a5f66' }}>
+          Terminate any other active devices and browser sessions while staying signed in on this device.
+        </p>
+        <Button
+          variant="secondary"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setError('');
+            setSuccess('');
+            try {
+              const res = await api<{ message?: string }>('/account/revoke-other-sessions', {});
+              setSuccess(res.message || 'All other sessions have been signed out successfully.');
+            } catch (err) {
+              setError((err as Error).message);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          Sign out of all other devices
+        </Button>
+      </div>
+    </section>
   );
 }
 

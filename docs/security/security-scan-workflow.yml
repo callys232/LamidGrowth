@@ -1,0 +1,40 @@
+name: Security Analysis (SAST & SCA)
+on:
+  push:
+    branches: [main, lamidOne]
+  pull_request:
+    branches: [main, lamidOne]
+  schedule:
+    - cron: '0 4 * * 1' # Run weekly on Monday at 04:00 UTC
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  sca-audit:
+    name: Software Composition Analysis (SCA)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run NPM Security Audit
+        run: npm audit --audit-level=high
+
+  codeql-analysis:
+    name: Static Application Security Testing (CodeQL)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended,security-and-quality
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:javascript-typescript'
+
