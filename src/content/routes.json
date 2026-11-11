@@ -141,13 +141,13 @@
     "route": "/security",
     "page": 24,
     "name": "SECURITY",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/responsible-ai",
     "page": 25,
     "name": "RESPONSIBLE AI",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/trust/privacy",
@@ -165,7 +165,7 @@
     "route": "/pricing",
     "page": 28,
     "name": "PRICING",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/experts",
@@ -261,37 +261,37 @@
     "route": "/developers",
     "page": 43,
     "name": "DEVELOPERS",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/developers/api",
     "page": 44,
     "name": "API DOCUMENTATION",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/developers/sdks",
     "page": 45,
     "name": "SDKS",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/integrations",
     "page": 46,
     "name": "INTEGRATIONS",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/developers/webhooks",
     "page": 47,
     "name": "WEBHOOKS & EVENTS",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/developers/changelog",
     "page": 48,
     "name": "DEVELOPER CHANGELOG",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/about",
@@ -309,19 +309,19 @@
     "route": "/about/leadership",
     "page": 51,
     "name": "FOUNDER & LEADERSHIP",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/careers",
     "page": 52,
     "name": "CAREERS",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/press",
     "page": 53,
     "name": "PRESS & MEDIA",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/contact",
@@ -333,31 +333,31 @@
     "route": "/legal/privacy",
     "page": 55,
     "name": "PRIVACY POLICY",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/legal/terms",
     "page": 56,
     "name": "TERMS OF SERVICE",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/legal/cookies",
     "page": 57,
     "name": "COOKIE POLICY",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/legal/acceptable-use",
     "page": 58,
     "name": "ACCEPTABLE USE POLICY",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/legal/dpa",
     "page": 59,
     "name": "DATA PROCESSING ADDENDUM",
-    "gated": true
+    "gated": false
   },
   {
     "route": "/accessibility",

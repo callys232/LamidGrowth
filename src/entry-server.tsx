@@ -7,18 +7,26 @@ import { MotionProvider } from './shared/visuals/Motion';
 import { InteractionFeedback } from './shared/visuals/InteractionFeedback';
 import { ScrollPop } from './shared/visuals/ScrollPop';
 
+class SsrErrorBoundary extends React.Component<{ children: React.ReactNode }> {
+  render() {
+    return this.props.children;
+  }
+}
+
 export function renderRoute(route: string): Promise<string> {
   return new Promise((resolve, reject) => {
     let didError = false;
     const stream = renderToPipeableStream(
       <React.StrictMode>
-        <MotionProvider>
-          <MemoryRouter initialEntries={[route]}>
-            <InteractionFeedback />
-            <ScrollPop />
-            <App />
-          </MemoryRouter>
-        </MotionProvider>
+        <SsrErrorBoundary>
+          <MotionProvider>
+            <MemoryRouter initialEntries={[route]}>
+              <InteractionFeedback />
+              <ScrollPop />
+              <App />
+            </MemoryRouter>
+          </MotionProvider>
+        </SsrErrorBoundary>
       </React.StrictMode>,
       {
         onAllReady() {

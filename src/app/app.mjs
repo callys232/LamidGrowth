@@ -1879,7 +1879,7 @@ export async function createApp({
   mountAgents(app, store, agentRuntime, { spendLimiter });
   mountModelRegistry(app, store);
   mountAccountServices(app, store, { verifyCurrentPassword, ecosystemAdminEmails });
-  mountProjects(app, store, { aiProvider });
+  mountProjects(app, store, { aiProvider, ecosystemAdminEmails });
   mountTasks(app, store);
   mountGoals(app, store);
   mountGrowth(app, store);
@@ -1897,7 +1897,7 @@ export async function createApp({
   mountOutcomeAttribution(app, store);
   mountExpertContextPackage(app, store);
   mountContextTransfer(app, store);
-  mountPayments(app, store, { paymentProvider });
+  mountPayments(app, store, { paymentProvider, ecosystemAdminEmails });
   mountPointsPurchase(app, store, { paymentProvider });
   mountDocuments(app, store);
   mountFx(app, store);

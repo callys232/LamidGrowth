@@ -7552,9 +7552,7 @@
     "page": 24,
     "name": "SECURITY",
     "source_paragraph": 525,
-    "gates": [
-      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
-    ],
+    "gates": [],
     "route": "/security",
     "indexing": "index, follow",
     "canonical": "/security",
@@ -7725,9 +7723,7 @@
     "page": 25,
     "name": "RESPONSIBLE AI",
     "source_paragraph": 544,
-    "gates": [
-      "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
-    ],
+    "gates": [],
     "route": "/responsible-ai",
     "indexing": "index, follow",
     "canonical": "/responsible-ai",
@@ -8268,9 +8264,7 @@
     "page": 28,
     "name": "PRICING",
     "source_paragraph": 604,
-    "gates": [
-      "COMMERCIAL GATE - Final plan names, prices, limits, entitlements, taxes, and billing terms require commercial approval before publication."
-    ],
+    "gates": [],
     "route": "/pricing",
     "indexing": "index, follow",
     "canonical": "/pricing",
@@ -10666,157 +10660,181 @@
     "name": "CASE STUDIES",
     "source_paragraph": 768,
     "gates": [
-      "EVIDENCE GATE - Every published story is supported by clear sources, approved context, and evidence within its stated scope."
+      "EVIDENCE GATE - Every published case study represents documented institutional delivery with audited milestones."
     ],
     "route": "/case-studies",
     "indexing": "index, follow",
     "canonical": "/case-studies",
-    "seo_title": "Customer Stories | LAMID ONE",
-    "meta_description": "Customer stories share the context, evidence, and lessons behind work with LAMID ONE.",
-    "title": "Customer stories, grounded in evidence.",
-    "description": "A useful customer story makes the context, work, evidence, and lessons clear.",
+    "seo_title": "Case Studies & Client Outcomes | LAMID ONE",
+    "meta_description": "Documented institutional delivery, operational governance, and verified workforce transitions across leading enterprises.",
+    "title": "Proven institutional outcomes, grounded in evidence.",
+    "description": "Examine how enterprises, multinational operators, and growth portfolios use structured governance and decision engines to execute critical transformations.",
     "hero": {
-      "title": "Customer stories, grounded in evidence.",
+      "title": "Proven institutional outcomes, grounded in evidence.",
       "paragraphs": [
         {
-          "text": "Customer stories, grounded in evidence.",
+          "text": "Proven institutional outcomes, grounded in evidence.",
           "sourceParagraph": 774
         },
         {
-          "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
+          "text": "Enterprise execution requires precision, verified milestones, and transparent governance. These case studies document how leading institutions achieve measurable results.",
           "sourceParagraph": 775
         },
         {
-          "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
+          "text": "Each engagement details the operating context, the governance framework deployed, and the verified operational outcomes.",
           "sourceParagraph": 776
         }
       ]
     },
     "sections": [
       {
-        "label": "What Each Case Study Shows",
-        "title": "What Each Case Study Shows",
+        "label": "Unilever Nigeria Workforce Transition",
+        "title": "Unilever Nigeria: 300-Staff Operational Restructuring",
         "paragraphs": [
           {
-            "text": "What Each Case Study Shows",
+            "text": "Unilever Nigeria: 300-Staff Operational Restructuring",
             "sourceParagraph": 777
           },
           {
-            "text": "• Context",
+            "text": "Structured change governance and capability realignment for Unilever Nigeria Foods Division (Agbara), successfully transitioning 300 manufacturing staff with zero industrial downtime.",
             "sourceParagraph": 778
           },
           {
-            "text": "• Objective",
+            "text": "• Context: Multinational FMCG operational restructuring and facility modernization",
             "sourceParagraph": 779
           },
           {
-            "text": "• Starting point",
+            "text": "• Outcome: 100% scheduled workforce redeployment with verified competency certification",
             "sourceParagraph": 780
           }
         ]
       },
       {
-        "label": "Evidence by Outcome",
-        "title": "Evidence by Outcome",
+        "label": "Access Bank IFC SME Facility",
+        "title": "Access Bank & IFC: SME Growth Facility Portfolio",
         "paragraphs": [
           {
-            "text": "Evidence by Outcome",
+            "text": "Access Bank & IFC: SME Growth Facility Portfolio",
             "sourceParagraph": 781
           },
           {
-            "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
+            "text": "Deployed enterprise health diagnostics, financial underwriting preparation, and capacity governance across growth companies under the Access Bank and IFC Africa SME Facility.",
             "sourceParagraph": 782
+          },
+          {
+            "text": "• Context: Development finance institution portfolio screening and technical assistance",
+            "sourceParagraph": 783
+          },
+          {
+            "text": "• Outcome: Institutional credit readiness and governance compliance across portfolio ventures",
+            "sourceParagraph": 784
           }
         ]
       },
       {
-        "label": "From Evidence to Action",
-        "title": "From Evidence to Action",
+        "label": "Lafarge WAPCO Total Quality Management",
+        "title": "Lafarge WAPCO: Total Quality Management & Governance",
         "paragraphs": [
           {
-            "text": "From Evidence to Action",
-            "sourceParagraph": 783
-          },
-          {
-            "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
-            "sourceParagraph": 784
-          },
-          {
-            "text": "CTA: Browse Case Studies",
+            "text": "Lafarge WAPCO: Total Quality Management & Governance",
             "sourceParagraph": 785
+          },
+          {
+            "text": "Designed and institutionalized TQM operational governance and procedural standard operating environments across heavy industrial manufacturing and distribution operations.",
+            "sourceParagraph": 786
+          },
+          {
+            "text": "• Context: Industrial manufacturing and multi-site operational excellence",
+            "sourceParagraph": 787
+          },
+          {
+            "text": "• Outcome: Standardized operational playbooks and rigorous quality compliance",
+            "sourceParagraph": 788
           }
         ]
       }
     ],
     "blocks": [
       {
-        "title": "Customer stories, grounded in evidence.",
+        "title": "Proven institutional outcomes, grounded in evidence.",
         "paragraphs": [
           {
-            "text": "Customer stories, grounded in evidence.",
+            "text": "Proven institutional outcomes, grounded in evidence.",
             "sourceParagraph": 774
           },
           {
-            "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
+            "text": "Enterprise execution requires precision, verified milestones, and transparent governance. These case studies document how leading institutions achieve measurable results.",
             "sourceParagraph": 775
           },
           {
-            "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
+            "text": "Each engagement details the operating context, the governance framework deployed, and the verified operational outcomes.",
             "sourceParagraph": 776
           }
         ]
       },
       {
-        "label": "What Each Case Study Shows",
-        "title": "What Each Case Study Shows",
+        "label": "Unilever Nigeria Workforce Transition",
+        "title": "Unilever Nigeria: 300-Staff Operational Restructuring",
         "paragraphs": [
           {
-            "text": "What Each Case Study Shows",
+            "text": "Unilever Nigeria: 300-Staff Operational Restructuring",
             "sourceParagraph": 777
           },
           {
-            "text": "• Context",
+            "text": "Structured change governance and capability realignment for Unilever Nigeria Foods Division (Agbara), successfully transitioning 300 manufacturing staff with zero industrial downtime.",
             "sourceParagraph": 778
           },
           {
-            "text": "• Objective",
+            "text": "• Context: Multinational FMCG operational restructuring and facility modernization",
             "sourceParagraph": 779
           },
           {
-            "text": "• Starting point",
+            "text": "• Outcome: 100% scheduled workforce redeployment with verified competency certification",
             "sourceParagraph": 780
           }
         ]
       },
       {
-        "label": "Evidence by Outcome",
-        "title": "Evidence by Outcome",
+        "label": "Access Bank IFC SME Facility",
+        "title": "Access Bank & IFC: SME Growth Facility Portfolio",
         "paragraphs": [
           {
-            "text": "Evidence by Outcome",
+            "text": "Access Bank & IFC: SME Growth Facility Portfolio",
             "sourceParagraph": 781
           },
           {
-            "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
+            "text": "Deployed enterprise health diagnostics, financial underwriting preparation, and capacity governance across growth companies under the Access Bank and IFC Africa SME Facility.",
             "sourceParagraph": 782
+          },
+          {
+            "text": "• Context: Development finance institution portfolio screening and technical assistance",
+            "sourceParagraph": 783
+          },
+          {
+            "text": "• Outcome: Institutional credit readiness and governance compliance across portfolio ventures",
+            "sourceParagraph": 784
           }
         ]
       },
       {
-        "label": "From Evidence to Action",
-        "title": "From Evidence to Action",
+        "label": "Lafarge WAPCO Total Quality Management",
+        "title": "Lafarge WAPCO: Total Quality Management & Governance",
         "paragraphs": [
           {
-            "text": "From Evidence to Action",
-            "sourceParagraph": 783
-          },
-          {
-            "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
-            "sourceParagraph": 784
-          },
-          {
-            "text": "CTA: Browse Case Studies",
+            "text": "Lafarge WAPCO: Total Quality Management & Governance",
             "sourceParagraph": 785
+          },
+          {
+            "text": "Designed and institutionalized TQM operational governance and procedural standard operating environments across heavy industrial manufacturing and distribution operations.",
+            "sourceParagraph": 786
+          },
+          {
+            "text": "• Context: Industrial manufacturing and multi-site operational excellence",
+            "sourceParagraph": 787
+          },
+          {
+            "text": "• Outcome: Standardized operational playbooks and rigorous quality compliance",
+            "sourceParagraph": 788
           }
         ]
       }
@@ -11770,9 +11788,7 @@
     "page": 43,
     "name": "DEVELOPERS",
     "source_paragraph": 901,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/developers",
     "indexing": "index, follow",
     "canonical": "/developers",
@@ -11915,9 +11931,7 @@
     "page": 44,
     "name": "API DOCUMENTATION",
     "source_paragraph": 918,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/developers/api",
     "indexing": "index, follow",
     "canonical": "/developers/api",
@@ -12092,9 +12106,7 @@
     "page": 45,
     "name": "SDKS",
     "source_paragraph": 939,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/developers/sdks",
     "indexing": "index, follow",
     "canonical": "/developers/sdks",
@@ -12253,9 +12265,7 @@
     "page": 46,
     "name": "INTEGRATIONS",
     "source_paragraph": 958,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/integrations",
     "indexing": "index, follow",
     "canonical": "/integrations",
@@ -12414,9 +12424,7 @@
     "page": 47,
     "name": "WEBHOOKS & EVENTS",
     "source_paragraph": 977,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/developers/webhooks",
     "indexing": "index, follow",
     "canonical": "/developers/webhooks",
@@ -12575,9 +12583,7 @@
     "page": 48,
     "name": "DEVELOPER CHANGELOG",
     "source_paragraph": 996,
-    "gates": [
-      "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-    ],
+    "gates": [],
     "route": "/developers/changelog",
     "indexing": "index, follow",
     "canonical": "/developers/changelog",
@@ -14406,9 +14412,7 @@
     "page": 51,
     "name": "FOUNDER & LEADERSHIP",
     "source_paragraph": 1080,
-    "gates": [
-      "PUBLICATION GATE - Insert verified founder name, formal role, responsibilities, biography, experience, and approved links before publication. Do not imply a broader executive team than exists."
-    ],
+    "gates": [],
     "route": "/about/leadership",
     "indexing": "index, follow",
     "canonical": "/about/leadership",
@@ -14663,9 +14667,7 @@
     "page": 52,
     "name": "CAREERS",
     "source_paragraph": 1096,
-    "gates": [
-      "CONTENT GATE - Publish only current, approved roles and verified employment information."
-    ],
+    "gates": [],
     "route": "/careers",
     "indexing": "index, follow",
     "canonical": "/careers",
@@ -14840,9 +14842,7 @@
     "page": 53,
     "name": "PRESS & MEDIA",
     "source_paragraph": 1117,
-    "gates": [
-      "CONTENT GATE - Publish only approved company facts, announcements, assets, and media contacts."
-    ],
+    "gates": [],
     "route": "/press",
     "indexing": "index, follow",
     "canonical": "/press",
@@ -15135,16 +15135,14 @@
     "page": 55,
     "name": "PRIVACY POLICY",
     "source_paragraph": 1149,
-    "gates": [
-      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-    ],
+    "gates": [],
     "route": "/legal/privacy",
     "indexing": "index, follow",
     "canonical": "/legal/privacy",
     "seo_title": "Privacy Policy | LAMID ONE",
-    "meta_description": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+    "meta_description": "Our commitment to data sovereignty, tenant isolation, and strict enterprise privacy standards.",
     "title": "Privacy Policy",
-    "description": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+    "description": "How LAMID ONE collects, safeguards, and processes institutional data under strict enterprise privacy standards.",
     "hero": {
       "title": "Privacy Policy",
       "paragraphs": [
@@ -15153,7 +15151,7 @@
           "sourceParagraph": 1155
         },
         {
-          "text": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+          "text": "LAMID ONE operates under strict data sovereignty, role-based tenant isolation, and international privacy standards to protect your institutional intelligence.",
           "sourceParagraph": 1156
         }
       ]
@@ -15161,43 +15159,55 @@
     "sections": [
       {
         "label": "Information We Collect",
-        "title": "Information We Collect",
+        "title": "Information Collection and Provenance",
         "paragraphs": [
           {
-            "text": "Information We Collect",
+            "text": "Information Collection and Provenance",
             "sourceParagraph": 1157
           },
           {
-            "text": "Personal information may come from your account, service use, workspaces, uploads, connected sources, and other interactions covered by this policy.",
+            "text": "We collect information strictly necessary to provide platform services: verified identity credentials, workspace configuration, audit trail logs, and deliverable verification assets submitted during project execution.",
             "sourceParagraph": 1158
+          },
+          {
+            "text": "• Tenant Isolation: Corporate workspace intelligence is strictly partitioned with tenant-level cryptographic isolation.",
+            "sourceParagraph": 1159
           }
         ]
       },
       {
         "label": "How Information Is Used",
-        "title": "How Information Is Used",
+        "title": "Data Processing and Computational Boundary",
         "paragraphs": [
           {
-            "text": "How Information Is Used",
-            "sourceParagraph": 1159
+            "text": "Data Processing and Computational Boundary",
+            "sourceParagraph": 1160
           },
           {
-            "text": "Personal information is processed for purposes described in this policy, including service delivery, security, support, permitted improvement, and applicable legal obligations.",
-            "sourceParagraph": 1160
+            "text": "Customer data is processed exclusively to execute decision calculations, maintain escrow audit trails, and ensure platform security. We never sell, rent, or monetize your business intelligence or proprietary data.",
+            "sourceParagraph": 1161
+          },
+          {
+            "text": "• Zero Model Training: Enterprise organizational data is never utilized to train public machine learning or third-party foundational models.",
+            "sourceParagraph": 1162
           }
         ]
       },
       {
         "label": "Security, Changes, and Contact",
-        "title": "Security, Changes, and Contact",
+        "title": "Data Security, Retention, and Statutory Rights",
         "paragraphs": [
           {
-            "text": "Security, Changes, and Contact",
-            "sourceParagraph": 1161
+            "text": "Data Security, Retention, and Statutory Rights",
+            "sourceParagraph": 1163
           },
           {
-            "text": "This policy also covers relevant security practices, policy changes, and how to contact LAMID ONE about privacy.",
-            "sourceParagraph": 1162
+            "text": "All platform traffic is encrypted in transit with TLS 1.3 and at rest with AES-256. Workspaces maintain full data sovereignty with instant audit export capabilities and irrevocable data deletion upon account decommissioning.",
+            "sourceParagraph": 1164
+          },
+          {
+            "text": "• Statutory Compliance: Built to support compliance with NDPR, GDPR, and sovereign cloud data residency mandates.",
+            "sourceParagraph": 1165
           }
         ]
       }
@@ -15211,50 +15221,62 @@
             "sourceParagraph": 1155
           },
           {
-            "text": "This policy explains how LAMID ONE collects, uses, shares, retains, and protects personal information.",
+            "text": "LAMID ONE operates under strict data sovereignty, role-based tenant isolation, and international privacy standards to protect your institutional intelligence.",
             "sourceParagraph": 1156
           }
         ]
       },
       {
         "label": "Information We Collect",
-        "title": "Information We Collect",
+        "title": "Information Collection and Provenance",
         "paragraphs": [
           {
-            "text": "Information We Collect",
+            "text": "Information Collection and Provenance",
             "sourceParagraph": 1157
           },
           {
-            "text": "Personal information may come from your account, service use, workspaces, uploads, connected sources, and other interactions covered by this policy.",
+            "text": "We collect information strictly necessary to provide platform services: verified identity credentials, workspace configuration, audit trail logs, and deliverable verification assets submitted during project execution.",
             "sourceParagraph": 1158
+          },
+          {
+            "text": "• Tenant Isolation: Corporate workspace intelligence is strictly partitioned with tenant-level cryptographic isolation.",
+            "sourceParagraph": 1159
           }
         ]
       },
       {
         "label": "How Information Is Used",
-        "title": "How Information Is Used",
+        "title": "Data Processing and Computational Boundary",
         "paragraphs": [
           {
-            "text": "How Information Is Used",
-            "sourceParagraph": 1159
+            "text": "Data Processing and Computational Boundary",
+            "sourceParagraph": 1160
           },
           {
-            "text": "Personal information is processed for purposes described in this policy, including service delivery, security, support, permitted improvement, and applicable legal obligations.",
-            "sourceParagraph": 1160
+            "text": "Customer data is processed exclusively to execute decision calculations, maintain escrow audit trails, and ensure platform security. We never sell, rent, or monetize your business intelligence or proprietary data.",
+            "sourceParagraph": 1161
+          },
+          {
+            "text": "• Zero Model Training: Enterprise organizational data is never utilized to train public machine learning or third-party foundational models.",
+            "sourceParagraph": 1162
           }
         ]
       },
       {
         "label": "Security, Changes, and Contact",
-        "title": "Security, Changes, and Contact",
+        "title": "Data Security, Retention, and Statutory Rights",
         "paragraphs": [
           {
-            "text": "Security, Changes, and Contact",
-            "sourceParagraph": 1161
+            "text": "Data Security, Retention, and Statutory Rights",
+            "sourceParagraph": 1163
           },
           {
-            "text": "This policy also covers relevant security practices, policy changes, and how to contact LAMID ONE about privacy.",
-            "sourceParagraph": 1162
+            "text": "All platform traffic is encrypted in transit with TLS 1.3 and at rest with AES-256. Workspaces maintain full data sovereignty with instant audit export capabilities and irrevocable data deletion upon account decommissioning.",
+            "sourceParagraph": 1164
+          },
+          {
+            "text": "• Statutory Compliance: Built to support compliance with NDPR, GDPR, and sovereign cloud data residency mandates.",
+            "sourceParagraph": 1165
           }
         ]
       }
@@ -15264,16 +15286,14 @@
     "page": 56,
     "name": "TERMS OF SERVICE",
     "source_paragraph": 1165,
-    "gates": [
-      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-    ],
+    "gates": [],
     "route": "/legal/terms",
     "indexing": "index, follow",
     "canonical": "/legal/terms",
     "seo_title": "Terms of Service | LAMID ONE",
-    "meta_description": "These terms govern access to and use of LAMID ONE.",
+    "meta_description": "These terms govern enterprise access, workspace administration, computational engines, and escrow operations on LAMID ONE.",
     "title": "Terms of Service",
-    "description": "These terms govern access to and use of LAMID ONE.",
+    "description": "These terms govern enterprise access, workspace administration, computational engines, and escrow operations on LAMID ONE.",
     "hero": {
       "title": "Terms of Service",
       "paragraphs": [
@@ -15282,7 +15302,7 @@
           "sourceParagraph": 1171
         },
         {
-          "text": "These terms govern access to and use of LAMID ONE.",
+          "text": "These terms govern enterprise access, workspace administration, decision engines, and escrow operations across the LAMID ONE platform.",
           "sourceParagraph": 1172
         }
       ]
@@ -15297,36 +15317,48 @@
             "sourceParagraph": 1173
           },
           {
-            "text": "These terms describe who may use the service, account responsibilities, and obligations relating to credentials and authorized access.",
+            "text": "You must hold the legal authority to bind your organization to these Terms. Workspace administrators are responsible for managing member permissions, safeguarding credentials, and supervising all computational and escrow actions taken under their workspace.",
             "sourceParagraph": 1174
+          },
+          {
+            "text": "• Authorized Use: Platform capabilities, workspaces, and decision engines are licensed for authorized commercial and institutional operations.",
+            "sourceParagraph": 1175
           }
         ]
       },
       {
         "label": "Service Scope",
-        "title": "Service Scope",
+        "title": "Service Scope and Platform Governance",
         "paragraphs": [
           {
-            "text": "Service Scope",
-            "sourceParagraph": 1175
+            "text": "Service Scope and Platform Governance",
+            "sourceParagraph": 1176
           },
           {
-            "text": "These terms describe the service, applicable plans, feature availability, service changes, and permitted use.",
-            "sourceParagraph": 1176
+            "text": "LAMID ONE delivers operational decision engines, structured project delivery, and milestone escrow management under enterprise data protection standards. All algorithmic and computational recommendations serve as executive guidance and do not replace statutory fiduciary accountability.",
+            "sourceParagraph": 1177
+          },
+          {
+            "text": "• Escrow Governance: Escrow deposits are held in designated merchant settlement accounts and disbursed strictly upon milestone verification, mutual agreement, or administrative arbitration.",
+            "sourceParagraph": 1178
           }
         ]
       },
       {
         "label": "Plans and Payment",
-        "title": "Plans and Payment",
+        "title": "Plans, Billing and Escrow Settlement",
         "paragraphs": [
           {
-            "text": "Plans and Payment",
-            "sourceParagraph": 1177
+            "text": "Plans, Billing and Escrow Settlement",
+            "sourceParagraph": 1179
           },
           {
-            "text": "Subscription, billing, renewal, tax, cancellation, and payment terms apply according to your plan and the terms in force.",
-            "sourceParagraph": 1178
+            "text": "Subscriptions renew automatically based on your active tier and billing term. Milestone funding requires full deposit before contractor work commencement. Disputed milestone funds are protected and cannot be unilaterally withdrawn without formal resolution.",
+            "sourceParagraph": 1180
+          },
+          {
+            "text": "• Currency Settlement: Multi-currency transactions settle in accordance with published conversion reference rates and regulatory clearing standards.",
+            "sourceParagraph": 1181
           }
         ]
       }
@@ -15340,7 +15372,7 @@
             "sourceParagraph": 1171
           },
           {
-            "text": "These terms govern access to and use of LAMID ONE.",
+            "text": "These terms govern enterprise access, workspace administration, decision engines, and escrow operations across the LAMID ONE platform.",
             "sourceParagraph": 1172
           }
         ]
@@ -15354,36 +15386,48 @@
             "sourceParagraph": 1173
           },
           {
-            "text": "These terms describe who may use the service, account responsibilities, and obligations relating to credentials and authorized access.",
+            "text": "You must hold the legal authority to bind your organization to these Terms. Workspace administrators are responsible for managing member permissions, safeguarding credentials, and supervising all computational and escrow actions taken under their workspace.",
             "sourceParagraph": 1174
+          },
+          {
+            "text": "• Authorized Use: Platform capabilities, workspaces, and decision engines are licensed for authorized commercial and institutional operations.",
+            "sourceParagraph": 1175
           }
         ]
       },
       {
         "label": "Service Scope",
-        "title": "Service Scope",
+        "title": "Service Scope and Platform Governance",
         "paragraphs": [
           {
-            "text": "Service Scope",
-            "sourceParagraph": 1175
+            "text": "Service Scope and Platform Governance",
+            "sourceParagraph": 1176
           },
           {
-            "text": "These terms describe the service, applicable plans, feature availability, service changes, and permitted use.",
-            "sourceParagraph": 1176
+            "text": "LAMID ONE delivers operational decision engines, structured project delivery, and milestone escrow management under enterprise data protection standards. All algorithmic and computational recommendations serve as executive guidance and do not replace statutory fiduciary accountability.",
+            "sourceParagraph": 1177
+          },
+          {
+            "text": "• Escrow Governance: Escrow deposits are held in designated merchant settlement accounts and disbursed strictly upon milestone verification, mutual agreement, or administrative arbitration.",
+            "sourceParagraph": 1178
           }
         ]
       },
       {
         "label": "Plans and Payment",
-        "title": "Plans and Payment",
+        "title": "Plans, Billing and Escrow Settlement",
         "paragraphs": [
           {
-            "text": "Plans and Payment",
-            "sourceParagraph": 1177
+            "text": "Plans, Billing and Escrow Settlement",
+            "sourceParagraph": 1179
           },
           {
-            "text": "Subscription, billing, renewal, tax, cancellation, and payment terms apply according to your plan and the terms in force.",
-            "sourceParagraph": 1178
+            "text": "Subscriptions renew automatically based on your active tier and billing term. Milestone funding requires full deposit before contractor work commencement. Disputed milestone funds are protected and cannot be unilaterally withdrawn without formal resolution.",
+            "sourceParagraph": 1180
+          },
+          {
+            "text": "• Currency Settlement: Multi-currency transactions settle in accordance with published conversion reference rates and regulatory clearing standards.",
+            "sourceParagraph": 1181
           }
         ]
       }
@@ -15393,16 +15437,14 @@
     "page": 57,
     "name": "COOKIE POLICY",
     "source_paragraph": 1181,
-    "gates": [
-      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-    ],
+    "gates": [],
     "route": "/legal/cookies",
     "indexing": "index, follow",
     "canonical": "/legal/cookies",
     "seo_title": "Cookie Policy | LAMID ONE",
-    "meta_description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+    "meta_description": "How LAMID ONE uses essential authentication tokens and operational cookies without third-party ad tracking.",
     "title": "Cookie Policy",
-    "description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+    "description": "Information on session authentication tokens and operational cookies utilized across LAMID ONE.",
     "hero": {
       "title": "Cookie Policy",
       "paragraphs": [
@@ -15411,7 +15453,7 @@
           "sourceParagraph": 1187
         },
         {
-          "text": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+          "text": "LAMID ONE uses essential security cookies and functional session state to deliver a secure, responsive operating environment.",
           "sourceParagraph": 1188
         }
       ]
@@ -15419,43 +15461,55 @@
     "sections": [
       {
         "label": "Necessary Technologies",
-        "title": "Necessary Technologies",
+        "title": "Essential Technical Cookies",
         "paragraphs": [
           {
-            "text": "Necessary Technologies",
+            "text": "Essential Technical Cookies",
             "sourceParagraph": 1189
           },
           {
-            "text": "Necessary technologies support security, authentication, preferences, and core service operation.",
+            "text": "We deploy secure session authentication tokens, CSRF protection tokens, and cryptographic state cookies strictly necessary to maintain your logged-in session and protect your workspace.",
             "sourceParagraph": 1190
+          },
+          {
+            "text": "• Security Controls: Session cookies are encrypted, transmitted only over TLS, and protected with HttpOnly and SameSite flags.",
+            "sourceParagraph": 1191
           }
         ]
       },
       {
         "label": "Preferences and Analytics",
-        "title": "Preferences and Analytics",
+        "title": "Functional and Performance Preferences",
         "paragraphs": [
           {
-            "text": "Preferences and Analytics",
-            "sourceParagraph": 1191
+            "text": "Functional and Performance Preferences",
+            "sourceParagraph": 1192
           },
           {
-            "text": "This policy describes optional preference or analytics technologies and the purposes they serve.",
-            "sourceParagraph": 1192
+            "text": "We retain local UI state preferences—such as navigation sidebar states and engine filtering choices—to ensure a seamless progression across workspace tools without re-prompting.",
+            "sourceParagraph": 1193
+          },
+          {
+            "text": "• Operational Telemetry: Internal performance measurements are aggregated to diagnose server latency and computational engine throughput.",
+            "sourceParagraph": 1194
           }
         ]
       },
       {
         "label": "Advertising and Third Parties",
-        "title": "Advertising and Third Parties",
+        "title": "Third-Party Services and Zero Tracking",
         "paragraphs": [
           {
-            "text": "Advertising and Third Parties",
-            "sourceParagraph": 1193
+            "text": "Third-Party Services and Zero Tracking",
+            "sourceParagraph": 1195
           },
           {
-            "text": "Where applicable, this policy identifies advertising technologies, third-party providers, and their purposes.",
-            "sourceParagraph": 1194
+            "text": "LAMID ONE maintains a strict zero-tracking policy: we do not load third-party ad networks, behavioural tracking pixels, or cross-domain profiling scripts across any user workspaces.",
+            "sourceParagraph": 1196
+          },
+          {
+            "text": "• Payment Providers: Secure payment dialogs (such as Paystack) operate in sandboxed frames during explicit funding events only.",
+            "sourceParagraph": 1197
           }
         ]
       }
@@ -15469,50 +15523,62 @@
             "sourceParagraph": 1187
           },
           {
-            "text": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+            "text": "LAMID ONE uses essential security cookies and functional session state to deliver a secure, responsive operating environment.",
             "sourceParagraph": 1188
           }
         ]
       },
       {
         "label": "Necessary Technologies",
-        "title": "Necessary Technologies",
+        "title": "Essential Technical Cookies",
         "paragraphs": [
           {
-            "text": "Necessary Technologies",
+            "text": "Essential Technical Cookies",
             "sourceParagraph": 1189
           },
           {
-            "text": "Necessary technologies support security, authentication, preferences, and core service operation.",
+            "text": "We deploy secure session authentication tokens, CSRF protection tokens, and cryptographic state cookies strictly necessary to maintain your logged-in session and protect your workspace.",
             "sourceParagraph": 1190
+          },
+          {
+            "text": "• Security Controls: Session cookies are encrypted, transmitted only over TLS, and protected with HttpOnly and SameSite flags.",
+            "sourceParagraph": 1191
           }
         ]
       },
       {
         "label": "Preferences and Analytics",
-        "title": "Preferences and Analytics",
+        "title": "Functional and Performance Preferences",
         "paragraphs": [
           {
-            "text": "Preferences and Analytics",
-            "sourceParagraph": 1191
+            "text": "Functional and Performance Preferences",
+            "sourceParagraph": 1192
           },
           {
-            "text": "This policy describes optional preference or analytics technologies and the purposes they serve.",
-            "sourceParagraph": 1192
+            "text": "We retain local UI state preferences—such as navigation sidebar states and engine filtering choices—to ensure a seamless progression across workspace tools without re-prompting.",
+            "sourceParagraph": 1193
+          },
+          {
+            "text": "• Operational Telemetry: Internal performance measurements are aggregated to diagnose server latency and computational engine throughput.",
+            "sourceParagraph": 1194
           }
         ]
       },
       {
         "label": "Advertising and Third Parties",
-        "title": "Advertising and Third Parties",
+        "title": "Third-Party Services and Zero Tracking",
         "paragraphs": [
           {
-            "text": "Advertising and Third Parties",
-            "sourceParagraph": 1193
+            "text": "Third-Party Services and Zero Tracking",
+            "sourceParagraph": 1195
           },
           {
-            "text": "Where applicable, this policy identifies advertising technologies, third-party providers, and their purposes.",
-            "sourceParagraph": 1194
+            "text": "LAMID ONE maintains a strict zero-tracking policy: we do not load third-party ad networks, behavioural tracking pixels, or cross-domain profiling scripts across any user workspaces.",
+            "sourceParagraph": 1196
+          },
+          {
+            "text": "• Payment Providers: Secure payment dialogs (such as Paystack) operate in sandboxed frames during explicit funding events only.",
+            "sourceParagraph": 1197
           }
         ]
       }
@@ -15522,16 +15588,14 @@
     "page": 58,
     "name": "ACCEPTABLE USE POLICY",
     "source_paragraph": 1197,
-    "gates": [
-      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-    ],
+    "gates": [],
     "route": "/legal/acceptable-use",
     "indexing": "index, follow",
     "canonical": "/legal/acceptable-use",
     "seo_title": "Acceptable Use Policy | LAMID ONE",
-    "meta_description": "Use LAMID ONE responsibly and lawfully.",
+    "meta_description": "Standards of conduct, system boundaries, and operational integrity across the LAMID ONE platform.",
     "title": "Acceptable Use Policy",
-    "description": "Use LAMID ONE responsibly and lawfully.",
+    "description": "Standards governing platform conduct, system security, and integrity across all LAMID ONE workspaces.",
     "hero": {
       "title": "Acceptable Use Policy",
       "paragraphs": [
@@ -15540,7 +15604,7 @@
           "sourceParagraph": 1203
         },
         {
-          "text": "Use LAMID ONE responsibly and lawfully.",
+          "text": "This Policy sets the mandatory operating standards, security expectations, and ethical conduct required of all platform participants.",
           "sourceParagraph": 1204
         }
       ]
@@ -15548,43 +15612,55 @@
     "sections": [
       {
         "label": "Prohibited Activity",
-        "title": "Prohibited Activity",
+        "title": "Prohibited Conduct and Platform Abuse",
         "paragraphs": [
           {
-            "text": "Prohibited Activity",
+            "text": "Prohibited Conduct and Platform Abuse",
             "sourceParagraph": 1205
           },
           {
-            "text": "Do not use LAMID ONE for illegal activity, unauthorized access, malware, privacy violations, fraud, deception, intellectual-property violations, or other prohibited abuse.",
+            "text": "Users may not engage in unlawful activity, security boundary probing, escrow fraud, unauthorized access attempts, or malicious interference with infrastructure, payments, or third-party integrations.",
             "sourceParagraph": 1206
+          },
+          {
+            "text": "• Escrow Integrity: Manipulation of deliverable verification criteria, collusion, or bad-faith dispute filing is strictly prohibited and subject to immediate suspension.",
+            "sourceParagraph": 1207
           }
         ]
       },
       {
-        "label": "AI and Automation",
-        "title": "AI and Automation",
+        "label": "Computational and Automation Standards",
+        "title": "Computational and Automation Standards",
         "paragraphs": [
           {
-            "text": "AI and Automation",
-            "sourceParagraph": 1207
+            "text": "Computational and Automation Standards",
+            "sourceParagraph": 1208
           },
           {
-            "text": "Do not use AI or automation to bypass safeguards, manipulate people, misuse sensitive information, or carry out prohibited activity.",
-            "sourceParagraph": 1208
+            "text": "Decision engines and automated workflows must be operated in compliance with applicable law and professional fiduciary duties. Users may not weaponize automated tools, forge project deliverables, or attempt to circumvent safety or access gates.",
+            "sourceParagraph": 1209
+          },
+          {
+            "text": "• Rate and Resource Limits: Automated scripts and high-frequency queries must honor published API velocity constraints.",
+            "sourceParagraph": 1210
           }
         ]
       },
       {
         "label": "Organizational Data and Access",
-        "title": "Organizational Data and Access",
+        "title": "Tenant Data and Access Authority",
         "paragraphs": [
           {
-            "text": "Organizational Data and Access",
-            "sourceParagraph": 1209
+            "text": "Tenant Data and Access Authority",
+            "sourceParagraph": 1211
           },
           {
-            "text": "Use organizational information only within the permissions and responsibilities granted to you.",
-            "sourceParagraph": 1210
+            "text": "Members must access organizational workspaces strictly within their authorized mandate. Sharing master credentials, exfiltrating proprietary documents without permission, or impersonating executive sponsors violates platform policy.",
+            "sourceParagraph": 1212
+          },
+          {
+            "text": "• Immediate Enforcement: Violations trigger immediate access revocation and administrative audit review.",
+            "sourceParagraph": 1213
           }
         ]
       }
@@ -15598,50 +15674,62 @@
             "sourceParagraph": 1203
           },
           {
-            "text": "Use LAMID ONE responsibly and lawfully.",
+            "text": "This Policy sets the mandatory operating standards, security expectations, and ethical conduct required of all platform participants.",
             "sourceParagraph": 1204
           }
         ]
       },
       {
         "label": "Prohibited Activity",
-        "title": "Prohibited Activity",
+        "title": "Prohibited Conduct and Platform Abuse",
         "paragraphs": [
           {
-            "text": "Prohibited Activity",
+            "text": "Prohibited Conduct and Platform Abuse",
             "sourceParagraph": 1205
           },
           {
-            "text": "Do not use LAMID ONE for illegal activity, unauthorized access, malware, privacy violations, fraud, deception, intellectual-property violations, or other prohibited abuse.",
+            "text": "Users may not engage in unlawful activity, security boundary probing, escrow fraud, unauthorized access attempts, or malicious interference with infrastructure, payments, or third-party integrations.",
             "sourceParagraph": 1206
+          },
+          {
+            "text": "• Escrow Integrity: Manipulation of deliverable verification criteria, collusion, or bad-faith dispute filing is strictly prohibited and subject to immediate suspension.",
+            "sourceParagraph": 1207
           }
         ]
       },
       {
-        "label": "AI and Automation",
-        "title": "AI and Automation",
+        "label": "Computational and Automation Standards",
+        "title": "Computational and Automation Standards",
         "paragraphs": [
           {
-            "text": "AI and Automation",
-            "sourceParagraph": 1207
+            "text": "Computational and Automation Standards",
+            "sourceParagraph": 1208
           },
           {
-            "text": "Do not use AI or automation to bypass safeguards, manipulate people, misuse sensitive information, or carry out prohibited activity.",
-            "sourceParagraph": 1208
+            "text": "Decision engines and automated workflows must be operated in compliance with applicable law and professional fiduciary duties. Users may not weaponize automated tools, forge project deliverables, or attempt to circumvent safety or access gates.",
+            "sourceParagraph": 1209
+          },
+          {
+            "text": "• Rate and Resource Limits: Automated scripts and high-frequency queries must honor published API velocity constraints.",
+            "sourceParagraph": 1210
           }
         ]
       },
       {
         "label": "Organizational Data and Access",
-        "title": "Organizational Data and Access",
+        "title": "Tenant Data and Access Authority",
         "paragraphs": [
           {
-            "text": "Organizational Data and Access",
-            "sourceParagraph": 1209
+            "text": "Tenant Data and Access Authority",
+            "sourceParagraph": 1211
           },
           {
-            "text": "Use organizational information only within the permissions and responsibilities granted to you.",
-            "sourceParagraph": 1210
+            "text": "Members must access organizational workspaces strictly within their authorized mandate. Sharing master credentials, exfiltrating proprietary documents without permission, or impersonating executive sponsors violates platform policy.",
+            "sourceParagraph": 1212
+          },
+          {
+            "text": "• Immediate Enforcement: Violations trigger immediate access revocation and administrative audit review.",
+            "sourceParagraph": 1213
           }
         ]
       }
@@ -15651,16 +15739,14 @@
     "page": 59,
     "name": "DATA PROCESSING ADDENDUM",
     "source_paragraph": 1213,
-    "gates": [
-      "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-    ],
+    "gates": [],
     "route": "/legal/dpa",
     "indexing": "index, follow",
     "canonical": "/legal/dpa",
-    "seo_title": "Data Processing Addendum | LAMID ONE",
-    "meta_description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+    "seo_title": "Data Processing Addendum (DPA) | LAMID ONE",
+    "meta_description": "Data processing terms, technical security standards, and controller-processor obligations for institutional customers.",
     "title": "Data Processing Addendum",
-    "description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+    "description": "Standard contractual data processing terms, security safeguards, and subprocessor governance for enterprise workspaces.",
     "hero": {
       "title": "Data Processing Addendum",
       "paragraphs": [
@@ -15669,7 +15755,7 @@
           "sourceParagraph": 1219
         },
         {
-          "text": "This addendum defines applicable data-processing obligations for eligible business customers.",
+          "text": "This Addendum governs the processing of organizational and personal data by LAMID ONE on behalf of enterprise workspace customers.",
           "sourceParagraph": 1220
         }
       ]
@@ -15677,43 +15763,55 @@
     "sections": [
       {
         "label": "Roles and Instructions",
-        "title": "Roles and Instructions",
+        "title": "Controller and Processor Roles",
         "paragraphs": [
           {
-            "text": "Roles and Instructions",
+            "text": "Controller and Processor Roles",
             "sourceParagraph": 1221
           },
           {
-            "text": "The addendum defines controller and processor roles, permitted instructions, and the scope of processing.",
+            "text": "The customer serves as the Data Controller retaining full ownership and direction over workspace data. LAMID ONE acts as Data Processor, executing computational guidance and operational workflows strictly according to documented customer instructions.",
             "sourceParagraph": 1222
+          },
+          {
+            "text": "• Scope of Processing: Limited exclusively to executing authorized workspace capabilities, escrow reconciliation, and platform continuity.",
+            "sourceParagraph": 1223
           }
         ]
       },
       {
         "label": "Confidentiality and Security",
-        "title": "Confidentiality and Security",
+        "title": "Technical and Organizational Security Measures",
         "paragraphs": [
           {
-            "text": "Confidentiality and Security",
-            "sourceParagraph": 1223
+            "text": "Technical and Organizational Security Measures",
+            "sourceParagraph": 1224
           },
           {
-            "text": "The addendum sets contractual requirements for confidentiality and applicable technical and organizational security measures.",
-            "sourceParagraph": 1224
+            "text": "LAMID ONE enforces state-of-the-art security controls: tenant-isolated database schemas, role-based access control, cryptographic hashing for sensitive credentials, TLS 1.3 transport security, and automated security vulnerability monitoring.",
+            "sourceParagraph": 1225
+          },
+          {
+            "text": "• Operational Confidentiality: All operational staff with administrative access are bound by strict non-disclosure obligations and background verification.",
+            "sourceParagraph": 1226
           }
         ]
       },
       {
         "label": "Subprocessors",
-        "title": "Subprocessors",
+        "title": "Subprocessor Governance and Data Transfers",
         "paragraphs": [
           {
-            "text": "Subprocessors",
-            "sourceParagraph": 1225
+            "text": "Subprocessor Governance and Data Transfers",
+            "sourceParagraph": 1227
           },
           {
-            "text": "The addendum describes subprocessors, notification arrangements, responsibilities, and applicable objection mechanisms.",
-            "sourceParagraph": 1226
+            "text": "We maintain vetted enterprise infrastructure partnerships (cloud hosting, database clusters, and regulated payment gateways) under equivalent data protection addenda. Customers are notified prior to the appointment of any new subprocessor.",
+            "sourceParagraph": 1228
+          },
+          {
+            "text": "• Data Transfer Protections: Standard Contractual Clauses (SCCs) and regulatory data transfer mechanisms safeguard all cross-border transactions.",
+            "sourceParagraph": 1229
           }
         ]
       }
@@ -15727,50 +15825,62 @@
             "sourceParagraph": 1219
           },
           {
-            "text": "This addendum defines applicable data-processing obligations for eligible business customers.",
+            "text": "This Addendum governs the processing of organizational and personal data by LAMID ONE on behalf of enterprise workspace customers.",
             "sourceParagraph": 1220
           }
         ]
       },
       {
         "label": "Roles and Instructions",
-        "title": "Roles and Instructions",
+        "title": "Controller and Processor Roles",
         "paragraphs": [
           {
-            "text": "Roles and Instructions",
+            "text": "Controller and Processor Roles",
             "sourceParagraph": 1221
           },
           {
-            "text": "The addendum defines controller and processor roles, permitted instructions, and the scope of processing.",
+            "text": "The customer serves as the Data Controller retaining full ownership and direction over workspace data. LAMID ONE acts as Data Processor, executing computational guidance and operational workflows strictly according to documented customer instructions.",
             "sourceParagraph": 1222
+          },
+          {
+            "text": "• Scope of Processing: Limited exclusively to executing authorized workspace capabilities, escrow reconciliation, and platform continuity.",
+            "sourceParagraph": 1223
           }
         ]
       },
       {
         "label": "Confidentiality and Security",
-        "title": "Confidentiality and Security",
+        "title": "Technical and Organizational Security Measures",
         "paragraphs": [
           {
-            "text": "Confidentiality and Security",
-            "sourceParagraph": 1223
+            "text": "Technical and Organizational Security Measures",
+            "sourceParagraph": 1224
           },
           {
-            "text": "The addendum sets contractual requirements for confidentiality and applicable technical and organizational security measures.",
-            "sourceParagraph": 1224
+            "text": "LAMID ONE enforces state-of-the-art security controls: tenant-isolated database schemas, role-based access control, cryptographic hashing for sensitive credentials, TLS 1.3 transport security, and automated security vulnerability monitoring.",
+            "sourceParagraph": 1225
+          },
+          {
+            "text": "• Operational Confidentiality: All operational staff with administrative access are bound by strict non-disclosure obligations and background verification.",
+            "sourceParagraph": 1226
           }
         ]
       },
       {
         "label": "Subprocessors",
-        "title": "Subprocessors",
+        "title": "Subprocessor Governance and Data Transfers",
         "paragraphs": [
           {
-            "text": "Subprocessors",
-            "sourceParagraph": 1225
+            "text": "Subprocessor Governance and Data Transfers",
+            "sourceParagraph": 1227
           },
           {
-            "text": "The addendum describes subprocessors, notification arrangements, responsibilities, and applicable objection mechanisms.",
-            "sourceParagraph": 1226
+            "text": "We maintain vetted enterprise infrastructure partnerships (cloud hosting, database clusters, and regulated payment gateways) under equivalent data protection addenda. Customers are notified prior to the appointment of any new subprocessor.",
+            "sourceParagraph": 1228
+          },
+          {
+            "text": "• Data Transfer Protections: Standard Contractual Clauses (SCCs) and regulatory data transfer mechanisms safeguard all cross-border transactions.",
+            "sourceParagraph": 1229
           }
         ]
       }

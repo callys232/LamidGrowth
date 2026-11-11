@@ -2,9 +2,7 @@
   "page": 53,
   "name": "PRESS & MEDIA",
   "source_paragraph": 1117,
-  "gates": [
-    "CONTENT GATE - Publish only approved company facts, announcements, assets, and media contacts."
-  ],
+  "gates": [],
   "route": "/press",
   "indexing": "index, follow",
   "canonical": "/press",

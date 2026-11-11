@@ -21,8 +21,8 @@ export const SEATS = ['Clarity', 'Consistency', 'Growth', 'Finance', 'Capability
 export const PLANS = {
   free: {
     id: 'free', name: 'Free', seats: ['Clarity'], members: 1,
-    monthlyMinor: 0, annualMinor: 0, monthlyPoints: 0, selfServe: false,
-    summary: 'Try LAMID ONE with the strategy and decision engines. Includes the 500-point welcome reward once your account is verified.',
+    monthlyMinor: 0, annualMinor: 0, monthlyPoints: 100, selfServe: false,
+    summary: 'Try LAMID ONE with the strategy and decision engines. Includes 100 monthly points plus the 500-point welcome reward once your account is verified.',
   },
   personal: {
     id: 'personal', name: 'Personal', seats: ['Clarity', 'Consistency'], members: 1,

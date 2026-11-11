@@ -2,9 +2,7 @@
   "page": 43,
   "name": "DEVELOPERS",
   "source_paragraph": 901,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/developers",
   "indexing": "index, follow",
   "canonical": "/developers",

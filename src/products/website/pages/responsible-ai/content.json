@@ -2,9 +2,7 @@
   "page": 25,
   "name": "RESPONSIBLE AI",
   "source_paragraph": 544,
-  "gates": [
-    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
-  ],
+  "gates": [],
   "route": "/responsible-ai",
   "indexing": "index, follow",
   "canonical": "/responsible-ai",

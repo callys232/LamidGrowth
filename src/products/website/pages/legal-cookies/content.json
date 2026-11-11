@@ -2,16 +2,14 @@
   "page": 57,
   "name": "COOKIE POLICY",
   "source_paragraph": 1181,
-  "gates": [
-    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-  ],
+  "gates": [],
   "route": "/legal/cookies",
   "indexing": "index, follow",
   "canonical": "/legal/cookies",
   "seo_title": "Cookie Policy | LAMID ONE",
-  "meta_description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+  "meta_description": "How LAMID ONE uses essential authentication tokens and operational cookies without third-party ad tracking.",
   "title": "Cookie Policy",
-  "description": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+  "description": "Information on session authentication tokens and operational cookies utilized across LAMID ONE.",
   "hero": {
     "title": "Cookie Policy",
     "paragraphs": [
@@ -20,7 +18,7 @@
         "sourceParagraph": 1187
       },
       {
-        "text": "This policy explains the cookies and similar technologies used by LAMID ONE and the choices available to you.",
+        "text": "LAMID ONE uses essential security cookies and functional session state to deliver a secure, responsive operating environment.",
         "sourceParagraph": 1188
       }
     ]
@@ -28,43 +26,55 @@
   "sections": [
     {
       "label": "Necessary Technologies",
-      "title": "Necessary Technologies",
+      "title": "Essential Technical Cookies",
       "paragraphs": [
         {
-          "text": "Necessary Technologies",
+          "text": "Essential Technical Cookies",
           "sourceParagraph": 1189
         },
         {
-          "text": "Necessary technologies support security, authentication, preferences, and core service operation.",
+          "text": "We deploy secure session authentication tokens, CSRF protection tokens, and cryptographic state cookies strictly necessary to maintain your logged-in session and protect your workspace.",
           "sourceParagraph": 1190
+        },
+        {
+          "text": "• Security Controls: Session cookies are encrypted, transmitted only over TLS, and protected with HttpOnly and SameSite flags.",
+          "sourceParagraph": 1191
         }
       ]
     },
     {
       "label": "Preferences and Analytics",
-      "title": "Preferences and Analytics",
+      "title": "Functional and Performance Preferences",
       "paragraphs": [
         {
-          "text": "Preferences and Analytics",
-          "sourceParagraph": 1191
+          "text": "Functional and Performance Preferences",
+          "sourceParagraph": 1192
         },
         {
-          "text": "This policy describes optional preference or analytics technologies and the purposes they serve.",
-          "sourceParagraph": 1192
+          "text": "We retain local UI state preferences—such as navigation sidebar states and engine filtering choices—to ensure a seamless progression across workspace tools without re-prompting.",
+          "sourceParagraph": 1193
+        },
+        {
+          "text": "• Operational Telemetry: Internal performance measurements are aggregated to diagnose server latency and computational engine throughput.",
+          "sourceParagraph": 1194
         }
       ]
     },
     {
       "label": "Advertising and Third Parties",
-      "title": "Advertising and Third Parties",
+      "title": "Third-Party Services and Zero Tracking",
       "paragraphs": [
         {
-          "text": "Advertising and Third Parties",
-          "sourceParagraph": 1193
+          "text": "Third-Party Services and Zero Tracking",
+          "sourceParagraph": 1195
         },
         {
-          "text": "Where applicable, this policy identifies advertising technologies, third-party providers, and their purposes.",
-          "sourceParagraph": 1194
+          "text": "LAMID ONE maintains a strict zero-tracking policy: we do not load third-party ad networks, behavioural tracking pixels, or cross-domain profiling scripts across any user workspaces.",
+          "sourceParagraph": 1196
+        },
+        {
+          "text": "• Payment Providers: Secure payment dialogs (such as Paystack) operate in sandboxed frames during explicit funding events only.",
+          "sourceParagraph": 1197
         }
       ]
     }

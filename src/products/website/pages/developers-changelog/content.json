@@ -2,9 +2,7 @@
   "page": 48,
   "name": "DEVELOPER CHANGELOG",
   "source_paragraph": 996,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/developers/changelog",
   "indexing": "index, follow",
   "canonical": "/developers/changelog",

@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useLayoutEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { setApiTransport } from './api';
 import pages from './content/pageIndex';
+import { documentRoute } from './shared/content/sourcePage';
 import { DemoAccessGate } from './products/website/pages/demo/DemoAccessGate';
 const DemoLeadsPage = lazy(() =>
   import('./products/website/pages/demo/DemoLeadsPage').then((module) => ({
@@ -237,7 +238,7 @@ function RouteEffects() {
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     else window.scrollTo(0, 0);
 
-    const page = pages.find((p) => p.route === pathname);
+    const page = pages.find((p) => p.route === documentRoute(pathname));
     // Must match the server's PUBLIC_ORIGIN (.env) — a canonical URL, sitemap, or JSON-LD
     // identity pointing at the wrong domain actively confuses search engines, it doesn't just
     // miss an optimization.
@@ -495,6 +496,12 @@ export function App() {
             <Route path="engines" element={<EnginesPage />} />
             <Route path="people" element={<PeoplePage />} />
             <Route path="pricing" element={<PricingBillablesPage />} />
+            <Route path="settings/billing" element={<PricingBillablesPage />} />
+            <Route path="settings/plan" element={<PricingBillablesPage />} />
+            <Route path="settings/workspace" element={<Settings />} />
+            <Route path="business" element={<Commercial />} />
+            <Route path="organization" element={<TeamsPage />} />
+            <Route path="organization/rhythm" element={<Rhythm />} />
             <Route path="scoping/new" element={<ScopingWizardPage />} />
             <Route path="learning" element={<LearningPage />} />
             <Route path="knowledge" element={<Knowledge />} />

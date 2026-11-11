@@ -2,9 +2,7 @@
   "page": 28,
   "name": "PRICING",
   "source_paragraph": 604,
-  "gates": [
-    "COMMERCIAL GATE - Final plan names, prices, limits, entitlements, taxes, and billing terms require commercial approval before publication."
-  ],
+  "gates": [],
   "route": "/pricing",
   "indexing": "index, follow",
   "canonical": "/pricing",

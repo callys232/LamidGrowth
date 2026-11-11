@@ -1,5 +1,6 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 import { requireApprovedModel } from './models.mjs';
 import { wordSet } from './text.mjs';
 import { scopedProvider } from './aiPolicy.mjs';
@@ -61,8 +62,10 @@ const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
 
-export function mountProjects(app, store, deps) {
+export function mountProjects(app, store, deps = {}) {
   const { db, transaction, log } = store;
+  const ecosystemAdminEmails = deps.ecosystemAdminEmails || [];
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
 
   async function projectFor(id) {
     const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(id);
@@ -231,6 +234,134 @@ export function mountProjects(app, store, deps) {
       );
     });
     res.json({ ok: true });
+  });
+
+  app.post('/api/disputes/:id/auto-adjudicate', async (req, res) => {
+    const resolution = await transaction(async () => {
+      const dispute = await db
+        .prepare('SELECT * FROM disputes WHERE id = ? FOR UPDATE')
+        .get(req.params.id);
+      if (!dispute || dispute.subject_type !== 'milestone') fail('Dispute not found.', 404);
+      const milestone = await milestoneFor(dispute.subject_id);
+      const project = await projectFor(milestone.project_id);
+      const isEcosystemAdmin = isAdmin(req);
+      const { isClient, isFreelancer } = isEcosystemAdmin
+        ? { isClient: false, isFreelancer: false }
+        : await requireParty(project, req.user.id);
+      if (!isClient && !isFreelancer && !isEcosystemAdmin)
+        fail('Only project parties or an administrator can invoke auto-adjudication.', 403);
+      if (dispute.status !== 'open') fail('This dispute is already resolved.', 409);
+      const record = await db
+        .prepare(
+          "SELECT * FROM records WHERE kind = 'dispute_resolution' AND data::jsonb ->> 'disputeId' = ? FOR UPDATE",
+        )
+        .get(dispute.id);
+      if (!record) fail('No resolution proposal exists for this dispute.', 404);
+      const data = JSON.parse(record.data);
+      if (data.status !== 'proposed') fail('The proposal is no longer pending.', 409);
+
+      const proposedAt = new Date(data.proposedAt || record.created_at).getTime();
+      const elapsedDays = (Date.now() - proposedAt) / (1000 * 60 * 60 * 24);
+      if (elapsedDays < 14 && !isEcosystemAdmin) {
+        fail(
+          `Auto-adjudication requires 14 days of inactivity. Only ${Math.floor(elapsedDays)} days have elapsed.`,
+          400,
+        );
+      }
+
+      data.status = 'accepted';
+      data.autoResolved = true;
+      data.respondedBy = 'system:auto-adjudication';
+      data.respondedAt = new Date().toISOString();
+      data.note = `${data.note || ''}\n[Auto-adjudicated after counterparty response window expired]`.trim();
+
+      await db
+        .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+        .run(JSON.stringify(data), record.id);
+      await db
+        .prepare('UPDATE disputes SET status = ? WHERE id = ?')
+        .run(`resolved_${data.outcome}`, dispute.id);
+      if (data.outcome !== 'refund') {
+        await db
+          .prepare('UPDATE milestones SET status = ? WHERE id = ?')
+          .run(data.outcome === 'release' ? 'approved' : 'revision_requested', milestone.id);
+      }
+      await log(
+        project.workspace_id,
+        req.user.name,
+        'Dispute auto-adjudicated',
+        dispute.id,
+        data.outcome,
+      );
+      return data;
+    });
+    res.json({ ok: true, resolution });
+  });
+
+  app.post('/api/admin/disputes/:id/arbitrate', async (req, res) => {
+    if (!isAdmin(req)) fail('Administrative privileges required.', 403);
+    const input = z
+      .object({
+        outcome: z.enum(['revision', 'refund', 'release']),
+        reason: z.string().trim().min(1).max(4000),
+      })
+      .strict()
+      .parse(req.body);
+
+    const resolution = await transaction(async () => {
+      const dispute = await db
+        .prepare('SELECT * FROM disputes WHERE id = ? FOR UPDATE')
+        .get(req.params.id);
+      if (!dispute || dispute.subject_type !== 'milestone') fail('Dispute not found.', 404);
+      const milestone = await milestoneFor(dispute.subject_id);
+      const project = await projectFor(milestone.project_id);
+      if (dispute.status !== 'open') fail('This dispute is already resolved.', 409);
+
+      const previous = await db
+        .prepare(
+          "SELECT id FROM records WHERE kind = 'dispute_resolution' AND data::jsonb ->> 'disputeId' = ?",
+        )
+        .get(dispute.id);
+
+      const data = {
+        disputeId: dispute.id,
+        outcome: input.outcome,
+        note: input.reason,
+        proposedBy: req.user.id,
+        status: 'accepted',
+        arbitrated: true,
+        arbitratedBy: req.user.id,
+        respondedBy: req.user.id,
+        respondedAt: new Date().toISOString(),
+        arbitratedAt: new Date().toISOString(),
+      };
+
+      if (previous) {
+        await db
+          .prepare('UPDATE records SET data = ?, version = version + 1 WHERE id = ?')
+          .run(JSON.stringify(data), previous.id);
+      } else {
+        await store.insert(project.workspace_id, 'dispute_resolution', data);
+      }
+
+      await db
+        .prepare('UPDATE disputes SET status = ? WHERE id = ?')
+        .run(`resolved_${input.outcome}`, dispute.id);
+      if (input.outcome !== 'refund') {
+        await db
+          .prepare('UPDATE milestones SET status = ? WHERE id = ?')
+          .run(input.outcome === 'release' ? 'approved' : 'revision_requested', milestone.id);
+      }
+      await log(
+        project.workspace_id,
+        req.user.name,
+        'Dispute arbitrated by admin',
+        dispute.id,
+        input.outcome,
+      );
+      return data;
+    });
+    res.json({ ok: true, resolution });
   });
 
   app.get('/api/projects/:id', async (req, res) => {

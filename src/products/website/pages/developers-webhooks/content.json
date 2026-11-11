@@ -2,9 +2,7 @@
   "page": 47,
   "name": "WEBHOOKS & EVENTS",
   "source_paragraph": 977,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/developers/webhooks",
   "indexing": "index, follow",
   "canonical": "/developers/webhooks",

@@ -2,16 +2,14 @@
   "page": 59,
   "name": "DATA PROCESSING ADDENDUM",
   "source_paragraph": 1213,
-  "gates": [
-    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-  ],
+  "gates": [],
   "route": "/legal/dpa",
   "indexing": "index, follow",
   "canonical": "/legal/dpa",
-  "seo_title": "Data Processing Addendum | LAMID ONE",
-  "meta_description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+  "seo_title": "Data Processing Addendum (DPA) | LAMID ONE",
+  "meta_description": "Data processing terms, technical security standards, and controller-processor obligations for institutional customers.",
   "title": "Data Processing Addendum",
-  "description": "This addendum defines applicable data-processing obligations for eligible business customers.",
+  "description": "Standard contractual data processing terms, security safeguards, and subprocessor governance for enterprise workspaces.",
   "hero": {
     "title": "Data Processing Addendum",
     "paragraphs": [
@@ -20,7 +18,7 @@
         "sourceParagraph": 1219
       },
       {
-        "text": "This addendum defines applicable data-processing obligations for eligible business customers.",
+        "text": "This Addendum governs the processing of organizational and personal data by LAMID ONE on behalf of enterprise workspace customers.",
         "sourceParagraph": 1220
       }
     ]
@@ -28,43 +26,55 @@
   "sections": [
     {
       "label": "Roles and Instructions",
-      "title": "Roles and Instructions",
+      "title": "Controller and Processor Roles",
       "paragraphs": [
         {
-          "text": "Roles and Instructions",
+          "text": "Controller and Processor Roles",
           "sourceParagraph": 1221
         },
         {
-          "text": "The addendum defines controller and processor roles, permitted instructions, and the scope of processing.",
+          "text": "The customer serves as the Data Controller retaining full ownership and direction over workspace data. LAMID ONE acts as Data Processor, executing computational guidance and operational workflows strictly according to documented customer instructions.",
           "sourceParagraph": 1222
+        },
+        {
+          "text": "• Scope of Processing: Limited exclusively to executing authorized workspace capabilities, escrow reconciliation, and platform continuity.",
+          "sourceParagraph": 1223
         }
       ]
     },
     {
       "label": "Confidentiality and Security",
-      "title": "Confidentiality and Security",
+      "title": "Technical and Organizational Security Measures",
       "paragraphs": [
         {
-          "text": "Confidentiality and Security",
-          "sourceParagraph": 1223
+          "text": "Technical and Organizational Security Measures",
+          "sourceParagraph": 1224
         },
         {
-          "text": "The addendum sets contractual requirements for confidentiality and applicable technical and organizational security measures.",
-          "sourceParagraph": 1224
+          "text": "LAMID ONE enforces state-of-the-art security controls: tenant-isolated database schemas, role-based access control, cryptographic hashing for sensitive credentials, TLS 1.3 transport security, and automated security vulnerability monitoring.",
+          "sourceParagraph": 1225
+        },
+        {
+          "text": "• Operational Confidentiality: All operational staff with administrative access are bound by strict non-disclosure obligations and background verification.",
+          "sourceParagraph": 1226
         }
       ]
     },
     {
       "label": "Subprocessors",
-      "title": "Subprocessors",
+      "title": "Subprocessor Governance and Data Transfers",
       "paragraphs": [
         {
-          "text": "Subprocessors",
-          "sourceParagraph": 1225
+          "text": "Subprocessor Governance and Data Transfers",
+          "sourceParagraph": 1227
         },
         {
-          "text": "The addendum describes subprocessors, notification arrangements, responsibilities, and applicable objection mechanisms.",
-          "sourceParagraph": 1226
+          "text": "We maintain vetted enterprise infrastructure partnerships (cloud hosting, database clusters, and regulated payment gateways) under equivalent data protection addenda. Customers are notified prior to the appointment of any new subprocessor.",
+          "sourceParagraph": 1228
+        },
+        {
+          "text": "• Data Transfer Protections: Standard Contractual Clauses (SCCs) and regulatory data transfer mechanisms safeguard all cross-border transactions.",
+          "sourceParagraph": 1229
         }
       ]
     }

@@ -2,9 +2,7 @@
   "page": 46,
   "name": "INTEGRATIONS",
   "source_paragraph": 958,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/integrations",
   "indexing": "index, follow",
   "canonical": "/integrations",

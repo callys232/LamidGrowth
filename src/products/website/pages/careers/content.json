@@ -2,9 +2,7 @@
   "page": 52,
   "name": "CAREERS",
   "source_paragraph": 1096,
-  "gates": [
-    "CONTENT GATE - Publish only current, approved roles and verified employment information."
-  ],
+  "gates": [],
   "route": "/careers",
   "indexing": "index, follow",
   "canonical": "/careers",

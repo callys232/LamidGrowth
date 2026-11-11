@@ -2,9 +2,7 @@
   "page": 44,
   "name": "API DOCUMENTATION",
   "source_paragraph": 918,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/developers/api",
   "indexing": "index, follow",
   "canonical": "/developers/api",

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { requirePermission } from './policy.mjs';
+import { FALLBACK_FX_RATES } from './payments.mjs';
 
 const currencyCode = z.string().regex(/^[A-Z]{3}$/);
 const rateSchema = z
@@ -26,9 +27,19 @@ export function mountFx(app, store) {
         rate: 1,
         asOf: null,
       });
-    const row = await db
+    let row = await db
       .prepare('SELECT * FROM fx_rates WHERE pair = ?')
       .get(`${input.from}_${input.to}`);
+    if (!row) {
+      const inv = await db
+        .prepare('SELECT * FROM fx_rates WHERE pair = ?')
+        .get(`${input.to}_${input.from}`);
+      if (inv && Number(inv.rate) > 0) {
+        row = { rate: 1 / Number(inv.rate), updated_at: inv.updated_at };
+      } else if (FALLBACK_FX_RATES[`${input.from}_${input.to}`]) {
+        row = { rate: FALLBACK_FX_RATES[`${input.from}_${input.to}`], updated_at: new Date().toISOString() };
+      }
+    }
     if (!row)
       return res
         .status(404)

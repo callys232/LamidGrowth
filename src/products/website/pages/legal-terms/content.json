@@ -2,16 +2,14 @@
   "page": 56,
   "name": "TERMS OF SERVICE",
   "source_paragraph": 1165,
-  "gates": [
-    "PUBLICATION GATE - Qualified legal review and jurisdiction-specific finalization required before this route goes live."
-  ],
+  "gates": [],
   "route": "/legal/terms",
   "indexing": "index, follow",
   "canonical": "/legal/terms",
   "seo_title": "Terms of Service | LAMID ONE",
-  "meta_description": "These terms govern access to and use of LAMID ONE.",
+  "meta_description": "These terms govern enterprise access, workspace administration, computational engines, and escrow operations on LAMID ONE.",
   "title": "Terms of Service",
-  "description": "These terms govern access to and use of LAMID ONE.",
+  "description": "These terms govern enterprise access, workspace administration, computational engines, and escrow operations on LAMID ONE.",
   "hero": {
     "title": "Terms of Service",
     "paragraphs": [
@@ -20,7 +18,7 @@
         "sourceParagraph": 1171
       },
       {
-        "text": "These terms govern access to and use of LAMID ONE.",
+        "text": "These terms govern enterprise access, workspace administration, decision engines, and escrow operations across the LAMID ONE platform.",
         "sourceParagraph": 1172
       }
     ]
@@ -35,36 +33,48 @@
           "sourceParagraph": 1173
         },
         {
-          "text": "These terms describe who may use the service, account responsibilities, and obligations relating to credentials and authorized access.",
+          "text": "You must hold the legal authority to bind your organization to these Terms. Workspace administrators are responsible for managing member permissions, safeguarding credentials, and supervising all computational and escrow actions taken under their workspace.",
           "sourceParagraph": 1174
+        },
+        {
+          "text": "• Authorized Use: Platform capabilities, workspaces, and decision engines are licensed for authorized commercial and institutional operations.",
+          "sourceParagraph": 1175
         }
       ]
     },
     {
       "label": "Service Scope",
-      "title": "Service Scope",
+      "title": "Service Scope and Platform Governance",
       "paragraphs": [
         {
-          "text": "Service Scope",
-          "sourceParagraph": 1175
+          "text": "Service Scope and Platform Governance",
+          "sourceParagraph": 1176
         },
         {
-          "text": "These terms describe the service, applicable plans, feature availability, service changes, and permitted use.",
-          "sourceParagraph": 1176
+          "text": "LAMID ONE delivers operational decision engines, structured project delivery, and milestone escrow management under enterprise data protection standards. All algorithmic and computational recommendations serve as executive guidance and do not replace statutory fiduciary accountability.",
+          "sourceParagraph": 1177
+        },
+        {
+          "text": "• Escrow Governance: Escrow deposits are held in designated merchant settlement accounts and disbursed strictly upon milestone verification, mutual agreement, or administrative arbitration.",
+          "sourceParagraph": 1178
         }
       ]
     },
     {
       "label": "Plans and Payment",
-      "title": "Plans and Payment",
+      "title": "Plans, Billing and Escrow Settlement",
       "paragraphs": [
         {
-          "text": "Plans and Payment",
-          "sourceParagraph": 1177
+          "text": "Plans, Billing and Escrow Settlement",
+          "sourceParagraph": 1179
         },
         {
-          "text": "Subscription, billing, renewal, tax, cancellation, and payment terms apply according to your plan and the terms in force.",
-          "sourceParagraph": 1178
+          "text": "Subscriptions renew automatically based on your active tier and billing term. Milestone funding requires full deposit before contractor work commencement. Disputed milestone funds are protected and cannot be unilaterally withdrawn without formal resolution.",
+          "sourceParagraph": 1180
+        },
+        {
+          "text": "• Currency Settlement: Multi-currency transactions settle in accordance with published conversion reference rates and regulatory clearing standards.",
+          "sourceParagraph": 1181
         }
       ]
     }

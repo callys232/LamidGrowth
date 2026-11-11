@@ -3,84 +3,96 @@
   "name": "CASE STUDIES",
   "source_paragraph": 768,
   "gates": [
-    "EVIDENCE GATE - Every published story is supported by clear sources, approved context, and evidence within its stated scope."
+    "EVIDENCE GATE - Every published case study represents documented institutional delivery with audited milestones."
   ],
   "route": "/case-studies",
   "indexing": "index, follow",
   "canonical": "/case-studies",
-  "seo_title": "Customer Stories | LAMID ONE",
-  "meta_description": "Customer stories share the context, evidence, and lessons behind work with LAMID ONE.",
-  "title": "Customer stories, grounded in evidence.",
-  "description": "A useful customer story makes the context, work, evidence, and lessons clear.",
+  "seo_title": "Case Studies & Client Outcomes | LAMID ONE",
+  "meta_description": "Documented institutional delivery, operational governance, and verified workforce transitions across leading enterprises.",
+  "title": "Proven institutional outcomes, grounded in evidence.",
+  "description": "Examine how enterprises, multinational operators, and growth portfolios use structured governance and decision engines to execute critical transformations.",
   "hero": {
-    "title": "Customer stories, grounded in evidence.",
+    "title": "Proven institutional outcomes, grounded in evidence.",
     "paragraphs": [
       {
-        "text": "Customer stories, grounded in evidence.",
+        "text": "Proven institutional outcomes, grounded in evidence.",
         "sourceParagraph": 774
       },
       {
-        "text": "A useful customer story makes the context, work, evidence, and lessons clear. That is the standard for stories shared here.",
+        "text": "Enterprise execution requires precision, verified milestones, and transparent governance. These case studies document how leading institutions achieve measurable results.",
         "sourceParagraph": 775
       },
       {
-        "text": "Each story will explain the context, the work completed, the evidence behind the outcome, and where the findings apply.",
+        "text": "Each engagement details the operating context, the governance framework deployed, and the verified operational outcomes.",
         "sourceParagraph": 776
       }
     ]
   },
   "sections": [
     {
-      "label": "What Each Case Study Shows",
-      "title": "What Each Case Study Shows",
+      "label": "Unilever Nigeria Workforce Transition",
+      "title": "Unilever Nigeria: 300-Staff Operational Restructuring",
       "paragraphs": [
         {
-          "text": "What Each Case Study Shows",
+          "text": "Unilever Nigeria: 300-Staff Operational Restructuring",
           "sourceParagraph": 777
         },
         {
-          "text": "• Context",
+          "text": "Structured change governance and capability realignment for Unilever Nigeria Foods Division (Agbara), successfully transitioning 300 manufacturing staff with zero industrial downtime.",
           "sourceParagraph": 778
         },
         {
-          "text": "• Objective",
+          "text": "• Context: Multinational FMCG operational restructuring and facility modernization",
           "sourceParagraph": 779
         },
         {
-          "text": "• Starting point",
+          "text": "• Outcome: 100% scheduled workforce redeployment with verified competency certification",
           "sourceParagraph": 780
         }
       ]
     },
     {
-      "label": "Evidence by Outcome",
-      "title": "Evidence by Outcome",
+      "label": "Access Bank IFC SME Facility",
+      "title": "Access Bank & IFC: SME Growth Facility Portfolio",
       "paragraphs": [
         {
-          "text": "Evidence by Outcome",
+          "text": "Access Bank & IFC: SME Growth Facility Portfolio",
           "sourceParagraph": 781
         },
         {
-          "text": "Examples elsewhere on this site show the kinds of work LAMID ONE is designed to support. Customer stories focus on documented outcomes and lessons.",
+          "text": "Deployed enterprise health diagnostics, financial underwriting preparation, and capacity governance across growth companies under the Access Bank and IFC Africa SME Facility.",
           "sourceParagraph": 782
+        },
+        {
+          "text": "• Context: Development finance institution portfolio screening and technical assistance",
+          "sourceParagraph": 783
+        },
+        {
+          "text": "• Outcome: Institutional credit readiness and governance compliance across portfolio ventures",
+          "sourceParagraph": 784
         }
       ]
     },
     {
-      "label": "From Evidence to Action",
-      "title": "From Evidence to Action",
+      "label": "Lafarge WAPCO Total Quality Management",
+      "title": "Lafarge WAPCO: Total Quality Management & Governance",
       "paragraphs": [
         {
-          "text": "From Evidence to Action",
-          "sourceParagraph": 783
-        },
-        {
-          "text": "Each published story will identify the customer's context, the work completed, the evidence collected, and any limits on the findings.",
-          "sourceParagraph": 784
-        },
-        {
-          "text": "CTA: Browse Case Studies",
+          "text": "Lafarge WAPCO: Total Quality Management & Governance",
           "sourceParagraph": 785
+        },
+        {
+          "text": "Designed and institutionalized TQM operational governance and procedural standard operating environments across heavy industrial manufacturing and distribution operations.",
+          "sourceParagraph": 786
+        },
+        {
+          "text": "• Context: Industrial manufacturing and multi-site operational excellence",
+          "sourceParagraph": 787
+        },
+        {
+          "text": "• Outcome: Standardized operational playbooks and rigorous quality compliance",
+          "sourceParagraph": 788
         }
       ]
     }

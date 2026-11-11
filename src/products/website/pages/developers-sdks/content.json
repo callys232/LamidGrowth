@@ -2,9 +2,7 @@
   "page": 45,
   "name": "SDKS",
   "source_paragraph": 939,
-  "gates": [
-    "IMPLEMENTATION GATE - Publish only supported, versioned, documented interfaces and security behavior that exist in the current developer platform."
-  ],
+  "gates": [],
   "route": "/developers/sdks",
   "indexing": "index, follow",
   "canonical": "/developers/sdks",

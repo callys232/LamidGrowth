@@ -1,5 +1,6 @@
 import { randomUUID, createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
+import { isVerifiedEcosystemAdmin } from './policy.mjs';
 import { POINTS_UNIT_PRICE_MINOR } from './billing.mjs';
 import { logHandledError } from './errorLog.mjs';
 
@@ -236,8 +237,10 @@ const fail = (message, status) => {
   throw Object.assign(new Error(message), { status });
 };
 
-export function mountPayments(app, store, deps) {
+export function mountPayments(app, store, deps = {}) {
   const { db, transaction, log } = store;
+  const ecosystemAdminEmails = deps.ecosystemAdminEmails || [];
+  const isAdmin = (req) => isVerifiedEcosystemAdmin(req, ecosystemAdminEmails);
   const providerFor = (name) => deps.paymentProvider(name);
 
   async function projectFor(id) {
@@ -564,9 +567,14 @@ export function mountPayments(app, store, deps) {
     try {
       const milestone = await milestoneFor(req.params.id);
       const project = await projectFor(milestone.project_id);
-      const { isClient } = await requireParty(project, req.user.id);
-      if (!isClient)
-        return res.status(403).json({ error: 'Only the project owner can request a refund.' });
+      const isEcosystemAdmin = isAdmin(req);
+      const { isClient } = isEcosystemAdmin
+        ? { isClient: false }
+        : await requireParty(project, req.user.id);
+      if (!isClient && !isEcosystemAdmin)
+        return res
+          .status(403)
+          .json({ error: 'Only the project owner or an ecosystem admin can request a refund.' });
       if (milestone.status !== 'disputed')
         return res.status(400).json({
           error: `A refund can only be requested for a disputed milestone (current status: ${milestone.status}).`,
@@ -577,14 +585,17 @@ export function mountPayments(app, store, deps) {
         ON r.kind = 'dispute_resolution' AND r.data::jsonb ->> 'disputeId' = d.id
         WHERE d.subject_type = 'milestone' AND d.subject_id = ? AND d.status = 'resolved_refund'
         AND r.data::jsonb ->> 'status' = 'accepted' AND r.data::jsonb ->> 'outcome' = 'refund'
-        AND r.data::jsonb ->> 'respondedBy' IS NOT NULL
-        AND r.data::jsonb ->> 'respondedBy' <> r.data::jsonb ->> 'proposedBy'`,
+        AND (
+          (r.data::jsonb ->> 'respondedBy' IS NOT NULL AND r.data::jsonb ->> 'respondedBy' <> r.data::jsonb ->> 'proposedBy')
+          OR (r.data::jsonb ->> 'arbitrated' = 'true')
+          OR (r.data::jsonb ->> 'autoResolved' = 'true')
+        )`,
         )
         .get(milestone.id);
       if (!agreed)
         return res.status(409).json({
           error:
-            'Both parties must accept a refund resolution in Disputes before requesting a refund.',
+            'A binding refund resolution (mutual acceptance, administrative arbitration, or inactivity auto-adjudication) must be recorded before requesting a refund.',
         });
       const provider = providerFor('paystack');
       if (!provider)
@@ -956,15 +967,41 @@ export function mountPointsPurchase(app, store, deps) {
   });
 }
 
+export const FALLBACK_FX_RATES = Object.freeze({
+  USD_NGN: 1450,
+  NGN_USD: 1 / 1450,
+  EUR_NGN: 1580,
+  NGN_EUR: 1 / 1580,
+  GBP_NGN: 1850,
+  NGN_GBP: 1 / 1850,
+  CAD_NGN: 1060,
+  NGN_CAD: 1 / 1060,
+  AUD_NGN: 960,
+  NGN_AUD: 1 / 960,
+});
+
 /** What Paystack is actually asked to move for a canonical amount: this merchant's account
  * settles in NGN only, so other currencies are converted with the fx_rates table (the same
- * rates /api/fx/convert reads). Null when no rate is configured — callers must refuse rather
+ * rates /api/fx/convert reads) or standard reference rates. Null when no rate is configured — callers must refuse rather
  * than send an unsettleable currency. */
 export async function settlementAmount(db, amountMinor, currency) {
   if (currency === 'NGN') return { amountMinor, currency };
+  let rate = null;
   const fxRow = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get(`${currency}_NGN`);
-  if (!fxRow) return null;
-  return { amountMinor: Math.round(amountMinor * fxRow.rate), currency: 'NGN' };
+  if (fxRow && Number.isFinite(Number(fxRow.rate)) && Number(fxRow.rate) > 0) {
+    rate = Number(fxRow.rate);
+  } else {
+    // Attempt cross rate via USD
+    const crossToUsd = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get(`${currency}_USD`);
+    const usdToNgn = await db.prepare('SELECT rate FROM fx_rates WHERE pair = ?').get('USD_NGN');
+    if (crossToUsd && usdToNgn && Number(crossToUsd.rate) > 0 && Number(usdToNgn.rate) > 0) {
+      rate = Number(crossToUsd.rate) * Number(usdToNgn.rate);
+    } else if (FALLBACK_FX_RATES[`${currency}_NGN`]) {
+      rate = FALLBACK_FX_RATES[`${currency}_NGN`];
+    }
+  }
+  if (!rate) return null;
+  return { amountMinor: Math.round(amountMinor * rate), currency: 'NGN' };
 }
 
 export { mountPaystackWebhook } from './paymentWebhook.mjs';

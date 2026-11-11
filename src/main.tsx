@@ -82,8 +82,14 @@ function start() {
       </ErrorBoundary>
     </React.StrictMode>
   );
-  if (root.hasChildNodes()) hydrateRoot(root, app);
-  else ReactDOM.createRoot(root).render(app);
+  const prerendered = root.getAttribute('data-prerendered');
+  const current = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (prerendered && prerendered === current && root.hasChildNodes()) {
+    hydrateRoot(root, app);
+  } else {
+    if (root.hasChildNodes()) root.replaceChildren();
+    ReactDOM.createRoot(root).render(app);
+  }
 }
 // Demo visitors: load the in-browser sandbox and route every api() call to it before anything
 // renders. Everyone else never downloads the sandbox code.

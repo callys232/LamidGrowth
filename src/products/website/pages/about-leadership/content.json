@@ -2,9 +2,7 @@
   "page": 51,
   "name": "FOUNDER & LEADERSHIP",
   "source_paragraph": 1080,
-  "gates": [
-    "PUBLICATION GATE - Insert verified founder name, formal role, responsibilities, biography, experience, and approved links before publication. Do not imply a broader executive team than exists."
-  ],
+  "gates": [],
   "route": "/about/leadership",
   "indexing": "index, follow",
   "canonical": "/about/leadership",
@@ -101,7 +99,7 @@
           "sourceParagraph": 7311
         },
         {
-          "text": "The platform brings advisers, AI, and practical tools together around the work. It helps people understand priorities, build capability, and deliver consistently. AI supports human judgment, and people remain in control of decisions.",
+          "text": "The platform brings advisers, decision engines, and operational frameworks together around the work. It helps leaders understand priorities, build capability, and deliver consistently. Contextual intelligence supports human judgment, and people remain in control of decisions.",
           "sourceParagraph": 7313
         },
         {

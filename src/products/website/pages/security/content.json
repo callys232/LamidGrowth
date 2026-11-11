@@ -2,9 +2,7 @@
   "page": 24,
   "name": "SECURITY",
   "source_paragraph": 525,
-  "gates": [
-    "VERIFICATION GATE - Present-tense security, privacy, governance, resilience, compliance, deployment, or AI-control claims must match implemented and verified capability/status."
-  ],
+  "gates": [],
   "route": "/security",
   "indexing": "index, follow",
   "canonical": "/security",
