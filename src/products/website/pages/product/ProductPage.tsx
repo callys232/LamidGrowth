@@ -177,7 +177,10 @@ const faqs = [
 
 function playVideo(event: { currentTarget: HTMLElement }) {
   const video = event.currentTarget.querySelector('video');
-  if (video && video.paused) void video.play().catch(() => undefined);
+  if (video) {
+    video.playbackRate = 0.65;
+    if (video.paused) void video.play().catch(() => undefined);
+  }
 }
 
 export function ProductPage() {
@@ -243,7 +246,13 @@ export function ProductPage() {
                   playsInline
                   preload="none"
                   poster={`/media/posters/${job.clip}.svg`}
-                  aria-label={`${job.name} tool in use`}
+                  aria-label={`${job.name} engine in use`}
+                  onLoadedMetadata={(e) => {
+                    e.currentTarget.playbackRate = 0.65;
+                  }}
+                  onPlay={(e) => {
+                    e.currentTarget.playbackRate = 0.65;
+                  }}
                 >
                   <source src={`/videos/engines/${job.clip}.webm`} type="video/webm" />
                   <source src={`/videos/engines/${job.clip}.mp4`} type="video/mp4" />

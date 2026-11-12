@@ -8,17 +8,17 @@
     "indexing": "index, follow",
     "canonical": "/",
     "seo_title": "LAMID ONE | Decide. Build. Deliver.",
-    "meta_description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
-    "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
-    "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+    "meta_description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
+    "title": "Decide what matters, build capability, and deliver results — all in one place.",
+    "description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
     "landingHero": {
       "eyebrow": "The LAMID ONE platform",
       "titleLines": [
         "Decide what matters,",
-        "build what's needed,",
-        "and deliver the results — all in one place."
+        "build capability,",
+        "and deliver results — all in one place."
       ],
-      "description": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+      "description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
       "actions": [
         {
           "label": "Get a demo",
@@ -43,14 +43,14 @@
       ]
     },
     "hero": {
-      "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+      "title": "Decide what matters, build capability, and deliver results — all in one place.",
       "paragraphs": [
         {
-          "text": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+          "text": "Decide what matters, build capability, and deliver results — all in one place.",
           "sourceParagraph": 6283
         },
         {
-          "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+          "text": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
           "sourceParagraph": 6287
         },
         {
@@ -422,7 +422,7 @@
             "sourceParagraph": 13947
           },
           {
-            "text": "LAMID ONE brings guidance, practical tools, and adviser support into one connected platform.",
+            "text": "LAMID ONE brings guidance, decision engines, and executive advisory support into one connected platform.",
             "sourceParagraph": 13949
           },
           {
@@ -524,14 +524,14 @@
     ],
     "blocks": [
       {
-        "title": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+        "title": "Decide what matters, build capability, and deliver results — all in one place.",
         "paragraphs": [
           {
-            "text": "Decide what matters, build what’s needed, and deliver the results — all in one place.",
+            "text": "Decide what matters, build capability, and deliver results — all in one place.",
             "sourceParagraph": 6283
           },
           {
-            "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+            "text": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
             "sourceParagraph": 6287
           },
           {
@@ -902,7 +902,7 @@
             "sourceParagraph": 13947
           },
           {
-            "text": "LAMID ONE brings guidance, practical tools, and adviser support into one connected platform.",
+            "text": "LAMID ONE brings guidance, decision engines, and executive advisory support into one connected platform.",
             "sourceParagraph": 13949
           },
           {
@@ -1028,11 +1028,11 @@
           "sourceParagraph": 15000
         },
         {
-          "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+          "text": "LAMID ONE brings relevant guidance, decision engines, and executive advisory support into one connected platform.",
           "sourceParagraph": 15001
         },
         {
-          "text": "AI suggests, explains, and prepares. You decide what happens next.",
+          "text": "Contextual intelligence suggests, explains, and prepares. You direct what happens next.",
           "sourceParagraph": 15002
         },
         {
@@ -1159,11 +1159,11 @@
             "sourceParagraph": 15025
           },
           {
-            "text": "The context changes the tools, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
+            "text": "The context shapes the decision engines, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
             "sourceParagraph": 15026
           },
           {
-            "text": "Start with the depth that helps now, then move into related tools and workflows as the work calls for them.",
+            "text": "Start with the depth that helps now, then move into related engines and workflows as the work calls for them.",
             "sourceParagraph": 15027
           }
         ]
@@ -1178,11 +1178,11 @@
             "sourceParagraph": 15000
           },
           {
-            "text": "LAMID ONE brings relevant guidance, practical tools, and adviser support into one connected platform. AI suggests, explains, and prepares. You decide what happens next.",
+            "text": "LAMID ONE brings relevant guidance, decision engines, and executive advisory support into one connected platform.",
             "sourceParagraph": 15001
           },
           {
-            "text": "AI suggests, explains, and prepares. You decide what happens next.",
+            "text": "Contextual intelligence suggests, explains, and prepares. You direct what happens next.",
             "sourceParagraph": 15002
           },
           {
@@ -1308,11 +1308,11 @@
             "sourceParagraph": 15025
           },
           {
-            "text": "The context changes the tools, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
+            "text": "The context shapes the decision engines, detail, and coordination needed. Clarity, Capability, and Consistency keep the underlying progression recognizable.",
             "sourceParagraph": 15026
           },
           {
-            "text": "Start with the depth that helps now, then move into related tools and workflows as the work calls for them.",
+            "text": "Start with the depth that helps now, then move into related engines and workflows as the work calls for them.",
             "sourceParagraph": 15027
           }
         ]
@@ -14509,7 +14509,7 @@
             "sourceParagraph": 7311
           },
           {
-            "text": "The platform brings advisers, AI, and practical tools together around the work. It helps people understand priorities, build capability, and deliver consistently. AI supports human judgment, and people remain in control of decisions.",
+            "text": "The platform brings advisers, decision engines, and operational frameworks together around the work. It helps leaders understand priorities, build capability, and deliver consistently. Contextual intelligence supports human judgment, and people remain in control of decisions.",
             "sourceParagraph": 7313
           },
           {
@@ -14630,7 +14630,7 @@
             "sourceParagraph": 7311
           },
           {
-            "text": "The platform brings advisers, AI, and practical tools together around the work. It helps people understand priorities, build capability, and deliver consistently. AI supports human judgment, and people remain in control of decisions.",
+            "text": "The platform brings advisers, decision engines, and operational frameworks together around the work. It helps leaders understand priorities, build capability, and deliver consistently. Contextual intelligence supports human judgment, and people remain in control of decisions.",
             "sourceParagraph": 7313
           },
           {

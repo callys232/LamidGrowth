@@ -188,6 +188,8 @@ const ContentPage = lazy(() =>
     default: module.ContentPage,
   })),
 );
+import { ProductSuitePage } from './products/website/pages/product/ProductSuitePage';
+import { productSuites } from './products/website/pages/product/productSuitesData';
 const Workflows = lazy(() =>
   import('./products/workflows/pages/WorkflowsPage').then((module) => ({
     default: module.Workflows,
@@ -367,10 +369,36 @@ function DemoLandingPage() {
   );
 }
 
+function VideoPlaybackSpeedEnforcer() {
+  useEffect(() => {
+    const handleMedia = (e: Event) => {
+      if (e.target instanceof HTMLMediaElement) {
+        e.target.playbackRate = 0.65;
+      }
+    };
+    document.addEventListener('play', handleMedia, true);
+    document.addEventListener('loadedmetadata', handleMedia, true);
+    document.addEventListener('playing', handleMedia, true);
+
+    document.querySelectorAll('video').forEach((v) => {
+      v.playbackRate = 0.65;
+    });
+
+    return () => {
+      document.removeEventListener('play', handleMedia, true);
+      document.removeEventListener('loadedmetadata', handleMedia, true);
+      document.removeEventListener('playing', handleMedia, true);
+    };
+  }, []);
+
+  return null;
+}
+
 export function App() {
   return (
     <>
       <RouteEffects />
+      <VideoPlaybackSpeedEnforcer />
       <div id="top" />
       <Suspense
         fallback={
@@ -381,6 +409,70 @@ export function App() {
       >
         <Routes>
           <Route path="/" element={<ContentPage />} />
+          <Route
+            path="/product/strategy"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.strategy} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/decisions"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.decisions} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/people"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.people} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/operations"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.operations} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/finance"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.finance} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/risk-governance"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites['risk-governance']} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/growth-change"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites['growth-change']} />
+              </ContentPage>
+            }
+          />
+          <Route
+            path="/product/advisory"
+            element={
+              <ContentPage>
+                <ProductSuitePage config={productSuites.advisory} />
+              </ContentPage>
+            }
+          />
           <Route
             path="/start"
             element={

@@ -1,7 +1,7 @@
 /** Approved public language for the LAMID ONE platform and how it is used. */
 export const platformMessaging = {
   description:
-    'LAMID ONE brings relevant guidance, decision engines, and executive advisory support into one connected platform. Contextual intelligence suggests, explains, and prepares. You direct what happens next.',
+    "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
   humanControl:
     'You set the objective, review recommendations, and approve consequential work. Advisers can join when you want their perspective.',
   visitorPaths: [

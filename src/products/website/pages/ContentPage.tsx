@@ -42,12 +42,12 @@ export function ContentPage({ children }: { children?: ReactNode }) {
           ) : (
             <CanonicalCopy path={pathname} />
           )
-        ) : (
+        ) : !children ? (
           <section className="section-wrap">
             <h1>Page not found</h1>
             <Cta to="/">Return home</Cta>
           </section>
-        )}
+        ) : null}
         {pathname === '/help' && <HelpSearchSlide />}
       </main>
       {pathname !== '/' && <Footer />}

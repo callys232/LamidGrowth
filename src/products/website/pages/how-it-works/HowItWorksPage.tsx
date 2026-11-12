@@ -251,7 +251,10 @@ export const howItWorks: Record<string, HowItWorksContent> = {
 
 function playVideo(event: { currentTarget: HTMLElement }) {
   const video = event.currentTarget.querySelector('video');
-  if (video && video.paused) void video.play().catch(() => undefined);
+  if (video) {
+    video.playbackRate = 0.65;
+    if (video.paused) void video.play().catch(() => undefined);
+  }
 }
 
 export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
@@ -334,6 +337,12 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
               playsInline
               preload="metadata"
               aria-label={`${engine.name} in use`}
+              onLoadedMetadata={(e) => {
+                e.currentTarget.playbackRate = 0.65;
+              }}
+              onPlay={(e) => {
+                e.currentTarget.playbackRate = 0.65;
+              }}
             >
               <source src={`/videos/engines/${engine.clip}.webm`} type="video/webm" />
               <source src={`/videos/engines/${engine.clip}.mp4`} type="video/mp4" />
@@ -349,6 +358,12 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
                 playsInline
                 preload="metadata"
                 tabIndex={-1}
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.playbackRate = 0.65;
+                }}
+                onPlay={(e) => {
+                  e.currentTarget.playbackRate = 0.65;
+                }}
               >
                 <source src={`/videos/engines/${second.clip}.webm`} type="video/webm" />
                 <source src={`/videos/engines/${second.clip}.mp4`} type="video/mp4" />

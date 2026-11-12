@@ -106,8 +106,14 @@ export function LandingHero() {
             <circle cx="400" cy="400" r="146" />
             <circle cx="400" cy="190" r="5" className="lg-target-marker lg-target-marker--teal" />
           </g>
-          <path className="lg-target-crosshair" d="M400 22v174M400 604v174M22 400h174M604 400h174" />
-          <path className="lg-target-route" d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148" />
+          <path
+            className="lg-target-crosshair"
+            d="M400 22v174M400 604v174M22 400h174M604 400h174"
+          />
+          <path
+            className="lg-target-route"
+            d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148"
+          />
           <circle className="lg-target-point" cx="492" cy="552" r="13" />
           <circle className="lg-target-center" cx="400" cy="400" r="14" />
         </svg>
@@ -121,7 +127,12 @@ export function LandingHero() {
             <span className="lg-mobile-cap">{content.landingHero.titleLines[1]}</span>
           </span>
           <br />
-          <span>{'and '}<span className="lg-mobile-cap">{content.landingHero.titleLines[2].replace(/^and\s+/, '')}</span></span>
+          <span>
+            {'and '}
+            <span className="lg-mobile-cap">
+              {content.landingHero.titleLines[2].replace(/^and\s+/, '')}
+            </span>
+          </span>
         </h1>
         <p className="lg-sub">{platformMessaging.description}</p>
         <Actions />
@@ -134,26 +145,29 @@ const tiles = [
   {
     pillar: 'clarity',
     caption: 'Know what matters, in one view.',
-    brief: 'Clarity tool in use: prioritising what matters',
+    brief: 'Clarity engine in use: prioritising what matters',
     featured: false,
   },
   {
     pillar: 'capability',
     caption: 'Build the plans, skills and teams you need.',
-    brief: 'Capability tool in use: building a plan',
+    brief: 'Capability engine in use: building a plan',
     featured: true,
   },
   {
     pillar: 'consistency',
     caption: 'Deliver steadily, with advisers beside you.',
-    brief: 'Consistency tool in use: tracking delivery',
+    brief: 'Consistency engine in use: tracking delivery',
     featured: false,
   },
 ] as const;
 
 function playVideo(event: { currentTarget: HTMLElement }) {
   const video = event.currentTarget.querySelector('video');
-  if (video && video.paused) void video.play().catch(() => undefined);
+  if (video) {
+    video.playbackRate = 0.65;
+    if (video.paused) void video.play().catch(() => undefined);
+  }
 }
 
 export function LandingTiles() {
@@ -193,13 +207,14 @@ export function LandingWhatIs() {
   return (
     <section className="lg-split" aria-labelledby="lg-what">
       <h2 id="lg-what" className="lg-split-title">
-        <span>What</span> <span>is</span> <LamidOneBrand withIcon={false} /><span className="lg-split-q">?</span>
+        <span>What</span> <span>is</span> <LamidOneBrand withIcon={false} />
+        <span className="lg-split-q">?</span>
       </h2>
       <div className="lg-what-copy">
         <p className="lg-what-lead">
-          <LamidOneBrand withIcon={false} /> is your Continuous Human–AI Growth Operating System that turns intelligence into
-          sustained progress — helping you understand what matters, build what you need and keep
-          moving forward, with you in control.
+          <LamidOneBrand withIcon={false} /> is your Continuous Human–AI Growth Operating System
+          that turns intelligence into sustained progress — helping you understand what matters,
+          build what you need and keep moving forward, with you in control.
         </p>
       </div>
     </section>
@@ -235,38 +250,43 @@ export function LandingTrust() {
 const products = [
   {
     name: 'Strategy',
+    href: '/product/strategy',
     points: ['Line up purpose, priorities and plan.', 'Rank what to do first.'],
   },
   {
     name: 'Decisions',
+    href: '/product/decisions',
     points: ['Record decisions and who owns them.', 'Score the quality before you commit.'],
   },
   {
     name: 'People & skills',
+    href: '/product/people',
     points: ['Find skills gaps and plan your workforce.', 'Build your bench and culture.'],
   },
   {
     name: 'Operations',
+    href: '/product/operations',
     points: ['Spot delays and bottlenecks in how work flows.', 'Catch drift before it costs you.'],
   },
   {
     name: 'Finance',
+    href: '/product/finance',
     points: ['See cash, health and forecasts clearly.', 'Link KPIs to the drivers behind them.'],
   },
   {
     name: 'Risk & governance',
+    href: '/product/risk-governance',
     points: ['Keep a risk register with early warnings.', 'Check compliance and continuity.'],
   },
   {
     name: 'Growth & change',
+    href: '/product/growth-change',
     points: ['Score opportunities and map growth paths.', 'Test change readiness and track it.'],
   },
   {
     name: 'Expert advisory',
-    points: [
-      'Match with Leading Experts.',
-      'Get human review before big decisions.',
-    ],
+    href: '/product/advisory',
+    points: ['Match with Leading Experts.', 'Get human review before big decisions.'],
   },
 ] as const;
 const areaStyle: Record<string, { pillar: string; icon: LucideIcon }> = {
@@ -309,8 +329,14 @@ export function LandingProducts() {
   return (
     <section className="lg-products" aria-labelledby="lg-products-title">
       <div className="lg-products-intro">
-        <h2 id="lg-products-title">Growing is hard. <LamidOneBrand /> makes it clearer.</h2>
-        <p>Scattered tools slow you down. <LamidOneBrand withIcon={false} /> connects them in one place.</p>
+        <h2 id="lg-products-title">
+          Growing is hard. <LamidOneBrand /> makes it clearer.
+        </h2>
+        <p>
+          Fragmented systems create decision friction. <LamidOneBrand withIcon={false} /> connects
+          continuous intelligence to execution—giving teams the context to decide and the structure
+          to deliver.
+        </p>
         <Actions />
       </div>
       <div className="lg-card-wrap">
@@ -318,7 +344,7 @@ export function LandingProducts() {
           ref={gridRef}
           className={`lg-card-grid ${cardsVisible ? 'is-visible' : ''}`}
           tabIndex={0}
-          aria-label="LAMID ONE tool areas"
+          aria-label="LAMID ONE capability areas"
         >
           {products.map((product, index) => {
             const style = areaStyle[product.name];
@@ -327,7 +353,7 @@ export function LandingProducts() {
               <Link
                 key={product.name}
                 className="lg-card"
-                to="/product"
+                to={product.href}
                 data-pillar={style.pillar}
                 style={{ '--card-i': index } as CSSProperties}
               >
@@ -345,7 +371,10 @@ export function LandingProducts() {
                 </ul>
                 <span className="lg-foot">
                   <span className="lg-more">
-                    Learn more <span className="lg-more-arrow" aria-hidden="true">&rarr;</span>
+                    Learn more{' '}
+                    <span className="lg-more-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
                   </span>
                 </span>
               </Link>
@@ -472,8 +501,8 @@ export function LandingResults() {
     <section className="lg-results" aria-labelledby="lg-results-title">
       <h2 id="lg-results-title">Made for the work in front of you.</h2>
       <p className="lg-results-note">
-        Explore how <LamidOneBrand withIcon={false} /> brings clearer decisions, stronger capability and steadier delivery
-        into different working contexts.
+        Explore how <LamidOneBrand withIcon={false} /> brings clearer decisions, stronger capability
+        and steadier delivery into different working contexts.
       </p>
       <div className="lg-tabs" role="tablist">
         {results.map((result, index) => (
@@ -497,10 +526,7 @@ export function LandingResults() {
             ratio="16 / 10"
           />
         </div>
-        <div
-          className="lg-result-copy"
-          style={{ '--aud': current.pillar?.color } as CSSProperties}
-        >
+        <div className="lg-result-copy" style={{ '--aud': current.pillar?.color } as CSSProperties}>
           <span className="lg-result-pillar">
             {current.pillar?.name} · {current.pillar?.verb}
           </span>
@@ -532,7 +558,9 @@ export function LandingResults() {
 export function LandingClose() {
   return (
     <section className="lg-close" aria-labelledby="lg-close-title">
-      <h2 id="lg-close-title">Make growth feel clear, not complicated with <LamidOneBrand />.</h2>
+      <h2 id="lg-close-title">
+        Make growth feel clear, not complicated with <LamidOneBrand />.
+      </h2>
       <Actions />
     </section>
   );
