@@ -5,6 +5,8 @@ import { Modal } from '../../../../shared/ui/Modal';
 import playbooks from './playbooks.json';
 import content from './content.json';
 import './playbooks.css';
+import { productSuites } from '../product/productSuitesData';
+import { getEngineGuide, suitePlaybooks } from '../product/suitePlaybooksAndUseCases';
 
 type Playbook = (typeof playbooks)[number];
 
@@ -214,6 +216,42 @@ export function InsightPlaybooks() {
       {!filtered.length && (
         <p className="playbook-empty">No playbooks match. Try another engine name or choose All.</p>
       )}
+      <section className="suite-usecases-library" aria-labelledby="suite-usecases-lib-title">
+        <h3 id="suite-usecases-lib-title">Suite Playbooks &amp; Live Engine Use Cases</h3>
+        <div className="playbook-grid">
+          {Object.entries(productSuites).map(([suiteId, suite]) => {
+            const pbs = suitePlaybooks[suiteId] || [];
+            const firstEngine = suite.engines[0];
+            const firstGuide = firstEngine ? getEngineGuide(firstEngine) : null;
+            return (
+              <Link
+                key={suiteId}
+                to={`/product/${suiteId}`}
+                className="playbook-card"
+                data-category={pbs[0]?.category || 'Clarity'}
+              >
+                <div className="playbook-card-copy">
+                  <span className="playbook-kicker">{suite.name} Suite · {suite.engines.length} Engines</span>
+                  <h3>{pbs[0]?.title || suite.title}</h3>
+                  <p>
+                    {firstGuide
+                      ? `${firstGuide.useCase.role}: ${firstGuide.useCase.scenario} (${firstGuide.useCase.outcome})`
+                      : suite.lede}
+                  </p>
+                  <div className="playbook-tags">
+                    {suite.engines.slice(0, 3).map((eng) => (
+                      <span key={eng.code}>{eng.name}</span>
+                    ))}
+                  </div>
+                  <span className="playbook-open">
+                    Open suite playbooks &amp; use cases <ArrowUpRight size={18} aria-hidden="true" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
       {active && (
         <Modal title={active.title} onClose={() => setActive(null)} wide>
           <div className="playbook-guide" data-category={active.category}>

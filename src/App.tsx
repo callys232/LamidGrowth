@@ -188,8 +188,11 @@ const ContentPage = lazy(() =>
     default: module.ContentPage,
   })),
 );
-import { ProductSuitePage } from './products/website/pages/product/ProductSuitePage';
-import { productSuites } from './products/website/pages/product/productSuitesData';
+const ProductSuiteRoute = lazy(() =>
+  import('./products/website/pages/product/ProductSuiteRoute').then((module) => ({
+    default: module.ProductSuiteRoute,
+  })),
+);
 const Workflows = lazy(() =>
   import('./products/workflows/pages/WorkflowsPage').then((module) => ({
     default: module.Workflows,
@@ -413,7 +416,7 @@ export function App() {
             path="/product/strategy"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.strategy} />
+                <ProductSuiteRoute suiteKey="strategy" />
               </ContentPage>
             }
           />
@@ -421,7 +424,7 @@ export function App() {
             path="/product/decisions"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.decisions} />
+                <ProductSuiteRoute suiteKey="decisions" />
               </ContentPage>
             }
           />
@@ -429,7 +432,7 @@ export function App() {
             path="/product/people"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.people} />
+                <ProductSuiteRoute suiteKey="people" />
               </ContentPage>
             }
           />
@@ -437,7 +440,7 @@ export function App() {
             path="/product/operations"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.operations} />
+                <ProductSuiteRoute suiteKey="operations" />
               </ContentPage>
             }
           />
@@ -445,7 +448,7 @@ export function App() {
             path="/product/finance"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.finance} />
+                <ProductSuiteRoute suiteKey="finance" />
               </ContentPage>
             }
           />
@@ -453,7 +456,7 @@ export function App() {
             path="/product/risk-governance"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites['risk-governance']} />
+                <ProductSuiteRoute suiteKey="risk-governance" />
               </ContentPage>
             }
           />
@@ -461,7 +464,7 @@ export function App() {
             path="/product/growth-change"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites['growth-change']} />
+                <ProductSuiteRoute suiteKey="growth-change" />
               </ContentPage>
             }
           />
@@ -469,7 +472,7 @@ export function App() {
             path="/product/advisory"
             element={
               <ContentPage>
-                <ProductSuitePage config={productSuites.advisory} />
+                <ProductSuiteRoute suiteKey="advisory" />
               </ContentPage>
             }
           />

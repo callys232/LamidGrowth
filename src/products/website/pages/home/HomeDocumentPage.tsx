@@ -8,10 +8,8 @@ import {
   LandingClose,
   LandingHero,
   LandingProducts,
+  LandingProofBar,
   LandingResults,
-  LandingTiles,
-  LandingTrust,
-  LandingWhatIs,
 } from './landing/Landing';
 import './home.css';
 
@@ -97,9 +95,7 @@ export function HomeDocumentPage({ embedded = false }: DocumentPageProps) {
   return (
     <div className="lamid-home" data-source-page={content.page}>
       <LandingHero />
-      <LandingTiles />
-      <LandingWhatIs />
-      <LandingTrust />
+      <LandingProofBar />
       <LandingProducts />
       <LandingAi />
       <LandingResults />

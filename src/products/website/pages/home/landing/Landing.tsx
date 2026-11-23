@@ -11,9 +11,9 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { audiences, brochureClients, pillars } from '../../../../../shared/brand';
-import { platformMessaging } from '../../../../../shared/brand/platformMessaging';
+import { audiences, pillars } from '../../../../../shared/brand';
 import { AudienceContextIllustration } from '../../../../../shared/brand/AudienceContextIllustration';
+import { OrbitVisual } from '../../../../../shared/visuals/Orbit';
 import content from '../content.json';
 import './landing.css';
 import '../../motion.css';
@@ -65,101 +65,191 @@ function Actions() {
   );
 }
 
+const heroPillars = [
+  {
+    num: '01',
+    title: 'Make Informed Decisions.',
+    copy: 'Access continuous intelligence and trusted expertise.',
+    to: '/product/decisions',
+    image: '/media/hero/pillar-01-decisions.jpg',
+    altImage: '/media/hero/pillar-01-decisions-b.jpg',
+    alt: 'Layered glass and crimson architectural planes',
+  },
+  {
+    num: '02',
+    title: 'Turn Capabilities into Execution.',
+    copy: 'Connect resources, build skills, and deliver projects.',
+    to: '/product/operations',
+    image: '/media/hero/pillar-02-capabilities.jpg',
+    altImage: '/media/hero/pillar-02-capabilities-b.jpg',
+    alt: 'Interlocking frosted glass, steel, and crimson modular blocks',
+  },
+  {
+    num: '03',
+    title: 'Drive Growth with Confidence.',
+    copy: 'Track progress, measure impact, and scale results.',
+    to: '/product/growth-change',
+    image: '/media/hero/pillar-03-growth.jpg',
+    altImage: '/media/hero/pillar-03-growth-b.jpg',
+    alt: 'Ascending metallic bars with crimson trajectory curve',
+  },
+] as const;
+
 export function LandingHero() {
   const hero = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const section = hero.current;
     if (!section) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const { top, height } = section.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -top / Math.max(height, 1)));
-      section.style.setProperty('--lg-hero-art-drift', `${(-progress * 72).toFixed(1)}px`);
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    let targetNx = 0;
+    let targetNy = 0;
+    let currentNx = 0;
+    let currentNy = 0;
+    let mouseRaf = 0;
+
+    const tickMouse = () => {
+      currentNx += (targetNx - currentNx) * 0.085;
+      currentNy += (targetNy - currentNy) * 0.085;
+      section.style.setProperty('--lg-mouse-x', currentNx.toFixed(4));
+      section.style.setProperty('--lg-mouse-y', currentNy.toFixed(4));
+
+      const settled =
+        Math.abs(targetNx - currentNx) < 0.001 && Math.abs(targetNy - currentNy) < 0.001;
+      if (!settled) {
+        mouseRaf = requestAnimationFrame(tickMouse);
+      } else {
+        mouseRaf = 0;
+      }
     };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
+
+    const startTick = () => {
+      if (!mouseRaf) mouseRaf = requestAnimationFrame(tickMouse);
     };
-    update();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
+
+    const onPointerMove = (e: PointerEvent) => {
+      const rect = section.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      targetNx = Math.max(-1, Math.min(1, ((e.clientX - rect.left) / rect.width - 0.5) * 2));
+      targetNy = Math.max(-1, Math.min(1, ((e.clientY - rect.top) / rect.height - 0.5) * 2));
+      startTick();
+
+      const orbitHost = section.querySelector<HTMLElement>('.orbit-visual');
+      orbitHost?.dispatchEvent(
+        new PointerEvent('pointermove', {
+          clientX: e.clientX,
+          clientY: e.clientY,
+          pointerType: e.pointerType,
+        }),
+      );
+    };
+
+    const onPointerLeave = () => {
+      targetNx = 0;
+      targetNy = 0;
+      startTick();
+
+      const orbitHost = section.querySelector<HTMLElement>('.orbit-visual');
+      orbitHost?.dispatchEvent(new PointerEvent('pointerleave'));
+    };
+
+    section.addEventListener('pointermove', onPointerMove, { passive: true });
+    section.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-      section.style.removeProperty('--lg-hero-art-drift');
+      cancelAnimationFrame(mouseRaf);
+      section.removeEventListener('pointermove', onPointerMove);
+      section.removeEventListener('pointerleave', onPointerLeave);
+      section.style.removeProperty('--lg-mouse-x');
+      section.style.removeProperty('--lg-mouse-y');
     };
   }, []);
 
   return (
-    <section ref={hero} className="lg-hero" aria-labelledby="lg-hero-title">
-      <div className="lg-hero-target" aria-hidden="true">
-        <svg className="lg-hero-target-art" viewBox="0 0 800 800" fill="none">
-          <g className="lg-target-orbit lg-target-orbit--outer">
-            <circle cx="400" cy="400" r="330" />
-            <circle cx="400" cy="400" r="272" />
-            <circle cx="400" cy="70" r="6" className="lg-target-marker" />
-          </g>
-          <g className="lg-target-orbit lg-target-orbit--inner">
-            <circle cx="400" cy="400" r="210" />
-            <circle cx="400" cy="400" r="146" />
-            <circle cx="400" cy="190" r="5" className="lg-target-marker lg-target-marker--teal" />
-          </g>
-          <path
-            className="lg-target-crosshair"
-            d="M400 22v174M400 604v174M22 400h174M604 400h174"
-          />
-          <path
-            className="lg-target-route"
-            d="M92 585c85-6 102-110 192-110 89 0 101 77 190 77 79 0 121-65 218-148"
-          />
-          <circle className="lg-target-point" cx="492" cy="552" r="13" />
-          <circle className="lg-target-center" cx="400" cy="400" r="14" />
-        </svg>
+    <section ref={hero} className="lg-hero lg-hero-editorial" aria-labelledby="lg-hero-title">
+      <div className="lg-hero-stage-dark">
+        <div className="lg-hero-orbit-bg" aria-hidden="true">
+          <OrbitVisual />
+          <div className="lg-hero-orbit-scrim" />
+        </div>
+
+        <div className="lg-hero-inner">
+          <div className="lg-hero-copy-col">
+            <p className="lg-eyebrow">
+              <span className="lg-eyebrow-rule" aria-hidden="true" />
+              INTELLIGENT OPERATING ENVIRONMENT
+            </p>
+            <h1 id="lg-hero-title">
+              <span>Power Intelligent Decisions.</span>
+              <span className="lg-hero-accent-row">
+                <span>Build Capabilities.</span>{' '}
+                <span className="lg-hero-accent">Accelerate Growth</span>
+              </span>
+              <span className="lg-hero-sub-suffix">— all in one place.</span>
+            </h1>
+            <p className="lg-sub">
+              <span className="lg-sub-lead">
+                LAMID ONE is an intelligent operating environment that empowers people and
+                organizations to access trusted expertise, execute projects, deliver results and
+                achieve growth through <strong>continuous intelligence</strong>,{' '}
+                <strong>decentralized decision-making</strong>, and{' '}
+                <strong>structured delivery</strong>.
+              </span>
+              <span className="lg-sub-closer">
+                LAMID ONE updates as your reality changes —{' '}
+                <span className="lg-sub-closer-accent">with you in control always.</span>
+              </span>
+            </p>
+            <div className="lg-hero-cta-row">
+              <Link className="lg-btn-crimson" to="/signup">
+                Get Started <span aria-hidden="true">&rarr;</span>
+              </Link>
+              <Link className="lg-btn-overview" to="/demo">
+                <span className="lg-play-circle" aria-hidden="true">
+                  &#9654;
+                </span>
+                Get Demo
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="lg-hero-content">
-        <p className="lg-eyebrow">{content.landingHero.eyebrow}</p>
-        <h1 id="lg-hero-title">
-          <span>
-            {content.landingHero.titleLines[0]}
-            <br className="lg-mobile-break" />{' '}
-            <span className="lg-mobile-cap">{content.landingHero.titleLines[1]}</span>
-          </span>
-          <br />
-          <span>
-            {'and '}
-            <span className="lg-mobile-cap">
-              {content.landingHero.titleLines[2].replace(/^and\s+/, '')}
-            </span>
-          </span>
-        </h1>
-        <p className="lg-sub">{platformMessaging.description}</p>
-        <Actions />
+
+      <div className="lg-hero-bento" aria-label="Core platform capabilities">
+        {heroPillars.map((item) => (
+          <Link key={item.num} to={item.to} className="lg-bento-cell">
+            <div className="lg-bento-copy">
+              <span className="lg-bento-num">{item.num}</span>
+              <h2 className="lg-bento-title">{item.title}</h2>
+              <p className="lg-bento-desc">{item.copy}</p>
+              <span className="lg-bento-link">
+                Learn more <span aria-hidden="true">&rarr;</span>
+              </span>
+            </div>
+            <div className="lg-bento-art">
+              <img src={item.image} alt={item.alt} className="lg-bento-img-a" loading="eager" />
+              <img
+                src={item.altImage}
+                alt=""
+                aria-hidden="true"
+                className="lg-bento-img-b"
+                loading="eager"
+              />
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
 }
 
-const tiles = [
-  {
-    pillar: 'clarity',
-    caption: 'Know what matters, in one view.',
-    brief: 'Clarity engine in use: prioritising what matters',
-    featured: false,
-  },
-  {
-    pillar: 'capability',
-    caption: 'Build the plans, skills and teams you need.',
-    brief: 'Capability engine in use: building a plan',
-    featured: true,
-  },
-  {
-    pillar: 'consistency',
-    caption: 'Deliver steadily, with advisers beside you.',
-    brief: 'Consistency engine in use: tracking delivery',
-    featured: false,
-  },
+const proofMetrics = [
+  { value: 'Since 1988', label: 'Advising leaders & enterprises' },
+  { value: 'Live Intelligence', label: 'Auditable, standards-backed math' },
+  { value: 'Escrow Advisory', label: 'Vetted specialists on demand' },
+  { value: '100% Human', label: 'You approve every consequential call' },
 ] as const;
 
 function playVideo(event: { currentTarget: HTMLElement }) {
@@ -170,78 +260,16 @@ function playVideo(event: { currentTarget: HTMLElement }) {
   }
 }
 
-export function LandingTiles() {
+export function LandingProofBar() {
   return (
-    <section className="lg-tiles" aria-label="What you get">
-      {tiles.map(({ pillar, caption, brief, featured }) => (
-        <figure
-          tabIndex={0}
-          key={pillar}
-          className={`lg-tile${featured ? ' lg-tile-featured' : ''}`}
-          data-pillar={pillar}
-          onMouseEnter={playVideo}
-          onFocus={playVideo}
-        >
-          <video
-            muted
-            loop
-            playsInline
-            preload="none"
-            poster={`/media/posters/${pillar}-demo.svg`}
-            aria-label={brief}
-          >
-            <source src={`/videos/${pillar}-demo.webm`} type="video/webm" />
-            <source src={`/videos/${pillar}-demo.mp4`} type="video/mp4" />
-          </video>
-          <figcaption>
-            <span className="lg-tile-kicker">{pillar}</span>
-            {caption}
-          </figcaption>
-        </figure>
-      ))}
-    </section>
-  );
-}
-
-export function LandingWhatIs() {
-  return (
-    <section className="lg-split" aria-labelledby="lg-what">
-      <h2 id="lg-what" className="lg-split-title">
-        <span>What</span> <span>is</span> <LamidOneBrand withIcon={false} />
-        <span className="lg-split-q">?</span>
-      </h2>
-      <div className="lg-what-copy">
-        <p className="lg-what-lead">
-          <LamidOneBrand withIcon={false} /> is your Continuous Human–AI Growth Operating System
-          that turns intelligence into sustained progress — helping you understand what matters,
-          build what you need and keep moving forward, with you in control.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-export function LandingTrust() {
-  const row = [...brochureClients, ...brochureClients];
-  return (
-    <section className="lg-trust" aria-label="Track record">
-      <h3>
-        Advising organisations
-        <br />
-        since 1988
-      </h3>
-      <div className="lg-marquee" aria-label="Client names, logos pending permission">
-        <div className="lg-marquee-track">
-          {row.map((name, index) => (
-            <span
-              className="lg-logo"
-              key={`${name}-${index}`}
-              aria-hidden={index >= brochureClients.length}
-            >
-              {name}
-            </span>
-          ))}
-        </div>
+    <section className="lg-proof-sec" aria-label="Platform verification metrics">
+      <div className="lg-proof-bar">
+        {proofMetrics.map((item) => (
+          <div key={item.value} className="lg-proof-item">
+            <strong className="lg-proof-val">{item.value}</strong>
+            <span className="lg-proof-lbl">{item.label}</span>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -330,12 +358,13 @@ export function LandingProducts() {
     <section className="lg-products" aria-labelledby="lg-products-title">
       <div className="lg-products-intro">
         <h2 id="lg-products-title">
-          Growing is hard. <LamidOneBrand /> makes it clearer.
+          Growing is hard.
+          <br />
+          <LamidOneBrand withIcon /> makes it clearer.
         </h2>
         <p>
-          Fragmented systems create decision friction. <LamidOneBrand withIcon={false} /> connects
-          continuous intelligence to execution—giving teams the context to decide and the structure
-          to deliver.
+          Fragmented systems create decision friction. LAMID ONE connects continuous intelligence to
+          execution—giving teams the context to decide and the structure to deliver.
         </p>
         <Actions />
       </div>
@@ -357,11 +386,13 @@ export function LandingProducts() {
                 data-pillar={style.pillar}
                 style={{ '--card-i': index } as CSSProperties}
               >
-                <span className="lg-card-icon" aria-hidden="true">
-                  <Icon />
-                </span>
-                <h3>{product.name}</h3>
-                <ul className="lg-line">
+                <div className="lg-card-head">
+                  <span className="lg-card-icon" aria-hidden="true">
+                    <Icon />
+                  </span>
+                  <h3>{product.name}</h3>
+                </div>
+                <ul className="lg-line" data-scroll-feedback="off">
                   {product.points.map((point) => (
                     <li key={point}>
                       <span className="lg-line-bullet" aria-hidden="true" />

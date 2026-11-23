@@ -48,11 +48,37 @@
 
 @media (max-width: 640px) {
   .public-header .brand.brand-logo {
-    width: 124px;
+    width: 104px;
   }
 
   .public-footer .brand.brand-logo {
     width: 200px;
+  }
+}
+
+/* Navbar-specific compact logo sizing */
+.public-header .brand.brand-logo {
+  width: 118px;
+}
+
+.public-header .brand-full-logo-img {
+  height: 28px;
+  max-width: 152px;
+}
+
+.public-header .brand-icon-alone-img {
+  height: 28px;
+  width: 28px;
+}
+
+@media (max-width: 640px) {
+  .public-header .brand-full-logo-img {
+    height: 24px;
+    max-width: 130px;
+  }
+  .public-header .brand-icon-alone-img {
+    height: 26px;
+    width: 26px;
   }
 }
 
@@ -70,7 +96,9 @@
   width: auto;
   max-width: 220px;
   object-fit: contain;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .brand.brand-icon-alone {

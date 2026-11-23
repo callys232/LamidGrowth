@@ -1,7 +1,7 @@
 /** Approved public language for the LAMID ONE platform and how it is used. */
 export const platformMessaging = {
   description:
-    "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
+    'LAMID ONE is an intelligent operating environment that empowers people and organizations to access trusted expertise, execute projects, deliver results and achieve growth through continuous intelligence, decentralized decision-making, and structured delivery. LAMID ONE updates as your reality changes — with you in control always.',
   humanControl:
     'You set the objective, review recommendations, and approve consequential work. Advisers can join when you want their perspective.',
   visitorPaths: [

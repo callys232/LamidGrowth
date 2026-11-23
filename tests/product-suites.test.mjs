@@ -36,13 +36,21 @@ async function run() {
 
     const heroTitle = await page.textContent('h1');
     console.log('Homepage H1:', heroTitle?.trim());
+    if (!heroTitle?.includes('Power Intelligent Decisions')) {
+      throw new Error(`Homepage H1 missing expected text! Got: ${heroTitle}`);
+    }
 
     await page.waitForSelector('.lg-sub');
     const heroSubtitle = await page.locator('.lg-sub').textContent();
     console.log('Homepage Subtitle preview:', heroSubtitle?.trim().slice(0, 100));
 
-    if (!heroSubtitle?.includes('Continuous intelligence creates the capability to decide')) {
+    if (!heroSubtitle?.includes('intelligent operating environment')) {
       throw new Error(`Homepage subtitle missing expected text! Got: ${heroSubtitle}`);
+    }
+
+    const whatIsCount = await page.locator('#lg-what').count();
+    if (whatIsCount !== 0) {
+      throw new Error(`Expected #lg-what section to be removed, found ${whatIsCount}`);
     }
 
     await page.waitForSelector('.lg-card');

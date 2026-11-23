@@ -20,7 +20,7 @@ export function HelpSearchSlide() {
         placeholder="Try “Companion” or “getting started”…"
         aria-label="Search help topics"
       />
-      {query.trim() && (
+      {query.trim() ? (
         <ul className="help-search-results">
           {matches.length === 0 ? (
             <li className="help-search-empty">No help topics match “{query}”.</li>
@@ -35,7 +35,7 @@ export function HelpSearchSlide() {
             ))
           )}
         </ul>
-      )}
+      ) : null}
     </section>
   );
 }

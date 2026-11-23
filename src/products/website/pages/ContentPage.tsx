@@ -14,17 +14,18 @@ import { HelpSearchSlide } from '../slides/HelpSearchSlide';
 /** Public shell; the document registry selects the product's named page composition. */
 export function ContentPage({ children }: { children?: ReactNode }) {
   const { pathname } = useLocation();
-  const page = sourcePage(pathname);
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/';
+  const page = sourcePage(normalizedPath);
   // A quiet, abstract brand scene behind the page hero (see hero-scene.css).
-  const scene = !children ? heroScene(pathname) : undefined;
-  useImageReveal(pathname);
+  const scene = !children ? heroScene(normalizedPath) : undefined;
+  useImageReveal(normalizedPath);
   return (
     <>
       <PublicHeader />
       <main
         id="main"
         className="content-page"
-        data-page-theme={pageTheme(pathname)}
+        data-page-theme={pageTheme(normalizedPath)}
         data-hero-scene={scene ? '' : undefined}
         style={scene ? ({ '--hero-scene': `url("${scene}")` } as CSSProperties) : undefined}
       >
@@ -37,10 +38,10 @@ export function ContentPage({ children }: { children?: ReactNode }) {
           children ? (
             <details className="canonical-copy-disclosure">
               <summary>Getting started</summary>
-              <CanonicalCopy path={pathname} embedded />
+              <CanonicalCopy path={normalizedPath} embedded />
             </details>
           ) : (
-            <CanonicalCopy path={pathname} />
+            <CanonicalCopy path={normalizedPath} />
           )
         ) : !children ? (
           <section className="section-wrap">
@@ -48,9 +49,9 @@ export function ContentPage({ children }: { children?: ReactNode }) {
             <Cta to="/">Return home</Cta>
           </section>
         ) : null}
-        {pathname === '/help' && <HelpSearchSlide />}
+        {normalizedPath === '/help' && <HelpSearchSlide />}
       </main>
-      {pathname !== '/' && <Footer />}
+      {normalizedPath !== '/' && <Footer />}
     </>
   );
 }

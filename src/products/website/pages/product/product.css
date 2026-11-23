@@ -372,3 +372,120 @@
     list-style-position: inside;
   }
 }
+
+/* HubSpot-style 8-Suite Directory Grid on /product */
+.ps-directory {
+  max-width: 1180px;
+  margin: 0 auto 4.5rem;
+  padding: 0 24px;
+}
+
+.ps-directory-head {
+  max-width: 680px;
+  margin-bottom: 24px;
+}
+
+.ps-directory-head h2 {
+  margin: 10px 0 8px;
+  font-size: clamp(1.6rem, 2.5vw, 2.15rem);
+  color: light-dark(#0d1a2b, #f8fafc);
+}
+
+.ps-directory-head p {
+  margin: 0;
+  color: light-dark(#475569, #cbd5e1);
+  line-height: 1.6;
+}
+
+.ps-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.ps-dir-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 14px;
+  background: light-dark(#ffffff, #131c2b);
+  border: 1px solid light-dark(#e2e8f0, #233043);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ps-dir-card:hover {
+  border-color: light-dark(#c12129, #ef4444);
+  transform: translateY(-2px);
+  box-shadow: light-dark(0 10px 24px rgba(13, 26, 43, 0.08), 0 10px 24px rgba(0, 0, 0, 0.35));
+}
+
+.ps-dir-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f4f5f7;
+  border: 1px solid light-dark(#e2e8f0, #233043);
+  margin-bottom: 4px;
+}
+
+.ps-dir-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ps-dir-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ps-dir-pillar {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: light-dark(#eef6f6, #1b2c38);
+  color: light-dark(#0f4c5c, #5eead4);
+}
+
+.ps-dir-card h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  color: light-dark(#0d1a2b, #f8fafc);
+}
+
+.ps-dir-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: light-dark(#475569, #cbd5e1);
+}
+
+.ps-dir-highlights {
+  margin: 4px 0 0;
+  padding: 10px 0 0 16px;
+  border-top: 1px solid light-dark(#e2e8f0, #233043);
+  display: grid;
+  gap: 4px;
+  font-size: 0.83rem;
+  color: light-dark(#334155, #94a3b8);
+}
+
+.ps-dir-link {
+  margin-top: auto;
+  padding-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: light-dark(#c12129, #f87171);
+}

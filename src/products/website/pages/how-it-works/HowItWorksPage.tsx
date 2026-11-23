@@ -257,6 +257,19 @@ function playVideo(event: { currentTarget: HTMLElement }) {
   }
 }
 
+const hiw3dArt: Record<string, string> = {
+  overview: '/media/suites/strategy-3d.jpg',
+  clarity: '/media/suites/decisions-3d.jpg',
+  capability: '/media/suites/people-3d.jpg',
+  consistency: '/media/suites/risk-governance-3d.jpg',
+  growth: '/media/suites/finance-3d.jpg',
+  rhythm: '/media/suites/operations-3d.jpg',
+  companion: '/media/suites/advisory-3d.jpg',
+  experience: '/media/suites/people-3d.jpg',
+  intelligence: '/media/suites/decisions-3d.jpg',
+  organizations: '/media/suites/growth-change-3d.jpg',
+};
+
 export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
   const [active, setActive] = useState(0);
   const engine = content.engines[active];
@@ -264,6 +277,7 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
   const nav = content.group === 'product' ? productNav : cycle;
   const position = nav.findIndex((item) => item.id === content.id);
   const next = nav[position + 1];
+  const art3d = hiw3dArt[content.id];
 
   return (
     <div className="hx-page hiw-page">
@@ -279,8 +293,16 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
         ))}
       </nav>
 
-      <header className={content.id === 'workflows' ? 'hx-hero has-art' : 'hx-hero'}>
-        {content.id === 'workflows' && <WorkflowArt />}
+      <header className={content.id === 'workflows' || art3d ? 'hx-hero has-art' : 'hx-hero'}>
+        {content.id === 'workflows' ? (
+          <WorkflowArt />
+        ) : (
+          art3d && (
+            <div className="hx-hero-3d" aria-hidden="true">
+              <img src={art3d} alt="" loading="eager" decoding="async" />
+            </div>
+          )
+        )}
         <p className="hx-eyebrow">{content.eyebrow}</p>
         <h1>{content.title}</h1>
         <div className="hx-hero-foot">

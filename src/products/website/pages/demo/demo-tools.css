@@ -898,3 +898,239 @@
     transition: none;
   }
 }
+
+.demo-hero-benefits {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.demo-hero-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  color: var(--ink-secondary);
+}
+
+.demo-hero-benefits svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--accent);
+}
+
+.demo-request-card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.08);
+}
+
+.demo-request-card h2 {
+  font-size: 1.35rem;
+  line-height: 1.25;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.demo-request-sub {
+  margin: 0 0 20px;
+  font-size: 0.92rem;
+  color: var(--ink-secondary);
+}
+
+.demo-request-form {
+  display: grid;
+  gap: 14px;
+}
+
+.demo-request-field {
+  display: grid;
+  gap: 6px;
+}
+
+.demo-request-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.demo-request-field input,
+.demo-request-field select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.demo-request-field input:focus,
+.demo-request-field select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.demo-request-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--ink-secondary);
+  cursor: pointer;
+}
+
+.demo-request-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.demo-request-privacy {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-muted, var(--ink-secondary));
+}
+
+.demo-request-privacy a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.demo-request-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.demo-request-sent {
+  display: grid;
+  gap: 12px;
+  padding: 12px 0 4px;
+}
+
+.demo-request-sent h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--ink-primary);
+}
+
+.demo-request-sent p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--ink-secondary);
+}
+
+.demo-trust-strip {
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+
+.demo-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.demo-trust-item {
+  display: grid;
+  gap: 4px;
+}
+
+.demo-trust-item strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.demo-trust-item span {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-secondary);
+}
+
+.demo-faq-list {
+  display: grid;
+  gap: 12px;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.demo-faq-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-alt);
+  overflow: hidden;
+}
+
+.demo-faq-item summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.demo-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.demo-faq-chevron {
+  flex-shrink: 0;
+  color: var(--ink-secondary);
+  transition: transform 0.2s ease;
+}
+
+.demo-faq-item[open] .demo-faq-chevron {
+  transform: rotate(180deg);
+}
+
+.demo-faq-item p {
+  margin: 0;
+  padding: 0 20px 18px;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--ink-secondary);
+}
+
+.demo-closing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .demo-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .demo-trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-request-card {
+    padding: 22px 18px;
+  }
+}

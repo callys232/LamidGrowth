@@ -13,6 +13,7 @@ import {
   ClipboardList,
   Compass,
   Cpu,
+  Download,
   FileCheck,
   Gauge,
   GitBranch,
@@ -49,6 +50,20 @@ import './product-suite.css';
 import '../motion.css';
 import { SuiteInteractiveWidget } from './interactive/SuiteInteractiveWidget';
 import { SuiteHeroDispatcher } from './heroes/SuiteHeroDispatcher';
+import { SuiteDashboardShowcase } from './dashboards/SuiteDashboardShowcase';
+import {
+  EngineVectorSchematic,
+  EngineVectorThumb,
+  getCardPattern,
+  getCardShade,
+} from './EngineVectorArt';
+import { Modal } from '../../../../shared/ui/Modal';
+import {
+  getEngineGuide,
+  getSuiteUseCases,
+  suitePlaybooks,
+  type SuitePlaybookSummary,
+} from './suitePlaybooksAndUseCases';
 
 export interface ProductEngineItem {
   code: string;
@@ -148,6 +163,62 @@ const defaultIcons: Record<string, LucideIcon> = {
   G06: Cpu,
 };
 
+const suite3dPools: Record<string, string[]> = {
+  strategy: [
+    '/media/suites/strategy-3d.jpg',
+    '/media/suites/decisions-3d.jpg',
+    '/media/hero/pillar-01-decisions.jpg',
+    '/media/suites/growth-change-3d.jpg',
+  ],
+  decisions: [
+    '/media/suites/decisions-3d.jpg',
+    '/media/hero/pillar-01-decisions.jpg',
+    '/media/hero/pillar-01-decisions-b.jpg',
+    '/media/suites/strategy-3d.jpg',
+  ],
+  people: [
+    '/media/suites/people-3d.jpg',
+    '/media/hero/pillar-02-capabilities.jpg',
+    '/media/suites/operations-3d.jpg',
+    '/media/suites/advisory-3d.jpg',
+  ],
+  operations: [
+    '/media/suites/operations-3d.jpg',
+    '/media/hero/pillar-02-capabilities-b.jpg',
+    '/media/suites/people-3d.jpg',
+    '/media/hero/pillar-02-capabilities.jpg',
+  ],
+  finance: [
+    '/media/suites/finance-3d.jpg',
+    '/media/hero/pillar-03-growth.jpg',
+    '/media/suites/growth-change-3d.jpg',
+    '/media/hero/pillar-03-growth-b.jpg',
+  ],
+  'growth-change': [
+    '/media/suites/growth-change-3d.jpg',
+    '/media/hero/pillar-03-growth-b.jpg',
+    '/media/suites/finance-3d.jpg',
+    '/media/hero/pillar-03-growth.jpg',
+  ],
+  'risk-governance': [
+    '/media/suites/risk-governance-3d.jpg',
+    '/media/suites/advisory-3d.jpg',
+    '/media/suites/decisions-3d.jpg',
+    '/media/suites/operations-3d.jpg',
+  ],
+  advisory: [
+    '/media/suites/advisory-3d.jpg',
+    '/media/suites/risk-governance-3d.jpg',
+    '/media/suites/strategy-3d.jpg',
+    '/media/suites/people-3d.jpg',
+  ],
+};
+
+function getEngine3dThumb(suiteId: string, idx: number): string {
+  const pool = suite3dPools[suiteId] || suite3dPools.strategy;
+  return pool[idx % pool.length];
+}
+
 function playVideo(event: { currentTarget: HTMLElement }) {
   const video = event.currentTarget.querySelector('video');
   if (video) {
@@ -159,7 +230,43 @@ function playVideo(event: { currentTarget: HTMLElement }) {
 export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
   const [activeEngineCode, setActiveEngineCode] = useState<string>(config.engines[0]?.code || '');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [activePlaybook, setActivePlaybook] = useState<SuitePlaybookSummary | null>(null);
   const activeEngine = config.engines.find((e) => e.code === activeEngineCode) || config.engines[0];
+
+  const downloadSuiteTemplate = (pb: SuitePlaybookSummary) => {
+    const matchedEngines = config.engines.filter((e) => pb.engineCodes.includes(e.code));
+    const lines = [
+      `# ${pb.title}`,
+      '',
+      pb.description,
+      `Cadence: ${pb.cadence}`,
+      '',
+      'Review date: __________',
+      'Owner: __________',
+      'Question to answer: __________',
+    ];
+    for (const eng of matchedEngines) {
+      const guide = getEngineGuide(eng);
+      lines.push(
+        '',
+        `## ${eng.name}`,
+        eng.purpose,
+        '',
+        '### Steps',
+        ...guide.playbookSteps.map((s, i) => `${i + 1}. ${s}`),
+        '',
+        'Result / observation: __________',
+        'Next action and owner: __________',
+      );
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${pb.id}.md`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     document.title = `${config.title} | LAMID ONE`;
@@ -182,14 +289,380 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
     ? `The Complete ${config.name} Suite`
     : `The Complete ${config.name} Decision Suite`;
 
+  const suiteExplorerSubtitle: Record<string, string> = {
+    strategy: 'Pick a check to see which projects create value and which create drag.',
+    decisions: 'Pick a decision check to see how teams align faster without bottlenecks.',
+    people: 'Pick a role check to see how skills adapt as priorities shift.',
+    operations: 'Pick a flow check to spot where handoffs stall across teams.',
+    finance: 'Pick a financial check to link daily choices to cash and margin.',
+    'risk-governance': 'Pick a control check to keep autonomous teams inside safe limits.',
+    'growth-change': 'Pick a readiness check to see what your teams can absorb next.',
+    advisory: 'Pick a mandate model to add senior judgment inside your workflow.',
+  };
+
+  const suiteClosingHeadline: Record<string, string> = {
+    strategy: 'Stop funding busywork. Fund what moves your goals.',
+    decisions: 'Make faster calls without routing everything to the top.',
+    people: 'Build a team that adapts as fast as your market.',
+    operations: 'Clear handoff friction so teams deliver together.',
+    finance: 'See every cash dip and margin lever weeks ahead.',
+    'risk-governance': 'Give teams room to move inside clear guardrails.',
+    'growth-change': 'Scale your next bet without burning out your people.',
+    advisory: 'Bring senior judgment directly into your live decisions.',
+  };
+
+  const activeGuide = activeEngine ? getEngineGuide(activeEngine) : null;
+  const playbooksForSuite = suitePlaybooks[config.id] || [];
+  const useCasesForSuite = getSuiteUseCases(
+    config.id,
+    config.engines.length > 3 ? config.engines.slice(1) : config.engines,
+  ).slice(0, 2);
+
   return (
     <div className="prod-page product-suite-page" data-suite-pillar={config.pillar}>
       {/* 1. Bespoke Hero Slide Dispatcher (8 Unique Architectural Patterns) */}
       <SuiteHeroDispatcher config={config} />
 
-      {/* 2. Interactive Video Showcase Block */}
-      <section className="ps-block suite-showcase-block" aria-labelledby="suite-showcase-title">
-        <div className="ps-block-row">
+      {/* 2. Populated Dashboard Asset Showing Live Usage */}
+      <SuiteDashboardShowcase config={config} />
+
+      {/* 3. Engines Intro + Split Explorer */}
+      <section className="suite-catalog-section" aria-labelledby="suite-catalog-title">
+        <div className="suite-catalog-header">
+          <span className="ps-tag">What’s Inside</span>
+          <h2 id="suite-catalog-title">{catalogHeading}</h2>
+          <p>{suiteExplorerSubtitle[config.id] || 'Pick an engine to see what it checks and how to run it.'}</p>
+        </div>
+
+        <div className="suite-catalog-toolbar">
+          <div className="suite-search-input-wrap">
+            <Search size={18} aria-hidden="true" />
+            <input
+              type="text"
+              className="suite-search-input"
+              placeholder={`Search ${config.name} engines...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label={`Search ${config.name} decision engines`}
+            />
+          </div>
+        </div>
+
+        <div className="suite-explorer-split">
+          <div className="suite-engine-list" role="list" aria-label={`${config.name} engines`}>
+            {filteredEngines.map((engine, idx) => {
+              const Icon = engine.icon || defaultIcons[engine.code] || CircleHelp;
+              const isSelected = activeEngine?.code === engine.code;
+              const shade = getCardShade(idx);
+              const pattern = getCardPattern(idx);
+              return (
+                <article
+                  key={engine.code}
+                  data-shade={shade}
+                  data-pattern={pattern}
+                  className={`suite-engine-card suite-engine-row ${isSelected ? 'is-selected' : ''}`}
+                  onClick={() => setActiveEngineCode(engine.code)}
+                >
+                  <div className="suite-engine-row-head">
+                    <EngineVectorThumb code={engine.code} index={idx} />
+                    <div className="suite-engine-row-title">
+                      <h3 className="suite-engine-name">{engine.name}</h3>
+                    </div>
+                    <Icon size={16} className="suite-engine-row-chevron" aria-hidden="true" />
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {activeEngine && activeGuide && (() => {
+            const activeIdx = Math.max(
+              0,
+              config.engines.findIndex((e) => e.code === activeEngine.code),
+            );
+            const activeShade = getCardShade(activeIdx);
+            const activePattern = getCardPattern(activeIdx);
+            return (
+              <div
+                data-shade={activeShade}
+                data-pattern={activePattern}
+                className="suite-engine-inspector suite-engine-inspector-sticky"
+                role="region"
+                aria-label="Selected Engine Details"
+              >
+                <div className="suite-inspector-header">
+                  <div className="suite-inspector-title-row">
+                    <EngineVectorThumb code={activeEngine.code} index={activeIdx} />
+                    <div>
+                      <h3 className="suite-inspector-name">{activeEngine.name}</h3>
+                      {activeEngine.standard && (
+                        <span className="suite-inspector-standard">{activeEngine.standard}</span>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/demo#engine-${activeEngine.code}`}
+                    className="suite-inspector-btn"
+                    title={`Launch ${activeEngine.name} in interactive sandbox`}
+                  >
+                    Run Live Demo <ChevronRight size={14} aria-hidden="true" />
+                  </Link>
+                </div>
+
+                <EngineVectorSchematic engine={activeEngine} index={activeIdx} />
+
+              <div className="suite-inspector-card">
+                <span className="suite-inspector-lbl">What it checks</span>
+                <p className="suite-inspector-val">{activeEngine.purpose}</p>
+              </div>
+
+              <div className="suite-inspector-example">
+                <span className="suite-inspector-lbl">Example</span>
+                <div className="suite-example-grid">
+                  <div>
+                    <strong>You bring:</strong> {activeGuide.sampleRun.inputs}
+                  </div>
+                  <div>
+                    <strong>You see:</strong> {activeGuide.sampleRun.output}
+                  </div>
+                </div>
+              </div>
+
+              <div className="suite-inspector-playbook">
+                <div className="suite-inspector-pb-head">
+                  <span className="suite-inspector-lbl">Steps</span>
+                  <span className="suite-cadence-pill">{activeGuide.cadence}</span>
+                </div>
+                <ol className="suite-pb-steps" data-scroll-feedback="off">
+                  {activeGuide.playbookSteps.map((step, i) => (
+                    <li key={i}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* 3.5 Interactive Simulator */}
+      <SuiteInteractiveWidget config={config} />
+
+      {/* 4. Playbooks & Use Cases */}
+      <section className="suite-library-section" aria-labelledby="suite-library-title">
+        <div className="suite-library-header">
+          <div>
+            <span className="ps-tag">Playbooks &amp; Use Cases</span>
+            <h2 id="suite-library-title">Put {config.name} into weekly practice</h2>
+          </div>
+          <Link className="suite-demo-link" to="/insights#playbook-library">
+            Browse all playbooks &rarr;
+          </Link>
+        </div>
+
+        <div className="suite-library-grid">
+          {playbooksForSuite.map((pb, pbIdx) => (
+            <article
+              key={pb.id}
+              className="suite-pb-card"
+              data-category={pb.category}
+            >
+              <div className="suite-pb-card-media" aria-hidden="true">
+                <img
+                  src={getEngine3dThumb(config.id, pbIdx)}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span className="suite-pb-phase-count">
+                  {pb.engineCodes.length} Phases · {pb.cadence}
+                </span>
+              </div>
+              <span className="suite-pb-kicker">{pb.category}</span>
+              <h3>{pb.title}</h3>
+              <p>{pb.description}</p>
+              <div className="suite-pb-actions">
+                <button
+                  type="button"
+                  className="suite-pb-btn-solid"
+                  onClick={() => setActivePlaybook(pb)}
+                >
+                  View playbook
+                </button>
+                <button
+                  type="button"
+                  className="suite-pb-btn-outline"
+                  onClick={() => downloadSuiteTemplate(pb)}
+                >
+                  <Download size={15} aria-hidden="true" />
+                  Template
+                </button>
+              </div>
+            </article>
+          ))}
+
+          {useCasesForSuite.map((uc) => (
+            <article key={uc.id} className="suite-lib-card suite-lib-usecase">
+              <div className="suite-lib-meta">
+                <span className="suite-lib-type">{uc.role}</span>
+              </div>
+              <h3>{uc.title}</h3>
+              <p>{uc.scenario}</p>
+              <p className="suite-lib-outcome">
+                <strong>Result:</strong> {uc.outcome}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        {activePlaybook && (() => {
+          const matchedEngines = config.engines.filter((e) =>
+            activePlaybook.engineCodes.includes(e.code),
+          );
+          const leadGuide = matchedEngines[0] ? getEngineGuide(matchedEngines[0]) : null;
+          return (
+            <Modal title={activePlaybook.title} onClose={() => setActivePlaybook(null)} wide>
+              <div className="suite-pb-modal" data-suite-pillar={config.pillar}>
+                {/* Executive Banner with 3D Visual + Vector Architecture */}
+                <div className="suite-pb-hero">
+                  <div className="suite-pb-hero-copy">
+                    <div className="suite-pb-hero-badges">
+                      <span className="suite-pb-badge">{activePlaybook.category}</span>
+                      <span className="suite-pb-badge is-outline">{activePlaybook.cadence}</span>
+                      <span className="suite-pb-badge is-outline">
+                        {matchedEngines.length} Sequential Phases
+                      </span>
+                    </div>
+                    <p className="suite-pb-modal-desc">{activePlaybook.description}</p>
+                    <div className="suite-pb-gov-grid">
+                      <div>
+                        <span>Lead Role</span>
+                        <strong>{leadGuide?.useCase.role || 'Executive Sponsor'}</strong>
+                      </div>
+                      <div>
+                        <span>Sign-Off Gate</span>
+                        <strong>Board / IC Review</strong>
+                      </div>
+                      <div>
+                        <span>Audit Trail</span>
+                        <strong>Inputs + Math Logged</strong>
+                      </div>
+                      <div>
+                        <span>Suite</span>
+                        <strong>{config.name}</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="suite-pb-hero-art" aria-hidden="true">
+                    <img
+                      src={getEngine3dThumb(config.id, 0)}
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <svg className="suite-pb-vector-flow" viewBox="0 0 180 44" fill="none">
+                      <rect x="4" y="10" width="38" height="24" rx="6" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M46 22H68" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <polygon points="90,6 112,22 90,38 68,22" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M114 22H136" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
+                      <rect x="138" y="10" width="38" height="24" rx="6" fill="currentColor" fillOpacity="0.16" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Pre-Flight Readiness & Data Inputs */}
+                <div className="suite-pb-prereqs">
+                  <span className="suite-pb-section-lbl">Pre-Flight Data Requirements</span>
+                  <div className="suite-pb-prereq-chips">
+                    {matchedEngines.map((eng) => {
+                      const guide = getEngineGuide(eng);
+                      return (
+                        <div key={eng.code} className="suite-pb-prereq-chip">
+                          <strong>{eng.name}</strong>
+                          <span>{guide.sampleRun.inputs}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Institutional Phase-by-Phase Protocol */}
+                <ol className="suite-pb-phases" data-scroll-feedback="off">
+                  {matchedEngines.map((eng, idx) => {
+                    const guide = getEngineGuide(eng);
+                    return (
+                      <li key={eng.code} className="suite-pb-phase-card">
+                        <div className="suite-pb-phase-head">
+                          <div className="suite-pb-phase-id">
+                            <div className="suite-pb-phase-3d" aria-hidden="true">
+                              <img
+                                src={getEngine3dThumb(config.id, idx)}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            </div>
+                            <div>
+                              <span className="suite-pb-phase-num">
+                                Phase 0{idx + 1} · {guide.cadence}
+                              </span>
+                              <h4>{eng.name}</h4>
+                              {eng.standard && (
+                                <span className="suite-pb-phase-std">{eng.standard}</span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="suite-pb-role-pill">{guide.useCase.role}</span>
+                        </div>
+
+                        <p className="suite-pb-phase-purpose">{eng.purpose}</p>
+
+                        <div className="suite-pb-phase-grid">
+                          <div className="suite-pb-phase-box">
+                            <span className="suite-pb-box-lbl">1. Inputs Required</span>
+                            <p>{guide.sampleRun.inputs}</p>
+                          </div>
+                          <div className="suite-pb-phase-box is-protocol">
+                            <span className="suite-pb-box-lbl">2. Execution Protocol</span>
+                            <ol data-scroll-feedback="off">
+                              {guide.playbookSteps.map((step, i) => (
+                                <li key={i}>{step}</li>
+                              ))}
+                            </ol>
+                          </div>
+                          <div className="suite-pb-phase-box is-output">
+                            <span className="suite-pb-box-lbl">3. Verified Output &amp; Gate</span>
+                            <p>{guide.sampleRun.output}</p>
+                            <small>Result: {guide.useCase.outcome}</small>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+
+                <div className="suite-pb-modal-foot">
+                  <Link className="suite-pb-btn-outline" to="/demo">
+                    Open live sandbox
+                  </Link>
+                  <button
+                    type="button"
+                    className="suite-pb-btn-solid"
+                    onClick={() => downloadSuiteTemplate(activePlaybook)}
+                  >
+                    <Download size={15} aria-hidden="true" />
+                    Download institutional template
+                  </button>
+                </div>
+              </div>
+            </Modal>
+          );
+        })()}
+      </section>
+
+      {/* 5. Suite Assets & Motion Walkthrough */}
+      <section className="suite-assets-section" aria-labelledby="suite-assets-title">
+        <div className="suite-assets-grid">
           <div
             className="ps-visual suite-visual"
             onMouseEnter={playVideo}
@@ -197,17 +670,18 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
             tabIndex={0}
           >
             <video
+              autoPlay
               muted
               loop
               playsInline
-              preload="none"
+              preload="metadata"
               poster={config.clipPoster || `/media/posters/${config.clip}.svg`}
               aria-label={`${config.name} engine in operation`}
               onLoadedMetadata={(e) => {
-                e.currentTarget.playbackRate = 0.65;
+                e.currentTarget.playbackRate = 0.6;
               }}
               onPlay={(e) => {
-                e.currentTarget.playbackRate = 0.65;
+                e.currentTarget.playbackRate = 0.6;
               }}
             >
               <source src={`/videos/engines/${config.clip}.webm`} type="video/webm" />
@@ -217,135 +691,26 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
               <span className="suite-live-badge">Live Computational Engine</span>
             </div>
           </div>
-          <div className="ps-text suite-thesis-text">
-            <h2 id="suite-showcase-title">{config.thesis.headline}</h2>
-            <p className="suite-thesis-desc">{config.thesis.description}</p>
+
+          <div className="suite-assets-copy">
+            <span className="ps-tag">Built-in Standards</span>
+            <h2 id="suite-assets-title">Clear math you can check.</h2>
+            <p>You see every input, assumption, and limit behind every score.</p>
             <Link className="suite-demo-link" to="/demo">
-              Launch interactive sandbox &rarr;
+              Try a live check in Sandbox &rarr;
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 2.5 Bespoke Interactive Simulator Widget (Pillar-Specific Micro-Interactions) */}
-      <SuiteInteractiveWidget config={config} />
-
-      {/* 3. Comprehensive Engine Catalog Section */}
-      <section className="suite-catalog-section" aria-labelledby="suite-catalog-title">
-        <div className="suite-catalog-header">
-          <span className="ps-tag">Decision Engines</span>
-          <h2 id="suite-catalog-title">{catalogHeading}</h2>
-          <p>
-            Choose an engine below to test its math against your numbers. Inspect formulas,
-            assumptions, and audit trails upfront.
-          </p>
-        </div>
-
-        {/* Selected Engine Inspector Console */}
-        {activeEngine && (
-          <div
-            className="suite-engine-inspector"
-            role="region"
-            aria-label="Selected Engine Telemetry"
-          >
-            <div className="suite-inspector-header">
-              <div className="suite-inspector-title-row">
-                <span className="suite-inspector-badge">{activeEngine.code}</span>
-                <div>
-                  <h3 className="suite-inspector-name">{activeEngine.name}</h3>
-                  {activeEngine.standard && (
-                    <span className="suite-inspector-standard">{activeEngine.standard}</span>
-                  )}
-                </div>
-              </div>
-              <Link
-                to={`/demo#engine-${activeEngine.code}`}
-                className="suite-inspector-btn"
-                title={`Launch ${activeEngine.name} in interactive sandbox`}
-              >
-                Launch Live in Sandbox <ChevronRight size={14} aria-hidden="true" />
-              </Link>
-            </div>
-            <div className="suite-inspector-grid">
-              <div className="suite-inspector-card">
-                <span className="suite-inspector-lbl">What It Computes For You</span>
-                <p className="suite-inspector-val">{activeEngine.computes}</p>
-              </div>
-              <div className="suite-inspector-card">
-                <span className="suite-inspector-lbl">What Problem It Solves</span>
-                <p className="suite-inspector-val">{activeEngine.purpose}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Instant Search / Filter Toolbar */}
-        <div className="suite-catalog-toolbar">
-          <div className="suite-search-input-wrap">
-            <Search size={18} aria-hidden="true" />
-            <input
-              type="text"
-              className="suite-search-input"
-              placeholder={`Search ${config.name} engines by name, code (e.g. ${config.engines[0]?.code || 'Q01'}), or standard...`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              aria-label={`Search ${config.name} decision engines`}
-            />
-          </div>
-        </div>
-
-        <div className="suite-engine-grid">
-          {filteredEngines.map((engine) => {
-            const Icon = engine.icon || defaultIcons[engine.code] || CircleHelp;
-            const isSelected = activeEngine?.code === engine.code;
-            return (
-              <article
-                key={engine.code}
-                className={`suite-engine-card ${isSelected ? 'is-selected' : ''}`}
-                onClick={() => setActiveEngineCode(engine.code)}
-              >
-                <div className="suite-engine-card-top">
-                  <span className="suite-engine-code-badge">{engine.code}</span>
-                  <div className="suite-engine-icon-wrap" aria-hidden="true">
-                    <Icon size={19} strokeWidth={1.8} />
-                  </div>
-                </div>
-                <h3 className="suite-engine-name">{engine.name}</h3>
-                {engine.standard && (
-                  <span className="suite-engine-standard-badge" title={engine.standard}>
-                    {engine.standard}
-                  </span>
-                )}
-                <div className="suite-engine-computes-wrap">
-                  <span className="suite-engine-computes-label">Computes</span>
-                  <p className="suite-engine-computes">{engine.computes}</p>
-                </div>
-                <div className="suite-engine-card-foot">
-                  <Link
-                    to={`/demo#engine-${engine.code}`}
-                    className="suite-engine-run-link"
-                    title={`Run ${engine.name} in interactive sandbox`}
-                  >
-                    Run in Sandbox <ChevronRight size={14} aria-hidden="true" />
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 4. Advisory & Executive Delivery Alignment */}
+      {/* 6. Advisory & Executive Delivery Alignment */}
       {config.advisoryHighlight ? (
         <section className="suite-advisory-block" aria-labelledby="suite-advisory-title">
           <div className="suite-advisory-inner">
             <div className="suite-advisory-header">
               <span className="ps-tag">Executive Collaboration</span>
               <h2 id="suite-advisory-title">{config.advisoryHighlight.title}</h2>
-              <p>
-                Our engines compute the evidence. You and our vetted fractional leaders decide what
-                happens next.
-              </p>
+              <p>You review the numbers, set the direction, and decide what comes next with your adviser.</p>
             </div>
             <ul className="suite-advisory-points">
               {config.advisoryHighlight.points.map((pt, idx) => (
@@ -359,18 +724,18 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
         </section>
       ) : null}
 
-      {/* 5. Closing CTA */}
+      {/* 7. Closing Slide */}
       <section className="prod-close suite-close">
-        <h2>Put {config.name} to work in your organization today.</h2>
+        <h2>{suiteClosingHeadline[config.id] || `Try ${config.name} on your own work.`}</h2>
         <p className="suite-close-sub">
-          Continuous intelligence that moves with your work—giving you the evidence to decide and deliver.
+          You keep full control—with live checks and human advisers whenever you want them.
         </p>
         <div className="prod-actions">
-          <Link className="prod-btn prod-btn-light" to="/contact">
-            Request an Executive Demo
+          <Link className="prod-btn prod-btn-light" to="/demo">
+            Get a demo
           </Link>
           <Link className="prod-btn prod-btn-ghost" to="/pricing">
-            Review Pricing & Tiers
+            See pricing
           </Link>
         </div>
       </section>

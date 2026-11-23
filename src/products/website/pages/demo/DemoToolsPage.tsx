@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useReducedMotion } from 'motion/react';
-import { ArrowDown, Clock } from 'lucide-react';
-import { DecisionQualityPreview } from './DecisionQualityPreview';
+import { ArrowDown, Check, ChevronDown, Clock } from 'lucide-react';
+import { networkApi } from '../../../../api';
 import { DemoVideoPlayer } from './DemoVideoPlayer';
 import { DemoVideoLibrary } from './DemoVideoLibrary';
 import { AllEngineDemos } from './CatalogEngineDemo';
@@ -19,22 +19,65 @@ export function DemoToolsPage() {
   const heroToolRef = useRef<HTMLElement>(null);
   const pickedRef = useRef<HTMLDivElement>(null);
   const [picked, setPicked] = useState<FeaturedTool | null>(null);
+  const [requestStatus, setRequestStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [requestError, setRequestError] = useState('');
+  const [requestedEmail, setRequestedEmail] = useState('');
   const reduced = useReducedMotion();
 
-  // The first tool shows until the visitor picks another; picking never scrolls the page away.
+  // The first engine shows until the visitor picks another; picking never scrolls the page away.
   const current = picked ?? START_HERE[0];
+
+  async function handleDemoRequest(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const email = String(data.get('email') ?? '').trim();
+    setRequestStatus('sending');
+    setRequestError('');
+
+    try {
+      await networkApi('/demo/register', {
+        name: String(data.get('name') ?? '').trim(),
+        email,
+        tier: String(data.get('size') ?? '1-10'),
+        followup: data.get('followup') === 'on',
+      });
+      setRequestedEmail(email);
+      setRequestStatus('sent');
+    } catch (error) {
+      setRequestError(
+        error instanceof Error
+          ? error.message
+          : 'Could not send your demo link right now. Please try again.'
+      );
+      setRequestStatus('error');
+    }
+  }
 
   return (
     <div className="demo-tools-page" data-scroll-feedback="off">
       <section id="demo-player" className="demo-slide demo-hero">
         <div className="demo-tools-container demo-hero-grid">
           <div className="demo-hero-copy">
-            <span className="demo-tools-eyebrow">Try it — no account needed</span>
-            <h1>Is your next decision ready to make?</h1>
+            <span className="demo-tools-eyebrow">Free product demo</span>
+            <h1>Get a free demo of LAMID ONE.</h1>
             <p>
-              Run a real diagnostic in about {HERO_TOOL.minutes} minutes. Same engine as the
-              product. Nothing saved, nothing charged.
+              See how our connected growth engines, live diagnostics, and human advisory workflows
+              help you make clearer decisions and execute faster.
             </p>
+            <ul className="demo-hero-benefits">
+              <li>
+                <Check aria-hidden="true" size={16} />
+                <span>Run live diagnostics right away with zero setup or account required</span>
+              </li>
+              <li>
+                <Check aria-hidden="true" size={16} />
+                <span>Explore real workflows tailored to your team size and role</span>
+              </li>
+              <li>
+                <Check aria-hidden="true" size={16} />
+                <span>Get a personal demo link delivered straight to your inbox</span>
+              </li>
+            </ul>
             <div className="demo-hero-actions">
               <button
                 type="button"
@@ -43,14 +86,112 @@ export function DemoToolsPage() {
                   heroToolRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }
               >
-                Try {HERO_TOOL.name} <ArrowDown aria-hidden="true" size={16} />
+                Try a live engine now <ArrowDown aria-hidden="true" size={16} />
               </button>
-              <a className="demo-hero-link" href="#start-here">
-                Or pick another engine
+              <a className="demo-hero-link" href="#profile-demos">
+                Or explore by role
               </a>
             </div>
           </div>
-          <DecisionQualityPreview />
+
+          <div className="demo-request-card" aria-labelledby="demo-request-heading">
+            <h2 id="demo-request-heading">Get your personal demo link</h2>
+            <p className="demo-request-sub">
+              Enter your details to receive a direct link you can revisit anytime.
+            </p>
+
+            {requestStatus === 'sent' ? (
+              <div className="demo-request-sent" role="status">
+                <h3>Check your inbox.</h3>
+                <p>
+                  We sent your personal demo link to <strong>{requestedEmail}</strong>. Open it
+                  whenever you are ready, or jump straight into a live diagnostic below.
+                </p>
+                <button
+                  type="button"
+                  className="button button-secondary"
+                  onClick={() => setRequestStatus('idle')}
+                >
+                  Request another link
+                </button>
+              </div>
+            ) : (
+              <form className="demo-request-form" onSubmit={handleDemoRequest}>
+                <div className="demo-request-field">
+                  <label htmlFor="demo-req-name">Full name</label>
+                  <input
+                    id="demo-req-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Adaeze Okafor"
+                    required
+                  />
+                </div>
+                <div className="demo-request-field">
+                  <label htmlFor="demo-req-email">Business email</label>
+                  <input
+                    id="demo-req-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@company.com"
+                    required
+                  />
+                </div>
+                <div className="demo-request-field">
+                  <label htmlFor="demo-req-size">Organization size</label>
+                  <select id="demo-req-size" name="size" defaultValue="1-10">
+                    <option value="1-10">1 - 10 people</option>
+                    <option value="11-50">11 - 50 people</option>
+                    <option value="51-250">51 - 250 people</option>
+                    <option value="251+">251+ people</option>
+                  </select>
+                </div>
+                <label className="demo-request-check">
+                  <input type="checkbox" name="followup" />
+                  <span>Send me a 2-day reminder if I do not finish</span>
+                </label>
+                {requestStatus === 'error' && requestError && (
+                  <p className="demo-request-error" role="alert">
+                    {requestError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  className="button button-primary"
+                  disabled={requestStatus === 'sending'}
+                >
+                  {requestStatus === 'sending' ? 'Sending...' : 'Get my demo link'}
+                </button>
+                <p className="demo-request-privacy">
+                  We respect your privacy and use your details only to send your demo link.{' '}
+                  <Link to="/legal/privacy">Privacy policy</Link>.
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="demo-trust-strip" aria-label="Platform highlights">
+        <div className="demo-tools-container demo-trust-grid">
+          <div className="demo-trust-item">
+            <strong>Since 1988</strong>
+            <span>Decades of real-world advisory frameworks</span>
+          </div>
+          <div className="demo-trust-item">
+            <strong>Live Intelligence</strong>
+            <span>Interactive diagnostics you can test today</span>
+          </div>
+          <div className="demo-trust-item">
+            <strong>Escrow Advisory</strong>
+            <span>Built-in accountability for every milestone</span>
+          </div>
+          <div className="demo-trust-item">
+            <strong>100% Human</strong>
+            <span>Real advisers alongside clear systems</span>
+          </div>
         </div>
       </section>
 
@@ -120,13 +261,69 @@ export function DemoToolsPage() {
           <DemoProfileLauncher />
         </div>
       </section>
+      <section className="demo-slide demo-faq" aria-labelledby="demo-faq-heading">
+        <div className="demo-tools-container">
+          <div className="demo-section-head">
+            <span className="demo-tools-eyebrow">Common questions</span>
+            <h2 id="demo-faq-heading">Frequently asked questions</h2>
+          </div>
+          <div className="demo-faq-list">
+            <details className="demo-faq-item">
+              <summary>
+                <span>What happens after I request a demo link?</span>
+                <ChevronDown className="demo-faq-chevron" aria-hidden="true" size={18} />
+              </summary>
+              <p>
+                We send a personal link straight to your inbox so you can open your guided demo
+                whenever you are ready, with no sales pressure.
+              </p>
+            </details>
+            <details className="demo-faq-item">
+              <summary>
+                <span>Can I try LAMID ONE without signing up?</span>
+                <ChevronDown className="demo-faq-chevron" aria-hidden="true" size={18} />
+              </summary>
+              <p>
+                Yes. Every live diagnostic and role preview on this page runs immediately with zero
+                account setup and nothing charged.
+              </p>
+            </details>
+            <details className="demo-faq-item">
+              <summary>
+                <span>How does organization size affect my demo?</span>
+                <ChevronDown className="demo-faq-chevron" aria-hidden="true" size={18} />
+              </summary>
+              <p>
+                It helps us tailor your guided workspace examples and advisory cadence to match
+                whether you lead a lean team or a larger multi-unit organization.
+              </p>
+            </details>
+            <details className="demo-faq-item">
+              <summary>
+                <span>Is my demo data saved or shared?</span>
+                <ChevronDown className="demo-faq-chevron" aria-hidden="true" size={18} />
+              </summary>
+              <p>
+                No. Public diagnostics run in your browser without saving your inputs, and your
+                contact email is only used to deliver the demo link you requested.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
       <section className="demo-slide demo-closing">
         <div className="demo-tools-container">
           <h2>Save your results and unlock everything.</h2>
           <p>Your own workspace, every diagnostic, and results that build on each other.</p>
-          <Link className="button button-primary" to="/signup">
-            Create your account
-          </Link>
+          <div className="demo-closing-actions">
+            <Link className="button button-primary" to="/signup">
+              Create your account
+            </Link>
+            <Link className="button button-secondary" to="/pricing">
+              See pricing
+            </Link>
+          </div>
         </div>
       </section>
     </div>

@@ -6,8 +6,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Strategy',
     eyebrow: 'Strategic Direction & Initiative Alignment',
     pillar: 'clarity',
-    title: 'Strategy: Align Your Priorities, Stop the Drag, and Fund What Wins',
-    lede: 'Stop funding work that goes nowhere. See where your capital drifts from your priorities, eliminate orphaned projects, and keep your entire team moving in one direction.',
+    title: 'Fund what creates value, not busywork.',
+    lede: 'Stop perfecting existing work that goes nowhere—align every project and dollar to what matters.',
     statement:
       'You cannot out-execute a broken plan. We test every active initiative against your core objectives so you only deploy capital where it produces verified returns.',
     tags: [
@@ -20,9 +20,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'S01',
     thesis: {
-      headline: 'Tie every dollar you spend directly to what you set out to achieve.',
+      headline: 'Cut work that adds activity, not impact.',
       description:
-        "You lose momentum when day-to-day budgets drift from your board's goals. Continuous intelligence tracks your active work against strategic targets, flags wasted spend immediately, and helps you reallocate resources with zero guesswork.",
+        'See which active projects support your board goals and redirect wasted budget before quarters lock.',
     },
     engines: [
       {
@@ -78,11 +78,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Fractional Strategy Leadership & Board Advisory',
+      title: 'Fractional Strategy Leadership',
       points: [
-        'Strategic roadmaps reviewed and battle-tested by veteran management consultants.',
-        'Independent second opinions on M&A, market entry, and portfolio restructuring.',
-        'Board-ready governance decks generated with full calculation audit trails.',
+        'Stress-test roadmaps with seasoned strategy operators.',
+        'Get independent second opinions on M&A and market entry.',
+        'Share board-ready decks with full calculation trails.',
       ],
     },
   },
@@ -92,8 +92,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Decisions',
     eyebrow: 'Decentralized Authority & Decision Rights',
     pillar: 'clarity',
-    title: 'Decisions: Decentralize Authority, Clear Bottlenecks, and Decide with Conviction',
-    lede: 'Stop waiting weeks for executive sign-off. Give your frontline the clarity, decision rights, and proven frameworks to make consequential calls at the speed of work.',
+    title: 'Move decisions closer to the work.',
+    lede: 'Stop routing every call through the same bottlenecks—give teams clear rights and testable options.',
     statement:
       "When your people don't know who owns a choice, work stalls on your desk. Lock down clear decision rights, score the quality of options before you commit capital, and move from debate to action.",
     tags: [
@@ -106,9 +106,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'Q44',
     thesis: {
-      headline: 'Push decision authority to your frontline without losing executive control.',
+      headline: 'Better decisions, without the approval queue.',
       description:
-        'When your team lacks a clear framework, every decision lands back on your plate. Our decision engines evaluate trade-offs, expose hidden assumptions, and certify choice quality so you can delegate authority with total confidence.',
+        'Assign single owners, score option quality upfront, and clear stalled calls before delay costs compound.',
     },
     engines: [
       {
@@ -209,11 +209,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Peer Advisory & Fiduciary Adjudication',
+      title: 'Peer Advisory & Independent Review',
       points: [
-        'High-consequence decisions evaluated with independent external scrutiny.',
-        'Objective dispute resolution and contract milestone arbitration.',
-        'Direct connection to senior decision analysts for high-stakes transactions.',
+        'Pressure-test high-stakes calls with outside judgment.',
+        'Resolve cross-team priority disputes objectively.',
+        'Bring senior decision analysts directly into key reviews.',
       ],
     },
   },
@@ -223,8 +223,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'People & Skills',
     eyebrow: 'Workforce Capability & Talent Architecture',
     pillar: 'capability',
-    title: 'People & Skills: Close Critical Capability Gaps and Secure Your Bench',
-    lede: 'Know your true talent depth before vacancy strikes. Map skills to mission-critical roles, spot single points of failure, and build ready-now successors across your leadership bench.',
+    title: 'Build dynamic roles, not static boxes.',
+    lede: 'Move skills across teams as priorities shift, close real gaps, and back up critical seats.',
     statement:
       "Software doesn't grow your business; your people do. We give you continuous visibility into workforce skills, cultural health, and succession readiness so you can scale without breaking your culture.",
     tags: [
@@ -237,9 +237,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'A02',
     thesis: {
-      headline: 'Replace guesswork appraisals with real-time workforce intelligence.',
+      headline: 'Match people to what your next stage needs.',
       description:
-        'Annual reviews are too late to fix talent attrition. Continuous intelligence monitors role readiness, bench depth, and team morale in real time—giving you the facts to retain top performers and close capability deficits early.',
+        'Track role readiness, spot single-point-of-failure seats, and close capability gaps before turnover hits.',
     },
     engines: [
       {
@@ -326,11 +326,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Fractional Chief People Officers & Executive Coaching',
+      title: 'Fractional People Leadership & Coaching',
       points: [
-        'Custom workforce transition and restructuring plans supervised by senior HR executives.',
-        'Executive coaching and succession pipeline reviews for critical roles.',
-        'Complete NDPR and GDPR compliant workforce data protection frameworks.',
+        'Design dynamic role shifts with senior HR executives.',
+        'Review succession depth for mission-critical seats.',
+        'Keep workforce data protected under NDPR and GDPR.',
       ],
     },
   },
@@ -340,8 +340,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Operations',
     eyebrow: 'Operational Flow & Capacity Governance',
     pillar: 'capability',
-    title: 'Operations: Balance Workloads, Break Bottlenecks, and Stabilize Delivery Flow',
-    lede: 'Stop overloading your teams with work that sits in queues. Measure your true throughput, rebalance capacity against demand, and clear delivery bottlenecks before they hurt your margins.',
+    title: 'Fix how work flows together.',
+    lede: 'Redesign handoffs and clear coordination bottlenecks instead of pushing people to work longer.',
     statement:
       'Pushing more work into a clogged pipeline only delays delivery. We show you the exact constraint throttling your output so you can fix the bottleneck, protect your team, and deliver on time.',
     tags: [
@@ -354,9 +354,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'R05',
     thesis: {
-      headline: 'See your bottlenecks in real time and protect your delivery commitments.',
+      headline: 'Remove friction across teams, not just speed up tasks.',
       description:
-        'When processes drift, projects slip and operating costs compound. Our operational engines apply proven queueing theory to show you exactly where work queues up, helping you rebalance workloads and fix root causes with empirical proof.',
+        'Separate true process drift from normal noise, cap work-in-progress, and rebalance overloaded squads.',
     },
     engines: [
       {
@@ -459,11 +459,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Fractional COOs & Total Quality Management (TQM)',
+      title: 'Fractional COOs & Process Redesign',
       points: [
-        'Operations playbooks audited by practitioners with multi-plant manufacturing experience.',
-        'Rigorous process redesign rooted in verified Unilever and Lafarge WAPCO methodologies.',
-        'Continuous bottleneck monitoring with real-time alerting for operational leaders.',
+        'Audit delivery workflows with veteran operations leaders.',
+        'Fix cross-team handoffs instead of adding status meetings.',
+        'Watch live bottleneck alerts before commitments slip.',
       ],
     },
   },
@@ -473,8 +473,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Finance',
     eyebrow: 'Capital Telemetry & Predictive Financial Modeling',
     pillar: 'growth',
-    title: 'Finance: Protect Your Cash Runway, Model Valuation, and Maximize Return on Equity',
-    lede: 'Never let a cash valley take you by surprise. Forecast your rolling 13-week liquidity, isolate the operational drivers behind your return on equity, and value your business with boardroom precision.',
+    title: 'Measure impact, not just output.',
+    lede: 'See your 13-week cash runway and the real drivers behind margin and return on equity.',
     statement:
       'Accounting reports tell you what happened last quarter; you need to know what happens to your cash next month. We model your cash receipts, test stress scenarios, and connect daily operational choices to your bottom line.',
     tags: [
@@ -487,9 +487,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'F02',
     thesis: {
-      headline: 'Master your cash flow before liquidity crunches force bad compromises.',
+      headline: 'Connect daily choices to cash and margin.',
       description:
-        'Cash surprises destroy great companies. Our financial models project your weekly cash receipts and disbursements, unpack the operational levers behind your return on equity, and give you the numbers to negotiate from strength.',
+        'Spot cash troughs weeks ahead and focus operational effort on the levers that actually lift return on equity.',
     },
     engines: [
       {
@@ -546,11 +546,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Fractional CFOs & Capital Structuring Advisory',
+      title: 'Fractional CFOs & Capital Advisory',
       points: [
-        'Treasury, runway, and cash models validated by seasoned corporate finance executives.',
-        'Investor data rooms and financial due diligence support for capital raises.',
-        'Multi-currency treasury clearing and cross-border settlement governance.',
+        'Verify 13-week cash models with seasoned CFOs.',
+        'Prepare investor data rooms backed by live telemetry.',
+        'Govern multi-currency treasury and settlement controls.',
       ],
     },
   },
@@ -560,8 +560,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Risk & Governance',
     eyebrow: 'Enterprise Risk Management & Board Oversight',
     pillar: 'consistency',
-    title: 'Risk & Governance: Spot Critical Exposures Early and Armor Your Enterprise Value',
-    lede: 'Catch critical operational exposures before they turn into board-level crises. Track live risk indicators, automate control reviews, and maintain audit readiness without slowing your teams down.',
+    title: 'Give teams freedom inside clear limits.',
+    lede: 'Spot early warning signs and keep controls ready so decentralized teams stay safe.',
     statement:
       'Good governance is your structural defense against avoidable disasters. We arm your leadership with real-time risk registers and early-warning monitors so you stay fully compliant, secure, and resilient.',
     tags: [
@@ -574,9 +574,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'Q43',
     thesis: {
-      headline: 'Catch operational and compliance drift before it triggers a crisis.',
+      headline: 'Catch exposure early while teams move fast.',
       description:
-        'Annual audits are useless when operational conditions change every week. Leading risk indicators track your exposure in real time, assigning clear control ownership and giving your board verifiable assurance.',
+        'Track leading risk indicators against board limits and assign clear control owners before issues escalate.',
     },
     engines: [
       {
@@ -669,11 +669,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Institutional Governance Advisers & Audit Readiness',
+      title: 'Governance Advisers & Audit Readiness',
       points: [
-        'Regulatory frameworks designed from 35+ years advising central banks and financial institutions.',
-        'Independent risk audits and committee representation.',
-        'Preparation for statutory audits, certifications, and compliance reviews.',
+        'Apply proven frameworks built for regulated institutions.',
+        'Run independent risk reviews and committee briefings.',
+        'Stay ready for statutory audits and ISO certifications.',
       ],
     },
   },
@@ -683,8 +683,8 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Growth & Change',
     eyebrow: 'Strategic Scaling & Transformation Governance',
     pillar: 'growth',
-    title: 'Growth & Change: Balance Your Growth Bets and Execute Without Organizational Burnout',
-    lede: 'Scale your business without overwhelming your people. Sequence growth initiatives to match your operational bandwidth, diagnose adoption friction early, and protect your core cash engine.',
+    title: 'Adapt before the market forces you.',
+    lede: 'Sequence growth bets around what your teams can absorb—with clear guidance, not fatigue.',
     statement:
       'Taking on too many expansion bets at once burns capital and exhausts your best people. We help you balance your short-term cash engine with long-term breakthroughs, testing change readiness before you pull the trigger.',
     tags: [
@@ -697,9 +697,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'G03',
     thesis: {
-      headline: 'Align your expansion bets with what your organization can realistically execute.',
+      headline: 'Reorganize around change without burning out.',
       description:
-        'Growth fails when your organization cannot absorb the changes you mandate. Our portfolio models score opportunities across three horizons, evaluate team readiness, and sequence your roadmap so every initiative sticks.',
+        'Balance short- and long-horizon bets within working-capital limits and fix adoption stalls early.',
     },
     engines: [
       {
@@ -764,11 +764,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Fractional Transformation Directors & Change Architects',
+      title: 'Transformation Directors & Change Support',
       points: [
-        'Large-scale workforce and corporate restructurings guided by battle-tested practitioners.',
-        'Milestone-linked transformation tracking with objective progress verification.',
-        'Hands-on change management workshops designed to eliminate frontline skepticism.',
+        'Guide major restructurings with experienced change leaders.',
+        'Track transformation milestones with clear sign-off gates.',
+        'Remove frontline friction through targeted team clinics.',
       ],
     },
   },
@@ -778,13 +778,13 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     name: 'Expert Advisory',
     eyebrow: 'Vetted Fractional Leadership & Milestone Escrow',
     pillar: 'consistency',
-    title: 'Expert Advisory: Senior Executive Firepower On Demand, Governed by Escrow',
-    lede: 'When consequential decisions demand 30 years of boardroom experience. Engage vetted fractional leaders and specialized advisers—with all funds protected under milestone escrow until deliverables are verified.',
+    title: 'Add judgment, not just more reports.',
+    lede: 'Bring vetted leaders directly into your live context to sharpen decisions, backed by escrow.',
     statement:
       "You don't need expensive agencies billing endless hours. You need proven executive operators working directly in your corner, funded under milestone escrow so you only pay for verified results.",
     tags: [
       'Vetted Fractional Executives',
-      '17+ Practice Corridors',
+      'Vetted Practice Corridors',
       'Milestone Escrow Governance',
       'Independent Second Opinions',
       'Concierge Workspace Management',
@@ -792,10 +792,9 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
     ],
     clip: 'Q99',
     thesis: {
-      headline:
-        'Embed seasoned executive leadership without bloated overhead or billable-hour games.',
+      headline: 'Senior judgment inside your workflow.',
       description:
-        'Hiring permanent executives takes months, and consulting agencies pad their hours. We match you with vetted fractional partners across 17+ practice areas, locking project milestones in escrow so your capital is released only when verified results are in your hands.',
+        'Match with vetted fractional leaders who start with your live numbers—and release escrow only on sign-off.',
     },
     engines: [
       {
@@ -836,11 +835,11 @@ export const productSuites: Record<string, ProductSuiteConfig> = {
       },
     ],
     advisoryHighlight: {
-      title: 'Guaranteed Delivery Through Escrow Protection',
+      title: 'Guaranteed Delivery Through Escrow',
       points: [
-        '100% funds protection: milestones are funded upfront and disbursed only after your explicit approval.',
-        'Impartial dispute arbitration backed by documented acceptance criteria.',
-        'Access to over 17 specialized advisory corridors across emerging and global markets.',
+        'Fund milestones upfront and release only on your sign-off.',
+        'Resolve disputes fairly using written acceptance criteria.',
+        'Access vetted practice corridors across global markets.',
       ],
     },
   },

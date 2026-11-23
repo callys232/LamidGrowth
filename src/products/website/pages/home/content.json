@@ -6,18 +6,18 @@
   "route": "/",
   "indexing": "index, follow",
   "canonical": "/",
-  "seo_title": "LAMID ONE | Decide. Build. Deliver.",
-  "meta_description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
-  "title": "Decide what matters, build capability, and deliver results — all in one place.",
-  "description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
+  "seo_title": "LAMID ONE | Power Intelligent Decisions. Build Capabilities. Accelerate Growth.",
+  "meta_description": "LAMID ONE is an intelligent operating environment that empowers people and organizations to access trusted expertise, execute projects, deliver results and achieve growth through continuous intelligence, decentralized decision-making, and structured delivery. LAMID ONE updates as your reality changes — with you in control always.",
+  "title": "Power Intelligent Decisions. Build Capabilities. Accelerate Growth — all in one place.",
+  "description": "LAMID ONE is an intelligent operating environment that empowers people and organizations to access trusted expertise, execute projects, deliver results and achieve growth through continuous intelligence, decentralized decision-making, and structured delivery. LAMID ONE updates as your reality changes — with you in control always.",
   "landingHero": {
     "eyebrow": "The LAMID ONE platform",
     "titleLines": [
-      "Decide what matters,",
-      "build capability,",
-      "and deliver results — all in one place."
+      "Power Intelligent Decisions.",
+      "Build Capabilities.",
+      "Accelerate Growth — all in one place."
     ],
-    "description": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
+    "description": "LAMID ONE is an intelligent operating environment that empowers people and organizations to access trusted expertise, execute projects, deliver results and achieve growth through continuous intelligence, decentralized decision-making, and structured delivery. LAMID ONE updates as your reality changes — with you in control always.",
     "actions": [
       {
         "label": "Get a demo",
@@ -30,14 +30,14 @@
     ]
   },
   "hero": {
-    "title": "Decide what matters, build capability, and deliver results — all in one place.",
+    "title": "Power Intelligent Decisions. Build Capabilities. Accelerate Growth — all in one place.",
     "paragraphs": [
       {
-        "text": "Decide what matters, build capability, and deliver results — all in one place.",
+        "text": "Power Intelligent Decisions. Build Capabilities. Accelerate Growth — all in one place.",
         "sourceParagraph": 6283
       },
       {
-        "text": "Don't just automate tasks—decentralize decisions. Continuous intelligence creates the capability to decide. LAMID ONE updates as your reality moves—giving teams the context to decide faster and the structure to deliver with certainty.",
+        "text": "LAMID ONE is an intelligent operating environment that empowers people and organizations to access trusted expertise, execute projects, deliver results and achieve growth through continuous intelligence, decentralized decision-making, and structured delivery. LAMID ONE updates as your reality changes — with you in control always.",
         "sourceParagraph": 6287
       },
       {
