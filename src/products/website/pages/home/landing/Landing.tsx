@@ -586,9 +586,12 @@ export function LandingResults() {
   );
 }
 
+import { FloatingStickmen } from './FloatingStickmen';
+
 export function LandingClose() {
   return (
     <section className="lg-close" aria-labelledby="lg-close-title">
+      <FloatingStickmen />
       <h2 id="lg-close-title">
         Make growth feel clear, not complicated with <LamidOneBrand />.
       </h2>
