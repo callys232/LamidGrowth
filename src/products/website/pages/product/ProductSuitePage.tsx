@@ -384,6 +384,7 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
             const activePattern = getCardPattern(activeIdx);
             return (
               <div
+                key={activeEngine.code}
                 data-shade={activeShade}
                 data-pattern={activePattern}
                 className="suite-engine-inspector suite-engine-inspector-sticky"

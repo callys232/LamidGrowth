@@ -50,8 +50,8 @@ details[open] > summary {
     color-mix(in srgb, currentColor 8%, transparent)
   ) !important;
 }
-/* Clicked content links stay underlined for this browser tab's session. */
-:where(main, .modal) a:not([class])[data-session-visited='true'] {
+/* Clicked prose links stay underlined for this browser tab's session (not nav/pill links). */
+:where(main, .modal) a:not([class]):not(nav a)[data-session-visited='true'] {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }

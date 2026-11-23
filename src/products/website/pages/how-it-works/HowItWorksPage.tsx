@@ -125,7 +125,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
       { title: 'Shared rhythm', line: 'One cadence for planning and review.' },
       { title: 'Governance', line: 'Clear accountability, with a record of decisions.' },
     ],
-    tourTitle: 'Organisation tools in use',
+    tourTitle: 'Organisation engines in use',
     engines: [
       { name: 'Governance Assessment', clip: 'Q99' },
       { name: 'Decision Rights Matrix', clip: 'Q29' },
@@ -334,7 +334,7 @@ export function HowItWorksPage({ content }: { content: HowItWorksContent }) {
       <section className="hx-stage" aria-labelledby="hiw-tour-title">
         <div className="hx-stage-list">
           <h2 id="hiw-tour-title">{content.tourTitle}</h2>
-          <ul role="group" aria-label="Tools">
+          <ul role="group" aria-label="Engines">
             {content.engines.map((item, index) => (
               <li key={item.clip}>
                 <button

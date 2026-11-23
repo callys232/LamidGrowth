@@ -1081,6 +1081,89 @@
   gap: 20px;
 }
 
+/* Micro-interactions across Engine Explorer, Playbooks & Buttons */
+.suite-engine-row {
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.suite-engine-row:hover {
+  transform: translateX(3px);
+  border-color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-engine-row:hover .suite-engine-row-chevron {
+  transform: translateX(3px);
+  color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-engine-row-chevron {
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.suite-engine-row:hover .suite-vec-thumb,
+.suite-engine-row.is-selected .suite-vec-thumb {
+  transform: scale(1.06);
+  border-color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-vec-thumb {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+@keyframes suite-inspector-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suite-engine-inspector[data-shade] {
+  animation: suite-inspector-enter 0.22s ease;
+}
+
+.suite-pb-card,
+.suite-lib-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.suite-pb-card:hover,
+.suite-lib-card:hover {
+  transform: translateY(-3px);
+  box-shadow: light-dark(0 12px 26px rgba(13, 26, 43, 0.08), 0 12px 26px rgba(0, 0, 0, 0.35));
+}
+
+.suite-pb-card-media img {
+  transition: transform 0.35s ease;
+}
+
+.suite-pb-card:hover .suite-pb-card-media img {
+  transform: scale(1.04);
+}
+
+.suite-pb-btn-solid:active,
+.suite-pb-btn-outline:active,
+.suite-inspector-btn:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suite-engine-row,
+  .suite-engine-row-chevron,
+  .suite-vec-thumb,
+  .suite-engine-inspector[data-shade],
+  .suite-pb-card,
+  .suite-lib-card,
+  .suite-pb-card-media img {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
+}
+
 @media (max-width: 780px) {
   .suite-library-grid {
     grid-template-columns: 1fr;
@@ -1539,6 +1622,89 @@
   gap: 10px;
   padding-top: 8px;
   border-top: 1px solid light-dark(#e2e8f0, #233043);
+}
+
+/* Micro-interactions across Engine Explorer, Playbooks & Buttons */
+.suite-engine-row {
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.suite-engine-row:hover {
+  transform: translateX(3px);
+  border-color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-engine-row:hover .suite-engine-row-chevron {
+  transform: translateX(3px);
+  color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-engine-row-chevron {
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.suite-engine-row:hover .suite-vec-thumb,
+.suite-engine-row.is-selected .suite-vec-thumb {
+  transform: scale(1.06);
+  border-color: var(--card-accent, var(--suite-accent));
+}
+
+.suite-vec-thumb {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+@keyframes suite-inspector-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suite-engine-inspector[data-shade] {
+  animation: suite-inspector-enter 0.22s ease;
+}
+
+.suite-pb-card,
+.suite-lib-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.suite-pb-card:hover,
+.suite-lib-card:hover {
+  transform: translateY(-3px);
+  box-shadow: light-dark(0 12px 26px rgba(13, 26, 43, 0.08), 0 12px 26px rgba(0, 0, 0, 0.35));
+}
+
+.suite-pb-card-media img {
+  transition: transform 0.35s ease;
+}
+
+.suite-pb-card:hover .suite-pb-card-media img {
+  transform: scale(1.04);
+}
+
+.suite-pb-btn-solid:active,
+.suite-pb-btn-outline:active,
+.suite-inspector-btn:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suite-engine-row,
+  .suite-engine-row-chevron,
+  .suite-vec-thumb,
+  .suite-engine-inspector[data-shade],
+  .suite-pb-card,
+  .suite-lib-card,
+  .suite-pb-card-media img {
+    transition: none;
+    animation: none;
+    transform: none;
+  }
 }
 
 @media (max-width: 780px) {

@@ -109,6 +109,24 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  animation: hx-3d-float 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes hx-3d-float {
+  0%,
+  100% {
+    transform: scale(1.02) translateY(0px);
+  }
+  50% {
+    transform: scale(1.06) translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-hero-3d img {
+    animation: none;
+  }
 }
 .hx-hero.has-art .hx-hero-foot {
   grid-template-columns: 1fr;

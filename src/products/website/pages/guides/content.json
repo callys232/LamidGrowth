@@ -7,9 +7,9 @@
   "indexing": "index, follow",
   "canonical": "/guides",
   "seo_title": "User Guide | LAMID ONE",
-  "meta_description": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
+  "meta_description": "Step-by-step help with the demo, account setup, workspace engines, learning, and troubleshooting.",
   "title": "Your LAMID ONE User Guide.",
-  "description": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
+  "description": "Step-by-step help with the demo, account setup, workspace engines, learning, and troubleshooting.",
   "hero": {
     "title": "Your LAMID ONE User Guide.",
     "paragraphs": [
@@ -18,7 +18,7 @@
         "sourceParagraph": 755
       },
       {
-        "text": "Step-by-step help with the demo, email verification, account signup, workspace tools, learning, points and troubleshooting.",
+        "text": "Step-by-step help with the demo, account setup, workspace engines, learning, and troubleshooting.",
         "sourceParagraph": 756
       },
       {

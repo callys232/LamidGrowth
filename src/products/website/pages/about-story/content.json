@@ -9,9 +9,9 @@
   "indexing": "index, follow",
   "canonical": "/about/story",
   "seo_title": "Our Story | Why We Built LAMID ONE",
-  "meta_description": "For 35+ years, consulting work meant moving between disconnected apps, rebuilding context, and watching momentum stall. LAMID ONE was built piece by piece to change that.",
+  "meta_description": "How 35+ years of solving real organizational bottlenecks led us to build one connected operating system.",
   "title": "We Didn't Set Out to Build Another App.",
-  "description": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist apps, but the work kept becoming fragmented.",
+  "description": "How 35+ years of solving real organizational bottlenecks led us to build one connected operating system.",
   "hero": {
     "title": "We Didn't Set Out to Build Another App.",
     "paragraphs": [
@@ -20,7 +20,7 @@
         "sourceParagraph": 1051
       },
       {
-        "text": "LAMID ONE began with more than 35 years of consulting experience and a frustration we knew personally. We used more and more specialist apps, but the work kept becoming fragmented.",
+        "text": "How 35+ years of solving real organizational bottlenecks led us to build one connected operating system.",
         "sourceParagraph": 1052
       },
       {
@@ -117,15 +117,15 @@
       ]
     },
     {
-      "label": "Then AI Expanded What Was Possible",
-      "title": "Then AI Expanded What Was Possible",
+      "label": "Then New Capability Expanded What Was Possible",
+      "title": "Then New Capability Expanded What Was Possible",
       "paragraphs": [
         {
-          "text": "Then AI Expanded What Was Possible",
+          "text": "Then New Capability Expanded What Was Possible",
           "sourceParagraph": 1068
         },
         {
-          "text": "AI made it possible to understand more context, compare more possibilities, surface patterns, create useful work faster, and reassess what matters as conditions change.",
+          "text": "Connected intelligence made it possible to understand more context, compare more possibilities, surface patterns, create useful work faster, and reassess what matters as conditions change.",
           "sourceParagraph": 1069
         },
         {

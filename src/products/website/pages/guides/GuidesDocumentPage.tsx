@@ -35,7 +35,7 @@ function GuidePage() {
           <p className="gp-eyebrow">Guides</p>
           <h1>Your LAMID ONE user guide.</h1>
           <p className="gp-lede">
-            Step-by-step help with the demo, signup, workspace tools, learning, points and
+            Step-by-step help with the demo, signup, workspace engines, learning, and
             troubleshooting.
           </p>
           <div className="gp-actions">

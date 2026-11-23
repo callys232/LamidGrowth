@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import { audiences, pillars } from '../../../../shared/brand';
-import { AudienceContextIllustration } from '../../../../shared/brand/AudienceContextIllustration';
+import { AnimatedRoleCharacter, ROLE_VISUALS } from './AnimatedRoleVector';
 import type { DocumentPage } from '../../../../shared/content/types';
 import './audience.css';
 import '../motion.css';
@@ -32,8 +33,20 @@ export function AudiencePage({
   const cards = sections.filter((s) => s !== band).slice(0, 3);
   const others = audiences.filter((item) => item.id !== audience.id);
 
+  const roleVisual = ROLE_VISUALS[audience.id] || ROLE_VISUALS.founders;
+
   return (
-    <div className="aud-page" data-source-page={content.page} data-audience={audience.id}>
+    <div
+      className="aud-page"
+      data-source-page={content.page}
+      data-audience={audience.id}
+      style={
+        {
+          '--aud-accent': roleVisual.accent,
+          '--aud-tint': roleVisual.tint,
+        } as React.CSSProperties
+      }
+    >
       <section className="aud-hero">
         <div className="aud-hero-copy">
           <p className="aud-eyebrow">For {audience.name}</p>
@@ -43,12 +56,31 @@ export function AudiencePage({
             <Link className="aud-btn aud-btn-solid" to="/signup">
               Get started
             </Link>
-            <Link className="aud-btn aud-btn-outline" to="/insights#playbook-library">
-              Explore playbooks
+            <Link className="aud-btn aud-btn-outline" to="/demo">
+              Try live demo
             </Link>
           </div>
+          <div className="aud-suites-strip" aria-label="Recommended product suites">
+            <span>Recommended suites:</span>
+            {roleVisual.suites.map((suite) => (
+              <Link key={suite.to} to={suite.to} className="aud-suite-chip">
+                {suite.label} <ChevronRight size={13} aria-hidden="true" />
+              </Link>
+            ))}
+          </div>
         </div>
-        <AudienceContextIllustration audienceId={audience.id} audienceName={audience.name} />
+
+        <div className="aud-hero-visual">
+          <div className="aud-hero-photo-wrap">
+            <img src={roleVisual.photo} alt={roleVisual.photoAlt} loading="eager" decoding="async" />
+          </div>
+          <div className="aud-hero-char-float" aria-hidden="true">
+            <AnimatedRoleCharacter
+              variant={roleVisual.characterVariant}
+              accent={roleVisual.accent}
+            />
+          </div>
+        </div>
       </section>
 
       <section className="aud-start" aria-label={`Where LAMID ONE starts for ${audience.name}`}>

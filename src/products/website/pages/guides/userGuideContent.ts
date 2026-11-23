@@ -21,10 +21,10 @@ export const userGuideTopics = [
     steps: [
       'Open the demo and enter your name and email address. Choose the optional reminder only if you want a follow-up.',
       'Open the welcome email and follow your personal confirmation link. Check spam or junk if it has not arrived.',
-      'Choose a profile and tier, then explore the tools included in that tier. A locked tool belongs to another tier.',
+      'Choose a profile and tier, then explore the engines included in that tier. A locked engine belongs to another tier.',
       'Keep your personal link to return to saved demo progress, including on another device. Wait for the save confirmation before leaving.',
     ],
-    note: 'One demo registration is allowed per IP address, including shared office or home networks. Return through your existing email link rather than registering again. The link lasts 30 days. Demo data is fictional, tool runs cost no points, and demo work is separate from your real account.',
+    note: 'One demo registration is allowed per IP address, including shared office or home networks. Return through your existing email link rather than registering again. The link lasts 30 days. Demo data is fictional, engine runs cost no points, and demo work is separate from your real account.',
     links: [{ label: 'Open demo', to: '/demo' }],
   },
   {
@@ -46,14 +46,14 @@ export const userGuideTopics = [
   {
     id: 'find-your-work',
     title: 'Find your way around',
-    summary: 'Check your workspace and find the right tool.',
+    summary: 'Check your workspace and find the right engine.',
     steps: [
       'Start at Overview to see the current workspace. Check the workspace selector before creating or changing records.',
-      'Open Today to see work that needs attention. Use the sidebar to move between work, people, intelligence and account tools.',
+      'Open Today to see work that needs attention. Use the sidebar to move between work, people, intelligence and account views.',
       'Use workspace search, or press Ctrl+K on Windows and Command+K on Mac, to find a page quickly.',
-      'On a small screen, open the navigation menu to reach the same tools. User guide is available near Settings.',
+      'On a small screen, open the navigation menu to reach the same views. User guide is available near Settings.',
     ],
-    note: 'Available tools and actions depend on your selected plan, workspace and role. Some tools appear under More tools.',
+    note: 'Available engines and actions depend on your selected plan, workspace and role. Some checks appear under More engines.',
     links: [
       { label: 'Overview', to: '/os' },
       { label: 'Today', to: '/os/today' },
@@ -77,15 +77,15 @@ export const userGuideTopics = [
   },
   {
     id: 'run-tools',
-    title: 'Run a decision tool',
+    title: 'Run a decision engine',
     summary: 'Find an engine, enter inputs and interpret its result.',
     steps: [
       'Open Engines and search or browse for the decision you need to make.',
-      'Read the tool description, required inputs and any method notes. Use an example to understand the expected format before entering your own data.',
-      'Complete the form and correct any validation messages. Review the displayed points cost before running a tool in a real account.',
+      'Read the engine description, required inputs and any method notes. Use an example to understand the expected format before entering your own data.',
+      'Complete the form and correct any validation messages. Review the displayed points cost before running an engine in a real account.',
       'Read the result alongside its assumptions and your evidence. Use it to support a decision and decide the next action yourself.',
     ],
-    note: 'The selected demo tier controls which tools you can run. Demo runs do not spend points. A calculated result does not replace professional review or establish that every assumption is correct.',
+    note: 'The selected demo tier controls which engines you can run. Demo runs do not spend points. A calculated result does not replace professional review or establish that every assumption is correct.',
     links: [{ label: 'Engines', to: '/os/engines' }],
   },
   {
@@ -142,7 +142,7 @@ export const userGuideTopics = [
     title: 'Understand plans and points',
     summary: 'Check access and costs before using paid features.',
     steps: [
-      'Review Pricing to compare plan access. A tool being listed does not mean every plan includes it.',
+      'Review Pricing to compare plan access. An engine being listed does not mean every plan includes it.',
       'Check your workspace balance and the cost shown for an operation before confirming it.',
       'If you have insufficient points or a locked feature, review your plan or ask the person responsible for workspace billing.',
       'Review Finance for the records available to your role. Check the outcome of a payment before trying it again.',
@@ -172,12 +172,12 @@ export const userGuideTopics = [
   {
     id: 'troubleshooting',
     title: 'Get unstuck',
-    summary: 'Resolve missing email, save problems, expired links or unavailable tools.',
+    summary: 'Resolve missing email, save problems, expired links or unavailable engines.',
     steps: [
       'Missing email: check the address you entered, spam and junk folders. If it still does not arrive, contact support with the approximate request time.',
       'Demo already used on this IP: find the original welcome email and return through that link. A shared network also shares the one-registration limit.',
       'Save pending or failed: keep the demo open, check your connection and use the retry option. If another tab or device changed the same demo, follow the conflict notice before continuing.',
-      'Expired link or locked feature: use the correct account recovery flow or ask support about demo access; check the selected tier and your workspace role for tool access.',
+      'Expired link or locked feature: use the correct account recovery flow or ask support about demo access; check the selected tier and your workspace role for engine access.',
       'When contacting support, include the page, what you were trying to do and any displayed request reference. Leave out passwords, codes, private links and sensitive input data.',
     ],
     note: 'Support can investigate delivery or access problems. Repeated registration attempts do not bypass the one-demo-per-IP rule.',

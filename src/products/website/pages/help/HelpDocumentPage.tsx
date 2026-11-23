@@ -25,7 +25,7 @@ export function HelpDocumentPage({ embedded = false }: DocumentPageProps) {
     >
       <p>
         <Link to="/guides#user-guide-title">Open the user guide</Link> for demo setup, account
-        creation, workspace tools and troubleshooting.
+        creation, workspace engines, and troubleshooting.
       </p>
       <BrowseByNeedSlide1 embedded={embedded} />
       <GetUnblockedQuicklySlide2 embedded={embedded} />

@@ -66,6 +66,17 @@
 .mega-group li {
   margin: 0;
 }
+.mega-header a,
+.mega-header .mega-group a,
+.mega-header .mega-group a:hover,
+.mega-header .mega-group a:focus-visible,
+.mega-panel a,
+.public-nav a,
+.utility-bar a,
+.mega-planned {
+  text-decoration: none;
+}
+
 .mega-header .mega-group a,
 .mega-planned {
   display: block;

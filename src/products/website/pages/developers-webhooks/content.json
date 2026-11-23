@@ -7,9 +7,9 @@
   "indexing": "index, follow",
   "canonical": "/developers/webhooks",
   "seo_title": "Webhooks & Events | LAMID ONE",
-  "meta_description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems.",
+  "meta_description": "Keep your external systems in sync as objectives, decisions, and milestones change.",
   "title": "Keep Context Current Through Meaningful Events.",
-  "description": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems without requiring the user to be present.",
+  "description": "Keep your external systems in sync as objectives, decisions, and milestones change.",
   "hero": {
     "title": "Keep Context Current Through Meaningful Events.",
     "paragraphs": [
@@ -18,7 +18,7 @@
         "sourceParagraph": 983
       },
       {
-        "text": "Use controlled events and webhooks to keep permitted operating context and already-authorized workflows progressing across LAMID ONE and external systems without requiring the user to be present.",
+        "text": "Keep your external systems in sync as objectives, decisions, and milestones change.",
         "sourceParagraph": 984
       },
       {

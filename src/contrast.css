@@ -17,6 +17,7 @@
   --line-soft: #000;
   --line-strong: #000;
 }
+
 :root[data-contrast='high'][data-theme='dark'] {
   --paper: #000;
   --surface: #000;
@@ -32,6 +33,7 @@
   --line-soft: #fff;
   --line-strong: #fff;
 }
+
 @media (prefers-color-scheme: dark) {
   :root[data-contrast='high']:not([data-theme]) {
     --paper: #000;
@@ -49,19 +51,22 @@
     --line-strong: #fff;
   }
 }
+
 :root[data-contrast='high'] body {
   background: var(--paper);
   color: var(--ink);
 }
-:root[data-contrast='high'] :is(p, li) a,
-:root[data-contrast='high'] .utility-bar a:hover {
+
+:root[data-contrast='high'] :is(p, li) a:not(header a):not(nav a):not(.aud-others a) {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
 :root[data-contrast='high'] :focus-visible {
   outline: 3px solid var(--ink) !important;
   outline-offset: 3px !important;
 }
+
 :root[data-contrast='high'] img,
 :root[data-contrast='high'] video {
   filter: contrast(1.15);

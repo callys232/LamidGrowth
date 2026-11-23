@@ -436,6 +436,33 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s ease;
+  animation: ps-thumb-float 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.ps-dir-card:nth-child(2n) .ps-dir-thumb img {
+  animation-delay: -3s;
+}
+
+.ps-dir-card:nth-child(3n) .ps-dir-thumb img {
+  animation-delay: -6s;
+}
+
+@keyframes ps-thumb-float {
+  0%,
+  100% {
+    transform: scale(1.01) translateY(0px);
+  }
+  50% {
+    transform: scale(1.05) translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-dir-thumb img {
+    animation: none;
+  }
 }
 
 .ps-dir-top {

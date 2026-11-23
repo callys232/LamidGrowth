@@ -7,9 +7,9 @@
   "indexing": "index, follow",
   "canonical": "/integrations",
   "seo_title": "Integrations | LAMID ONE",
-  "meta_description": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness.",
+  "meta_description": "Connect your existing calendar, finance, and workspace systems without replacing how you work.",
   "title": "Connect the Systems You Already Use.",
-  "description": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness, revocation, and data boundaries.",
+  "description": "Connect your existing calendar, finance, and workspace systems without replacing how you work.",
   "hero": {
     "title": "Connect the Systems You Already Use.",
     "paragraphs": [
@@ -18,7 +18,7 @@
         "sourceParagraph": 964
       },
       {
-        "text": "Bring relevant external context into LAMID ONE and allow only authorized synchronization or progression while respecting permissions, ownership, freshness, revocation, and data boundaries.",
+        "text": "Connect your existing calendar, finance, and workspace systems without replacing how you work.",
         "sourceParagraph": 965
       },
       {

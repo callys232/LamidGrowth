@@ -89,6 +89,12 @@
   background: light-dark(#f8fafc, #151e2c);
   border: 1px solid light-dark(#e2e8f0, #233043);
   color: light-dark(#334155, #cbd5e1);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.suite-tag-pill:hover {
+  transform: translateY(-1px);
+  border-color: light-dark(#94a3b8, #475569);
 }
 
 /* Airy Right Visual Card (Unique 3D Asset & Accent per Suite) */
@@ -99,6 +105,57 @@
   border: 1px solid light-dark(#e2e8f0, #233043);
   box-shadow: light-dark(0 18px 40px rgba(13, 26, 43, 0.06), 0 18px 40px rgba(0, 0, 0, 0.35));
   display: grid;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.airy-visual-card:hover {
+  transform: translateY(-2px);
+  box-shadow: light-dark(0 22px 46px rgba(13, 26, 43, 0.1), 0 22px 46px rgba(0, 0, 0, 0.45));
+}
+
+.airy-visual-3d-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+  animation: airy-3d-float 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes airy-3d-float {
+  0%,
+  100% {
+    transform: scale(1.02) translateY(0px);
+  }
+  50% {
+    transform: scale(1.06) translateY(-5px);
+  }
+}
+
+@keyframes airy-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.airy-visual-bar-fill {
+  transform-origin: left center;
+  animation: airy-bar-grow 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .airy-visual-3d-frame img,
+  .airy-visual-bar-fill {
+    animation: none;
+  }
+}
+
+.airy-visual-card:hover .airy-visual-3d-frame img {
+  transform: scale(1.03);
 }
 
 .airy-visual-3d-frame {

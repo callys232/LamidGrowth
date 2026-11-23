@@ -21,6 +21,22 @@
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
+.dec-ux-row:hover {
+  border-color: light-dark(#93c5fd, #38bdf8);
+}
+
+.dec-preset-btn,
+.dec-sim-btn,
+.dec-tab-btn,
+.dec-switch-option {
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.dec-preset-btn:active,
+.dec-sim-btn:active {
+  transform: scale(0.97);
+}
+
 .dec-ux-row.is-weakest {
   background: light-dark(#fffbeb, rgba(217, 119, 6, 0.1));
   border-color: light-dark(#fcd34d, rgba(251, 191, 36, 0.45));
