@@ -31,7 +31,7 @@ const guidePlaybooks: Card[] = [
         title: 'Ask the Growth Companion',
         text: 'Describe the decision or challenge and ask for a structured next step.',
       },
-      { title: 'Run one tool', text: 'Pick the tool that matches the job and add your own data.' },
+      { title: 'Run one engine', text: 'Pick the engine that matches the job and add your own data.' },
       { title: 'Approve the step', text: 'Nothing consequential happens until you approve it.' },
     ],
   },

@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom';
 import { SkeletonCards } from '../../../../shared/ui/Skeleton';
 import { DocumentPageLayout } from '../../../../shared/content/DocumentPageLayout';
-import { DocumentSectionSlide } from '../../../../shared/content/slides/DocumentSectionSlide';
 import type { DocumentPageProps } from '../../../../shared/content/types';
 import content from './content.json';
 import { BundleBuilder } from './BundleBuilder';
@@ -38,6 +38,7 @@ export function PricingDocumentPage({ embedded = false }: DocumentPageProps) {
 function PricingPage() {
   const { billables, bundles, error } = usePublicBillables();
   const closing = content.sections[content.sections.length - 1];
+  const [closingTitle, closingBody] = closing.paragraphs;
   return (
     <DocumentPageLayout page={content} hero={<PricingHero />} nav={<PricingNav />}>
       <PricingTiers />
@@ -57,7 +58,20 @@ function PricingPage() {
         )}
       </section>
       <PricingCompare billables={billables} />
-      <DocumentSectionSlide section={closing} index={content.sections.length - 1} last />
+      <section className="pricing-close" aria-labelledby="pricing-close-title">
+        <h2 id="pricing-close-title" data-source-paragraph={closingTitle.sourceParagraph}>
+          {closingTitle.text}
+        </h2>
+        <p data-source-paragraph={closingBody.sourceParagraph}>{closingBody.text}</p>
+        <div className="pricing-close-actions">
+          <Link className="button button-primary" to="/signup">
+            Create an account
+          </Link>
+          <Link className="button button-secondary" to="/contact">
+            Talk to our team
+          </Link>
+        </div>
+      </section>
     </DocumentPageLayout>
   );
 }

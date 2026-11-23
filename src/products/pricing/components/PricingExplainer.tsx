@@ -4,22 +4,22 @@ import './pricing-explainer.css';
 const items = [
   {
     id: 'access',
-    title: 'Plan or tool access',
-    gives: 'Permission to use the included tools in your workspace.',
-    check: 'Check the included tools and any recurring billing terms at checkout.',
+    title: 'Plan or engine access',
+    gives: 'Permission to use the included engines in your workspace.',
+    check: 'Check the included engines and any recurring billing terms at checkout.',
   },
   {
     id: 'points',
     title: 'Points',
     gives:
-      'A balance used by billable tool runs. Buying points alone does not unlock an excluded tool.',
-    check: 'The tool shows its points cost before submission. Repeat charged runs use more points.',
+      'A balance used by billable engine runs. Buying points alone does not unlock an excluded engine.',
+    check: 'The engine shows its points cost before submission. Repeat charged runs use more points.',
   },
   {
     id: 'bundle',
-    title: 'One-time tool bundle',
-    gives: 'The listed tool access and included points, after payment is confirmed.',
-    check: 'No automatic renewal. Your points balance is shared by the tools you can access.',
+    title: 'One-time engine bundle',
+    gives: 'The listed engine access and included points, after payment is confirmed.',
+    check: 'No automatic renewal. Your points balance is shared by the engines you can access.',
   },
   {
     id: 'funding',

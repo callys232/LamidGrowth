@@ -39,13 +39,58 @@
   font-weight: 600;
   padding: 0;
 }
+.pricing-bundle-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.pricing-bundle-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.16s,
+    border-color 0.16s,
+    color 0.16s;
+}
+.pricing-bundle-tab.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.pricing-bundle-tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--signature-red, #c12129);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
 .pricing-bundle-engine-card ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+}
+@media (max-width: 720px) {
+  .pricing-bundle-engine-card ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .pricing-bundle-engine-card li label {
   display: flex;

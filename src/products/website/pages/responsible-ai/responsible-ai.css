@@ -1,12 +1,19 @@
 .rai-page {
-  --ink: #0d1a2b;
-  --mute: #5b6573;
-  --tint: #f3f6fa;
-  --line: #d5dce6;
-  --panel: #fff;
+  --ink: light-dark(#0d1a2b, #eef2f7);
+  --mute: light-dark(#525d6b, #b0bac9);
+  --tint: light-dark(#f3f6fa, #182436);
+  --line: light-dark(#d5dce6, #2b394f);
+  --panel: light-dark(#fff, #111b2a);
   color: var(--ink);
   font-family: 'Inter Variable', system-ui, sans-serif;
   overflow-x: clip;
+}
+:root[data-theme='dark'] .rai-page {
+  --ink: #eef2f7;
+  --mute: #b0bac9;
+  --tint: #182436;
+  --line: #2b394f;
+  --panel: #111b2a;
 }
 .rai-page > nav,
 .rai-page > header,
@@ -464,8 +471,8 @@
 }
 .rai-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+  gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -473,26 +480,28 @@
 .rai-grid li {
   position: relative;
   display: grid;
+  grid-template-rows: auto auto 1fr auto;
   align-content: start;
-  gap: 8px;
-  padding: 24px 22px 22px;
+  gap: 10px;
+  padding: 24px 22px 20px;
   border: 1px solid var(--line);
   border-top: 4px solid var(--rai-c);
   border-radius: 18px;
   background: var(--panel);
+  color: var(--ink);
   overflow: hidden;
   transition:
-    background-color 0.3s,
-    color 0.3s,
-    transform 0.3s,
-    border-color 0.3s;
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.25s ease;
   animation: rai-in 0.4s ease both;
 }
 .rai-grid li:hover {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: color-mix(in srgb, var(--rai-c) 7%, var(--panel));
+  border-color: color-mix(in srgb, var(--rai-c) 50%, var(--line));
   border-top-color: var(--rai-c);
-  color: var(--panel);
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--rai-c) 14%, #0d1a2b14);
   transform: translateY(-4px);
 }
 .rai-ico {
@@ -505,24 +514,35 @@
   color: #fff;
   font-family: 'Newsreader Variable', Georgia, serif;
   font-size: 1.3rem;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--rai-c) 28%, transparent);
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.rai-grid li:hover .rai-ico {
+  transform: scale(1.06);
 }
 .rai-grid h3 {
-  margin: 6px 0 0;
-  font-size: 1.12rem;
+  margin: 4px 0 0;
+  font-size: 1.08rem;
   font-weight: 600;
+  color: var(--ink);
 }
 .rai-grid p {
   margin: 0;
+  font-size: 0.93rem;
   line-height: 1.55;
-  opacity: 0.78;
+  color: var(--mute);
 }
 .rai-tag {
+  justify-self: start;
   margin-top: 6px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--rai-c) 12%, transparent);
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.6;
 }
 
 /* Governance */

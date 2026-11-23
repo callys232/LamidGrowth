@@ -21,10 +21,14 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
     return Array.from(byEngine.entries());
   }, [billables]);
 
+  const [activeEngine, setActiveEngine] = useState<string>('');
   const selectedTools = billables.tools.filter((t) => selected[t.id]);
   const toolPoints = selectedTools.reduce((sum, t) => sum + t.points_cost, 0);
   const totalPoints = toolPoints + extraPoints;
   const totalPriceMinor = totalPoints * billables.pointsUnitPriceMinor;
+
+  const currentEngine = activeEngine || engines[0]?.[0] || '';
+  const visibleEngines = engines.filter(([name]) => name === currentEngine);
 
   function toggle(id: string) {
     setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -73,9 +77,27 @@ export function BundleBuilder({ billables }: { billables: Billables }) {
         {formatMinor(billables.pointsUnitPriceMinor, billables.currency)}/point rate as everything
         else, no markup.
       </p>
+      <div className="pricing-bundle-tabs" role="tablist" aria-label="Engine suites">
+        {engines.map(([engine, tools]) => {
+          const count = tools.filter((t) => selected[t.id]).length;
+          return (
+            <button
+              key={engine}
+              type="button"
+              role="tab"
+              aria-selected={engine === currentEngine}
+              className={`pricing-bundle-tab${engine === currentEngine ? ' is-active' : ''}`}
+              onClick={() => setActiveEngine(engine)}
+            >
+              {engine}
+              {count > 0 && <span className="pricing-bundle-tab-count">{count}</span>}
+            </button>
+          );
+        })}
+      </div>
       <div className="pricing-bundle-layout">
         <div className="pricing-bundle-engines">
-          {engines.map(([engine, tools]) => {
+          {visibleEngines.map(([engine, tools]) => {
             const allSelected = tools.every((t) => selected[t.id]);
             return (
               <article key={engine} className="pricing-bundle-engine-card">

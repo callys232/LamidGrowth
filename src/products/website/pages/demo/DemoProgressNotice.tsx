@@ -62,7 +62,7 @@ export function DemoProgressNotice() {
       {' · '}
       <Link to="/os/commercial/projects">Explore projects</Link>
       {' · '}
-      <Link to="/os/engines">Try a tool</Link>
+      <Link to="/os/engines">Try an engine</Link>
       {' · '}
       <Link
         to="/signup"

@@ -264,7 +264,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 32px 30px;
+  padding: 26px 22px;
   border: 1px solid var(--border, #e3e4e0);
   border-radius: 22px;
   background: var(--surface, #fff);
@@ -286,7 +286,7 @@
 .content-page .canonical-copy .pricing-tier h2 {
   margin: 0;
   font-family: var(--font-ui, inherit);
-  font-size: 30px;
+  font-size: clamp(22px, 1.9vw, 26px);
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ink, #0d1a2b);
@@ -309,7 +309,8 @@
 /* ── Live price cards ──────────────────────────────────────────────────── */
 .pricing-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 380px));
+  justify-content: center;
   gap: 20px;
 }
 .pricing-card {
@@ -556,4 +557,47 @@
     margin-inline: auto;
     text-align: left;
   }
+}
+
+/* ── Closing CTA band ──────────────────────────────────────────────────── */
+.pricing-close {
+  margin: clamp(56px, 7vw, 88px) calc(50% - 50vw) 0;
+  padding: clamp(56px, 7vw, 84px) 24px;
+  background: var(--midnight, #0d1a2b);
+  color: #fff;
+  text-align: center;
+}
+.content-page .canonical-copy .pricing-close h2 {
+  margin: 0 auto 12px;
+  max-width: 24ch;
+  font-family: var(--font-editorial, Georgia, serif);
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #fff;
+}
+.content-page .canonical-copy .pricing-close p {
+  margin: 0 auto 24px;
+  max-width: 52ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #cdd5e2;
+}
+.pricing-close-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.pricing-close-actions .button {
+  text-decoration: none;
+}
+.pricing-close-actions .button-secondary {
+  color: #fff;
+  border-color: #ffffff47;
+  background: #ffffff0d;
+}
+.pricing-close-actions .button-secondary:hover {
+  background: #ffffff1f;
+  border-color: #ffffff80;
 }

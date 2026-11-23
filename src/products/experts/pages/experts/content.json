@@ -50,7 +50,7 @@
           "sourceParagraph": 9904
         },
         {
-          "text": "Strategy, finance, people, marketing, commercial, operations, technology/data/AI, product/design, legal/risk/compliance, engineering, manufacturing, energy, healthcare, sustainability, research, education, public sector, development/impact, program management, creative and other supported domains.",
+          "text": "Strategy, finance, people, marketing, commercial, operations, technology, data, product, legal, risk, engineering, healthcare, sustainability, and public sector.",
           "sourceParagraph": 9905
         }
       ]
@@ -124,18 +124,18 @@
           "sourceParagraph": 9915
         },
         {
-          "text": "Your work does not stop. Keep the draft, unresolved questions and context intact, then queue the specific parts that need qualified human review. You approve the revised scope before it becomes canonical unless a defined policy says otherwise.",
+          "text": "Your work keeps moving. Save the draft and queue only the steps that need specialist review, then approve the final scope before it becomes the approved record.",
           "sourceParagraph": 9916
         }
       ]
     },
     {
       "group": "Expert Matching",
-      "label": "Match Expertise to the Work - Not Just a Keyword.",
-      "title": "Match Expertise to the Work - Not Just a Keyword.",
+      "label": "Match Expertise to the Work.",
+      "title": "Match Expertise to the Work.",
       "paragraphs": [
         {
-          "text": "Match Expertise to the Work - Not Just a Keyword.",
+          "text": "Match Expertise to the Work.",
           "sourceParagraph": 9917
         },
         {
@@ -309,11 +309,11 @@
     },
     {
       "group": "Capability Strategy",
-      "label": "Strengthen Capability - Then Keep Building It.",
-      "title": "Strengthen Capability - Then Keep Building It.",
+      "label": "Strengthen Internal Capability.",
+      "title": "Strengthen Internal Capability.",
       "paragraphs": [
         {
-          "text": "Strengthen Capability - Then Keep Building It.",
+          "text": "Strengthen Internal Capability.",
           "sourceParagraph": 9943
         },
         {
@@ -345,7 +345,7 @@
           "sourceParagraph": 9947
         },
         {
-          "text": "Compare expert engagement, recruitment, fractional leadership, upskilling, reskilling, mentoring, coaching, learning and Engine Fabric options.",
+          "text": "Compare expert engagement, recruitment, fractional leadership, upskilling, mentoring, coaching, learning and platform workflows.",
           "sourceParagraph": 9948
         }
       ]
@@ -398,11 +398,11 @@
     },
     {
       "group": "Become an Expert",
-      "label": "Bring Your Expertise Into Better-Defined Work.",
-      "title": "Bring Your Expertise Into Better-Defined Work.",
+      "label": "Join as a Verified Expert.",
+      "title": "Join as a Verified Expert.",
       "paragraphs": [
         {
-          "text": "Bring Your Expertise Into Better-Defined Work.",
+          "text": "Join as a Verified Expert.",
           "sourceParagraph": 9956
         },
         {

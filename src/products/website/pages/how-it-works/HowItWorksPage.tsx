@@ -164,7 +164,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
       },
       { title: 'Reveal patterns', line: 'Spot the recurring issues scattered information hides.' },
     ],
-    tourTitle: 'Clarity tools in use',
+    tourTitle: 'Clarity engines in use',
     engines: [
       { name: 'Option Comparison', clip: 'Q21' },
       { name: 'Decision Register', clip: 'Q02' },
@@ -182,7 +182,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
       { title: 'Organisational', line: 'Plan people, capacity and succession.' },
       { title: 'Even when unsure', line: '“Not sure yet” is a valid place to start.' },
     ],
-    tourTitle: 'Capability tools in use',
+    tourTitle: 'Capability engines in use',
     engines: [
       { name: 'Skills Gap Analysis', clip: 'A02' },
       { name: 'Workforce Plan', clip: 'A03' },
@@ -200,7 +200,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
       { title: 'Build a rhythm', line: 'Set a practical cadence around important work.' },
       { title: 'Review the result', line: 'Learn from what happened before moving on.' },
     ],
-    tourTitle: 'Consistency tools in use',
+    tourTitle: 'Consistency engines in use',
     engines: [
       { name: 'Workload & Capacity Balance', clip: 'R05' },
       { name: 'Delivery Flow Metrics', clip: 'R02' },
@@ -218,7 +218,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
       { title: 'Organisational', line: 'Better coordination, systems and team capability.' },
       { title: 'Without losing control', line: 'Scale while people stay in charge of decisions.' },
     ],
-    tourTitle: 'Growth tools in use',
+    tourTitle: 'Growth engines in use',
     engines: [
       { name: 'Growth Pathways', clip: 'G03' },
       { name: 'Growth Opportunity Scoring', clip: 'Z01' },
@@ -239,7 +239,7 @@ export const howItWorks: Record<string, HowItWorksContent> = {
         line: 'Where are priorities aligned and where is delivery slipping?',
       },
     ],
-    tourTitle: 'Rhythm tools in use',
+    tourTitle: 'Rhythm engines in use',
     engines: [
       { name: 'Operating Rhythm & Meeting Design', clip: 'S05' },
       { name: 'Drift & Stability Monitor', clip: 'R03' },
