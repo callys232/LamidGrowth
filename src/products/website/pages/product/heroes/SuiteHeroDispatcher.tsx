@@ -142,14 +142,6 @@ export function SuiteHeroDispatcher({ config }: SuiteHeroProps) {
               Try Live Demo
             </Link>
           </div>
-
-          <div className="airy-hero-tags" aria-label={`${config.name} capabilities`}>
-            {config.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className="suite-tag-pill">
-                {tag}
-              </span>
-            ))}
-          </div>
         </div>
 
         <div className="airy-hero-visual" data-suite={config.id} aria-hidden="true">

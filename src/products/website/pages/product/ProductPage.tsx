@@ -137,7 +137,6 @@ export function ProductPage() {
 
       <section className="ps-intro" aria-labelledby="ps-intro-title">
         <div className="ps-intro-heading">
-          <span className="ps-tag">{content.platformIntro.label}</span>
           <div className="ps-intro-row">
             <h2 id="ps-intro-title">{content.platformIntro.title}</h2>
             <p>{content.platformIntro.description}</p>
@@ -158,7 +157,6 @@ export function ProductPage() {
 
       <section className="ps-directory" aria-labelledby="ps-directory-title">
         <div className="ps-directory-head">
-          <span className="ps-tag">Decision Suites</span>
           <h2 id="ps-directory-title">Explore each suite in depth.</h2>
           <p>Pick a suite to explore live dashboards, simulators, and playbooks.</p>
         </div>

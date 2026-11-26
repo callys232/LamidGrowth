@@ -504,7 +504,6 @@ export function SuiteDashboardShowcase({ config }: { config: ProductSuiteConfig 
     <section className="suite-dashboard-section" aria-labelledby="suite-dashboard-title">
       <div className="suite-dashboard-header">
         <div className="suite-dashboard-intro">
-          <span className="ps-tag">Live Workspace Walkthrough</span>
           <h2 id="suite-dashboard-title">{config.thesis.headline}</h2>
           <p>{config.thesis.description}</p>
         </div>

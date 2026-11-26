@@ -329,7 +329,6 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
       {/* 3. Engines Intro + Split Explorer */}
       <section className="suite-catalog-section" aria-labelledby="suite-catalog-title">
         <div className="suite-catalog-header">
-          <span className="ps-tag">What’s Inside</span>
           <h2 id="suite-catalog-title">{catalogHeading}</h2>
           <p>{suiteExplorerSubtitle[config.id] || 'Pick an engine to see what it checks and how to run it.'}</p>
         </div>
@@ -453,7 +452,6 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
       <section className="suite-library-section" aria-labelledby="suite-library-title">
         <div className="suite-library-header">
           <div>
-            <span className="ps-tag">Playbooks &amp; Use Cases</span>
             <h2 id="suite-library-title">Put {config.name} into weekly practice</h2>
           </div>
           <Link className="suite-demo-link" to="/insights#playbook-library">
@@ -688,13 +686,9 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
               <source src={`/videos/engines/${config.clip}.webm`} type="video/webm" />
               <source src={`/videos/engines/${config.clip}.mp4`} type="video/mp4" />
             </video>
-            <div className="suite-visual-overlay">
-              <span className="suite-live-badge">Live Computational Engine</span>
-            </div>
           </div>
 
           <div className="suite-assets-copy">
-            <span className="ps-tag">Built-in Standards</span>
             <h2 id="suite-assets-title">Clear math you can check.</h2>
             <p>You see every input, assumption, and limit behind every score.</p>
             <Link className="suite-demo-link" to="/demo">
@@ -709,7 +703,6 @@ export function ProductSuitePage({ config }: { config: ProductSuiteConfig }) {
         <section className="suite-advisory-block" aria-labelledby="suite-advisory-title">
           <div className="suite-advisory-inner">
             <div className="suite-advisory-header">
-              <span className="ps-tag">Executive Collaboration</span>
               <h2 id="suite-advisory-title">{config.advisoryHighlight.title}</h2>
               <p>You review the numbers, set the direction, and decide what comes next with your adviser.</p>
             </div>

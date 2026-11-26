@@ -93,10 +93,6 @@ export function DecisionInteractiveSuite() {
     <div className="dec-interactive-container">
       <div className="dec-interactive-header">
         <div className="dec-header-left">
-          <span className="dec-status-pill">
-            <span className="dec-status-dot" />
-            Interactive Decision Check
-          </span>
           <h2 className="dec-header-title">Test a call before you commit</h2>
           <p className="dec-header-desc">
             Drag any slider to see how one weak link holds back an entire decision—or compare

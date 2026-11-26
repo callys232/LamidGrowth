@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import './interactive-suite.css';
 
 interface SliderSpec {
@@ -324,10 +324,6 @@ export function SuiteSimulator({ suiteId }: { suiteId: string }) {
       <div className="dec-interactive-container suite-sim-container">
         <div className="suite-sim-head">
           <div>
-            <span className="dec-status-pill">
-              <SlidersHorizontal size={13} aria-hidden="true" />
-              {cfg.badge}
-            </span>
             <h3>{cfg.title}</h3>
             <p>{cfg.subtitle}</p>
           </div>
